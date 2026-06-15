@@ -1,0 +1,53 @@
+name: Release installers
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: sqlite, curl, mbstring, json
+
+      - name: Install Composer deps
+        run: composer install --no-interaction --prefer-dist --no-dev
+
+      - name: Build Windows installer
+        shell: pwsh
+        run: ./scripts/build-installer-windows.ps1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pcverse-windows
+          path: public/downloads/PCVerse-Setup-Windows-x64.exe
+
+  linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: sqlite, curl, mbstring, json
+
+      - name: Install Composer deps
+        run: composer install --no-interaction --prefer-dist --no-dev
+
+      - name: Build Linux installer
+        run: |
+          chmod +x scripts/build-installer-linux.sh scripts/stage-payload-unix.sh
+          ./scripts/build-installer-linux.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pcverse-linux
+          path: public/downloads/PCVerse-Setup-Linux-x64.run

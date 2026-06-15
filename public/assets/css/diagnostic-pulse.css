@@ -1,0 +1,234 @@
+/* ── Intelligence Pulse · وخش × امین ── */
+.dx-pulse {
+  margin: 32px auto 36px;
+  position: relative;
+}
+
+.dx-pulse-bridge {
+  display: grid;
+  grid-template-columns: 1fr minmax(140px, 220px) 1fr;
+  gap: 0;
+  align-items: stretch;
+  min-height: 280px;
+}
+
+@media (max-width: 960px) {
+  .dx-pulse-bridge {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .dx-pulse-synapse { order: -1; min-height: 72px; }
+}
+
+.dx-pulse-node {
+  position: relative;
+  padding: 28px 26px 24px;
+  border-radius: 22px;
+  overflow: hidden;
+  backdrop-filter: blur(18px);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s;
+}
+
+.dx-pulse-node:hover {
+  transform: translateY(-3px);
+}
+
+.dx-pulse-node.vakhsh {
+  background: linear-gradient(155deg, rgba(34, 211, 238, 0.07), rgba(17, 19, 29, 0.92));
+  border: 1px solid rgba(34, 211, 238, 0.22);
+  box-shadow: 0 24px 48px rgba(34, 211, 238, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.dx-pulse-node.amin {
+  background: linear-gradient(155deg, rgba(242, 159, 5, 0.08), rgba(17, 19, 29, 0.92));
+  border: 1px solid rgba(242, 159, 5, 0.22);
+  box-shadow: 0 24px 48px rgba(242, 159, 5, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.dx-pulse-ring {
+  position: absolute;
+  top: 18px;
+  inset-inline-end: 18px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.dx-pulse-node.vakhsh .dx-pulse-ring {
+  background: radial-gradient(circle, rgba(34, 211, 238, 0.5) 0%, transparent 70%);
+  animation: dxPulseRing 3.2s ease-in-out infinite;
+}
+
+.dx-pulse-node.amin .dx-pulse-ring {
+  background: radial-gradient(circle, rgba(242, 159, 5, 0.5) 0%, transparent 70%);
+  animation: dxPulseRing 3.2s ease-in-out infinite 1.6s;
+}
+
+@keyframes dxPulseRing {
+  0%, 100% { transform: scale(0.85); opacity: 0.25; }
+  50% { transform: scale(1.15); opacity: 0.55; }
+}
+
+.dx-pulse-name {
+  display: block;
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin-bottom: 4px;
+}
+
+.dx-pulse-node.vakhsh .dx-pulse-name {
+  background: linear-gradient(120deg, #22d3ee, #67e8f9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.dx-pulse-node.amin .dx-pulse-name {
+  background: linear-gradient(120deg, #f29f05, #fbbf24);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.dx-pulse-role {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.42);
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+}
+
+.dx-pulse-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.dx-pulse-metric {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dx-pulse-metric strong {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.15;
+  margin-bottom: 2px;
+}
+
+.dx-pulse-node.vakhsh .dx-pulse-metric strong { color: #67e8f9; }
+.dx-pulse-node.amin .dx-pulse-metric strong { color: #fbbf24; }
+
+.dx-pulse-metric span {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.38);
+  line-height: 1.35;
+}
+
+.dx-pulse-live {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.48);
+  line-height: 1.55;
+  min-height: 2.8em;
+}
+
+.dx-pulse-synapse {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 12px 8px;
+}
+
+.dx-pulse-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 120px;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.dx-pulse-tagline {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.dx-pulse-sync {
+  position: relative;
+  z-index: 1;
+  margin-top: 10px;
+  font-size: 9px;
+  color: rgba(34, 211, 238, 0.55);
+  letter-spacing: 0.08em;
+}
+
+.dx-pulse-whisper {
+  margin-top: 18px;
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dx-pulse-whisper p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.58);
+  line-height: 1.65;
+  transition: opacity 0.6s ease;
+}
+
+.dx-pulse-whisper p.fade-out { opacity: 0; }
+
+.dx-pulse-feed {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 12px;
+}
+
+.dx-pulse-feed-chip {
+  font-size: 10px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.dx-pulse-feed-chip em {
+  font-style: normal;
+  color: rgba(34, 211, 238, 0.75);
+}

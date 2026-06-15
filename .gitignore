@@ -1,0 +1,17 @@
+/vendor/
+/storage/database/*.sqlite
+/storage/cache/
+/storage/settings/local.json
+.env
+public/downloads/*.zip
+public/downloads/*.tar.gz
+public/downloads/*.exe
+public/downloads/*.run
+!public/downloads/.gitkeep
+build-cache/
+installer/PCVerse.Setup/payload.zip
+installer/PCVerse.Setup/bin/
+installer/PCVerse.Setup/obj/
+agent/pcverse_probe/PcverseHwMon/bin/
+agent/pcverse_probe/PcverseHwMon/obj/
+agent/pcverse_probe/PcbHwMon.exe

@@ -1,0 +1,8 @@
+{
+  "php_windows_version": "8.3.31",
+  "php_windows_url": "https://windows.php.net/downloads/releases/php-8.3.31-nts-Win32-vs16-x64.zip",
+  "php_linux_min": "8.2.0",
+  "composer_url": "https://getcomposer.org/download/latest-stable/composer.phar",
+  "dotnet_channel": "8.0",
+  "dotnet_install_script": "https://dot.net/v1/dotnet-install.ps1"
+}

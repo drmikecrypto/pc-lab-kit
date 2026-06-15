@@ -1,0 +1,224 @@
+.pclab-body {
+  margin: 0;
+  min-height: 100vh;
+  background: #0a0e17;
+  color: #e8eaed;
+  font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
+}
+
+.pclab-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 14, 23, 0.92);
+  backdrop-filter: blur(8px);
+}
+
+.pclab-brand {
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #f29f05;
+  text-decoration: none;
+}
+
+.pclab-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.pclab-nav a {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pclab-nav a:hover {
+  color: #22d3ee;
+}
+
+.pclab-nav-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+}
+
+.pclab-nav-btn:hover {
+  color: #22d3ee;
+}
+
+.dx-settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.dx-settings-overlay[hidden] {
+  display: none;
+}
+
+.dx-settings-panel {
+  width: min(480px, 100%);
+  background: #161b22;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+}
+
+.dx-settings-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.dx-settings-head h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.dx-settings-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.dx-settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.dx-settings-field input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.25);
+  color: #e8eaed;
+  font-size: 14px;
+}
+
+.dx-settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.dx-settings-status {
+  min-height: 1.2em;
+  margin-top: 12px;
+}
+
+.dx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.dx-btn.primary {
+  background: linear-gradient(135deg, #f29f05, #e88a00);
+  color: #0a0e17;
+}
+
+.dx-btn.ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.muted { color: rgba(255, 255, 255, 0.55); }
+.fs-sm { font-size: 13px; }
+.fs-xs { font-size: 12px; }
+
+.pclab-main {
+  min-height: calc(100vh - 120px);
+}
+
+.pclab-footer {
+  padding: 24px;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.pclab-error {
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.pclab-error a {
+  color: #22d3ee;
+}
+
+.container {
+  width: min(1120px, 92vw);
+  margin-inline: auto;
+}
+
+.glass {
+  background: rgba(22, 27, 34, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.dx-lab-noise {
+  position: relative;
+}
+
+.dx-lab-noise::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.pcverse-update-banner {
+  border-bottom: 1px solid rgba(34, 211, 238, 0.25);
+  background: linear-gradient(90deg, rgba(34, 211, 238, 0.12), rgba(242, 159, 5, 0.08));
+}
+
+.pcverse-update-inner {
+  width: min(1120px, 92vw);
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pcverse-update-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

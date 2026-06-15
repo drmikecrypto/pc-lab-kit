@@ -1,0 +1,27 @@
+-- RGB / lighting hub category + sample listing (idempotent).
+
+INSERT IGNORE INTO categories (slug, name_fa, name_en, icon_svg, sort_order, guide_fa) VALUES
+('rgb-lighting', 'نور و RGB', 'RGB / Lighting', 'sparkles', 22, 'هاب ARGB، نوار نور و همگام‌سازی با فن‌ها؛ روی ظاهر و نویز کم اثر دارد، نه مستقیم روی بنچ CPU/GPU.');
+
+INSERT IGNORE INTO parts (category_id, name_fa, brand, model, specs_json, benchmark_score, tdp_watts)
+SELECT c.id, 'هاب ARGB دیپ‌کول FH-10', 'DeepCool', 'FH-10', '{"kind":"argb_hub","ports":10,"watts":12,"rgb":true}', 0, 12
+FROM categories c WHERE c.slug = 'rgb-lighting' LIMIT 1;
+
+INSERT IGNORE INTO parts (category_id, name_fa, brand, model, specs_json, benchmark_score, tdp_watts)
+SELECT c.id, 'نوار نور ARGB ۳۰ سانتی', 'PCVerse', 'ARGB-Strip-30', '{"kind":"strip","length_cm":30,"watts":8,"rgb":true}', 0, 8
+FROM categories c WHERE c.slug = 'rgb-lighting' LIMIT 1;
+
+-- Link to first approved/live provider if exists (Digikala demo id=1 in seed).
+INSERT IGNORE INTO listings (part_id, provider_id, price_toman, stock, status, approved_at)
+SELECT p.id, 1, 890000, 8, 'live', CURRENT_TIMESTAMP
+FROM parts p
+JOIN categories c ON c.id = p.category_id AND c.slug = 'rgb-lighting'
+WHERE p.model = 'FH-10'
+LIMIT 1;
+
+INSERT IGNORE INTO listings (part_id, provider_id, price_toman, stock, status, approved_at)
+SELECT p.id, 1, 420000, 12, 'live', CURRENT_TIMESTAMP
+FROM parts p
+JOIN categories c ON c.id = p.category_id AND c.slug = 'rgb-lighting'
+WHERE p.model = 'ARGB-Strip-30'
+LIMIT 1;

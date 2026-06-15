@@ -1,0 +1,175 @@
+.lab-pitch {
+  --lab-accent: #22d3ee;
+  --lab-accent-dim: rgba(34, 211, 238, 0.14);
+  --lab-border: rgba(34, 211, 238, 0.28);
+  --lab-glow: rgba(34, 211, 238, 0.08);
+  padding: 1.5rem 0 3rem;
+}
+.lab-pitch--violet {
+  --lab-accent: #c4b5fd;
+  --lab-accent-dim: rgba(167, 139, 250, 0.16);
+  --lab-border: rgba(167, 139, 250, 0.32);
+  --lab-glow: rgba(167, 139, 250, 0.1);
+}
+
+/* عرض کامل تا حد کارت خانه — بدون ستون باریک وسط */
+.lab-pitch__shell {
+  width: 100%;
+  max-width: 56rem;
+  margin: 0 auto;
+  padding-inline: 1rem;
+}
+@media (min-width: 640px) {
+  .lab-pitch__shell { padding-inline: 1.5rem; }
+}
+@media (min-width: 1024px) {
+  .lab-pitch__shell { padding-inline: 2rem; }
+}
+
+.lab-pitch__back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+}
+.lab-pitch__back:hover { color: var(--lab-accent); }
+
+.lab-pitch__card {
+  width: 100%;
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-radius: 1.5rem;
+  border: 1px solid var(--lab-border);
+  background: linear-gradient(155deg, var(--lab-glow) 0%, rgba(10, 14, 23, 0.4) 45%, transparent 100%);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+}
+@media (min-width: 640px) {
+  .lab-pitch__card {
+    padding: 2rem 2rem 1.75rem;
+    border-radius: 1.75rem;
+  }
+}
+@media (min-width: 1024px) {
+  .lab-pitch__card { padding: 2.25rem 2.5rem 2rem; }
+}
+
+.lab-pitch__card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+.lab-pitch__card-copy { flex: 1; min-width: 0; }
+
+.lab-pitch__icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 1rem;
+  background: var(--lab-accent-dim);
+  color: var(--lab-accent);
+  box-shadow: inset 0 0 0 1px var(--lab-border);
+}
+@media (min-width: 640px) {
+  .lab-pitch__icon { width: 3.25rem; height: 3.25rem; }
+}
+.lab-pitch__icon-svg { width: 1.5rem; height: 1.5rem; }
+
+.lab-pitch__title {
+  margin: 0 0 0.65rem;
+  font-size: clamp(1.5rem, 4.2vw, 2rem);
+  font-weight: 900;
+  line-height: 1.25;
+  color: #fff;
+}
+.lab-pitch__lead {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: rgba(255, 255, 255, 0.68);
+  max-width: none;
+}
+
+.lab-pitch__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem 1.5rem;
+}
+@media (min-width: 768px) {
+  .lab-pitch__list { grid-template-columns: 1fr 1fr; }
+}
+.lab-pitch__list li {
+  position: relative;
+  padding-right: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.82);
+}
+.lab-pitch__list li::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--lab-accent);
+}
+
+.lab-pitch__closing {
+  margin: 1.25rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 600;
+}
+html[data-theme="light"] .lab-pitch__closing { color: #64748b; }
+
+.lab-pitch__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.25rem;
+  margin-top: 1.75rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+.lab-pitch__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  padding: 0.65rem 1.75rem;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 0.9375rem;
+  text-decoration: none;
+  color: #111;
+  background: linear-gradient(135deg, #f29f05, #ea580c);
+  box-shadow: 0 4px 20px rgba(242, 159, 5, 0.25);
+  transition: filter 0.15s ease;
+}
+.lab-pitch__btn:hover { filter: brightness(1.06); color: #111; }
+.lab-pitch__sibling {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--lab-accent);
+  text-decoration: none;
+}
+.lab-pitch__sibling:hover { text-decoration: underline; }
+
+html[data-theme="light"] .lab-pitch__title { color: #0f172a; }
+html[data-theme="light"] .lab-pitch__lead { color: #475569; }
+html[data-theme="light"] .lab-pitch__list li { color: #334155; }
+html[data-theme="light"] .lab-pitch__back { color: #64748b; }
+html[data-theme="light"] .lab-pitch__card {
+  background: linear-gradient(155deg, var(--lab-glow) 0%, rgba(255, 255, 255, 0.85) 50%, #fff 100%);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+}

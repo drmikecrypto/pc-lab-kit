@@ -1,0 +1,23 @@
+# PCVerse
+> Local-first PC diagnostic lab for Windows and Linux — health scan, test history, optional AI advisor. No cloud account required.
+
+## Summary
+PCVerse replaces juggling HWiNFO, GPU-Z, and manual spreadsheets with one local web laboratory. Install via GitHub Releases.
+
+## Install
+- Windows: PCVerse-Setup-Windows-x64.exe
+- Linux: PCVerse-Setup-Linux-x64.run
+- Latest: https://github.com/drmikecrypto/pc-lab-kit/releases/latest
+
+## Documentation
+- README.md — overview and quick start
+- docs/FAQ.md — common questions
+- docs/GITHUB_PUBLISH_AND_RELEASE.md — maintainer release guide
+- LICENSE — Elastic License 2.0
+- TRADEMARK.md — brand policy
+
+## Keywords
+PC diagnostic, hardware monitoring, HWiNFO alternative, GPU health, CPU thermal, local-first, Windows, Linux, benchmark, telemetry, RGB
+
+## Author
+https://github.com/drmikecrypto

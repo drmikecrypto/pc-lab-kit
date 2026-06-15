@@ -1,0 +1,172 @@
+.dx-toolkit-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.dx-toolkit-head h2 {
+  margin: 0 0 6px;
+  font-size: 1.35rem;
+}
+
+.dx-toolkit-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dx-toolkit-stat {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dx-toolkit-stat--live { color: #4ade80; border-color: rgba(74, 222, 128, 0.35); }
+.dx-toolkit-stat--beta { color: #22d3ee; border-color: rgba(34, 211, 238, 0.35); }
+.dx-toolkit-stat--import { color: #a78bfa; border-color: rgba(167, 139, 250, 0.35); }
+.dx-toolkit-stat--orchestrate { color: #fbbf24; border-color: rgba(251, 191, 36, 0.35); }
+.dx-toolkit-stat--planned { color: rgba(255, 255, 255, 0.45); }
+
+.dx-toolkit-run {
+  margin-bottom: 16px;
+}
+
+.dx-toolkit-run h3 {
+  margin: 0 0 6px;
+}
+
+.dx-toolkit-run-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.dx-toolkit-run-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.dx-toolkit-run-btn:hover:not(:disabled) {
+  border-color: rgba(34, 211, 238, 0.4);
+  background: rgba(34, 211, 238, 0.06);
+}
+
+.dx-toolkit-run-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.dx-toolkit-run-btn strong {
+  font-size: 14px;
+}
+
+.dx-toolkit-run-btn span {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.dx-toolkit-run-status {
+  margin-top: 12px;
+}
+
+.dx-toolkit-result {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 12px;
+  overflow-x: auto;
+  max-height: 220px;
+}
+
+.dx-toolkit-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.dx-toolkit-filter {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dx-toolkit-filter.is-active {
+  color: #fff;
+  border-color: rgba(34, 211, 238, 0.4);
+  background: rgba(34, 211, 238, 0.08);
+}
+
+.dx-toolkit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.dx-toolkit-card {
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(22, 27, 34, 0.55);
+}
+
+.dx-toolkit-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.dx-toolkit-card-head strong {
+  font-size: 14px;
+}
+
+.dx-toolkit-badge {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.dx-toolkit-badge--live { background: rgba(74, 222, 128, 0.15); color: #4ade80; }
+.dx-toolkit-badge--beta { background: rgba(34, 211, 238, 0.12); color: #22d3ee; }
+.dx-toolkit-badge--import { background: rgba(167, 139, 250, 0.12); color: #a78bfa; }
+.dx-toolkit-badge--orchestrate { background: rgba(251, 191, 36, 0.12); color: #fbbf24; }
+.dx-toolkit-badge--planned { background: rgba(255, 255, 255, 0.06); color: rgba(255, 255, 255, 0.45); }
+
+.dx-toolkit-card p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.58);
+}

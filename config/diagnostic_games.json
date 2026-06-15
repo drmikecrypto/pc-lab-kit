@@ -1,0 +1,5140 @@
+{
+    "version": 2,
+    "count": 300,
+    "updated_at": "2026-06-14T08:27:04+00:00",
+    "sources": {
+        "legacy": 224,
+        "anchor": 39,
+        "award": 37
+    },
+    "games": [
+        {
+            "id": "g301",
+            "slug": "death-stranding-2-on-the-beach",
+            "name": "Death Stranding 2: On the Beach",
+            "name_fa": "Death Stranding 2: On the Beach",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2026",
+                "ultra",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g302",
+            "slug": "borderlands-4",
+            "name": "Borderlands 4",
+            "name_fa": "Borderlands 4",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "goty_candidate",
+                "coop",
+                "award_2026",
+                "high",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g303",
+            "slug": "mafia-the-old-country",
+            "name": "Mafia: The Old Country",
+            "name_fa": "Mafia: The Old Country",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2026",
+                "high",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g304",
+            "slug": "elden-ring-nightreign",
+            "name": "Elden Ring: Nightreign",
+            "name_fa": "Elden Ring: Nightreign",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "goty_candidate",
+                "multiplayer",
+                "award_2026",
+                "high",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g305",
+            "slug": "doom-the-dark-ages",
+            "name": "DOOM: The Dark Ages",
+            "name_fa": "DOOM: The Dark Ages",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2026",
+                "ultra",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g306",
+            "slug": "clair-obscur-expedition-33",
+            "name": "Clair Obscur: Expedition 33",
+            "name_fa": "Clair Obscur: Expedition 33",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "goty",
+                "singleplayer",
+                "award_2025",
+                "high",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g190",
+            "slug": "split-fiction",
+            "name": "Split Fiction",
+            "name_fa": "Split Fiction",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "goty_candidate",
+                "coop",
+                "award_2025",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g145",
+            "slug": "kingdom-come-deliverance-ii",
+            "name": "Kingdom Come: Deliverance II",
+            "name_fa": "Kingdom Come: Deliverance II",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "goty_candidate",
+                "singleplayer",
+                "award_2025",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g27",
+            "slug": "monster-hunter-wilds",
+            "name": "Monster Hunter Wilds",
+            "name_fa": "Monster Hunter Wilds",
+            "tier": "ultra",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "goty_candidate",
+                "multiplayer",
+                "award_2025",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g307",
+            "slug": "assassin-s-creed-shadows",
+            "name": "Assassin's Creed Shadows",
+            "name_fa": "Assassin's Creed Shadows",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2025",
+                "high",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g144",
+            "slug": "avowed",
+            "name": "Avowed",
+            "name_fa": "Avowed",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "goty_candidate",
+                "award_2025",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g308",
+            "slug": "indiana-jones-and-the-great-circle",
+            "name": "Indiana Jones and the Great Circle",
+            "name_fa": "Indiana Jones and the Great Circle",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2025",
+                "ultra",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g155",
+            "slug": "metaphor-refantazio",
+            "name": "Metaphor: ReFantazio",
+            "name_fa": "Metaphor: ReFantazio",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "goty",
+                "award_2025",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g309",
+            "slug": "astro-bot",
+            "name": "Astro Bot",
+            "name_fa": "Astro Bot",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "goty",
+                "singleplayer",
+                "award_2024",
+                "mid",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g310",
+            "slug": "balatro",
+            "name": "Balatro",
+            "name_fa": "Balatro",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2024",
+                "low",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g28",
+            "slug": "black-myth-wukong",
+            "name": "Black Myth: Wukong",
+            "name_fa": "Black Myth: Wukong",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "multiplayer",
+                "goty_candidate",
+                "singleplayer",
+                "award_2024",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g26",
+            "slug": "helldivers-2",
+            "name": "Helldivers 2",
+            "name_fa": "Helldivers 2",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "goty_candidate",
+                "coop",
+                "award_2024",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g311",
+            "slug": "final-fantasy-vii-rebirth",
+            "name": "Final Fantasy VII Rebirth",
+            "name_fa": "Final Fantasy VII Rebirth",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2024",
+                "ultra",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g312",
+            "slug": "dragon-s-dogma-2",
+            "name": "Dragon's Dogma 2",
+            "name_fa": "Dragon's Dogma 2",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2024",
+                "high",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g4",
+            "slug": "baldur-s-gate-3",
+            "name": "Baldur's Gate 3",
+            "name_fa": "Baldur's Gate 3",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "goty",
+                "coop",
+                "award_2023",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g313",
+            "slug": "the-legend-of-zelda-tears-of-the-kingdom",
+            "name": "The Legend of Zelda: Tears of the Kingdom",
+            "name_fa": "The Legend of Zelda: Tears of the Kingdom",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2023",
+                "mid",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g73",
+            "slug": "alan-wake-2",
+            "name": "Alan Wake 2",
+            "name_fa": "Alan Wake 2",
+            "tier": "ultra",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "goty_candidate",
+                "singleplayer",
+                "award_2023",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g314",
+            "slug": "marvel-s-spider-man-2",
+            "name": "Marvel's Spider-Man 2",
+            "name_fa": "Marvel's Spider-Man 2",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2023",
+                "high",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g74",
+            "slug": "resident-evil-4-remake",
+            "name": "Resident Evil 4 Remake",
+            "name_fa": "Resident Evil 4 Remake",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "goty_candidate",
+                "award_2023",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g78",
+            "slug": "lies-of-p",
+            "name": "Lies of P",
+            "name_fa": "Lies of P",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "goty_candidate",
+                "award_2023",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g3",
+            "slug": "elden-ring",
+            "name": "Elden Ring",
+            "name_fa": "Elden Ring",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "goty",
+                "award_2022",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g315",
+            "slug": "god-of-war-ragnar-k",
+            "name": "God of War Ragnarök",
+            "name_fa": "God of War Ragnarök",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2022",
+                "high",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g66",
+            "slug": "horizon-forbidden-west",
+            "name": "Horizon Forbidden West",
+            "name_fa": "Horizon Forbidden West",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "goty_candidate",
+                "award_2022",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g316",
+            "slug": "stray",
+            "name": "Stray",
+            "name_fa": "Stray",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "goty_candidate",
+                "singleplayer",
+                "award_2022",
+                "mid",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g188",
+            "slug": "it-takes-two",
+            "name": "It Takes Two",
+            "name_fa": "It Takes Two",
+            "tier": "mid",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "goty",
+                "coop",
+                "award_2021",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g75",
+            "slug": "resident-evil-village",
+            "name": "Resident Evil Village",
+            "name_fa": "Resident Evil Village",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "goty_candidate",
+                "award_2021",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g46",
+            "slug": "forza-horizon-5",
+            "name": "Forza Horizon 5",
+            "name_fa": "Forza Horizon 5",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "goty_candidate",
+                "singleplayer",
+                "award_2021",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g171",
+            "slug": "halo-infinite",
+            "name": "Halo Infinite",
+            "name_fa": "Halo Infinite",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "goty_candidate",
+                "multiplayer",
+                "award_2021",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g317",
+            "slug": "the-last-of-us-part-ii",
+            "name": "The Last of Us Part II",
+            "name_fa": "The Last of Us Part II",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "goty",
+                "singleplayer",
+                "award_2020",
+                "high",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g93",
+            "slug": "hades",
+            "name": "Hades",
+            "name_fa": "Hades",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "goty",
+                "award_2020",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g70",
+            "slug": "ghost-of-tsushima",
+            "name": "Ghost of Tsushima",
+            "name_fa": "Ghost of Tsushima",
+            "tier": "high",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "multiplayer",
+                "goty_candidate",
+                "singleplayer",
+                "award_2020",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g85",
+            "slug": "demon-s-souls",
+            "name": "Demon's Souls",
+            "name_fa": "Demon's Souls",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "goty_candidate",
+                "singleplayer",
+                "award_2020",
+                "award"
+            ],
+            "source": "award"
+        },
+        {
+            "id": "g1",
+            "slug": "cyberpunk-2077",
+            "name": "Cyberpunk 2077",
+            "name_fa": "Cyberpunk 2077",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g2",
+            "slug": "red-dead-redemption-2",
+            "name": "Red Dead Redemption 2",
+            "name_fa": "Red Dead Redemption 2",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g5",
+            "slug": "starfield",
+            "name": "Starfield",
+            "name_fa": "Starfield",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g25",
+            "slug": "palworld",
+            "name": "Palworld",
+            "name_fa": "Palworld",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g12",
+            "slug": "counter-strike-2",
+            "name": "Counter-Strike 2",
+            "name_fa": "Counter-Strike 2",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g8",
+            "slug": "call-of-duty-warzone",
+            "name": "Call of Duty: Warzone",
+            "name_fa": "Call of Duty: Warzone",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g9",
+            "slug": "fortnite",
+            "name": "Fortnite",
+            "name_fa": "Fortnite",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g10",
+            "slug": "apex-legends",
+            "name": "Apex Legends",
+            "name_fa": "Apex Legends",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g11",
+            "slug": "valorant",
+            "name": "Valorant",
+            "name_fa": "Valorant",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g16",
+            "slug": "pubg-battlegrounds",
+            "name": "PUBG: Battlegrounds",
+            "name_fa": "PUBG: Battlegrounds",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g14",
+            "slug": "league-of-legends",
+            "name": "League of Legends",
+            "name_fa": "League of Legends",
+            "tier": "high",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g13",
+            "slug": "dota-2",
+            "name": "Dota 2",
+            "name_fa": "Dota 2",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g15",
+            "slug": "overwatch-2",
+            "name": "Overwatch 2",
+            "name_fa": "Overwatch 2",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g18",
+            "slug": "destiny-2",
+            "name": "Destiny 2",
+            "name_fa": "Destiny 2",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g19",
+            "slug": "gta-v",
+            "name": "GTA V",
+            "name_fa": "GTA V",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g65",
+            "slug": "the-witcher-3",
+            "name": "The Witcher 3",
+            "name_fa": "The Witcher 3",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g6",
+            "slug": "hogwarts-legacy",
+            "name": "Hogwarts Legacy",
+            "name_fa": "Hogwarts Legacy",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g61",
+            "slug": "star-wars-jedi-survivor",
+            "name": "Star Wars Jedi: Survivor",
+            "name_fa": "Star Wars Jedi: Survivor",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g53",
+            "slug": "microsoft-flight-simulator",
+            "name": "Microsoft Flight Simulator",
+            "name_fa": "Microsoft Flight Simulator",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g318",
+            "slug": "cyberpunk-2077-phantom-liberty",
+            "name": "Cyberpunk 2077: Phantom Liberty",
+            "name_fa": "Cyberpunk 2077: Phantom Liberty",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "anchor",
+                "high"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g185",
+            "slug": "marvel-rivals",
+            "name": "Marvel Rivals",
+            "name_fa": "Marvel Rivals",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g122",
+            "slug": "escape-from-tarkov",
+            "name": "Escape from Tarkov",
+            "name_fa": "Escape from Tarkov",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g23",
+            "slug": "rust",
+            "name": "Rust",
+            "name_fa": "Rust",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g21",
+            "slug": "minecraft",
+            "name": "Minecraft",
+            "name_fa": "Minecraft",
+            "tier": "high",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g22",
+            "slug": "roblox",
+            "name": "Roblox",
+            "name_fa": "Roblox",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g31",
+            "slug": "world-of-warcraft",
+            "name": "World of Warcraft",
+            "name_fa": "World of Warcraft",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g30",
+            "slug": "final-fantasy-xiv",
+            "name": "Final Fantasy XIV",
+            "name_fa": "Final Fantasy XIV",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g32",
+            "slug": "diablo-iv",
+            "name": "Diablo IV",
+            "name_fa": "Diablo IV",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g34",
+            "slug": "path-of-exile-2",
+            "name": "Path of Exile 2",
+            "name_fa": "Path of Exile 2",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g92",
+            "slug": "hades-ii",
+            "name": "Hades II",
+            "name_fa": "Hades II",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g88",
+            "slug": "street-fighter-6",
+            "name": "Street Fighter 6",
+            "name_fa": "Street Fighter 6",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g89",
+            "slug": "tekken-8",
+            "name": "Tekken 8",
+            "name_fa": "Tekken 8",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g90",
+            "slug": "mortal-kombat-1",
+            "name": "Mortal Kombat 1",
+            "name_fa": "Mortal Kombat 1",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g319",
+            "slug": "battlefield-6",
+            "name": "Battlefield 6",
+            "name_fa": "Battlefield 6",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "anchor",
+                "high"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g320",
+            "slug": "dragon-age-the-veilguard",
+            "name": "Dragon Age: The Veilguard",
+            "name_fa": "Dragon Age: The Veilguard",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "anchor",
+                "high"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g102",
+            "slug": "satisfactory",
+            "name": "Satisfactory",
+            "name_fa": "Satisfactory",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g103",
+            "slug": "factorio",
+            "name": "Factorio",
+            "name_fa": "Factorio",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g321",
+            "slug": "lethal-company",
+            "name": "Lethal Company",
+            "name_fa": "Lethal Company",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "anchor",
+                "high"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g107",
+            "slug": "civilization-vii",
+            "name": "Civilization VII",
+            "name_fa": "Civilization VII",
+            "tier": "high",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "anchor"
+            ],
+            "source": "anchor"
+        },
+        {
+            "id": "g325",
+            "slug": "forza-horizon-6",
+            "name": "Forza Horizon 6",
+            "name_fa": "Forza Horizon 6",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g323",
+            "slug": "007-first-light-standard-edition",
+            "name": "007 First Light - Standard Edition",
+            "name_fa": "007 First Light - Standard Edition",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g324",
+            "slug": "paralives",
+            "name": "Paralives",
+            "name_fa": "Paralives",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g389",
+            "slug": "gothic-1-remake",
+            "name": "Gothic 1 Remake",
+            "name_fa": "Gothic 1 Remake",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g326",
+            "slug": "subnautica-2",
+            "name": "Subnautica 2",
+            "name_fa": "Subnautica 2",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g390",
+            "slug": "steam-controller",
+            "name": "Steam Controller",
+            "name_fa": "Steam Controller",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g391",
+            "slug": "resident-evil-requiem",
+            "name": "Resident Evil Requiem",
+            "name_fa": "Resident Evil Requiem",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g371",
+            "slug": "escape-the-backrooms",
+            "name": "Escape the Backrooms",
+            "name_fa": "Escape the Backrooms",
+            "tier": "high",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "steam_top",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g394",
+            "slug": "spacesteps",
+            "name": "SpaceSteps",
+            "name_fa": "SpaceSteps",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g395",
+            "slug": "mudventure",
+            "name": "Mudventure",
+            "name_fa": "Mudventure",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g396",
+            "slug": "mayumi",
+            "name": "真弓-Mayumi-",
+            "name_fa": "真弓-Mayumi-",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g397",
+            "slug": "grinny-s-playhouse",
+            "name": "Grinny’s Playhouse",
+            "name_fa": "Grinny’s Playhouse",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g399",
+            "slug": "noxcode-demo",
+            "name": "Noxcode Demo",
+            "name_fa": "Noxcode Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g398",
+            "slug": "guilds-of-mountgate-demo",
+            "name": "Guilds of Mountgate Demo",
+            "name_fa": "Guilds of Mountgate Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g400",
+            "slug": "liminality",
+            "name": "LIMINALITY",
+            "name_fa": "LIMINALITY",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g401",
+            "slug": "cosdarica-s-journey-at-the-end-of-the-world-demo",
+            "name": "Cosdarica's Journey at the End of the World Demo",
+            "name_fa": "Cosdarica's Journey at the End of the World Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g402",
+            "slug": "spacefighter-the-bullet-hell",
+            "name": "SPACEFIGHTER - The Bullet Hell",
+            "name_fa": "SPACEFIGHTER - The Bullet Hell",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g436",
+            "slug": "too-hot-to-be-true-demo",
+            "name": "Too Hot to Be True Demo",
+            "name_fa": "Too Hot to Be True Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g437",
+            "slug": "bckspce",
+            "name": "BCKSPCE",
+            "name_fa": "BCKSPCE",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g438",
+            "slug": "electro-havoc",
+            "name": "Electro Havoc",
+            "name_fa": "Electro Havoc",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g439",
+            "slug": "67-minutes-in-heaven",
+            "name": "67 Minutes in Heaven",
+            "name_fa": "67 Minutes in Heaven",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g393",
+            "slug": "trading-card-inspector",
+            "name": "Trading Card Inspector",
+            "name_fa": "Trading Card Inspector",
+            "tier": "mid",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "steam_new",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g440",
+            "slug": "nowhere-to-go",
+            "name": "Nowhere To Go",
+            "name_fa": "Nowhere To Go",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g441",
+            "slug": "hanta-hearts",
+            "name": "Hanta Hearts",
+            "name_fa": "Hanta Hearts",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g442",
+            "slug": "nurny-battles-hd",
+            "name": "nurny battles HD",
+            "name_fa": "nurny battles HD",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g443",
+            "slug": "your-own-cozy-motel",
+            "name": "Your Own Cozy Motel",
+            "name_fa": "Your Own Cozy Motel",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g444",
+            "slug": "giant-waifu-wash-simulator",
+            "name": "Giant Waifu Wash Simulator 💦",
+            "name_fa": "Giant Waifu Wash Simulator 💦",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g403",
+            "slug": "journey-express",
+            "name": "Journey Express",
+            "name_fa": "Journey Express",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g404",
+            "slug": "particulitix",
+            "name": "Particulitix",
+            "name_fa": "Particulitix",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g405",
+            "slug": "the-legacy-of-shadow-s-bane-tcg",
+            "name": "The Legacy of Shadow's Bane TCG",
+            "name_fa": "The Legacy of Shadow's Bane TCG",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g406",
+            "slug": "momento",
+            "name": "Momento",
+            "name_fa": "Momento",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g407",
+            "slug": "geckoshop",
+            "name": "GeckoShop",
+            "name_fa": "GeckoShop",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g408",
+            "slug": "hexa-vanguard",
+            "name": "Hexa Vanguard",
+            "name_fa": "Hexa Vanguard",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g409",
+            "slug": "sharp-stock",
+            "name": "Sharp Stock",
+            "name_fa": "Sharp Stock",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g445",
+            "slug": "beaming",
+            "name": "Beaming",
+            "name_fa": "Beaming",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g410",
+            "slug": "teacher-waifu",
+            "name": "Teacher Waifu",
+            "name_fa": "Teacher Waifu",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g411",
+            "slug": "mice-crisis",
+            "name": "Mice Crisis",
+            "name_fa": "Mice Crisis",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g448",
+            "slug": "",
+            "name": "盟军远征: 地下世界",
+            "name_fa": "盟军远征: 地下世界",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g413",
+            "slug": "eternal-lust-realm-of-the-undead",
+            "name": "Eternal Lust: Realm of the Undead",
+            "name_fa": "Eternal Lust: Realm of the Undead",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g414",
+            "slug": "exercisesimulator-vol-1-hustle-and-exercise-in-a-cat-type-rodeo-machine",
+            "name": "ExerciseSimulator Vol.1 - Hustle and Exercise in a Cat-Type Rodeo Machine -",
+            "name_fa": "ExerciseSimulator Vol.1 - Hustle and Exercise in a Cat-Type Rodeo Machine -",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g415",
+            "slug": "sumire-s-secret",
+            "name": "Sumire's Secret",
+            "name_fa": "Sumire's Secret",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g416",
+            "slug": "supreme-war-god",
+            "name": "Supreme War God",
+            "name_fa": "Supreme War God",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g417",
+            "slug": "my-isekai-hotel",
+            "name": "My Isekai Hotel",
+            "name_fa": "My Isekai Hotel",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g418",
+            "slug": "splash-shot-golf-legend",
+            "name": "Splash Shot Golf Legend",
+            "name_fa": "Splash Shot Golf Legend",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g419",
+            "slug": "blue-fury",
+            "name": "Blue Fury",
+            "name_fa": "Blue Fury",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g420",
+            "slug": "gif-catcher",
+            "name": "gif catcher",
+            "name_fa": "gif catcher",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g421",
+            "slug": "cyber-bike-duels",
+            "name": "Cyber Bike Duels",
+            "name_fa": "Cyber Bike Duels",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g422",
+            "slug": "hitman-woa-the-wizard-pack",
+            "name": "HITMAN WOA - The Wizard Pack",
+            "name_fa": "HITMAN WOA - The Wizard Pack",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g433",
+            "slug": "sons-of-the-forest",
+            "name": "Sons Of The Forest",
+            "name_fa": "Sons Of The Forest",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g330",
+            "slug": "path-of-exile-2-early-access-supporter-pack-special",
+            "name": "Path of Exile 2 - Early Access Supporter Pack (Special)",
+            "name_fa": "Path of Exile 2 - Early Access Supporter Pack (Special)",
+            "tier": "mid",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "steam_special",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g434",
+            "slug": "resident-evil-4",
+            "name": "Resident Evil 4",
+            "name_fa": "Resident Evil 4",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g373",
+            "slug": "backrooms-escape-together",
+            "name": "Backrooms: Escape Together",
+            "name_fa": "Backrooms: Escape Together",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g392",
+            "slug": "fatekeeper",
+            "name": "Fatekeeper",
+            "name_fa": "Fatekeeper",
+            "tier": "mid",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "steam_special",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g101",
+            "slug": "no-man-s-sky",
+            "name": "No Man's Sky",
+            "name_fa": "No Man's Sky",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy",
+                "steam_special",
+                "steam",
+                "steam_specials"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g447",
+            "slug": "dispatch",
+            "name": "Dispatch",
+            "name_fa": "Dispatch",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g423",
+            "slug": "hitman-woa-world-champions-pack",
+            "name": "HITMAN WOA - World Champions Pack",
+            "name_fa": "HITMAN WOA - World Champions Pack",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g424",
+            "slug": "street-fighter-6-year-4-ultimate-pass",
+            "name": "Street Fighter™ 6 - Year 4 Ultimate Pass",
+            "name_fa": "Street Fighter™ 6 - Year 4 Ultimate Pass",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g425",
+            "slug": "street-fighter-6-year-4-character-pass",
+            "name": "Street Fighter™ 6 - Year 4 Character Pass",
+            "name_fa": "Street Fighter™ 6 - Year 4 Character Pass",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g426",
+            "slug": "a-talk-beneath-the-tree",
+            "name": "A talk beneath the tree",
+            "name_fa": "A talk beneath the tree",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g427",
+            "slug": "ropes-race-edition",
+            "name": "ROPES - Race Edition",
+            "name_fa": "ROPES - Race Edition",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g428",
+            "slug": "countryside-cumsluts",
+            "name": "Countryside Cumsluts",
+            "name_fa": "Countryside Cumsluts",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g429",
+            "slug": "goatbrains",
+            "name": "GoatBrains",
+            "name_fa": "GoatBrains",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g430",
+            "slug": "midnight-massacre",
+            "name": "Midnight Massacre",
+            "name_fa": "Midnight Massacre",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g431",
+            "slug": "vibe-idler",
+            "name": "Vibe Idler",
+            "name_fa": "Vibe Idler",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g432",
+            "slug": "drawn-together",
+            "name": "Drawn Together",
+            "name_fa": "Drawn Together",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g435",
+            "slug": "spyro-reignited-trilogy",
+            "name": "Spyro™ Reignited Trilogy",
+            "name_fa": "Spyro™ Reignited Trilogy",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g327",
+            "slug": "mina-the-hollower",
+            "name": "Mina the Hollower",
+            "name_fa": "Mina the Hollower",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g329",
+            "slug": "gamble-with-your-friends",
+            "name": "Gamble With Your Friends",
+            "name_fa": "Gamble With Your Friends",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g328",
+            "slug": "007-first-light",
+            "name": "007 First Light",
+            "name_fa": "007 First Light",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_top",
+                "steam",
+                "high",
+                "steam_top_sellers",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g331",
+            "slug": "brokenlore-follow",
+            "name": "BrokenLore: FOLLOW",
+            "name_fa": "BrokenLore: FOLLOW",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g376",
+            "slug": "lily2d",
+            "name": "Lily2D",
+            "name_fa": "Lily2D",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g377",
+            "slug": "13-bones-demo",
+            "name": "13 BONES DEMO",
+            "name_fa": "13 BONES DEMO",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g378",
+            "slug": "required-synergy-workshop-deja-damnation-demo",
+            "name": "REQUIRED SYNERGY WORKSHOP: Deja Damnation Demo",
+            "name_fa": "REQUIRED SYNERGY WORKSHOP: Deja Damnation Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g379",
+            "slug": "harvest-hollow-demo",
+            "name": "Harvest Hollow Demo",
+            "name_fa": "Harvest Hollow Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g380",
+            "slug": "exact-360",
+            "name": "Exact 360",
+            "name_fa": "Exact 360",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g381",
+            "slug": "evolution-code-of-6-desires-demo",
+            "name": "Evolution: Code of 6 Desires Demo",
+            "name_fa": "Evolution: Code of 6 Desires Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g382",
+            "slug": "duke-vs-the-gang",
+            "name": "Duke vs The Gang",
+            "name_fa": "Duke vs The Gang",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g383",
+            "slug": "mini-sushi-factory-demo",
+            "name": "Mini Sushi Factory Demo",
+            "name_fa": "Mini Sushi Factory Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g334",
+            "slug": "sex-fast-food-demo",
+            "name": "Sex & Fast Food Demo",
+            "name_fa": "Sex & Fast Food Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g384",
+            "slug": "dawn-of-corruption",
+            "name": "Dawn of Corruption",
+            "name_fa": "Dawn of Corruption",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g341",
+            "slug": "raw-video",
+            "name": "Raw Video",
+            "name_fa": "Raw Video",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g342",
+            "slug": "kunugi-s-life-is-a-mess",
+            "name": "Kunugi's Life is a Mess!",
+            "name_fa": "Kunugi's Life is a Mess!",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g343",
+            "slug": "tavern-inn-and-the-halberd",
+            "name": "Tavern, Inn, and the Halberd",
+            "name_fa": "Tavern, Inn, and the Halberd",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g385",
+            "slug": "signal-zero",
+            "name": "Signal Zero",
+            "name_fa": "Signal Zero",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g386",
+            "slug": "hentai-age-airport",
+            "name": "Hentai Age Airport",
+            "name_fa": "Hentai Age Airport",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g387",
+            "slug": "deck-a-doodle-solitaire",
+            "name": "Deck-A-Doodle Solitaire",
+            "name_fa": "Deck-A-Doodle Solitaire",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g344",
+            "slug": "birdshot",
+            "name": "Birdshot",
+            "name_fa": "Birdshot",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g345",
+            "slug": "collision-course",
+            "name": "Collision Course",
+            "name_fa": "Collision Course",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g346",
+            "slug": "pulsari",
+            "name": "PULSARI",
+            "name_fa": "PULSARI",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g347",
+            "slug": "catbun-idle",
+            "name": "CatBun Idle",
+            "name_fa": "CatBun Idle",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g348",
+            "slug": "shale",
+            "name": "Shale",
+            "name_fa": "Shale",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g349",
+            "slug": "cosmic-rays",
+            "name": "Cosmic Rays",
+            "name_fa": "Cosmic Rays",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g350",
+            "slug": "the-lakeview-orb-2-consequences",
+            "name": "The Lakeview Orb 2: Consequences",
+            "name_fa": "The Lakeview Orb 2: Consequences",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g351",
+            "slug": "teeth-cutter",
+            "name": "Teeth Cutter",
+            "name_fa": "Teeth Cutter",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g352",
+            "slug": "itlivesinthewoods",
+            "name": "ItLivesInTheWoods",
+            "name_fa": "ItLivesInTheWoods",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g353",
+            "slug": "to-kill-eros",
+            "name": "To Kill Eros",
+            "name_fa": "To Kill Eros",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g354",
+            "slug": "watching-the-sky",
+            "name": "Watching the Sky",
+            "name_fa": "Watching the Sky",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g355",
+            "slug": "shipped-in-space",
+            "name": "Shipped In Space",
+            "name_fa": "Shipped In Space",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g356",
+            "slug": "dung-battles",
+            "name": "Dung Battles",
+            "name_fa": "Dung Battles",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g357",
+            "slug": "richard",
+            "name": "Richard",
+            "name_fa": "Richard",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g358",
+            "slug": "escape-from-crimson-manor-trapped-together",
+            "name": "Escape From Crimson Manor: Trapped Together",
+            "name_fa": "Escape From Crimson Manor: Trapped Together",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g359",
+            "slug": "alien-market-simulator",
+            "name": "Alien Market Simulator",
+            "name_fa": "Alien Market Simulator",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g360",
+            "slug": "hearts-under-guard",
+            "name": "Hearts Under Guard",
+            "name_fa": "Hearts Under Guard",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g361",
+            "slug": "week-of-the-mep",
+            "name": "Week of the MEP",
+            "name_fa": "Week of the MEP",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g362",
+            "slug": "destructive-contraptions",
+            "name": "Destructive Contraptions",
+            "name_fa": "Destructive Contraptions",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g363",
+            "slug": "aurora-s-awakening",
+            "name": "Aurora's Awakening",
+            "name_fa": "Aurora's Awakening",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g364",
+            "slug": "goblin-lord-wants-me-to-become-a-virgin-wizard-by-managing-the-brothel",
+            "name": "Goblin Lord wants me to become a Virgin Wizard by Managing The Brothel!?",
+            "name_fa": "Goblin Lord wants me to become a Virgin Wizard by Managing The Brothel!?",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g365",
+            "slug": "studio-system-guardian-angel-the-document",
+            "name": "Studio System : Guardian Angel - The Document",
+            "name_fa": "Studio System : Guardian Angel - The Document",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g370",
+            "slug": "ready-or-not",
+            "name": "Ready or Not",
+            "name_fa": "Ready or Not",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g372",
+            "slug": "warhammer-40-000-space-marine-2",
+            "name": "Warhammer 40,000: Space Marine 2",
+            "name_fa": "Warhammer 40,000: Space Marine 2",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g374",
+            "slug": "the-elder-scrolls-v-skyrim-special-edition",
+            "name": "The Elder Scrolls V: Skyrim Special Edition",
+            "name_fa": "The Elder Scrolls V: Skyrim Special Edition",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g388",
+            "slug": "crashout-crew",
+            "name": "Crashout Crew",
+            "name_fa": "Crashout Crew",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g332",
+            "slug": "captain-gazman-day-of-the-rage-the-youth-and-anger-of-bashkim-jubani-dlc",
+            "name": "Captain Gazman Day Of The Rage - The Youth And Anger Of Bashkim Jubani DLC",
+            "name_fa": "Captain Gazman Day Of The Rage - The Youth And Anger Of Bashkim Jubani DLC",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g333",
+            "slug": "soviet-backrooms",
+            "name": "Soviet Backrooms",
+            "name_fa": "Soviet Backrooms",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g335",
+            "slug": "heroic-musical-chairs-demo",
+            "name": "Heroic Musical Chairs Demo",
+            "name_fa": "Heroic Musical Chairs Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g336",
+            "slug": "little-heart-ai-2055-demo",
+            "name": "Little Heart AI-2055 Demo",
+            "name_fa": "Little Heart AI-2055 Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g337",
+            "slug": "slingshot-escape-the-solar-system",
+            "name": "Slingshot: Escape the solar system",
+            "name_fa": "Slingshot: Escape the solar system",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g338",
+            "slug": "summer-delusion-the-girl-only-i-can-see-demo",
+            "name": "Summer Delusion: The Girl Only I Can See Demo",
+            "name_fa": "Summer Delusion: The Girl Only I Can See Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g339",
+            "slug": "errata",
+            "name": "Errata",
+            "name_fa": "Errata",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g340",
+            "slug": "yggdra-survivor-demo",
+            "name": "YGGDRA: SURVIVOR Demo",
+            "name_fa": "YGGDRA: SURVIVOR Demo",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "steam_hype",
+                "steam",
+                "high",
+                "steam_coming_soon",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g366",
+            "slug": "project-confluence",
+            "name": "Project Confluence",
+            "name_fa": "Project Confluence",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g367",
+            "slug": "17-waves-td",
+            "name": "17.waves TD",
+            "name_fa": "17.waves TD",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g368",
+            "slug": "bunker-14",
+            "name": "Bunker 14",
+            "name_fa": "Bunker 14",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g369",
+            "slug": "truck-driver-the-american-dream",
+            "name": "Truck Driver: The American Dream",
+            "name_fa": "Truck Driver: The American Dream",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_new",
+                "steam",
+                "mid",
+                "steam_new_releases",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g375",
+            "slug": "grand-theft-auto-v-enhanced",
+            "name": "Grand Theft Auto V Enhanced",
+            "name_fa": "Grand Theft Auto V Enhanced",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "steam_special",
+                "steam",
+                "mid",
+                "steam_specials",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g7",
+            "slug": "call-of-duty-modern-warfare-iii",
+            "name": "Call of Duty: Modern Warfare III",
+            "name_fa": "Call of Duty: Modern Warfare III",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g17",
+            "slug": "rainbow-six-siege",
+            "name": "Rainbow Six Siege",
+            "name_fa": "Rainbow Six Siege",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g20",
+            "slug": "gta-online",
+            "name": "GTA Online",
+            "name_fa": "GTA Online",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g24",
+            "slug": "ark-survival-ascended",
+            "name": "ARK: Survival Ascended",
+            "name_fa": "ARK: Survival Ascended",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g29",
+            "slug": "final-fantasy-xvi",
+            "name": "Final Fantasy XVI",
+            "name_fa": "Final Fantasy XVI",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g33",
+            "slug": "path-of-exile",
+            "name": "Path of Exile",
+            "name_fa": "Path of Exile",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g35",
+            "slug": "lost-ark",
+            "name": "Lost Ark",
+            "name_fa": "Lost Ark",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g36",
+            "slug": "new-world",
+            "name": "New World",
+            "name_fa": "New World",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g37",
+            "slug": "the-finals",
+            "name": "The Finals",
+            "name_fa": "The Finals",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g38",
+            "slug": "xdefiant",
+            "name": "XDefiant",
+            "name_fa": "XDefiant",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g39",
+            "slug": "battlefield-2042",
+            "name": "Battlefield 2042",
+            "name_fa": "Battlefield 2042",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g40",
+            "slug": "battlefield-v",
+            "name": "Battlefield V",
+            "name_fa": "Battlefield V",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g41",
+            "slug": "assassin-s-creed-mirage",
+            "name": "Assassin's Creed Mirage",
+            "name_fa": "Assassin's Creed Mirage",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g42",
+            "slug": "assassin-s-creed-valhalla",
+            "name": "Assassin's Creed Valhalla",
+            "name_fa": "Assassin's Creed Valhalla",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g43",
+            "slug": "far-cry-6",
+            "name": "Far Cry 6",
+            "name_fa": "Far Cry 6",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g44",
+            "slug": "watch-dogs-legion",
+            "name": "Watch Dogs: Legion",
+            "name_fa": "Watch Dogs: Legion",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g45",
+            "slug": "tom-clancy-s-the-division-2",
+            "name": "Tom Clancy's The Division 2",
+            "name_fa": "Tom Clancy's The Division 2",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g47",
+            "slug": "forza-motorsport",
+            "name": "Forza Motorsport",
+            "name_fa": "Forza Motorsport",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g48",
+            "slug": "gran-turismo-7",
+            "name": "Gran Turismo 7",
+            "name_fa": "Gran Turismo 7",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g49",
+            "slug": "f1-24",
+            "name": "F1 24",
+            "name_fa": "F1 24",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g50",
+            "slug": "assetto-corsa-competizione",
+            "name": "Assetto Corsa Competizione",
+            "name_fa": "Assetto Corsa Competizione",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g51",
+            "slug": "euro-truck-simulator-2",
+            "name": "Euro Truck Simulator 2",
+            "name_fa": "Euro Truck Simulator 2",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g52",
+            "slug": "american-truck-simulator",
+            "name": "American Truck Simulator",
+            "name_fa": "American Truck Simulator",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g54",
+            "slug": "dcs-world",
+            "name": "DCS World",
+            "name_fa": "DCS World",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g55",
+            "slug": "war-thunder",
+            "name": "War Thunder",
+            "name_fa": "War Thunder",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g56",
+            "slug": "world-of-tanks",
+            "name": "World of Tanks",
+            "name_fa": "World of Tanks",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g57",
+            "slug": "warframe",
+            "name": "Warframe",
+            "name_fa": "Warframe",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g58",
+            "slug": "genshin-impact",
+            "name": "Genshin Impact",
+            "name_fa": "Genshin Impact",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g59",
+            "slug": "honkai-star-rail",
+            "name": "Honkai: Star Rail",
+            "name_fa": "Honkai: Star Rail",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g60",
+            "slug": "zenless-zone-zero",
+            "name": "Zenless Zone Zero",
+            "name_fa": "Zenless Zone Zero",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g62",
+            "slug": "star-wars-battlefront-ii",
+            "name": "Star Wars Battlefront II",
+            "name_fa": "Star Wars Battlefront II",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g63",
+            "slug": "mass-effect-legendary-edition",
+            "name": "Mass Effect Legendary Edition",
+            "name_fa": "Mass Effect Legendary Edition",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g64",
+            "slug": "dragon-age-veilguard",
+            "name": "Dragon Age: Veilguard",
+            "name_fa": "Dragon Age: Veilguard",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g67",
+            "slug": "god-of-war",
+            "name": "God of War",
+            "name_fa": "God of War",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g68",
+            "slug": "spider-man-remastered",
+            "name": "Spider-Man Remastered",
+            "name_fa": "Spider-Man Remastered",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g69",
+            "slug": "spider-man-2",
+            "name": "Spider-Man 2",
+            "name_fa": "Spider-Man 2",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g71",
+            "slug": "death-stranding",
+            "name": "Death Stranding",
+            "name_fa": "Death Stranding",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g72",
+            "slug": "control",
+            "name": "Control",
+            "name_fa": "Control",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g76",
+            "slug": "resident-evil-2-remake",
+            "name": "Resident Evil 2 Remake",
+            "name_fa": "Resident Evil 2 Remake",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g77",
+            "slug": "dead-space-remake",
+            "name": "Dead Space Remake",
+            "name_fa": "Dead Space Remake",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g79",
+            "slug": "lords-of-the-fallen",
+            "name": "Lords of the Fallen",
+            "name_fa": "Lords of the Fallen",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g80",
+            "slug": "armored-core-vi",
+            "name": "Armored Core VI",
+            "name_fa": "Armored Core VI",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g81",
+            "slug": "sekiro-shadows-die-twice",
+            "name": "Sekiro: Shadows Die Twice",
+            "name_fa": "Sekiro: Shadows Die Twice",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g82",
+            "slug": "dark-souls-iii",
+            "name": "Dark Souls III",
+            "name_fa": "Dark Souls III",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g83",
+            "slug": "dark-souls-remastered",
+            "name": "Dark Souls Remastered",
+            "name_fa": "Dark Souls Remastered",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g84",
+            "slug": "bloodborne",
+            "name": "Bloodborne",
+            "name_fa": "Bloodborne",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g86",
+            "slug": "nioh-2",
+            "name": "Nioh 2",
+            "name_fa": "Nioh 2",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g87",
+            "slug": "wo-long-fallen-dynasty",
+            "name": "Wo Long: Fallen Dynasty",
+            "name_fa": "Wo Long: Fallen Dynasty",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g91",
+            "slug": "guilty-gear-strive",
+            "name": "Guilty Gear Strive",
+            "name_fa": "Guilty Gear Strive",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g94",
+            "slug": "dead-cells",
+            "name": "Dead Cells",
+            "name_fa": "Dead Cells",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g95",
+            "slug": "hollow-knight",
+            "name": "Hollow Knight",
+            "name_fa": "Hollow Knight",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g96",
+            "slug": "silksong",
+            "name": "Silksong",
+            "name_fa": "Silksong",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g97",
+            "slug": "celeste",
+            "name": "Celeste",
+            "name_fa": "Celeste",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g98",
+            "slug": "stardew-valley",
+            "name": "Stardew Valley",
+            "name_fa": "Stardew Valley",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g99",
+            "slug": "terraria",
+            "name": "Terraria",
+            "name_fa": "Terraria",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g100",
+            "slug": "valheim",
+            "name": "Valheim",
+            "name_fa": "Valheim",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g104",
+            "slug": "dyson-sphere-program",
+            "name": "Dyson Sphere Program",
+            "name_fa": "Dyson Sphere Program",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g105",
+            "slug": "cities-skies-ii",
+            "name": "Cities: Skies II",
+            "name_fa": "Cities: Skies II",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g106",
+            "slug": "civilization-vi",
+            "name": "Civilization VI",
+            "name_fa": "Civilization VI",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g108",
+            "slug": "total-war-warhammer-iii",
+            "name": "Total War: Warhammer III",
+            "name_fa": "Total War: Warhammer III",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g109",
+            "slug": "crusader-kings-iii",
+            "name": "Crusader Kings III",
+            "name_fa": "Crusader Kings III",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g110",
+            "slug": "europa-universalis-iv",
+            "name": "Europa Universalis IV",
+            "name_fa": "Europa Universalis IV",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g111",
+            "slug": "hearts-of-iron-iv",
+            "name": "Hearts of Iron IV",
+            "name_fa": "Hearts of Iron IV",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g112",
+            "slug": "age-of-empires-iv",
+            "name": "Age of Empires IV",
+            "name_fa": "Age of Empires IV",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g113",
+            "slug": "starcraft-ii",
+            "name": "StarCraft II",
+            "name_fa": "StarCraft II",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g114",
+            "slug": "age-of-empires-ii-de",
+            "name": "Age of Empires II: DE",
+            "name_fa": "Age of Empires II: DE",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g115",
+            "slug": "command-conquer-remastered",
+            "name": "Command & Conquer Remastered",
+            "name_fa": "Command & Conquer Remastered",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g116",
+            "slug": "company-of-heroes-3",
+            "name": "Company of Heroes 3",
+            "name_fa": "Company of Heroes 3",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g117",
+            "slug": "squad",
+            "name": "Squad",
+            "name_fa": "Squad",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g118",
+            "slug": "hell-let-loose",
+            "name": "Hell Let Loose",
+            "name_fa": "Hell Let Loose",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g119",
+            "slug": "arma-3",
+            "name": "Arma 3",
+            "name_fa": "Arma 3",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g120",
+            "slug": "arma-reforger",
+            "name": "Arma Reforger",
+            "name_fa": "Arma Reforger",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g121",
+            "slug": "dayz",
+            "name": "DayZ",
+            "name_fa": "DayZ",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g123",
+            "slug": "the-cycle-frontier",
+            "name": "The Cycle: Frontier",
+            "name_fa": "The Cycle: Frontier",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g322",
+            "slug": "hunt-showdown",
+            "name": "Hunt: Showdown",
+            "name_fa": "Hunt: Showdown",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g125",
+            "slug": "deep-rock-galactic",
+            "name": "Deep Rock Galactic",
+            "name_fa": "Deep Rock Galactic",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g126",
+            "slug": "payday-3",
+            "name": "Payday 3",
+            "name_fa": "Payday 3",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g127",
+            "slug": "borderlands-3",
+            "name": "Borderlands 3",
+            "name_fa": "Borderlands 3",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g128",
+            "slug": "tiny-tina-s-wonderlands",
+            "name": "Tiny Tina's Wonderlands",
+            "name_fa": "Tiny Tina's Wonderlands",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g129",
+            "slug": "outriders",
+            "name": "Outriders",
+            "name_fa": "Outriders",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g130",
+            "slug": "remnant-2",
+            "name": "Remnant 2",
+            "name_fa": "Remnant 2",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g131",
+            "slug": "remnant-from-the-ashes",
+            "name": "Remnant: From the Ashes",
+            "name_fa": "Remnant: From the Ashes",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g132",
+            "slug": "returnal",
+            "name": "Returnal",
+            "name_fa": "Returnal",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g133",
+            "slug": "ratchet-clank-rift-apart",
+            "name": "Ratchet & Clank: Rift Apart",
+            "name_fa": "Ratchet & Clank: Rift Apart",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g134",
+            "slug": "uncharted-legacy-of-thieves",
+            "name": "Uncharted: Legacy of Thieves",
+            "name_fa": "Uncharted: Legacy of Thieves",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g135",
+            "slug": "the-last-of-us-part-i",
+            "name": "The Last of Us Part I",
+            "name_fa": "The Last of Us Part I",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g136",
+            "slug": "days-gone",
+            "name": "Days Gone",
+            "name_fa": "Days Gone",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g137",
+            "slug": "metro-exodus",
+            "name": "Metro Exodus",
+            "name_fa": "Metro Exodus",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g138",
+            "slug": "stalker-2",
+            "name": "STALKER 2",
+            "name_fa": "STALKER 2",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g139",
+            "slug": "atomic-heart",
+            "name": "Atomic Heart",
+            "name_fa": "Atomic Heart",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g140",
+            "slug": "biomutant",
+            "name": "Biomutant",
+            "name_fa": "Biomutant",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g141",
+            "slug": "scorn",
+            "name": "Scorn",
+            "name_fa": "Scorn",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g142",
+            "slug": "immortals-of-aveum",
+            "name": "Immortals of Aveum",
+            "name_fa": "Immortals of Aveum",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g143",
+            "slug": "forspoken",
+            "name": "Forspoken",
+            "name_fa": "Forspoken",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g146",
+            "slug": "mount-blade-ii-bannerlord",
+            "name": "Mount & Blade II: Bannerlord",
+            "name_fa": "Mount & Blade II: Bannerlord",
+            "tier": "high",
+            "min_vram_gb": 8,
+            "cpu_demand": 75,
+            "gpu_demand": 80,
+            "tags": [
+                "high",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g147",
+            "slug": "baldur-s-gate-enhanced-edition",
+            "name": "Baldur's Gate: Enhanced Edition",
+            "name_fa": "Baldur's Gate: Enhanced Edition",
+            "tier": "ultra",
+            "min_vram_gb": 12,
+            "cpu_demand": 90,
+            "gpu_demand": 95,
+            "tags": [
+                "ultra",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g148",
+            "slug": "pillars-of-eternity-ii",
+            "name": "Pillars of Eternity II",
+            "name_fa": "Pillars of Eternity II",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "multiplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g149",
+            "slug": "divinity-original-sin-2",
+            "name": "Divinity: Original Sin 2",
+            "name_fa": "Divinity: Original Sin 2",
+            "tier": "low",
+            "min_vram_gb": 2,
+            "cpu_demand": 35,
+            "gpu_demand": 40,
+            "tags": [
+                "low",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        },
+        {
+            "id": "g150",
+            "slug": "solasta",
+            "name": "Solasta",
+            "name_fa": "Solasta",
+            "tier": "mid",
+            "min_vram_gb": 4,
+            "cpu_demand": 55,
+            "gpu_demand": 60,
+            "tags": [
+                "mid",
+                "singleplayer",
+                "legacy"
+            ],
+            "source": "legacy"
+        }
+    ]
+}
