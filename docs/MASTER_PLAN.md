@@ -410,8 +410,10 @@ pc-lab-kit/
 ├── datasets/benchmark/    # JSON datasets + LICENSE/attribution
 ├── ui/                    # shared web components
 ├── docs/
+│   ├── README.md          # documentation index
 │   ├── MASTER_PLAN.md     # this document
-│   └── INTEGRATION.md
+│   ├── INTEGRATION.md
+│   └── API_MOBILE_ROUTES.md
 ├── e2e/
 └── examples/reports/      # anonymized sample outputs
 ```

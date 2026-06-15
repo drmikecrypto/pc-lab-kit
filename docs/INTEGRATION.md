@@ -67,7 +67,7 @@ php artisan diagnostic-games:refresh  # DiagnosticGamesRefreshCommand
 
 ## Flutter ↔ backend contract
 
-Documented in `doc/API_MOBILE_ROUTES.md` (included in kit).
+Documented in [API_MOBILE_ROUTES.md](API_MOBILE_ROUTES.md) (included in kit).
 
 Client: `pcverse_app/lib/core/diagnostic_service.dart`
 

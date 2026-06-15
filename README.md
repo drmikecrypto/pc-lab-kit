@@ -110,9 +110,13 @@ Third-party dependencies in `vendor/` remain under their respective licenses (mo
 
 ## Docs
 
+All documentation is under **[docs/](docs/README.md)**.
+
 | Doc | Purpose |
 |-----|---------|
-| [Publish & release on GitHub](docs/GITHUB_PUBLISH_AND_RELEASE.md) | Push repo, GitHub Releases, SEO/discovery |
 | [FAQ](docs/FAQ.md) | Common questions (search + AI friendly) |
+| [Integration guide](docs/INTEGRATION.md) | Kit layout, routes, Flutter contract |
+| [Mobile API routes](docs/API_MOBILE_ROUTES.md) | Flutter ↔ PHP endpoint map |
+| [Publish & release](docs/GITHUB_PUBLISH_AND_RELEASE.md) | GitHub Releases, SEO/discovery |
 | [Contributing](CONTRIBUTING.md) | PR guidelines |
 | [Changelog](CHANGELOG.md) | Version history |

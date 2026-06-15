@@ -129,9 +129,10 @@ pcverse_app/lib/presentation/pages/diagnostic_page.dart
 tests/Unit/DiagnosticConsultantServiceTest.php
 tests/Unit/DiagnosticHistoryServiceTest.php
 e2e/diagnostic-popup.spec.ts
-doc/API_MOBILE_ROUTES.md
+docs/API_MOBILE_ROUTES.md
 docs/INTEGRATION.md
 docs/bootstrap.routes.snippet.php
+docs/README.md
 README.md
 ```
 
