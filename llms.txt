@@ -15,7 +15,6 @@ PCVerse replaces juggling HWiNFO, GPU-Z, and manual spreadsheets with one local 
 - docs/FAQ.md — common questions
 - docs/INTEGRATION.md — developer integration guide
 - docs/API_MOBILE_ROUTES.md — Flutter ↔ PHP API map
-- docs/GITHUB_PUBLISH_AND_RELEASE.md — maintainer release guide
 - LICENSE — Elastic License 2.0
 - TRADEMARK.md — brand policy
 

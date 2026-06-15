@@ -16,4 +16,4 @@ agent/pcverse_probe/PcverseHwMon/bin/
 agent/pcverse_probe/PcverseHwMon/obj/
 agent/pcverse_probe/PcbHwMon.exe
 temp.md
-docs\GITHUB_PUBLISH_AND_RELEASE.md
+/internal/
