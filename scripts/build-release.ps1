@@ -9,20 +9,29 @@ Write-Host 'PCVerse installers' -ForegroundColor Cyan
 & (Join-Path $root 'scripts\build-installer-windows.ps1')
 
 $linuxBuilt = $false
-if (Get-Command wsl -ErrorAction SilentlyContinue) {
+$wslCmd = Get-Command wsl -ErrorAction SilentlyContinue
+if ($null -ne $wslCmd) {
     try {
-        $wslRoot = (wsl wslpath -u $root).Trim()
-        wsl bash -c "cd '$wslRoot' && chmod +x scripts/build-installer-linux.sh scripts/stage-payload-unix.sh && ./scripts/build-installer-linux.sh"
+        $wslPathArg = ($root -replace '\\', '/')
+        $wslRoot = (wsl wslpath -u $wslPathArg 2>$null).Trim()
+        if (-not $wslRoot) {
+            throw "wslpath returned empty path for $wslPathArg"
+        }
+        Write-Host "Building Linux installer via WSL ($wslRoot)..." -ForegroundColor Cyan
+        wsl bash -lc "cd '$wslRoot' && chmod +x scripts/build-installer-linux.sh scripts/stage-payload-unix.sh && ./scripts/build-installer-linux.sh"
         $linuxBuilt = $true
-    } catch {
+    }
+    catch {
         Write-Warning "WSL Linux installer failed: $_"
     }
 }
 
 if (-not $linuxBuilt) {
-    Write-Warning 'Linux .run not built — run scripts/build-installer-linux.sh on Linux or WSL.'
+    Write-Warning 'Linux .run not built - run scripts/build-installer-linux.sh on Linux or WSL.'
 }
 
 Write-Host ''
 Write-Host 'Installers in public/downloads/:' -ForegroundColor Green
-Get-ChildItem (Join-Path $root 'public\downloads') -Include *.exe,*.run | Format-Table Name, Length
+Get-ChildItem (Join-Path $root 'public\downloads') -File |
+    Where-Object { $_.Extension -in '.exe', '.run' } |
+    Format-Table Name, Length

@@ -6,8 +6,13 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-06-27
+
 ### Added
-- Initial public release preparation
+- Native C++20 desktop app (Qt 6): health scan, live sensors, toolkit, settings, GitHub update checker
+- `native/core` hardware/update library and `pcverse_cli` dev tool
+- Windows native installer: `PCVerse-Native-Setup-Windows-x64.exe`
+- Qt bootstrap and native build/installer scripts for Windows and Linux
 
 ## [1.0.0] - 2026-06-14
 

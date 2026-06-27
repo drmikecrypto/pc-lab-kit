@@ -4,5 +4,8 @@
   "php_linux_min": "8.2.0",
   "composer_url": "https://getcomposer.org/download/latest-stable/composer.phar",
   "dotnet_channel": "8.0",
-  "dotnet_install_script": "https://dot.net/v1/dotnet-install.ps1"
+  "dotnet_install_script": "https://dot.net/v1/dotnet-install.ps1",
+  "qt_version": "6.8.2",
+  "qt_windows_arch": "win64_msvc2022_64",
+  "qt_linux_arch": "linux_gcc_64"
 }

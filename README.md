@@ -1,6 +1,6 @@
 # PCVerse — local PC laboratory
 
-**PCVerse** is a local-first PC test lab: hardware probe, health scoring, live telemetry, RGB control, and an optional AI advisor (your API key). Everything runs on your machine — no cloud account required.
+**PCVerse** is a local-first PC diagnostic and hardware lab. v1 ships as an installer; **v2 is a native C++ desktop app** (Qt + direct hardware access) — see [`native/ARCHITECTURE.md`](native/ARCHITECTURE.md).
 
 ## Download (one click per platform)
 

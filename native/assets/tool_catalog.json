@@ -1,0 +1,735 @@
+{
+    "meta": {
+        "version": 1,
+        "total": 80,
+        "tagline": "One local lab instead of 80 separate apps.",
+        "ready_now": 72,
+        "live": 25
+    },
+    "categories": {
+        "cpu": "CPU benchmarks & stress",
+        "gpu": "GPU benchmarks & stress",
+        "ram": "RAM & memory testing",
+        "system": "Full-system benchmarks",
+        "monitor": "Temperature, power & sensors",
+        "storage": "SSD, HDD & storage",
+        "rgb": "RGB, ARGB & lighting",
+        "lcd": "AIO LCD & sensor panels"
+    },
+    "tools": [
+        {
+            "id": "cinebench",
+            "name": "Cinebench",
+            "category": "cpu",
+            "module": "bench",
+            "coverage": "beta",
+            "pcverse": "Native CPU render score + import Maxon exports"
+        },
+        {
+            "id": "geekbench",
+            "name": "Geekbench",
+            "category": "cpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Import Geekbench JSON; native compute suite in Toolkit"
+        },
+        {
+            "id": "passmark_cpu",
+            "name": "PassMark PerformanceTest",
+            "category": "cpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Composite score from PCVerse bench modules + import"
+        },
+        {
+            "id": "prime95",
+            "name": "Prime95",
+            "category": "cpu",
+            "module": "stress",
+            "coverage": "orchestrate",
+            "pcverse": "Built-in AVX CPU stress + optional Prime95 launcher"
+        },
+        {
+            "id": "occt",
+            "name": "OCCT",
+            "category": "cpu",
+            "module": "stress",
+            "coverage": "beta",
+            "pcverse": "Unified CPU/GPU/PSU stress with live telemetry overlay"
+        },
+        {
+            "id": "ycruncher",
+            "name": "y-cruncher",
+            "category": "cpu",
+            "module": "bench",
+            "coverage": "orchestrate",
+            "pcverse": "Pi/AVX stress orchestration + import logs"
+        },
+        {
+            "id": "aida64",
+            "name": "AIDA64",
+            "category": "cpu",
+            "module": "stress",
+            "coverage": "beta",
+            "pcverse": "Sensor + stress panels; import AIDA64 reports"
+        },
+        {
+            "id": "intel_xtu",
+            "name": "Intel Extreme Tuning Utility",
+            "category": "cpu",
+            "module": "stress",
+            "coverage": "planned",
+            "pcverse": "Safe OC advisor + telemetry (Intel-only tuning advisory)"
+        },
+        {
+            "id": "linpack",
+            "name": "Linpack Xtreme",
+            "category": "cpu",
+            "module": "bench",
+            "coverage": "beta",
+            "pcverse": "Linpack-style CPU benchmark in Toolkit"
+        },
+        {
+            "id": "cpuz_bench",
+            "name": "CPU-Z Benchmark",
+            "category": "cpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "CPU-Z TXT import + native single/multi score"
+        },
+        {
+            "id": "3dmark",
+            "name": "3DMark",
+            "category": "gpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Import 3DMark XML; native Vulkan compute bench (beta)"
+        },
+        {
+            "id": "superposition",
+            "name": "Unigine Superposition",
+            "category": "gpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Import Unigine logs + GPU compute stress"
+        },
+        {
+            "id": "heaven",
+            "name": "Unigine Heaven",
+            "category": "gpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Import benchmark logs"
+        },
+        {
+            "id": "valley",
+            "name": "Unigine Valley",
+            "category": "gpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Import benchmark logs"
+        },
+        {
+            "id": "furmark",
+            "name": "FurMark",
+            "category": "gpu",
+            "module": "stress",
+            "coverage": "orchestrate",
+            "pcverse": "GPU thermal soak stress + optional FurMark launcher"
+        },
+        {
+            "id": "kombustor",
+            "name": "MSI Kombustor",
+            "category": "gpu",
+            "module": "stress",
+            "coverage": "orchestrate",
+            "pcverse": "GPU stress orchestration with telemetry"
+        },
+        {
+            "id": "basemark_gpu",
+            "name": "Basemark GPU",
+            "category": "gpu",
+            "module": "bench",
+            "coverage": "planned",
+            "pcverse": "Native Vulkan bench module"
+        },
+        {
+            "id": "specviewperf",
+            "name": "SPECviewperf",
+            "category": "gpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Enterprise import + workstation profile"
+        },
+        {
+            "id": "octanebench",
+            "name": "OctaneBench",
+            "category": "gpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Import OctaneBench results"
+        },
+        {
+            "id": "vray",
+            "name": "V-Ray Benchmark",
+            "category": "gpu",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Import V-Ray exports"
+        },
+        {
+            "id": "memtest86",
+            "name": "MemTest86",
+            "category": "ram",
+            "module": "stress",
+            "coverage": "orchestrate",
+            "pcverse": "Bootable USB guide + in-OS memory stress"
+        },
+        {
+            "id": "testmem5",
+            "name": "TestMem5",
+            "category": "ram",
+            "module": "stress",
+            "coverage": "orchestrate",
+            "pcverse": "Profile runner + telemetry during RAM test"
+        },
+        {
+            "id": "karhu",
+            "name": "Karhu RAM Test",
+            "category": "ram",
+            "module": "stress",
+            "coverage": "beta",
+            "pcverse": "Built-in memory stress with error detection"
+        },
+        {
+            "id": "hci_memtest",
+            "name": "HCI MemTest",
+            "category": "ram",
+            "module": "stress",
+            "coverage": "beta",
+            "pcverse": "Coverage-based RAM stress in Toolkit"
+        },
+        {
+            "id": "memtest64",
+            "name": "MemTest64",
+            "category": "ram",
+            "module": "stress",
+            "coverage": "beta",
+            "pcverse": "Quick in-OS memory test"
+        },
+        {
+            "id": "aida64_mem",
+            "name": "AIDA64 Cache & Memory",
+            "category": "ram",
+            "module": "bench",
+            "coverage": "beta",
+            "pcverse": "RAM latency/bandwidth bench in Telemetry"
+        },
+        {
+            "id": "gsat",
+            "name": "GSAT",
+            "category": "ram",
+            "module": "stress",
+            "coverage": "orchestrate",
+            "pcverse": "GSAT profile orchestration"
+        },
+        {
+            "id": "passmark_ram",
+            "name": "PassMark RAM Benchmark",
+            "category": "ram",
+            "module": "bench",
+            "coverage": "beta",
+            "pcverse": "Native memory bandwidth score"
+        },
+        {
+            "id": "sandra_mem",
+            "name": "SiSoftware Sandra Memory",
+            "category": "ram",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Import Sandra exports"
+        },
+        {
+            "id": "linpack_mem",
+            "name": "Linpack Memory Stress",
+            "category": "ram",
+            "module": "stress",
+            "coverage": "beta",
+            "pcverse": "Memory bandwidth stress module"
+        },
+        {
+            "id": "pcmark10",
+            "name": "PCMark 10",
+            "category": "system",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Composite PCVerse system score + import"
+        },
+        {
+            "id": "userbenchmark",
+            "name": "UserBenchmark",
+            "category": "system",
+            "module": "bench",
+            "coverage": "beta",
+            "pcverse": "Local comparative scoring vs reference DB"
+        },
+        {
+            "id": "novabench",
+            "name": "Novabench",
+            "category": "system",
+            "module": "bench",
+            "coverage": "beta",
+            "pcverse": "Run all PCVerse bench modules as one report"
+        },
+        {
+            "id": "sandra",
+            "name": "SiSoftware Sandra",
+            "category": "system",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Import Sandra suite exports"
+        },
+        {
+            "id": "aida64_eng",
+            "name": "AIDA64 Engineer",
+            "category": "system",
+            "module": "system",
+            "coverage": "beta",
+            "pcverse": "Deep telemetry + burn-in orchestration"
+        },
+        {
+            "id": "burnintest",
+            "name": "BurnInTest",
+            "category": "system",
+            "module": "stress",
+            "coverage": "beta",
+            "pcverse": "Multi-hour burn-in mode with unified log"
+        },
+        {
+            "id": "crystalmark_retro",
+            "name": "CrystalMark Retro",
+            "category": "system",
+            "module": "bench",
+            "coverage": "planned",
+            "pcverse": "Retro composite bench module"
+        },
+        {
+            "id": "specworkstation",
+            "name": "SPECworkstation",
+            "category": "system",
+            "module": "bench",
+            "coverage": "import",
+            "pcverse": "Enterprise workstation import"
+        },
+        {
+            "id": "phoronix",
+            "name": "Phoronix Test Suite",
+            "category": "system",
+            "module": "bench",
+            "coverage": "orchestrate",
+            "pcverse": "PTS profile runner (Linux) + import"
+        },
+        {
+            "id": "anvil_storage",
+            "name": "Anvil's Storage Utilities",
+            "category": "system",
+            "module": "storage",
+            "coverage": "import",
+            "pcverse": "Storage score via DiskSpd + import"
+        },
+        {
+            "id": "hwinfo",
+            "name": "HWiNFO64",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "LibreHardwareMonitor + deep telemetry console"
+        },
+        {
+            "id": "hwmonitor",
+            "name": "HWMonitor",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "Live sensor strip + telemetry gauges"
+        },
+        {
+            "id": "ohm",
+            "name": "Open Hardware Monitor",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "Same LHM engine as PCVerse Probe"
+        },
+        {
+            "id": "lhm",
+            "name": "Libre Hardware Monitor",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "Bundled PcVerseHwMon collector"
+        },
+        {
+            "id": "gpuz",
+            "name": "GPU-Z",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "GPU inventory, VRAM, clocks, power sensors"
+        },
+        {
+            "id": "cpuz",
+            "name": "CPU-Z",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "CPU/RAM/board inventory + TXT import"
+        },
+        {
+            "id": "coretemp",
+            "name": "Core Temp",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "Per-core temperature in telemetry"
+        },
+        {
+            "id": "realtemp",
+            "name": "Real Temp",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "Intel CPU thermal sensors via LHM"
+        },
+        {
+            "id": "nzxt_cam",
+            "name": "NZXT CAM",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "Unified dashboard + OpenRGB device control"
+        },
+        {
+            "id": "argus",
+            "name": "Argus Monitor",
+            "category": "monitor",
+            "module": "monitor",
+            "coverage": "live",
+            "pcverse": "SMART, fan, and thermal alerts in lab report"
+        },
+        {
+            "id": "crystaldiskmark",
+            "name": "CrystalDiskMark",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "beta",
+            "pcverse": "DiskSpd / WinSAT seq & random bench"
+        },
+        {
+            "id": "crystaldiskinfo",
+            "name": "CrystalDiskInfo",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "live",
+            "pcverse": "SMART health in telemetry + probe scan"
+        },
+        {
+            "id": "atto",
+            "name": "ATTO Disk Benchmark",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "beta",
+            "pcverse": "Block-size sweep via DiskSpd profiles"
+        },
+        {
+            "id": "as_ssd",
+            "name": "AS SSD Benchmark",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "beta",
+            "pcverse": "Seq/4K storage bench module"
+        },
+        {
+            "id": "hdtune",
+            "name": "HD Tune Pro",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "import",
+            "pcverse": "SMART + benchmark import"
+        },
+        {
+            "id": "fio",
+            "name": "fio",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "orchestrate",
+            "pcverse": "fio job runner + parse output (Linux/Windows)"
+        },
+        {
+            "id": "diskspd",
+            "name": "DiskSpd",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "beta",
+            "pcverse": "Bundled storage benchmark orchestration"
+        },
+        {
+            "id": "iometer",
+            "name": "Iometer",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "orchestrate",
+            "pcverse": "I/O workload profiles via DiskSpd/fio"
+        },
+        {
+            "id": "blackmagic",
+            "name": "Blackmagic Disk Speed Test",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "beta",
+            "pcverse": "Large sequential read/write test"
+        },
+        {
+            "id": "samsung_magician",
+            "name": "Samsung Magician",
+            "category": "storage",
+            "module": "storage",
+            "coverage": "live",
+            "pcverse": "NVMe SMART + health via probe (vendor-agnostic)"
+        },
+        {
+            "id": "signalrgb",
+            "name": "SignalRGB",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "OpenRGB unified control + Vakhsh auto setup"
+        },
+        {
+            "id": "openrgb",
+            "name": "OpenRGB",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "Bundled OpenRGB in PCVerse Probe"
+        },
+        {
+            "id": "icue",
+            "name": "iCUE",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "Corsair via OpenRGB (when supported)"
+        },
+        {
+            "id": "synapse",
+            "name": "Razer Synapse",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "Razer devices via OpenRGB"
+        },
+        {
+            "id": "armoury_crate",
+            "name": "ASUS Armoury Crate",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "ASUS ARGB via OpenRGB"
+        },
+        {
+            "id": "mystic_light",
+            "name": "MSI Center Mystic Light",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "MSI boards/devices via OpenRGB"
+        },
+        {
+            "id": "rgb_fusion",
+            "name": "Gigabyte RGB Fusion",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "Gigabyte via OpenRGB"
+        },
+        {
+            "id": "polychrome",
+            "name": "ASRock Polychrome Sync",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "ASRock via OpenRGB"
+        },
+        {
+            "id": "tt_rgb",
+            "name": "Thermaltake TT RGB Plus",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "TT devices via OpenRGB"
+        },
+        {
+            "id": "lconnect",
+            "name": "L-Connect 3",
+            "category": "rgb",
+            "module": "rgb",
+            "coverage": "live",
+            "pcverse": "Lian Li fans/pumps via OpenRGB + LCD upload"
+        },
+        {
+            "id": "nzxt_lcd",
+            "name": "NZXT CAM LCD",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "live",
+            "pcverse": "Pump LCD GIF upload (local only)"
+        },
+        {
+            "id": "icue_lcd",
+            "name": "Corsair iCUE LCD",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "live",
+            "pcverse": "AIO LCD via Probe RGB/LCD API"
+        },
+        {
+            "id": "lconnect_lcd",
+            "name": "L-Connect 3 LCD",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "live",
+            "pcverse": "Lian Li screen GIF + sensor layout"
+        },
+        {
+            "id": "aida64_panel",
+            "name": "AIDA64 SensorPanel",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "beta",
+            "pcverse": "Telemetry console + Sensor Deck (beta)"
+        },
+        {
+            "id": "rainmeter",
+            "name": "Rainmeter",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "planned",
+            "pcverse": "Export sensor skins from PCVerse"
+        },
+        {
+            "id": "hwinfo_sm",
+            "name": "HWiNFO Shared Memory",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "planned",
+            "pcverse": "Shared-memory sensor feed export"
+        },
+        {
+            "id": "wallpaper_engine",
+            "name": "Wallpaper Engine",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "planned",
+            "pcverse": "Sensor-linked wallpaper hooks"
+        },
+        {
+            "id": "stream_deck",
+            "name": "Stream Deck",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "planned",
+            "pcverse": "Live sensor tiles plugin"
+        },
+        {
+            "id": "aquasuite",
+            "name": "Aquasuite",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "beta",
+            "pcverse": "Custom loop telemetry + LCD layouts"
+        },
+        {
+            "id": "turing_smart",
+            "name": "Turing Smart Screen",
+            "category": "lcd",
+            "module": "lcd",
+            "coverage": "planned",
+            "pcverse": "USB mini-panel driver integration"
+        }
+    ],
+    "summary": {
+        "coverage": {
+            "live": 25,
+            "beta": 21,
+            "import": 16,
+            "orchestrate": 10,
+            "planned": 8
+        },
+        "modules": {
+            "bench": 24,
+            "stress": 14,
+            "system": 1,
+            "storage": 11,
+            "monitor": 10,
+            "rgb": 10,
+            "lcd": 10
+        },
+        "headline": "80 tools unified — 25 live today, 72 via native modules, imports, or orchestration"
+    },
+    "runnable": {
+        "bench": [
+            {
+                "id": "cpu",
+                "label": "CPU benchmark",
+                "desc": "Multi-thread synthetic score (Cinebench-class workflow)",
+                "replaces": [
+                    "Cinebench",
+                    "CPU-Z Benchmark",
+                    "Linpack Xtreme"
+                ]
+            },
+            {
+                "id": "memory",
+                "label": "Memory bandwidth",
+                "desc": "RAM throughput test",
+                "replaces": [
+                    "PassMark RAM",
+                    "AIDA64 Cache & Memory"
+                ]
+            },
+            {
+                "id": "storage",
+                "label": "Storage benchmark",
+                "desc": "Sequential read/write on system drive",
+                "replaces": [
+                    "CrystalDiskMark",
+                    "DiskSpd",
+                    "AS SSD Benchmark"
+                ]
+            }
+        ],
+        "stress": [
+            {
+                "id": "cpu",
+                "label": "CPU stress",
+                "desc": "All-core thermal soak with telemetry",
+                "replaces": [
+                    "Prime95",
+                    "OCCT",
+                    "AIDA64"
+                ]
+            },
+            {
+                "id": "memory",
+                "label": "Memory stress",
+                "desc": "In-OS RAM pressure test",
+                "replaces": [
+                    "TestMem5",
+                    "HCI MemTest",
+                    "MemTest64"
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/">
+    <file>dark.qss</file>
+    <file alias="tool_catalog.json">../../../assets/tool_catalog.json</file>
+  </qresource>
+</RCC>

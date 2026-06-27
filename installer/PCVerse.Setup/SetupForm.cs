@@ -36,7 +36,7 @@ internal sealed class SetupForm : Form
 
         var subtitle = new Label
         {
-            Text = "Install the complete local PC lab — web UI, diagnostics, and PCVerse Probe.",
+            Text = "Install PCVerse native desktop — live sensors, full scan, and toolkit.",
             Font = new Font("Segoe UI", 10F),
             Location = new Point(34, 68),
             Size = new Size(490, 44),
@@ -192,7 +192,7 @@ internal sealed class SetupForm : Form
 
             MessageBox.Show(
                 this,
-                "PCVerse is installed.\n\nOpen the lab at http://127.0.0.1:8080/diagnostic\n\nUse the desktop shortcut or PCVerse.bat in your install folder.",
+                "PCVerse is installed.\n\nDouble-click the desktop shortcut or PCVerse.bat in your install folder to open the native app.",
                 "PCVerse Setup",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);

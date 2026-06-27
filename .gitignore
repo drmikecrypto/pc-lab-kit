@@ -17,3 +17,7 @@ agent/pcverse_probe/PcverseHwMon/obj/
 agent/pcverse_probe/PcbHwMon.exe
 temp.md
 /internal/
+native/build/
+native/build-linux/
+aqtinstall.log
+**/aqtinstall.log

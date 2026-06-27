@@ -3,6 +3,17 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT"
 
+if [[ -x "$ROOT/bin/pcverse" ]]; then
+  export LD_LIBRARY_PATH="$ROOT/bin/lib:${LD_LIBRARY_PATH:-}"
+  exec "$ROOT/bin/pcverse" "$@"
+fi
+
+NATIVE="$ROOT/native/build/apps/pcverse/pcverse"
+if [[ -x "$NATIVE" ]]; then
+  export LD_LIBRARY_PATH="$ROOT/native/build/apps/pcverse/lib:${LD_LIBRARY_PATH:-}"
+  exec "$NATIVE" "$@"
+fi
+
 PHP_BIN="php"
 if [[ -x "$ROOT/runtime/php/bin/php" ]]; then
   PHP_BIN="$ROOT/runtime/php/bin/php"
@@ -10,13 +21,12 @@ fi
 
 if [[ ! -f vendor/autoload.php ]]; then
   echo "PCVerse is not fully installed. Run the PCVerse installer again."
+  echo "Dev: build native desktop with scripts/build-native-desktop.sh"
   exit 1
 fi
 
 if command -v xdg-open >/dev/null 2>&1; then
   xdg-open "http://127.0.0.1:8080/diagnostic" >/dev/null 2>&1 &
-elif command -v open >/dev/null 2>&1; then
-  open "http://127.0.0.1:8080/diagnostic" >/dev/null 2>&1 &
 fi
 
 exec "$PHP_BIN" -S 127.0.0.1:8080 -t public
