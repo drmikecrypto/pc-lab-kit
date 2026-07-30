@@ -20,8 +20,8 @@ Standalone local lab: **PHP web UI** + **Windows probe agent**. No mobile SaaS, 
 | Method | Path | Handler |
 |--------|------|---------|
 | GET | `/`, `/diagnostic` | Diagnostic lab UI |
-| GET | `/download/windows` | Portable Windows lab ZIP (`pc-lab-kit-windows-x64.zip`) |
-| GET | `/download/linux` | Portable Linux lab tarball (`pc-lab-kit-linux-x64.tar.gz`) |
+| GET | `/download/windows` | Windows desktop installer (`PcLabKit-Setup-Windows-x64.exe`) |
+| GET | `/download/linux` | Linux AppImage (`PcLabKit-Linux-x64.AppImage`) |
 | GET | `/download/probe-windows` | Windows probe ZIP |
 | GET/POST | `/api/diagnostic/*` | Diagnostic JSON API |
 | GET/POST | `/api/settings` | Local BYOK settings |

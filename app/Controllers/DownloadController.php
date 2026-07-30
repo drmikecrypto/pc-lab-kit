@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 /**
- * Serves portable app archives and the Windows probe ZIP.
+ * Serves installable desktop apps and the optional Windows probe ZIP.
  */
 class DownloadController
 {
-    private const WINDOWS_APP = 'pc-lab-kit-windows-x64.zip';
+    private const WINDOWS_SETUP = 'PcLabKit-Setup-Windows-x64.exe';
 
-    private const LINUX_APP = 'pc-lab-kit-linux-x64.tar.gz';
+    private const LINUX_APPIMAGE = 'PcLabKit-Linux-x64.AppImage';
 
     private const PROBE_ZIP = 'pc-lab-kit-probe-windows.zip';
 
@@ -22,12 +22,20 @@ class DownloadController
 
     public function windowsApp(): void
     {
-        $this->sendFile(self::WINDOWS_APP, 'application/zip', 'Windows app not built yet. Run scripts/build-app-windows.ps1');
+        $this->sendFile(
+            self::WINDOWS_SETUP,
+            'application/octet-stream',
+            'Windows installer not built yet. Run scripts/build-desktop-windows.ps1'
+        );
     }
 
     public function linuxApp(): void
     {
-        $this->sendFile(self::LINUX_APP, 'application/gzip', 'Linux app not built yet. Run scripts/build-app-linux.sh');
+        $this->sendFile(
+            self::LINUX_APPIMAGE,
+            'application/octet-stream',
+            'Linux AppImage not built yet. Run scripts/build-desktop-linux.sh'
+        );
     }
 
     /** Stream the Windows probe agent bundle. */

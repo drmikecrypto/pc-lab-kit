@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PC Lab Kit</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0a0e17;
+        --fg: #e8eef8;
+        --muted: #8b9bb4;
+        --accent: #3d8bfd;
+      }
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        background: radial-gradient(1200px 600px at 20% -10%, #152238 0%, var(--bg) 55%);
+        color: var(--fg);
+      }
+      main {
+        min-height: 100%;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        text-align: center;
+      }
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: 1.75rem;
+        font-weight: 650;
+        letter-spacing: 0.02em;
+      }
+      p { margin: 0; color: var(--muted); max-width: 28rem; line-height: 1.45; }
+      .spinner {
+        width: 2rem;
+        height: 2rem;
+        margin: 0 auto 1.25rem;
+        border: 3px solid rgba(61, 139, 253, 0.25);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .error {
+        color: #ff8e8e;
+        white-space: pre-wrap;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div>
+        <div class="spinner" id="spinner" aria-hidden="true"></div>
+        <h1>PC Lab Kit</h1>
+        <p id="status">Starting local laboratory…</p>
+        <p class="error" id="error" hidden></p>
+      </div>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

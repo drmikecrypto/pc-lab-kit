@@ -21,6 +21,7 @@ fi
 
 mkdir -p "$DEST"
 rsync -a \
+  --exclude='desktop/' \
   --exclude='.git/' \
   --exclude='.cursor/' \
   --exclude='.env' \

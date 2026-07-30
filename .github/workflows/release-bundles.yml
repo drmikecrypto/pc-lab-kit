@@ -36,9 +36,25 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Build Windows app ZIP
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Tauri Windows deps
         shell: pwsh
-        run: ./scripts/build-app-windows.ps1
+        run: |
+          # WebView2 is preinstalled on windows-latest runners
+          rustc --version
+          cargo --version
+
+      - name: Build Windows desktop installer
+        shell: pwsh
+        run: ./scripts/build-desktop-windows.ps1
 
       - name: Build Windows probe ZIP
         shell: pwsh
@@ -48,11 +64,11 @@ jobs:
         with:
           name: windows-bundles
           path: |
-            public/downloads/pc-lab-kit-windows-x64.zip
+            public/downloads/PcLabKit-Setup-Windows-x64.exe
             public/downloads/pc-lab-kit-probe-windows.zip
 
   linux-app:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: test
     steps:
       - uses: actions/checkout@v4
@@ -63,15 +79,39 @@ jobs:
           extensions: sqlite, curl, mbstring, json, pdo
           tools: composer
 
-      - name: Build Linux app tarball
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Linux Tauri dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            build-essential \
+            curl \
+            wget \
+            file \
+            libxdo-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      - name: Build Linux AppImage
         run: |
           chmod +x scripts/*.sh PcLabKit
-          ./scripts/build-app-linux.sh
+          ./scripts/build-desktop-linux.sh
 
       - uses: actions/upload-artifact@v4
         with:
           name: linux-bundle
-          path: public/downloads/pc-lab-kit-linux-x64.tar.gz
+          path: public/downloads/PcLabKit-Linux-x64.AppImage
 
   release:
     runs-on: ubuntu-latest
@@ -87,7 +127,7 @@ jobs:
       - name: Collect release assets
         run: |
           mkdir -p release-assets
-          find dist -type f \( -name '*.zip' -o -name '*.tar.gz' \) -exec cp -v {} release-assets/ \;
+          find dist -type f \( -name '*.exe' -o -name '*.AppImage' -o -name '*.zip' \) -exec cp -v {} release-assets/ \;
           ls -lh release-assets
 
       - name: Publish GitHub Release
@@ -98,20 +138,19 @@ jobs:
           body: |
             ## PC Lab Kit ${{ github.ref_name }}
 
-            Portable local PC laboratory — unzip/extract and run. No installer required.
+            Installable desktop apps — download, install, open **PC Lab Kit**. No browser required.
 
             ### Downloads
             | Asset | Platform | What it is |
             |-------|----------|------------|
-            | `pc-lab-kit-windows-x64.zip` | Windows x64 | Web lab + bundled PHP — run `PcLabKit.bat` |
-            | `pc-lab-kit-linux-x64.tar.gz` | Linux x64 | Web lab + bundled PHP — run `./PcLabKit` |
-            | `pc-lab-kit-probe-windows.zip` | Windows | Hardware probe agent — run `Start-PcLabProbe.bat` |
+            | `PcLabKit-Setup-Windows-x64.exe` | Windows x64 | Installer — Start Menu app window |
+            | `PcLabKit-Linux-x64.AppImage` | Linux x64 | AppImage — chmod +x and run |
+            | `pc-lab-kit-probe-windows.zip` | Windows | Optional standalone probe (also bundled in the Windows app) |
 
             ### Quick start
-            1. Download the archive for your OS and extract it.
-            2. Open the `pc-lab-kit` folder.
-            3. Windows: double-click **PcLabKit.bat**. Linux: `chmod +x PcLabKit && ./PcLabKit`.
-            4. Browser opens **http://127.0.0.1:8080/diagnostic**.
-            5. (Windows) For sensors/benchmarks/OC, also unzip the probe and run **Start-PcLabProbe.bat**, then Connect in the lab.
+            1. Download the installer for your OS.
+            2. Windows: run the setup EXE. Linux: `chmod +x PcLabKit-Linux-x64.AppImage && ./PcLabKit-Linux-x64.AppImage`.
+            3. Open **PC Lab Kit** from the Start Menu (Windows) or the AppImage (Linux).
+            4. The lab opens inside the app window. On Windows the probe starts with the app for sensors/benchmarks.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

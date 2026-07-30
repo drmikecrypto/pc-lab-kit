@@ -6,6 +6,19 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-08-01
+
+### Added
+- Installable desktop apps via Tauri 2 shell (`desktop/`): lab UI runs inside the app window
+- Windows NSIS installer `PcLabKit-Setup-Windows-x64.exe` and Linux `PcLabKit-Linux-x64.AppImage`
+- Desktop runtime auto-starts bundled PHP lab; Windows also starts the probe sidecar
+- Build scripts: `scripts/build-desktop-windows.ps1`, `scripts/build-desktop-linux.sh`
+
+### Changed
+- GitHub Releases primary assets are installers (not zip/tarball quick-start)
+- App update checker prefers Setup.exe / AppImage download URLs
+- Version bumped to 3.1.0
+
 ## [3.0.0] - 2026-07-30
 
 ### Added

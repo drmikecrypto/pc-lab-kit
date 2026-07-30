@@ -111,9 +111,15 @@ class AppUpdateService
             if ($browser === '') {
                 continue;
             }
-            if ($name === 'pc-lab-kit-windows-x64.zip' || (str_contains($name, 'windows') && str_ends_with($name, '.zip') && !str_contains($name, 'probe'))) {
+            if ($name === 'pclabkit-setup-windows-x64.exe'
+                || ($name === 'pc-lab-kit-windows-x64.zip')
+                || (str_contains($name, 'windows') && (str_ends_with($name, '.exe') || str_ends_with($name, '.msi')))
+            ) {
                 $windowsUrl = $browser;
-            } elseif ($name === 'pc-lab-kit-linux-x64.tar.gz' || (str_contains($name, 'linux') && (str_ends_with($name, '.tar.gz') || str_ends_with($name, '.tgz')))) {
+            } elseif ($name === 'pclabkit-linux-x64.appimage'
+                || $name === 'pc-lab-kit-linux-x64.tar.gz'
+                || (str_contains($name, 'linux') && (str_ends_with($name, '.appimage') || str_ends_with($name, '.tar.gz') || str_ends_with($name, '.tgz') || str_ends_with($name, '.deb')))
+            ) {
                 $linuxUrl = $browser;
             } elseif ($name === 'pc-lab-kit-probe-windows.zip' || str_contains($name, 'probe')) {
                 $probeUrl = $browser;

@@ -1,6 +1,6 @@
 ﻿# PC Lab Kit
 
-**PC Lab Kit** is a local-first PC diagnostic and hardware lab. Download a portable build for your OS, or run from source.
+**PC Lab Kit** is a local-first PC diagnostic and hardware lab. Download the installer for your OS, install, and open the **PC Lab Kit** app window.
 
 ## Download (end users)
 
@@ -8,15 +8,15 @@ Get the latest release: **https://github.com/drmikecrypto/pc-lab-kit/releases/la
 
 | File | Platform | How to run |
 |------|----------|------------|
-| `pc-lab-kit-windows-x64.zip` | Windows x64 | Unzip → double-click **PcLabKit.bat** |
-| `pc-lab-kit-linux-x64.tar.gz` | Linux x64 | `tar xzf … && cd pc-lab-kit && chmod +x PcLabKit && ./PcLabKit` |
-| `pc-lab-kit-probe-windows.zip` | Windows | Unzip → run **Start-PcLabProbe.bat** (for sensors, benches, OC) |
+| `PcLabKit-Setup-Windows-x64.exe` | Windows x64 | Run the installer, then open **PC Lab Kit** from the Start Menu |
+| `PcLabKit-Linux-x64.AppImage` | Linux x64 | `chmod +x PcLabKit-Linux-x64.AppImage && ./PcLabKit-Linux-x64.AppImage` |
+| `pc-lab-kit-probe-windows.zip` | Windows | Optional standalone probe (also started by the Windows app) |
 
-The lab opens at **http://127.0.0.1:8080/diagnostic**. PHP is bundled — no separate install.
+The lab runs **inside the app** (not in your system browser). On Windows the hardware probe starts with the app for sensors, benchmarks, and OC.
 
 ## Quick start (developers)
 
-**Requirements:** Git. On first run, `.\scripts\install.ps1` (Windows) or `./scripts/install.sh` (Linux/macOS) can bootstrap **PHP 8.3** and **Composer** into `build-cache/`.
+**Requirements:** Git. On first run, `.\scripts\install.ps1` (Windows) or `./scripts/install.sh` (Linux/macOS) can bootstrap **PHP 8.4** and **Composer** into `build-cache/`. For the desktop shell: Rust + Node 20+.
 
 ```powershell
 git clone https://github.com/drmikecrypto/pc-lab-kit.git
@@ -33,34 +33,28 @@ chmod +x scripts/install.sh scripts/start.sh PcLabKit
 ./scripts/start.sh
 ```
 
-Open **http://127.0.0.1:8080/diagnostic**
-
-Or double-click **`PcLabKit.bat`** (Windows) / run **`./PcLabKit`** (Unix).
-
-## Windows probe (full hardware scan)
-
-For real sensors, benchmarks, stress tests, RGB, and safe OC:
-
-1. Download `pc-lab-kit-probe-windows.zip` from the [latest release](https://github.com/drmikecrypto/pc-lab-kit/releases/latest), or build with `.\scripts\build-agent-bundle.ps1`
-2. Or open **http://127.0.0.1:8080/download/probe-windows** while the lab is running
-3. Unzip and run **`Start-PcLabProbe.bat`** (self-elevates for CPU die temps)
-4. In the lab, open **Full scan** → **Connect**
-
-Probe listens on **http://127.0.0.1:18765/** (status page + JSON API).
-
-## Build release packages locally
+Open **http://127.0.0.1:8080/diagnostic** (dev browser), or run the Tauri shell:
 
 ```powershell
-.\scripts\build-app-windows.ps1          # → public/downloads/pc-lab-kit-windows-x64.zip
-.\scripts\build-agent-bundle.ps1         # → public/downloads/pc-lab-kit-probe-windows.zip
+cd desktop
+npm install
+$env:PCLAB_LAB_ROOT = (Resolve-Path ..).Path
+npm run tauri -- dev
+```
+
+## Build desktop installers
+
+```powershell
+.\scripts\build-desktop-windows.ps1   # → public/downloads/PcLabKit-Setup-Windows-x64.exe
+.\scripts\build-agent-bundle.ps1      # → public/downloads/pc-lab-kit-probe-windows.zip
 ```
 
 ```bash
 chmod +x scripts/*.sh
-./scripts/build-app-linux.sh             # → public/downloads/pc-lab-kit-linux-x64.tar.gz
+./scripts/build-desktop-linux.sh      # → public/downloads/PcLabKit-Linux-x64.AppImage
 ```
 
-Tag `v*` pushes trigger GitHub Actions to publish all three assets on the release.
+Tag `v*` pushes trigger GitHub Actions to publish the installers.
 
 ## Optional AI advisor (BYOK)
 
@@ -102,3 +96,4 @@ Third-party dependencies in `vendor/` remain under their respective licenses.
 | [Integration guide](docs/INTEGRATION.md) | Kit layout and routes |
 | [Contributing](CONTRIBUTING.md) | PR guidelines |
 | [Changelog](CHANGELOG.md) | Version history |
+| [Desktop shell](desktop/README.md) | Tauri app develop/build notes |

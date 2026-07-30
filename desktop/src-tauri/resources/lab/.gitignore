@@ -26,8 +26,3 @@ graphify-out/cost.json
 graphify-out/.graphify_python
 graphify-out/.graphify_root
 graphify-out/cache/
-
-# Tauri staged lab payload (built by scripts/stage-desktop-payload.*)
-desktop/src-tauri/resources/lab/**
-!desktop/src-tauri/resources/lab/.gitignore
-!desktop/src-tauri/resources/lab/.gitkeep

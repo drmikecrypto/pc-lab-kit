@@ -2,7 +2,7 @@
 
 ## What is this?
 
-A **local** PC laboratory: browser UI for diagnostics plus an optional Windows probe for real sensors, benchmarks, stress, RGB, and safe OS/GPU tuning.
+A **local** PC laboratory: installable desktop app (Windows/Linux) with the diagnostic lab inside the app window, plus a Windows probe for real sensors, benchmarks, stress, RGB, and safe OS/GPU tuning.
 
 ## Does anything leave my PC?
 
@@ -16,11 +16,15 @@ Run `Start-PcLabProbe.bat` — it elevates so the LibreHardwareMonitor helper (`
 
 GitHub Releases: https://github.com/drmikecrypto/pc-lab-kit/releases/latest  
 
-- Windows lab: `pc-lab-kit-windows-x64.zip` → `PcLabKit.bat`
-- Linux lab: `pc-lab-kit-linux-x64.tar.gz` → `./PcLabKit`
-- Windows probe: `pc-lab-kit-probe-windows.zip` → `Start-PcLabProbe.bat`
+- Windows: `PcLabKit-Setup-Windows-x64.exe` — install, then open **PC Lab Kit**
+- Linux: `PcLabKit-Linux-x64.AppImage` — `chmod +x` and run
+- Optional probe ZIP: `pc-lab-kit-probe-windows.zip` (also bundled/started by the Windows app)
 
 Local mirrors while the lab is running: `/download/windows`, `/download/linux`, `/download/probe-windows`.
+
+## Does the lab open in my browser?
+
+No. The installable apps open a **PC Lab Kit** window. Developers can still use `scripts/start.ps1` for a browser-based workflow.
 
 ## Where is the probe download?
 
