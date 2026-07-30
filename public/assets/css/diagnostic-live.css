@@ -316,7 +316,7 @@
 /* Live sensor strip (local agent) */
 .dx-sensor-strip {
   display: none;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(88px, 1fr));
   gap: 10px;
   padding: 14px;
   border-radius: 14px;
@@ -337,6 +337,40 @@
 .dx-sensor-val.warn { color: #f29f05; }
 .dx-sensor-val.hot { color: #ef4444; }
 .dx-sensor-lbl { font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+
+.dx-driver-actions {
+  margin-top: 14px;
+  display: grid;
+  gap: 8px;
+}
+.dx-driver-title {
+  margin: 0;
+  font-size: 14px;
+  color: #f8fafc;
+}
+.dx-driver-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  display: grid;
+  gap: 4px;
+}
+.dx-driver-card.critical {
+  border-color: rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.08);
+}
+.dx-driver-card.warn {
+  border-color: rgba(242, 159, 5, 0.45);
+  background: rgba(242, 159, 5, 0.08);
+}
+.dx-driver-card strong { font-size: 13px; color: #f8fafc; }
+.dx-driver-links a {
+  color: #22d3ee;
+  text-decoration: none;
+  font-size: 12px;
+}
+.dx-driver-links a:hover { text-decoration: underline; }
 
 .dx-replace-banner {
   margin-top: 16px;

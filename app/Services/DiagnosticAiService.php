@@ -10,7 +10,7 @@ namespace App\Services;
 class DiagnosticAiService
 {
     private const SYSTEM_PROMPT = <<<'PROMPT'
-You are PCVerse Lead Hardware Engineer — 20+ years diagnosing gaming PCs, workstations, and thermals.
+You are PC Lab Kit Lead Hardware Engineer — 20+ years diagnosing gaming PCs, workstations, and thermals.
 
 Write ONLY valid JSON (English). Be specific: cite numbers from the data (temps, scores, frametime, RAM GB). No generic fluff.
 
@@ -67,18 +67,37 @@ PROMPT;
         }
 
         $comparison = is_array($context['comparison'] ?? null) ? $context['comparison'] : null;
-        $comparisonBlock = $comparison
-            ? "Comparison vs previous test:\n" . json_encode($this->compactComparison($comparison), JSON_UNESCAPED_UNICODE) . "\n\n"
-            : '';
+        $toon = new ToonSerializer();
+        $graphSvc = new HardwareKnowledgeGraphService();
+
+        $graph = is_array($analysis['hardware_graph'] ?? null)
+            ? $analysis['hardware_graph']
+            : $graphSvc->fromProbe(
+                [
+                    'cpu' => ['model' => $metrics['cpu_model'] ?? ''],
+                    'gpu' => ['model' => $metrics['gpu_model'] ?? '', 'vram_gb' => $metrics['vram_gb'] ?? null],
+                    'ram' => ['total_gb' => $metrics['ram_gb'] ?? null],
+                    'sensors' => [
+                        'cpu_temp_max' => $metrics['cpu_temp_max'] ?? null,
+                        'gpu_temp_max' => $metrics['gpu_temp_max'] ?? null,
+                    ],
+                    'report_summary' => $analysis['report_summary'] ?? [],
+                ],
+                $analysis
+            );
+        $analysis['hardware_graph'] = $graph;
 
         $payload = $this->buildAnalysisPayload($analysis);
-        $userPrompt = implode("\n\n", array_filter([
-            $previousBlock,
-            $comparisonBlock,
-            $benchCtx,
-            'Current diagnostic payload (use these facts only):',
-            json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT),
-        ]));
+        $payload['percentiles'] = $analysis['percentiles'] ?? [];
+        $compactCtx = [
+            'previous' => $previousBlock !== '' ? $previousBlock : null,
+            'comparison' => $comparison ? $this->compactComparison($comparison) : null,
+            'benchmark_notes' => $benchCtx !== '' ? $benchCtx : null,
+            'hw_graph' => $graphSvc->compact($graph),
+            'diagnostic' => $payload,
+        ];
+        $userPrompt = "PC Lab Kit TOON context (facts only — do not invent sensors):\n"
+            . $toon->encode(array_filter($compactCtx, static fn ($v) => $v !== null && $v !== '' && $v !== []));
 
         $json = $this->llm->generateJson(self::SYSTEM_PROMPT, $userPrompt, 2200, 0.35);
 
@@ -130,7 +149,7 @@ PROMPT;
         $upgrades = array_slice((array) ($analysis['upgrade_suggestions'] ?? []), 0, 4);
         $games = array_slice((array) ($analysis['game_settings'] ?? []), 0, 5);
 
-        $oc = (array) ($analysis['vakhsh_oc'] ?? []);
+        $oc = (array) ($analysis['oc_plan'] ?? []);
         $ocSummary = $oc !== [] ? [
             'profile' => $oc['profile'] ?? null,
             'safe' => $oc['safe'] ?? null,
@@ -149,7 +168,7 @@ PROMPT;
             'issues' => $issues,
             'rule_based_upgrades' => $upgrades,
             'game_settings_sample' => $games,
-            'vakhsh_oc' => $ocSummary,
+            'oc_plan' => $ocSummary,
             'report_summary' => $analysis['report_summary'] ?? null,
         ];
     }

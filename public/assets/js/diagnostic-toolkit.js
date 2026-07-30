@@ -1,9 +1,10 @@
-(function () {
-  const cfg = window.PCVERSE_DIAGNOSTIC || {};
+﻿(function () {
+  const cfg = window.PCLAB_DIAGNOSTIC || {};
   const AGENT = (cfg.agentBase || '').replace(/\/+$/, '') || 'http://127.0.0.1:18765';
   let catalog = null;
   let filter = 'all';
   let probeOk = false;
+  let overlayTimer = null;
 
   const el = (id) => document.getElementById(id);
 
@@ -23,8 +24,8 @@
     const st = el('dx-toolkit-run-status');
     if (st) {
       st.textContent = probeOk
-        ? 'Probe connected — select a benchmark or stress test.'
-        : 'Start PCVerse Probe to run native benchmarks and stress tests (Windows).';
+        ? 'Probe connected — pick a one-click profile, benchmark, or stress test.'
+        : 'Start PcLab Probe to run native benchmarks and stress tests (Windows).';
     }
     document.querySelectorAll('.dx-toolkit-run-btn').forEach((btn) => {
       btn.disabled = !probeOk || btn.dataset.busy === '1';
@@ -82,7 +83,7 @@
           <strong>${esc(t.name)}</strong>
           <span class="dx-toolkit-badge dx-toolkit-badge--${esc(cov)}">${esc(cov)}</span>
         </div>
-        <p>${esc(t.pcverse || '')}</p>
+        <p>${esc(t.coverage_note || '')}</p>
       </article>`;
     }).join('');
   }
@@ -98,48 +99,140 @@
     if (!wrap) return;
     const items = [];
     (runnable.bench || []).forEach((b) => {
-      items.push({ kind: 'bench', id: b.id, label: b.label, desc: b.desc });
+      items.push({ kind: 'bench', id: b.id, label: b.label, desc: b.desc, seconds: 8 });
     });
     (runnable.stress || []).forEach((s) => {
-      items.push({ kind: 'stress', id: s.id, label: s.label, desc: s.desc, seconds: 15 });
+      const seconds = s.id === 'quick' ? 60 : 30;
+      items.push({ kind: 'stress', id: s.id, label: s.label, desc: s.desc, seconds });
     });
     wrap.innerHTML = items.map((item) =>
-      `<button type="button" class="dx-toolkit-run-btn" data-kind="${esc(item.kind)}" data-id="${esc(item.id)}" disabled>
+      `<button type="button" class="dx-toolkit-run-btn" data-kind="${esc(item.kind)}" data-id="${esc(item.id)}" data-seconds="${item.seconds || 15}" disabled>
         <strong>${esc(item.label)}</strong>
         <span>${esc(item.desc)}</span>
       </button>`
-    ).join('');
+    ).join('') + `<div id="dx-toolkit-overlay" class="dx-toolkit-overlay muted fs-sm mt-2" hidden></div>
+      <div id="dx-toolkit-cert" class="dx-toolkit-cert mt-2" hidden></div>`;
     wrap.querySelectorAll('.dx-toolkit-run-btn').forEach((btn) => {
       btn.addEventListener('click', () => runTest(btn));
     });
     probeHealth();
   }
 
+  function startOverlay(label) {
+    const ov = el('dx-toolkit-overlay');
+    if (!ov) return;
+    ov.hidden = false;
+    ov.textContent = `Live overlay: ${label} — sampling Probe telemetry…`;
+    if (overlayTimer) clearInterval(overlayTimer);
+    overlayTimer = setInterval(async () => {
+      try {
+        const res = await fetch(AGENT + '/telemetry', { mode: 'cors' });
+        if (!res.ok) return;
+        const t = await res.json();
+        const cpu = t.cpu_temp ?? t.sensors?.cpu_temp_max ?? t.thermal?.cpu ?? '—';
+        const gpu = t.gpu_temp ?? t.sensors?.gpu_temp_max ?? t.thermal?.gpu ?? '—';
+        ov.textContent = `Live overlay · CPU ${cpu}°C · GPU ${gpu}°C · ${label}`;
+      } catch (_) {}
+    }, 1500);
+  }
+
+  function stopOverlay() {
+    if (overlayTimer) {
+      clearInterval(overlayTimer);
+      overlayTimer = null;
+    }
+  }
+
+  function renderCertificate(cert) {
+    const box = el('dx-toolkit-cert');
+    if (!box || !cert) return;
+    box.hidden = false;
+    const tone = cert.passed ? 'ok' : 'fail';
+    box.innerHTML = `<div class="dx-cert dx-cert--${tone}">
+      <strong>${esc(cert.verdict || '')}</strong>
+      <p class="m-0 mt-1">${esc(cert.summary || '')}</p>
+      ${cert.peaks ? `<p class="muted fs-xs m-0 mt-1">Peaks: ${esc(JSON.stringify(cert.peaks))}</p>` : ''}
+    </div>`;
+  }
+
+  async function issueCertificate(run) {
+    try {
+      const res = await fetch('/api/diagnostic/stress/certificate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ run, samples: run.samples || [] }),
+      });
+      const data = await res.json();
+      renderCertificate(data.certificate);
+      return data.certificate;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function prettyResult(kind, data, cert) {
+    if (kind === 'bench') {
+      const lines = [
+        `${data.label || data.id || 'Benchmark'}`,
+        data.score != null ? `Score: ${data.score} ${data.unit || ''}`.trim() : null,
+        data.method ? `Method: ${data.method}` : null,
+        data.seq_read_mbps != null ? `Seq read: ${data.seq_read_mbps} MB/s` : null,
+        data.seq_write_mbps != null ? `Seq write: ${data.seq_write_mbps} MB/s` : null,
+        data.rand_4k_read_mbps != null ? `4K read: ${data.rand_4k_read_mbps} MB/s` : null,
+        data.note || null,
+      ].filter(Boolean);
+      return lines.join('\n');
+    }
+    const lines = [
+      `${data.label || data.id || 'Stress'} — ${data.status || ''}`,
+      data.duration_s != null ? `Duration: ${data.duration_s}s` : null,
+      data.cpu_temp_max != null ? `CPU peak: ${data.cpu_temp_max}°C` : null,
+      data.gpu_temp_max != null ? `GPU peak: ${data.gpu_temp_max}°C` : null,
+      cert ? `Certificate: ${cert.verdict} — ${cert.summary}` : null,
+    ].filter(Boolean);
+    return lines.join('\n') + '\n\n' + JSON.stringify(data, null, 2);
+  }
+
   async function runTest(btn) {
     if (!probeOk) return;
     const kind = btn.getAttribute('data-kind');
     const id = btn.getAttribute('data-id');
+    const seconds = parseInt(btn.getAttribute('data-seconds') || '15', 10);
     const out = el('dx-toolkit-result');
     const st = el('dx-toolkit-run-status');
+    const certBox = el('dx-toolkit-cert');
+    if (certBox) { certBox.hidden = true; certBox.innerHTML = ''; }
     btn.dataset.busy = '1';
     btn.disabled = true;
     if (st) st.textContent = 'Running ' + btn.querySelector('strong')?.textContent + '…';
     if (out) { out.hidden = false; out.textContent = 'Working…'; }
+    startOverlay(btn.querySelector('strong')?.textContent || id);
     try {
       const path = kind === 'stress' ? '/stress/run' : '/bench/run';
-      const body = kind === 'stress' ? { id, seconds: 15 } : { id, seconds: 5 };
+      const body = kind === 'stress'
+        ? { id, seconds, collect_samples: true }
+        : { id, seconds };
       const res = await fetch(AGENT + path, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (out) out.textContent = JSON.stringify(data, null, 2);
-      if (st) st.textContent = 'Completed — result below.';
+      let cert = null;
+      if (kind === 'stress') {
+        cert = await issueCertificate(data);
+      }
+      if (out) out.textContent = prettyResult(kind, data, cert);
+      if (st) st.textContent = cert
+        ? `Completed — ${cert.verdict}`
+        : 'Completed — result below.';
     } catch (e) {
       if (out) out.textContent = String(e);
       if (st) st.textContent = 'Run failed — is Probe running?';
     } finally {
+      stopOverlay();
+      const ov = el('dx-toolkit-overlay');
+      if (ov) ov.hidden = true;
       btn.dataset.busy = '0';
       btn.disabled = !probeOk;
     }

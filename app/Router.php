@@ -52,8 +52,10 @@ final class Router
             }
 
             $args = [];
-            foreach ($route['keys'] as $key) {
-                $args[] = $matches[$key] ?? '';
+            $i = 1;
+            foreach ($route['keys'] as $_key) {
+                $args[] = (string) ($matches[$i] ?? '');
+                $i++;
             }
 
             $result = ($route['handler'])(...$args);

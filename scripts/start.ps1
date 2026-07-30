@@ -15,6 +15,6 @@ $php = 'php'
 $bundled = Join-Path $Root 'runtime\php\php.exe'
 if (Test-Path $bundled) { $php = $bundled }
 
-Write-Host "PCVerse lab → http://127.0.0.1:$port/diagnostic" -ForegroundColor Cyan
+Write-Host "PC Lab Kit -> http://127.0.0.1:$port/diagnostic" -ForegroundColor Cyan
 Write-Host "Press Ctrl+C to stop."
 & $php -S "127.0.0.1:$port" -t public

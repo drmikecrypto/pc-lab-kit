@@ -3,7 +3,7 @@
 $cfg = $config ?? [];
 $steps = $cfg['lite_steps'] ?? [];
 $tools = $cfg['pro_tools'] ?? [];
-$probeDl = (string) (($cfg['windows_agent'] ?? [])['download_url'] ?? '/download/pcverse-windows-x64');
+$probeDl = (string) (($cfg['windows_agent'] ?? [])['download_url'] ?? '/download/probe-windows');
 $importFormats = $cfg['import_formats'] ?? [];
 $product = $cfg['product'] ?? [];
 $toolKit = new \App\Services\DiagnosticToolCatalogService();
@@ -21,9 +21,9 @@ $toolTotal = $toolKit->total();
 
     <header class="dx-shell-hero">
         <div class="dx-shell-hero__inner">
-            <p class="dx-shell-eyebrow">PCVerse diagnostic lab</p>
+            <p class="dx-shell-eyebrow">PC Lab Kit diagnostic lab</p>
             <h1 class="dx-shell-title">Check your PC in minutes</h1>
-            <p class="dx-shell-lead"><?= e($product['full_tagline'] ?? 'Quick health quiz in the browser · deep scan with PCVerse Probe · history and telemetry on your machine.') ?></p>
+            <p class="dx-shell-lead"><?= e($product['full_tagline'] ?? 'Quick health quiz in the browser · deep scan with PcLab Probe · history and telemetry on your machine.') ?></p>
             <div class="dx-shell-meta">
                 <span class="dx-shell-pill dx-shell-pill--live">Local only</span>
                 <span class="dx-shell-pill"><?= (int) $toolTotal ?> tools unified</span>
@@ -35,7 +35,7 @@ $toolTotal = $toolKit->total();
 
     <section class="dx-pulse-hidden" id="dx-intelligence-pulse" aria-hidden="true">
         <div class="dx-pulse-bridge">
-            <article class="dx-pulse-node vakhsh">
+            <article class="dx-pulse-node engine">
                 <div class="dx-pulse-ring" aria-hidden="true"></div>
                 <span class="dx-pulse-name">Engine</span>
                 <span class="dx-pulse-role"><?= e($product['engine_label'] ?? 'Depth · telemetry · RGB · safe OC') ?></span>
@@ -50,9 +50,9 @@ $toolTotal = $toolKit->total();
             <div class="dx-pulse-synapse" aria-hidden="true">
                 <canvas id="dx-pulse-canvas" class="dx-pulse-canvas"></canvas>
                 <p class="dx-pulse-tagline" id="dx-pulse-tagline">Tools — not a store</p>
-                <span class="dx-pulse-sync" id="dx-pulse-sync">● PCVerse local</span>
+                <span class="dx-pulse-sync" id="dx-pulse-sync">● PC Lab Kit local</span>
             </div>
-            <article class="dx-pulse-node amin">
+            <article class="dx-pulse-node advisor">
                 <div class="dx-pulse-ring" aria-hidden="true"></div>
                 <span class="dx-pulse-name">Advisor</span>
                 <span class="dx-pulse-role"><?= e($product['advisor_label'] ?? 'Insight · bottleneck · guidance') ?></span>
@@ -99,11 +99,11 @@ $toolTotal = $toolKit->total();
             <section class="dx-full-scan glass-effect">
                 <div class="dx-full-head">
                     <p class="dx-full-kicker">Windows · local PC</p>
-                    <h2>Full scan with <span class="dx-gradient">PCVerse Probe</span></h2>
+                    <h2>Full scan with <span class="dx-gradient">PcLab Probe</span></h2>
                     <p class="dx-full-lead">Real sensors, bottlenecks, game performance, and stability — everything runs on your machine.</p>
                 </div>
                 <div class="dx-full-primary">
-                    <a href="<?= e($probeDl) ?>" class="dx-btn primary dx-full-dl-main" download>Download PCVerse Probe</a>
+                    <a href="<?= e($probeDl) ?>" class="dx-btn primary dx-full-dl-main" download>Download PcLab Probe</a>
                     <p class="muted fs-sm dx-full-note">Install and run locally — no cloud required.</p>
                 </div>
                 <details class="dx-full-advanced">
@@ -112,7 +112,7 @@ $toolTotal = $toolKit->total();
                         <div class="dx-full-grid">
                             <div class="dx-full-card">
                                 <h3>1. Local Probe</h3>
-                                <p class="muted fs-sm">Run PCVerse Probe, then click Connect.</p>
+                                <p class="muted fs-sm">Run PcLab Probe, then click Connect.</p>
                                 <a href="<?= e($probeDl) ?>" class="dx-btn primary dx-full-dl" download>Download Probe</a>
                                 <button type="button" class="dx-btn ghost dx-full-dl" id="dx-fetch-probe">Connect</button>
                                 <span id="dx-probe-status" class="muted fs-xs"></span>
@@ -141,7 +141,7 @@ $toolTotal = $toolKit->total();
                     </div>
                 </details>
                 <div id="dx-full-results" class="dx-results" hidden></div>
-                <div id="dx-vakhsh-oc" class="dx-vakhsh-oc-wrap"></div>
+                <div id="dx-oc-panel" class="dx-oc-panel-wrap"></div>
             </section>
         </div>
     </div>
@@ -157,7 +157,7 @@ $toolTotal = $toolKit->total();
             </div>
             <div class="dx-toolkit-run dx-panel-card">
                 <h3>Run benchmarks &amp; stress tests</h3>
-                <p class="muted fs-sm">Requires PCVerse Probe on Windows. Replaces Cinebench, Prime95, OCCT, CrystalDiskMark, MemTest workflows.</p>
+                <p class="muted fs-sm">Requires PcLab Probe on Windows. Replaces Cinebench, Prime95, OCCT, CrystalDiskMark, MemTest workflows.</p>
                 <div class="dx-toolkit-run-grid" id="dx-toolkit-run"></div>
                 <div class="dx-toolkit-run-status muted fs-sm" id="dx-toolkit-run-status">Connect Probe to run tests.</div>
                 <pre class="dx-toolkit-result" id="dx-toolkit-result" hidden></pre>
@@ -189,13 +189,19 @@ $toolTotal = $toolKit->total();
                         <h3 class="dx-sensor-title">Live sensors</h3>
                         <p class="muted fs-sm dx-sensor-sub">From your latest Probe connection</p>
                         <div class="dx-sensor-strip" id="dx-sensor-strip">
-                            <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-cpu">—</div><div class="dx-sensor-lbl">CPU Temp</div></div>
-                            <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-gpu">—</div><div class="dx-sensor-lbl">GPU Temp</div></div>
+                            <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-cpu">—</div><div class="dx-sensor-lbl">CPU Package</div></div>
+                            <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-cpu-hs">—</div><div class="dx-sensor-lbl">CPU Hot Spot</div></div>
+                            <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-gpu">—</div><div class="dx-sensor-lbl">GPU Core</div></div>
+                            <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-gpu-hs">—</div><div class="dx-sensor-lbl">GPU Hot Spot</div></div>
+                            <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-gpu-delta">—</div><div class="dx-sensor-lbl">HS Δ</div></div>
                             <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-vram">—</div><div class="dx-sensor-lbl">VRAM</div></div>
                             <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-util">—</div><div class="dx-sensor-lbl">GPU Util</div></div>
                             <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-ram">—</div><div class="dx-sensor-lbl">RAM</div></div>
+                            <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-drivers">—</div><div class="dx-sensor-lbl">Drivers</div></div>
                             <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-bat">—</div><div class="dx-sensor-lbl">Battery</div></div>
                         </div>
+                        <p class="muted fs-xs" id="dx-sensor-note" hidden></p>
+                        <div id="dx-driver-actions" class="dx-driver-actions" hidden></div>
                     </div>
                 </div>
                 <details class="dx-collapsible">
@@ -256,7 +262,7 @@ $toolTotal = $toolKit->total();
                 <div class="dx-rgb-body">
                     <div class="dx-rgb-toolbar">
                         <button type="button" class="dx-btn ghost" id="dx-rgb-scan">Rescan RGB</button>
-                        <button type="button" class="dx-btn primary" id="dx-rgb-vakhsh">Auto setup</button>
+                        <button type="button" class="dx-btn primary" id="dx-rgb-auto">Auto setup</button>
                         <button type="button" class="dx-btn ghost" id="dx-rgb-apply">Manual zone</button>
                     </div>
                     <div class="dx-rgb-devices" id="dx-rgb-devices"><div class="dx-rgb-empty">Scanning USB/HID…</div></div>
@@ -271,13 +277,13 @@ $toolTotal = $toolKit->total();
 $wa = $cfg['windows_agent'] ?? [];
 $agentHost = trim((string) ($wa['local_host'] ?? '127.0.0.1')) ?: '127.0.0.1';
 $agentPort = (int) ($wa['local_port'] ?? 18765);
-$pcverseAgentBase = 'http://' . $agentHost . ':' . max(1, min(65535, $agentPort));
+$pclabAgentBase = 'http://' . $agentHost . ':' . max(1, min(65535, $agentPort));
 ?>
 <script>
-window.PCVERSE_DIAGNOSTIC = {
+window.PCLAB_DIAGNOSTIC = {
     steps: <?= json_encode($steps, JSON_UNESCAPED_UNICODE) ?>,
     appDownload: <?= json_encode($cfg['app_download'] ?? [], JSON_UNESCAPED_UNICODE) ?>,
-    agentBase: <?= json_encode($pcverseAgentBase, JSON_UNESCAPED_UNICODE) ?>
+    agentBase: <?= json_encode($pclabAgentBase, JSON_UNESCAPED_UNICODE) ?>
 };
 </script>
 <script defer src="/assets/js/diagnostic-tabs.js?v=1.0.1"></script>

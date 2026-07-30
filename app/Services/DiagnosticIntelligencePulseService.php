@@ -23,7 +23,7 @@ final class DiagnosticIntelligencePulseService
                 'label' => 'Engine',
                 'role' => 'Depth · telemetry · RGB · safe OC',
                 'deep_scans' => (int) ($stats['full_scans'] ?? 0),
-                'orchestrations' => (int) ($activity['vakhsh_orchestrations'] ?? 0),
+                'orchestrations' => (int) ($activity['orchestrations'] ?? 0),
                 'sensor_layers' => 11,
                 'tools_unified' => $toolsReplaced,
                 'live_line' => $this->engineLiveLine($stats, $activity),
@@ -40,7 +40,7 @@ final class DiagnosticIntelligencePulseService
             'neural' => [
                 'whispers' => $this->whispers($stats, $activity, $toolsReplaced),
                 'feed' => $this->feedLines(),
-                'sync_label' => 'PCVerse local network',
+                'sync_label' => 'PC Lab Kit local network',
             ],
         ];
     }
@@ -59,23 +59,23 @@ final class DiagnosticIntelligencePulseService
         }
     }
 
-    /** @return array{vakhsh_orchestrations: int} */
+    /** @return array{orchestrations: int} */
     private function recentActivity(): array
     {
-        return ['vakhsh_orchestrations' => 0];
+        return ['orchestrations' => 0];
     }
 
     /** @param array<string, mixed> $stats @param array<string, mixed> $activity */
     private function engineLiveLine(array $stats, array $activity): string
     {
-        if (($activity['vakhsh_orchestrations'] ?? 0) > 0) {
-            return sprintf('%d RGB/telemetry orchestrations — no separate iCUE/CAM stack', $activity['vakhsh_orchestrations']);
+        if (($activity['orchestrations'] ?? 0) > 0) {
+            return sprintf('%d RGB/telemetry orchestrations — no separate iCUE/CAM stack', $activity['orchestrations']);
         }
         if ((int) ($stats['full_scans'] ?? 0) > 0) {
             return sprintf('%d deep scans · 11 sensor layers', (int) $stats['full_scans']);
         }
 
-        return 'Ready — connect PCVerse Probe';
+        return 'Ready — connect PcLab Probe';
     }
 
     /** @param array<string, mixed> $stats @param array<string, mixed> $activity */

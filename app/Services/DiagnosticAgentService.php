@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * Normalizes PCVerse Windows Probe JSON (v2) into DiagnosticService report shape.
+ * Normalizes PC Lab Kit Windows Probe JSON (v2) into DiagnosticService report shape.
  */
 class DiagnosticAgentService
 {
@@ -27,6 +27,9 @@ class DiagnosticAgentService
         $network = $agent['network'] ?? [];
         $storage = $agent['storage'] ?? [];
         $telemetry = (array) ($agent['telemetry'] ?? []);
+        $thermal = (array) ($agent['thermal'] ?? ($telemetry['thermal'] ?? []));
+        $drivers = (array) ($agent['drivers'] ?? []);
+        $devices = (array) ($agent['devices'] ?? []);
 
         if ($telemetry !== []) {
             $telRam = (array) ($telemetry['ram'] ?? []);
@@ -36,6 +39,26 @@ class DiagnosticAgentService
             $telGaming = (array) ($telemetry['gaming'] ?? []);
             if ($telGaming !== []) {
                 $gaming = array_merge($gaming, $telGaming);
+            }
+            $telGpu = (array) ($telemetry['gpu'] ?? []);
+            if ($telGpu !== []) {
+                $gpuThermal = (array) ($telGpu['thermal'] ?? []);
+                if ($gpuThermal !== []) {
+                    $sensors['gpu_temp_max'] = $gpuThermal['core_c'] ?? ($sensors['gpu_temp_max'] ?? null);
+                    $sensors['gpu_hotspot_max'] = $gpuThermal['hot_spot_c'] ?? ($sensors['gpu_hotspot_max'] ?? null);
+                    $sensors['gpu_hotspot_delta'] = $gpuThermal['hotspot_delta_c'] ?? ($sensors['gpu_hotspot_delta'] ?? null);
+                    $sensors['gpu_vram_temp'] = $gpuThermal['memory_c'] ?? ($sensors['gpu_vram_temp'] ?? null);
+                }
+            }
+            $telCpu = (array) ($telemetry['cpu'] ?? []);
+            if ($telCpu !== []) {
+                $cpuThermal = (array) ($telCpu['thermal'] ?? []);
+                if (!empty($cpuThermal['package_c'])) {
+                    $sensors['cpu_temp_max'] = $cpuThermal['package_c'];
+                }
+                if (!empty($cpuThermal['hotspot_c'])) {
+                    $sensors['cpu_hotspot_max'] = $cpuThermal['hotspot_c'];
+                }
             }
         }
 
@@ -52,23 +75,42 @@ class DiagnosticAgentService
         $storageList = is_array($storage) ? $storage : [];
         $primaryStorage = $storageList[0] ?? [];
 
+        $gpuHotspot = $sensors['gpu_hotspot_max']
+            ?? $nvidia['temp_hotspot_c']
+            ?? null;
+        $gpuCore = $sensors['gpu_temp_max']
+            ?? $nvidia['temp_c']
+            ?? null;
+
         return [
             'device' => array_merge($device, [
                 'form_factor' => $device['form_factor'] ?? 'desktop',
                 'platform' => 'windows',
-                'probe_agent' => 'pcverse-probe',
+                'probe_agent' => 'pclab-probe',
+                'elevated' => !empty($agent['elevated']),
             ]),
             'cpu' => array_merge($cpu, [
                 'model' => trim((string) ($cpu['model'] ?? '')),
                 'cores' => (int) ($cpu['cores'] ?? 0),
                 'threads' => (int) ($cpu['threads'] ?? 0),
-                'temp_max' => $sensors['cpu_temp_max'] ?? null,
+                'codename' => $cpu['codename'] ?? null,
+                'hybrid' => !empty($cpu['hybrid']),
+                'performance_cores' => $cpu['performance_cores'] ?? null,
+                'efficiency_cores' => $cpu['efficiency_cores'] ?? null,
+                'temp_max' => $sensors['cpu_temp_max'] ?? ($cpu['package_c'] ?? null),
+                'hotspot_max' => $sensors['cpu_hotspot_max'] ?? ($cpu['hotspot_c'] ?? null),
+                'tjmax_c' => $cpu['tjmax_c'] ?? null,
             ]),
             'gpu' => array_merge($gpu, [
                 'model' => (string) ($nvidia['name'] ?? $gpu['model'] ?? ''),
                 'vram_gb' => (float) ($gpu['vram_gb'] ?? 0),
-                'hotspot_max' => $nvidia['temp_c'] ?? $sensors['gpu_temp_max'] ?? null,
-                'power_w' => $nvidia['power_w'] ?? null,
+                // Hot spot is a distinct sensor. Never fall back to core temp —
+                // that is exactly the bug that hid NVIDIA junction readings.
+                'core_temp' => $gpuCore,
+                'hotspot_max' => $gpuHotspot,
+                'hotspot_delta' => $sensors['gpu_hotspot_delta'] ?? null,
+                'vram_temp' => $sensors['gpu_vram_temp'] ?? null,
+                'power_w' => $nvidia['power_w'] ?? $nvidia['power_draw_w'] ?? null,
                 'pcie_gen' => $nvidia['pcie_gen'] ?? null,
                 'pcie_width' => $nvidia['pcie_width'] ?? null,
                 'cuda_note' => !empty($nvidia) ? 'See nvidia-smi in report' : null,
@@ -97,6 +139,9 @@ class DiagnosticAgentService
             'sensors' => array_merge($sensors, [
                 'throttle_count' => (int) ($sensors['throttle_count'] ?? 0),
             ]),
+            'thermal' => $thermal,
+            'devices' => $devices,
+            'drivers' => $drivers,
             'gaming' => $gaming,
             'peripherals' => (array) ($agent['peripherals'] ?? []),
             'bios' => (array) ($agent['bios'] ?? []),
@@ -104,6 +149,7 @@ class DiagnosticAgentService
             'telemetry' => $telemetry,
             'collected_at' => $agent['collected_at'] ?? date('c'),
             'probe_version' => (int) ($agent['probe_version'] ?? 2),
+            'elevated' => !empty($agent['elevated']),
         ];
     }
 

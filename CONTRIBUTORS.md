@@ -1,4 +1,4 @@
-# Contributors
+﻿# Contributors
 
 | Name | GitHub | Role |
 |------|--------|------|
@@ -6,4 +6,4 @@
 | Hasti | [@hasti1356](https://github.com/hasti1356) | Core team — AI/ML systems |
 | taTalok | [@taha-saadatjou](https://github.com/taha-saadatjou) | Core team — Full-stack (JS, PHP, Python) |
 
-Thank you to everyone who reports issues, suggests features, and helps improve PCVerse.
+Thank you to everyone who reports issues, suggests features, and helps improve PC Lab Kit.

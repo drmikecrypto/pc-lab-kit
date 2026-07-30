@@ -1,84 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers;
 
+/**
+ * Serves portable app archives and the Windows probe ZIP.
+ */
 class DownloadController
 {
-    private const WINDOWS_FILE = 'PCVerse-Setup-Windows-x64.exe';
-    private const LINUX_FILE = 'PCVerse-Setup-Linux-x64.run';
+    private const WINDOWS_APP = 'pc-lab-kit-windows-x64.zip';
+
+    private const LINUX_APP = 'pc-lab-kit-linux-x64.tar.gz';
+
+    private const PROBE_ZIP = 'pc-lab-kit-probe-windows.zip';
 
     private function downloadsRoot(): string
     {
         return dirname(__DIR__, 2) . '/public/downloads';
     }
 
-    public function index(): string
+    public function windowsApp(): void
     {
-        return view('pages/download_hub', [
-            'title' => 'Download PCVerse',
-            'meta_description' => 'One click — Windows or Linux installer with everything you need.',
-            'windows_ready' => $this->isReady('windows'),
-            'linux_ready' => $this->isReady('linux'),
-            'windows_url' => '/download/pcverse-windows-x64',
-            'linux_url' => '/download/pcverse-linux-x64',
-            'suggested_platform' => $this->suggestedPlatform(),
-        ]);
+        $this->sendFile(self::WINDOWS_APP, 'application/zip', 'Windows app not built yet. Run scripts/build-app-windows.ps1');
     }
 
-    /** @deprecated Redirect to hub — single download flow */
-    public function windows(): never
+    public function linuxApp(): void
     {
-        header('Location: /download', true, 302);
-        exit;
+        $this->sendFile(self::LINUX_APP, 'application/gzip', 'Linux app not built yet. Run scripts/build-app-linux.sh');
     }
 
-    /** @deprecated Redirect to hub */
-    public function linuxMac(): never
+    /** Stream the Windows probe agent bundle. */
+    public function probeWindows(): void
     {
-        header('Location: /download', true, 302);
-        exit;
+        $this->sendFile(self::PROBE_ZIP, 'application/zip', 'Probe bundle not built yet. Run scripts/build-agent-bundle.ps1');
     }
 
-    public function windowsInstaller(): void
-    {
-        $this->sendFile(self::WINDOWS_FILE, 'application/octet-stream');
-    }
-
-    public function linuxInstaller(): void
-    {
-        $this->sendFile(self::LINUX_FILE, 'application/octet-stream');
-    }
-
-    private function isReady(string $platform): bool
-    {
-        $file = $platform === 'windows' ? self::WINDOWS_FILE : self::LINUX_FILE;
-
-        return is_file($this->downloadsRoot() . '/' . $file);
-    }
-
-    private function suggestedPlatform(): ?string
-    {
-        $ua = strtolower((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
-        if ($ua === '') {
-            return null;
-        }
-        if (str_contains($ua, 'windows')) {
-            return 'windows';
-        }
-        if (str_contains($ua, 'linux')) {
-            return 'linux';
-        }
-
-        return null;
-    }
-
-    private function sendFile(string $filename, string $contentType): void
+    private function sendFile(string $filename, string $contentType, string $missingMessage): void
     {
         $path = $this->downloadsRoot() . '/' . $filename;
         if (!is_file($path)) {
             http_response_code(404);
             header('Content-Type: text/plain; charset=utf-8');
-            echo "Installer not built yet. Run scripts/build-installer-windows.ps1 or scripts/build-installer-linux.sh";
+            echo $missingMessage;
 
             exit;
         }

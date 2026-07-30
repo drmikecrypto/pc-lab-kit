@@ -13,9 +13,9 @@ class DiagnosticRgbService
     public function catalog(): array
     {
         return [
-            'engine' => 'vakhsh',
+            'engine' => 'orchestrator',
             'tagline_fa' => 'Open-source core · قابلیت SignalRGB + Fan Control + AIDA64 panel — بدون bloat',
-            'privacy_fa' => 'GIF، dashboard و fan curve فقط روی PC شما — سرور PCVerse هیچ فایلی نمی‌گیرد.',
+            'privacy_fa' => 'GIF، dashboard و fan curve فقط روی PC شما — سرور PC Lab Kit هیچ فایلی نمی‌گیرد.',
             'philosophy_fa' => 'یک کنترلر سبک به‌جای iCUE + Armoury Crate + CAM + SignalRGB همزمان. بدون RAM leak، بدون خراب کردن telemetry.',
             'effects' => [
                 ['id' => 'static', 'label_fa' => 'ثابت'],
@@ -27,7 +27,7 @@ class DiagnosticRgbService
                 ['id' => 'off', 'label_fa' => 'خاموش'],
                 ['id' => 'gif', 'label_fa' => 'GIF (LCD)', 'lcd_only' => true],
             ],
-            'vakhsh_profiles' => [
+            'orchestrator_profiles' => [
                 ['id' => 'dashboard_thermal', 'label_fa' => 'داشبورد حرارتی', 'desc_fa' => 'RGB = telemetry زنده — مثل setup حرفه‌ای'],
                 ['id' => 'thermal_warning', 'label_fa' => 'هشدار دما', 'desc_fa' => 'GPU/CPU > 85°C → قرمز pulse'],
                 ['id' => 'gaming_pulse', 'label_fa' => 'گیمینگ', 'desc_fa' => 'load بالا → spectrum + سرعت بیشتر'],
@@ -59,7 +59,7 @@ class DiagnosticRgbService
      */
     public function orchestrate(array $telemetry, array $context = []): array
     {
-        $lighting = new DiagnosticVakhshLightingService();
+        $lighting = new DiagnosticOrchestratorService();
         $plan = $lighting->buildOrchestrationPlan($telemetry, $context);
 
         return [
@@ -74,7 +74,7 @@ class DiagnosticRgbService
      */
     public function narrateApply(array $plan, array $applyResult): array
     {
-        return (new DiagnosticVakhshLightingService())->narrate($plan, $applyResult);
+        return (new DiagnosticOrchestratorService())->narrate($plan, $applyResult);
     }
 
     /** @return array{title_fa: string, why_fa: string, steps_fa: list<string>} */
@@ -82,11 +82,11 @@ class DiagnosticRgbService
     {
         return [
             'title_fa' => 'فعال‌سازی RGB — چرا الان فقط detect می‌بینی؟',
-            'why_fa' => 'LED کیس از USB/SMBus کنترل می‌شود. iCUE و Armoury Crate «درایور» نصب می‌کنند ولی سنگین و conflict‌زا هستند. PCVerse Probe با OpenRGB portable — user-mode، سبک، بدون spyware برند.',
+            'why_fa' => 'LED کیس از USB/SMBus کنترل می‌شود. iCUE و Armoury Crate «درایور» نصب می‌کنند ولی سنگین و conflict‌زا هستند. PcLab Probe با OpenRGB portable — user-mode، سبک، بدون spyware برند.',
             'steps_fa' => [
-                'OpenRGB.exe → agent/pcverse_probe/tools/OpenRGB/',
+                'OpenRGB.exe → agent/pclab_probe/tools/OpenRGB/',
                 'iCUE · NZXT CAM · SignalRGB · Armoury Crate را ببند',
-                'Start-PCVerseProbe.bat → Run as Administrator',
+                'Start-PcLabProbe.bat → Run as Administrator',
                 '«setup حرفه‌ای وخش» را بزن',
             ],
         ];

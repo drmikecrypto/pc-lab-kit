@@ -317,10 +317,10 @@ class BenchmarkDatasetService
         return (int) min(100, max(1, round(($below / count($scores)) * 100)));
     }
 
-    /** Compact context string for LLM / Amin recommendations. */
+    /** Compact context string for LLM / Advisor recommendations. */
     public function buildAiContext(array $selectedParts, array $analysis = []): string
     {
-        $lines = ['=== PCVerse benchmark context (PassMark lab + gold crowd datasets) ==='];
+        $lines = ['=== PC Lab Kit benchmark context (PassMark lab + gold crowd datasets) ==='];
         foreach ($selectedParts as $p) {
             $match = $this->matchPart($p);
             if (!$match) {

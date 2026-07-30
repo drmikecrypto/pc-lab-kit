@@ -1,4 +1,4 @@
-.dx-hero { padding: 56px 0 32px; background: linear-gradient(180deg, rgba(34,211,238,0.06), transparent); border-bottom: 1px solid rgba(255,255,255,0.06); }
+﻿.dx-hero { padding: 56px 0 32px; background: linear-gradient(180deg, rgba(34,211,238,0.06), transparent); border-bottom: 1px solid rgba(255,255,255,0.06); }
 .dx-badge { font-size: 11px; letter-spacing: 0.2em; color: #22d3ee; margin-bottom: 12px; }
 .dx-title { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; margin: 0 0 12px; }
 .dx-gradient { background: linear-gradient(90deg, #f29f05, #22d3ee); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -200,7 +200,7 @@ html[data-dx-focus="full-scan"] #dx-wizard {
 .dx-metric strong { display: block; font-size: 1.1rem; color: #22d3ee; }
 .dx-risk { padding: 10px; border-radius: 10px; margin-bottom: 6px; border-right: 3px solid #ef4444; background: rgba(239,68,68,0.08); font-size: 13px; }
 
-.dx-vakhsh-oc-wrap { margin-top: 24px; }
+.dx-oc-panel-wrap { margin-top: 24px; }
 .dx-oc-panel { padding: 24px; border-radius: 20px; border: 1px solid rgba(242,159,5,0.25); }
 .dx-oc-brand { font-size: 11px; letter-spacing: 0.15em; color: #f29f05; font-weight: 800; margin-bottom: 4px; }
 .dx-oc-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; margin-bottom: 16px; }

@@ -1,35 +1,35 @@
 <?php
 
 /**
- * PCVerse — local diagnostic lab configuration (English UI).
+ * PC Lab Kit — local diagnostic lab configuration (English UI).
  */
 return [
     'product' => [
-        'name' => 'PCVerse',
+        'name' => 'PC Lab Kit',
         'tagline' => 'Local PC laboratory — probe, test, monitor, tune.',
-        'lite_tagline' => 'Quick health quiz — full scan runs locally via PCVerse Probe.',
+        'lite_tagline' => 'Quick health quiz — full scan runs locally via PcLab Probe.',
         'full_tagline' => 'One local lab for monitoring, benchmarks, stress tests, storage, RGB, and LCD — replaces 80 separate apps.',
         'engine_label' => 'Engine — depth · telemetry · RGB · safe OC',
         'advisor_label' => 'Advisor — insight · bottleneck · guidance',
     ],
     'rgb' => [
         'max_gif_mb' => 25,
-        'openrgb_bundle_path' => 'agent/pcverse_probe/tools/OpenRGB/OpenRGB.exe',
+        'openrgb_bundle_path' => 'agent/pclab_probe/tools/OpenRGB/OpenRGB.exe',
     ],
     'app_download' => [
-        'windows' => '/download/pcverse-windows-x64',
-        'linux' => '/download/pcverse-linux-x64',
-        'hub' => '/download',
-        'fallback' => '/download',
+        'windows' => '/download/probe-windows',
+        'linux' => '/download/probe-windows',
+        'hub' => '/download/probe-windows',
+        'fallback' => '/download/probe-windows',
     ],
     'downloads' => [
-        'hub' => '/download',
-        'windows' => '/download/pcverse-windows-x64',
-        'linux' => '/download/pcverse-linux-x64',
+        'hub' => '/download/probe-windows',
+        'windows' => '/download/probe-windows',
+        'linux' => '/download/probe-windows',
     ],
     'windows_agent' => [
-        'name' => 'PCVerse Probe',
-        'download_url' => '/download/pcverse-windows-x64',
+        'name' => 'PcLab Probe',
+        'download_url' => '/download/probe-windows',
         'local_host' => '127.0.0.1',
         'local_port' => 18765,
         'health_path' => '/health',

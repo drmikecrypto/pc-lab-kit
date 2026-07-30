@@ -111,7 +111,7 @@ class UsdtExchangeService
         $ctx = stream_context_create([
             'http' => [
                 'timeout' => 8,
-                'header' => "Accept: application/json\r\nUser-Agent: PCVerse/1.0\r\n",
+                'header' => "Accept: application/json\r\nUser-Agent: PcLabKit/1.0\r\n",
             ],
             'ssl' => [
                 'verify_peer' => true,

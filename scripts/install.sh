@@ -6,7 +6,7 @@ cd "$ROOT"
 # shellcheck source=bootstrap-build-tools.sh
 source "$ROOT/scripts/bootstrap-build-tools.sh"
 
-echo "PCVerse — install"
+echo "PC Lab Kit — install"
 ensure_build_tools
 
 if [[ ! -f .env ]]; then

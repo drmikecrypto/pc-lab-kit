@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * PCVerse Diagnostic Lab — lite web scan + full hardware report analysis.
+ * PC Lab Kit Diagnostic Lab — lite web scan + full hardware report analysis.
  */
 class DiagnosticService
 {
@@ -65,7 +65,7 @@ class DiagnosticService
             'bottleneck' => $bottleneck,
             'upgrade_suggestions' => $upgrades,
             'needs_full_scan' => true,
-            'full_scan_reason' => 'For real temps, voltage, frametime, battery health, and sensors, run a full scan with PCVerse Probe.',
+            'full_scan_reason' => 'For real temps, voltage, frametime, battery health, and sensors, run a full scan with PcLab Probe.',
             'app_download' => $this->appDownloadForUserAgent($answers['user_agent'] ?? ''),
         ];
     }
@@ -81,7 +81,7 @@ class DiagnosticService
         $agentSvc = new DiagnosticAgentService();
         $importSvc = new DiagnosticImportService();
 
-        if (($report['probe_version'] ?? 0) >= 2 || ($report['agent'] ?? '') === 'pcverse-probe') {
+        if (($report['probe_version'] ?? 0) >= 2 || ($report['agent'] ?? '') === 'pclab-probe') {
             $report = $agentSvc->normalize($report);
         }
 
@@ -136,22 +136,81 @@ class DiagnosticService
 
         $gameIds = array_slice((array) ($report['selected_games'] ?? []), 0, 20);
         $gameSettings = $this->predictGameSettings($metrics, $gameIds);
+        $percentiles = $this->attachPercentiles($metrics, $normalized);
+        $reportSummary = $this->buildReportSummary($normalized);
 
         $result = [
             'mode' => 'full',
             'health_score' => $health,
             'health_grade' => $this->grade($health),
             'metrics' => $metrics,
+            'percentiles' => $percentiles,
             'bottleneck' => $bottleneck,
             'risks' => $risks,
             'upgrade_suggestions' => $upgrades,
             'game_settings' => $gameSettings,
-            'report_summary' => $this->buildReportSummary($normalized),
+            'report_summary' => $reportSummary,
         ];
 
-        $result['vakhsh_oc'] = (new DiagnosticOcService())->buildPlan($report, $result);
+        $result['hardware_graph'] = (new HardwareKnowledgeGraphService())->fromProbe($normalized, $result);
+        $result['oc_plan'] = (new DiagnosticOcService())->buildPlan($report, $result);
 
         return $result;
+    }
+
+    /**
+     * Dataset percentiles for report export + AI context.
+     *
+     * @param array<string, mixed> $metrics
+     * @param array<string, mixed> $normalized
+     * @return array<string, int>
+     */
+    private function attachPercentiles(array $metrics, array $normalized): array
+    {
+        $parts = [];
+        $cpuModel = (string) ($metrics['cpu_model'] ?? $normalized['cpu']['model'] ?? '');
+        $gpuModel = (string) ($metrics['gpu_model'] ?? $normalized['gpu']['model'] ?? '');
+        if ($cpuModel !== '' || (int) ($metrics['cpu_score'] ?? 0) > 0) {
+            $parts[] = [
+                'category_slug' => 'cpu',
+                'model' => $cpuModel,
+                'name' => $cpuModel,
+                'benchmark_score' => (int) ($metrics['cpu_score'] ?? 0),
+            ];
+        }
+        if ($gpuModel !== '' || (int) ($metrics['gpu_score'] ?? 0) > 0) {
+            $parts[] = [
+                'category_slug' => 'gpu',
+                'model' => $gpuModel,
+                'name' => $gpuModel,
+                'benchmark_score' => (int) ($metrics['gpu_score'] ?? 0),
+            ];
+        }
+        $ramGb = (int) ($metrics['ram_gb'] ?? 0);
+        if ($ramGb > 0) {
+            $parts[] = [
+                'category_slug' => 'ram',
+                'model' => $ramGb . 'GB',
+                'benchmark_score' => $ramGb * 250,
+            ];
+        }
+
+        if ($parts === []) {
+            return [];
+        }
+
+        $board = $this->benchAnalyze->analyze($parts);
+
+        return array_filter([
+            'cpu' => (int) ($board['cpu_percentile'] ?? 0),
+            'gpu' => (int) ($board['gpu_percentile'] ?? 0),
+            'ram' => (int) ($board['ram_percentile'] ?? 0),
+            'storage' => (int) ($board['storage_percentile'] ?? 0),
+            'gaming' => (int) ($board['gaming_score_percent'] ?? 0),
+            'workstation' => (int) ($board['workstation_score_percent'] ?? 0),
+            'balance' => (int) ($board['balance_percent'] ?? 0),
+            'overall_score' => (int) ($board['overall_score'] ?? 0),
+        ], static fn ($v) => (int) $v > 0);
     }
 
     /** @param list<string> $gameIds */
@@ -310,8 +369,15 @@ class DiagnosticService
     {
         $gpu = (array) ($report['gpu'] ?? []);
         $nvidia = (array) ($report['nvidia_smi'] ?? []);
-        if (empty($gpu['hotspot_max']) && isset($nvidia['temp_c'])) {
-            $gpu['hotspot_max'] = $nvidia['temp_c'];
+        $sensors = (array) ($report['sensors'] ?? []);
+        // Hot spot is its own sensor. Core temp must never masquerade as hotspot.
+        if (empty($gpu['hotspot_max'])) {
+            $gpu['hotspot_max'] = $sensors['gpu_hotspot_max']
+                ?? $nvidia['temp_hotspot_c']
+                ?? null;
+        }
+        if (empty($gpu['core_temp'])) {
+            $gpu['core_temp'] = $sensors['gpu_temp_max'] ?? $nvidia['temp_c'] ?? null;
         }
 
         return [
@@ -434,6 +500,8 @@ class DiagnosticService
         }
 
         return [
+            'cpu_model' => (string) ($cpu['model'] ?? ''),
+            'gpu_model' => (string) ($gpu['model'] ?? ''),
             'cpu_score' => $cpuScore,
             'gpu_score' => $gpuScore,
             'ram_gb' => (int) ($ram['total_gb'] ?? $ram['capacity_gb'] ?? 0),
@@ -444,12 +512,16 @@ class DiagnosticService
             'frametime_variance' => (float) ($gaming['frametime_variance'] ?? 0),
             'spike_count' => (int) ($gaming['spike_count'] ?? ($gaming['spike_map']['stats']['spike_count'] ?? 0)),
             'cpu_temp_max' => (float) ($normalized['sensors']['cpu_temp_max'] ?? $cpu['temp_max'] ?? 0),
-            'gpu_temp_max' => (float) ($normalized['sensors']['gpu_temp_max'] ?? $gpu['temp_max'] ?? 0),
-            'gpu_hotspot_max' => (float) ($gpu['hotspot_max'] ?? 0),
+            'cpu_hotspot_max' => (float) ($normalized['sensors']['cpu_hotspot_max'] ?? $cpu['hotspot_max'] ?? 0),
+            'gpu_temp_max' => (float) ($normalized['sensors']['gpu_temp_max'] ?? $gpu['core_temp'] ?? $gpu['temp_max'] ?? 0),
+            'gpu_hotspot_max' => (float) ($gpu['hotspot_max'] ?? $normalized['sensors']['gpu_hotspot_max'] ?? 0),
+            'gpu_hotspot_delta' => (float) ($gpu['hotspot_delta'] ?? $normalized['sensors']['gpu_hotspot_delta'] ?? 0),
             'battery_health_pct' => (float) ($normalized['battery']['health_percent'] ?? 0),
             'throttle_events' => (int) ($normalized['sensors']['throttle_count'] ?? 0),
+            'throttle_detected' => ((int) ($normalized['sensors']['throttle_count'] ?? 0)) > 0,
             'lan_link_mbps' => (int) ($normalized['network']['lan_speed_mbps'] ?? 0),
             'wifi_standard' => (string) ($normalized['network']['wifi_standard'] ?? ''),
+            'storage_type' => (string) ($normalized['storage'][0]['type'] ?? $normalized['storage']['type'] ?? ''),
         ];
     }
 
@@ -511,6 +583,11 @@ class DiagnosticService
         if ($m['gpu_hotspot_max'] > 100) {
             $risks[] = ['code' => 'gpu_hotspot', 'severity' => 'critical', 'message' => 'GPU hotspot too high — undervolt or repaste.'];
         }
+        if (($m['gpu_hotspot_delta'] ?? 0) >= 27 && ($m['gpu_hotspot_max'] ?? 0) > 0) {
+            $risks[] = ['code' => 'gpu_hotspot_delta', 'severity' => 'critical', 'message' => 'GPU hot-spot delta is ' . $m['gpu_hotspot_delta'] . '°C — paste pumped out or cooler seating issue.'];
+        } elseif (($m['gpu_hotspot_delta'] ?? 0) >= 20 && ($m['gpu_hotspot_max'] ?? 0) > 0) {
+            $risks[] = ['code' => 'gpu_hotspot_delta', 'severity' => 'warn', 'message' => 'GPU hot-spot delta is elevated (' . $m['gpu_hotspot_delta'] . '°C). Watch under load.'];
+        }
         if ($m['throttle_events'] > 0) {
             $risks[] = ['code' => 'throttle', 'severity' => 'high', 'message' => 'Thermal or power throttling detected.'];
         }
@@ -549,13 +626,13 @@ class DiagnosticService
 
     private function appDownloadForUserAgent(string $ua): array
     {
-        $probe = (string) ($this->config['windows_agent']['download_url'] ?? '/download/pcverse-windows-x64');
+        $probe = (string) ($this->config['windows_agent']['download_url'] ?? '/download/probe-windows');
 
         return [
             'platform' => 'windows',
             'url' => $probe,
             'download_url' => $probe,
-            'label' => 'Download PCVerse Probe',
+            'label' => 'Download PcLab Probe',
         ];
     }
 

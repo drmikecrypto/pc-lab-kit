@@ -1,5 +1,5 @@
-(function () {
-  const cfg = window.PCVERSE_DIAGNOSTIC || {};
+﻿(function () {
+  const cfg = window.PCLAB_DIAGNOSTIC || {};
   const AGENT = (cfg.agentBase || '').replace(/\/+$/, '') || 'http://127.0.0.1:18765';
   const POLL_MS = 3000;
   let activeTab = 'cpu';
@@ -122,7 +122,7 @@
     }
     if (!telemetryTracked && window.dxTrackLab) {
       telemetryTracked = true;
-      window.dxTrackLab('vakhsh_telemetry_open', { hwmon: !!hwmon });
+      window.dxTrackLab('telemetry_open', { hwmon: !!hwmon });
     }
   }
 
@@ -130,7 +130,7 @@
     const st = document.getElementById('dx-tel-status');
     if (st) {
       st.className = 'dx-tel-status offline';
-      st.textContent = 'Probe offline — run Start-PCVerseProbe.bat';
+      st.textContent = 'Probe offline — run Start-PcLabProbe.bat';
     }
     if (!lastProbe) {
       document.getElementById('dx-tel-highlights').innerHTML = '';
@@ -138,7 +138,7 @@
       document.getElementById('dx-tel-panels').innerHTML = `<div class="dx-tel-empty">
         <p><strong>Deep Telemetry Console</strong></p>
         <p>LibreHardwareMonitor · PresentMon · per-core · SMART · WHEA · sparklines</p>
-        <p><code>Start-PCVerseProbe.bat</code></p>
+        <p><code>Start-PcLabProbe.bat</code></p>
       </div>`;
     }
   }

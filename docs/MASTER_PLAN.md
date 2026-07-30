@@ -1,9 +1,9 @@
 # PC Lab Kit → The Unified Local PC Laboratory
 
-**Strategic master plan** — from extractable bundle to open-source replacement for the scattered PC enthusiast / builder / reviewer toolchain.
+**Strategic master plan** — historical roadmap. Parts of this document still describe retired PCVerse shells (native Qt, installers, Flutter). The shipping product in this repository is the **standalone PHP web lab + Windows probe** only; see [INTEGRATION.md](INTEGRATION.md) and the root [README](../README.md).
 
-**Status:** Planning document  
-**Last updated:** 2026-06-14  
+**Status:** Historical planning document  
+**Last updated:** 2026-07-30 (standalone note)  
 **Repository:** [pc-lab-kit](../README.md)
 
 ---
@@ -53,12 +53,12 @@ This is credible because ~40% of the hard parts are already built inside this ki
 
 | Layer | Status | Strength |
 |-------|--------|----------|
-| **Windows Agent** (`agent/pcverse_probe/`) | Substantial | Probe, telemetry ring buffer, OC apply/rollback, OpenRGB, LCD GIF, Vakhsh orchestration |
+| **Windows Agent** (`agent/pclab_probe/`) | Substantial | Probe, telemetry ring buffer, OC apply/rollback, OpenRGB, LCD GIF, Orchestrator orchestration |
 | **Analysis engine** (13 PHP services) | Substantial | Health scoring, bottlenecks, import parsers (HWiNFO, CapFrameX, CPU-Z), OC safety gates, consultant |
 | **Web lab UI** | Built but hidden | Full `diagnostic.php` + telemetry/RGB/OC JS — currently redirected to pitch pages |
 | **Flutter module** | Partial | Strong PC test flow; RGB/OC parity missing vs web |
 | **Benchmark data** | 19 JSON datasets | Reference scoring data — **not yet wired** (needs `BenchmarkDatasetService`) |
-| **AI** | Optional LLM | Rule-based fallback exists; persona "Amin" + structured JSON output |
+| **AI** | Optional LLM | Rule-based fallback exists; persona "Advisor" + structured JSON output |
 | **OC safety** | Real | Thermal margins, blockers, baseline save, one-click rollback in `overclock.ps1` |
 
 ### Critical gap
@@ -146,7 +146,7 @@ flowchart TB
     subgraph shell [PC Lab Kit Shell]
         UI[Desktop UI - Tauri or Flutter]
         CORE[Local Core API]
-        AGENT[PCVerse Probe Agent]
+        AGENT[PcLab Probe Agent]
         AI[AI Advisor BYOK]
         KG[Hardware Knowledge Graph]
     end
@@ -176,7 +176,7 @@ flowchart TB
         R3[Fan curves via vendor APIs where possible]
     end
 
-    subgraph mod5 [OC Vakhsh]
+    subgraph mod5 [OC Orchestrator]
         O1[Safety-gated OS-level tuning]
         O2[Baseline + rollback]
         O3[BIOS/XMP advisory only - no silent voltage]
@@ -225,7 +225,7 @@ flowchart TB
 └──────────────────────────┼──────────────────────────────────┘
                            │ localhost:18765
 ┌──────────────────────────▼──────────────────────────────────┐
-│  PCVerse Probe Agent (PowerShell → migrate hot paths to Rust)│
+│  PcLab Probe Agent (PowerShell → migrate hot paths to Rust)│
 │  Probe · Telemetry · OC · RGB · Stress orchestration         │
 └─────────────────────────────────────────────────────────────┘
                            │
@@ -256,7 +256,7 @@ Flutter app (LabHub / PcTest / RgbLab)     Web diagnostic lab
          │  HTTP 127.0.0.1:18765                    │
          └──────────────────┬───────────────────────┘
                             ▼
-                   PCVerse Probe Agent
+                   PcLab Probe Agent
                             │
                             ▼
               Local Core API (Tauri/Rust or PHP Phase 0)
@@ -275,9 +275,9 @@ Flutter app (LabHub / PcTest / RgbLab)     Web diagnostic lab
 |---------|----------|
 | Persian-first RTL lab | **Bilingual EN/FA** — English README + UI for GitHub; FA as locale |
 | Orange `#F29F05` + Cyan `#22D3EE` | Keep — strong, distinctive, not "gaming RGB cringe" |
-| "Vakhsh" + "Amin" personas | Keep internally; expose as **Engine** + **Advisor** in English UI |
+| "Engine" + "Advisor" personas | Keep internally; expose as **Engine** + **Advisor** in English UI |
 
-Brand tokens (existing in `pcverse_app/lib/core/pcverse_brand_tokens.dart`):
+Brand tokens (existing in `pclab_app/lib/core/pclab_brand_tokens.dart`):
 
 - Primary orange: `#F29F05`
 - Secondary cyan: `#22D3EE`
@@ -290,7 +290,7 @@ Brand tokens (existing in `pcverse_app/lib/core/pcverse_brand_tokens.dart`):
 2. **3D System Topology** (three.js) — clickable GPU/CPU/RAM with live temps on nodes
 3. **Telemetry River** — sparklines (existing), upgraded to 60fps canvas with power overlay
 4. **Benchmark Arena** — side-by-side vs reference DB (JSON datasets) + percentile rings
-5. **Vakhsh OC Panel** — safety score ring, blockers list, one-click Apply with 10s countdown + auto-rollback on thermal breach
+5. **Orchestrator OC Panel** — safety score ring, blockers list, one-click Apply with 10s countdown + auto-rollback on thermal breach
 6. **Advisor Panel** — structured cards: Upgrade / Thermal / Stability / $/perf — not chat-only slop
 7. **Lottie state transitions** — scan complete, stress pass/fail, OC applied
 
@@ -333,7 +333,7 @@ Validated JSON schema → UI cards
 - **Bottleneck diagnosis** with confidence %
 - **Upgrade paths**: Budget / Balanced / Enthusiast (uses benchmark JSON for $/perf)
 - **Thermal risk** with measured headroom
-- **OC recommendation** tied to Vakhsh safety score
+- **OC recommendation** tied to Orchestrator safety score
 - **Game settings** (300-game catalog in `config/diagnostic_games.json`)
 - **"Do not upgrade"** honest stance when CPU/GPU balanced
 
@@ -341,7 +341,7 @@ Validated JSON schema → UI cards
 
 - `DiagnosticAiService.php` — LLM narrative with rule-based fallback
 - `DiagnosticConsultantService.php` — rule-based consultant (no PII)
-- Persona: **Amin**, PCVerse hardware strategist
+- Persona: **Advisor**, PC Lab Kit hardware strategist
 - Structured JSON fields: `headline_fa`, `summary_fa`, `upgrade_plan_fa`, `burn_risk_fa`, `swap_pairs_fa`
 
 ### Supported AI providers (target)
@@ -359,7 +359,7 @@ Validated JSON schema → UI cards
 
 ### Already implemented philosophy
 
-Source: `app/Services/DiagnosticOcService.php`, `agent/pcverse_probe/ProbeLib/overclock.ps1`
+Source: `app/Services/DiagnosticOcService.php`, `agent/pclab_probe/ProbeLib/overclock.ps1`
 
 **Safety gates:**
 
@@ -384,9 +384,9 @@ Source: `app/Services/DiagnosticOcService.php`, `agent/pcverse_probe/ProbeLib/ov
 
 **Rollback:**
 
-- Baseline saved to `%LOCALAPPDATA%\PCVerseProbe\oc-baseline.json`
+- Baseline saved to `%LOCALAPPDATA%\PcLabKit\Probe\oc-baseline.json`
 - `POST /oc/rollback` on agent
-- Disclaimer: *"Vakhsh only applies reversible OS/GPU settings. XMP/BIOS and manual voltage require separate confirmation."*
+- Disclaimer: *"Orchestrator only applies reversible OS/GPU settings. XMP/BIOS and manual voltage require separate confirmation."*
 
 ### Enhancements for v1 launch
 
@@ -405,7 +405,7 @@ Source: `app/Services/DiagnosticOcService.php`, `agent/pcverse_probe/ProbeLib/ov
 ```
 pc-lab-kit/
 ├── apps/desktop/          # Tauri shell
-├── agent/                 # PCVerse Probe (existing)
+├── agent/                 # PcLab Probe (existing)
 ├── core/                  # Rust analysis + benchmark runners
 ├── datasets/benchmark/    # JSON datasets + LICENSE/attribution
 ├── ui/                    # shared web components
@@ -435,7 +435,7 @@ pc-lab-kit/
 | GitHub repo | `pc-lab-kit` (current) or `pclab` for short |
 | Product name | **PC Lab Kit** |
 | Tagline | *"Local PC laboratory"* |
-| Parent brand | PCVerse optional in About |
+| Parent brand | PC Lab Kit optional in About |
 
 ---
 
@@ -514,7 +514,7 @@ pc-lab-kit/
 
 **Goal:** Replace SignalRGB + Rainmeter slice
 
-- [ ] Full Flutter/Tauri parity for RGB apply + Vakhsh orchestration
+- [ ] Full Flutter/Tauri parity for RGB apply + Orchestrator orchestration
 - [ ] Sensor Deck: drag-drop gauges, export Rainmeter/HWiNFO SM
 - [ ] LCD GIF pipeline polish
 
@@ -550,7 +550,7 @@ pc-lab-kit/
 2. **Confirm language:** English-first for GitHub, bilingual UI
 3. **Phase 0 sprint:** Standalone runnable kit (biggest unblocker)
 4. **Design pass:** 3D topology mock + Command Center layout
-5. **Rename personas** for international README while keeping Vakhsh/Amin in FA locale
+5. **Rename personas** for international README while keeping Engine/Advisor in FA locale
 
 ### Recommended start
 
@@ -577,7 +577,7 @@ pc-lab-kit/
 
 ## Appendix: existing kit inventory
 
-### Agent endpoints (`PCVerseProbeServe.ps1`)
+### Agent endpoints (`PcLabProbeServe.ps1`)
 
 | Endpoint | Purpose |
 |----------|---------|
@@ -585,9 +585,9 @@ pc-lab-kit/
 | `GET /probe` | Full hardware JSON scan |
 | `GET /telemetry` | Fast counters + ring buffer sample |
 | `GET /telemetry/history` | 120-sample sparkline buffer |
-| `GET /oc/status`, `POST /oc/apply`, `POST /oc/rollback` | Vakhsh auto-OC |
-| `GET /rgb/scan`, `POST /rgb/apply`, `POST /rgb/lcd`, `POST /rgb/vakhsh` | RGB/LCD control |
-| `POST /vakhsh/orchestrate` | Professional RGB+fan+LCD setup |
+| `GET /oc/status`, `POST /oc/apply`, `POST /oc/rollback` | Orchestrator auto-OC |
+| `GET /rgb/scan`, `POST /rgb/apply`, `POST /rgb/lcd`, `POST /rgb/auto` | RGB/LCD control |
+| `POST /orchestrate` | Professional RGB+fan+LCD setup |
 
 ### API routes (to extract)
 
@@ -595,7 +595,7 @@ See [INTEGRATION.md](./INTEGRATION.md) for full list including:
 
 - `POST /api/diagnostic/lite`, `/full`, `/agent`, `/import`
 - `POST /api/diagnostic/oc/plan`
-- `POST /api/diagnostic/vakhsh/orchestrate`
+- `POST /api/diagnostic/orchestrate`
 - `GET /api/diagnostic/games`, `/history`, `/live`
 
 ### Benchmark datasets (19 JSON files)

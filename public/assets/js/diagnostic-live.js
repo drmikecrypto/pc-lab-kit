@@ -1,6 +1,6 @@
-(function () {
+﻿(function () {
   const POLL_MS = 8000;
-  const cfg = window.PCVERSE_DIAGNOSTIC || {};
+  const cfg = window.PCLAB_DIAGNOSTIC || {};
   const AGENT = (cfg.agentBase || '').replace(/\/+$/, '') || 'http://127.0.0.1:18765';
   let lastFeedHash = '';
   let pollTimer = null;
@@ -11,7 +11,7 @@
   /** Match ApiClient / tracker fingerprint so diagnostic live + report use the same user key on MariaDB. */
   function fpQuery() {
     try {
-      const fp = localStorage.getItem('_pcverse_fp') || '';
+      const fp = localStorage.getItem('pclab_fp') || '';
       return fp ? '?fp=' + encodeURIComponent(fp) : '';
     } catch (_) {
       return '';
@@ -112,7 +112,7 @@
       if (t.category) {
         const examples = (t.examples || []).slice(0, 3).join(', ');
         return `<div class="dx-tool-card active" title="${esc(examples)}">
-          <span class="dx-tool-check">✓ PCVerse</span>
+          <span class="dx-tool-check">✓ PC Lab Kit</span>
           <span class="dx-tool-name">${esc(t.category)}</span>
           <span class="dx-tool-live">${t.live_count}/${t.tool_count} live${examples ? ' · ' + esc(examples) : ''}</span>
         </div>`;
@@ -122,7 +122,7 @@
         ? `<span class="dx-tool-live">${esc(t.live_label || '')}: ${formatSample(t.live_sample)}</span>`
         : `<span class="dx-tool-live muted">✓ Replaced</span>`;
       return `<div class="dx-tool-card${active ? ' active' : ''}" title="${esc(t.desc || t.desc_fa || '')}">
-        <span class="dx-tool-check">✓ PCVerse</span>
+        <span class="dx-tool-check">✓ PC Lab Kit</span>
         <span class="dx-tool-name">${esc(t.name)}</span>
         ${live}
       </div>`;
@@ -259,20 +259,107 @@
     try {
       const h = await fetch(`${AGENT}/health`, { mode: 'cors' });
       if (!h.ok) throw new Error('no agent');
+      const health = await h.json().catch(() => ({}));
       const probe = await (await fetch(`${AGENT}/probe`, { mode: 'cors' })).json();
       strip.classList.add('visible');
 
       const nvidia = probe.nvidia_smi || {};
       const sensors = probe.sensors || {};
-      setSensor('dx-s-cpu', sensors.cpu_temp_max, '°C', 80, 90);
-      setSensor('dx-s-gpu', nvidia.temp_c || sensors.gpu_temp_max, '°C', 80, 88);
+      const thermal = probe.thermal || {};
+      const cpuT = (thermal.cpu || {});
+      const gpuT = (probe.telemetry && probe.telemetry.gpu && probe.telemetry.gpu.thermal)
+        ? probe.telemetry.gpu.thermal
+        : (sensors);
+
+      setSensor('dx-s-cpu', cpuT.package_c || sensors.cpu_temp_max, '°C', 80, 90);
+      setSensor('dx-s-cpu-hs', cpuT.hotspot_c || sensors.cpu_hotspot_max, '°C', 85, 95);
+      setSensor('dx-s-gpu', gpuT.core_c || nvidia.temp_c || sensors.gpu_temp_max, '°C', 80, 88);
+      setSensor('dx-s-gpu-hs', gpuT.hot_spot_c || nvidia.temp_hotspot_c || sensors.gpu_hotspot_max, '°C', 90, 100);
+      const delta = gpuT.hotspot_delta_c != null ? gpuT.hotspot_delta_c : sensors.gpu_hotspot_delta;
+      setSensor('dx-s-gpu-delta', delta, '°C', 20, 27);
       setSensor('dx-s-vram', probe.gpu?.vram_gb, ' GB', null, null);
-      setSensor('dx-s-util', nvidia.gpu_util_pct, '%', null, null);
+      setSensor('dx-s-util', nvidia.gpu_util_pct || (probe.telemetry && probe.telemetry.gpu && probe.telemetry.gpu.render && probe.telemetry.gpu.render.gpu_util_pct), '%', null, null);
       setSensor('dx-s-ram', probe.ram?.total_gb, ' GB', null, null);
       setSensor('dx-s-bat', probe.battery?.health_percent || probe.battery?.estimated_charge, '%', null, null);
+
+      const drivers = probe.drivers || {};
+      const grade = drivers.grade || '—';
+      const score = drivers.score != null ? drivers.score : null;
+      const driverNode = el('dx-s-drivers');
+      if (driverNode) {
+        if (score != null) {
+          driverNode.textContent = score + '/' + grade;
+          driverNode.className = 'dx-sensor-val';
+          if (score < 60) driverNode.classList.add('hot');
+          else if (score < 80) driverNode.classList.add('warn');
+        } else {
+          driverNode.textContent = '—';
+          driverNode.className = 'dx-sensor-val';
+        }
+      }
+
+      const note = el('dx-sensor-note');
+      if (note) {
+        const bits = [];
+        if (health.elevated === false || probe.elevated === false) {
+          bits.push('Probe is not elevated — restart Start-PcLabProbe.bat as Administrator for CPU die temps.');
+        }
+        if (gpuT.hotspot_source && gpuT.hotspot_source !== 'unavailable') {
+          bits.push('GPU hot spot via ' + gpuT.hotspot_source);
+        } else if (!gpuT.hot_spot_c && !sensors.gpu_hotspot_max) {
+          bits.push('GPU hot spot not readable on this adapter.');
+        }
+        const findings = (thermal.findings || []).slice(0, 2);
+        findings.forEach((f) => {
+          if (f && f.title) bits.push(f.title);
+        });
+        if (bits.length) {
+          note.hidden = false;
+          note.textContent = bits.join(' · ');
+        } else {
+          note.hidden = true;
+          note.textContent = '';
+        }
+      }
+
+      renderDriverActions(drivers, probe.devices || {});
     } catch (_) {
       strip.classList.remove('visible');
+      const note = el('dx-sensor-note');
+      if (note) { note.hidden = true; }
+      const box = el('dx-driver-actions');
+      if (box) { box.hidden = true; box.innerHTML = ''; }
     }
+  }
+
+  function renderDriverActions(drivers, devices) {
+    const box = el('dx-driver-actions');
+    if (!box) return;
+    const actions = (drivers.actions || []).filter((a) => a && (a.severity === 'critical' || a.severity === 'warn')).slice(0, 6);
+    const driverless = (devices.driverless || []).slice(0, 4);
+    if (!actions.length && !driverless.length) {
+      box.hidden = true;
+      box.innerHTML = '';
+      return;
+    }
+    box.hidden = false;
+    const actionHtml = actions.map((a) => {
+      const links = (a.links || []).slice(0, 2).map((l) =>
+        `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || 'Download')}</a>`
+      ).join(' · ');
+      return `<div class="dx-driver-card ${esc(a.severity || '')}">
+        <strong>${esc(a.title || '')}</strong>
+        <span class="muted fs-xs">${esc(a.detail || '')}</span>
+        ${links ? `<div class="dx-driver-links">${links}</div>` : ''}
+      </div>`;
+    }).join('');
+    const missingHtml = driverless.map((d) =>
+      `<div class="dx-driver-card critical"><strong>No driver: ${esc(d.name || 'Unknown')}</strong>
+       <span class="muted fs-xs">${esc(d.problem_message || d.category || '')}</span></div>`
+    ).join('');
+    box.innerHTML = `<h4 class="dx-driver-title">Driver advisor</h4>
+      <p class="muted fs-xs">Score ${esc(String(drivers.score ?? '—'))} / ${esc(drivers.grade || '—')} — install in chipset → GPU → audio → network order</p>
+      ${missingHtml}${actionHtml}`;
   }
 
   function setSensor(id, val, unit, warn, hot) {

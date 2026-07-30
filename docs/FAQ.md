@@ -1,51 +1,37 @@
-# PCVerse FAQ
+# FAQ — PC Lab Kit
 
-Short answers for users, search engines, and AI assistants.
+## What is this?
 
-## What is PCVerse?
+A **local** PC laboratory: browser UI for diagnostics plus an optional Windows probe for real sensors, benchmarks, stress, RGB, and safe OS/GPU tuning.
 
-PCVerse is a **local-first PC diagnostic laboratory** for **Windows** and **Linux**. It combines a quick health quiz, deep hardware scan (via PCVerse Probe on Windows), test history, optional AI advice, and imports from tools like HWiNFO — without requiring a cloud account.
+## Does anything leave my PC?
 
-## Is PCVerse free?
+No cloud account is required. Scans and history stay on your machine. Optional AI advisor uses **your** API key against **your** chosen OpenAI-compatible endpoint.
 
-You can download and run PCVerse locally at no charge. The code is **source available** under the [Elastic License 2.0](../LICENSE). Commercial hosted services or trademark use may require a separate agreement with the licensor.
+## How do I get CPU temperatures?
 
-## Does PCVerse upload my PC data to the cloud?
+Run `Start-PcLabProbe.bat` — it elevates so the LibreHardwareMonitor helper (`PcLabHwMon.exe`) can read die/board sensors.
 
-No account is required. Diagnostics and history are stored **on your machine** (SQLite). Optional AI features only call **your** API provider if you enter a key in Settings.
+## Where do I download the app?
 
-## How do I enable AI analysis?
+GitHub Releases: https://github.com/drmikecrypto/pc-lab-kit/releases/latest  
 
-1. Open **http://127.0.0.1:8080/diagnostic**
-2. Click **Settings** (top nav) or **AI advisor** (pill under the title)
-3. Paste your API key, base URL, and model → **Save**
-4. Run a Quick or Full scan — AI analysis appears in the results
+- Windows lab: `pc-lab-kit-windows-x64.zip` → `PcLabKit.bat`
+- Linux lab: `pc-lab-kit-linux-x64.tar.gz` → `./PcLabKit`
+- Windows probe: `pc-lab-kit-probe-windows.zip` → `Start-PcLabProbe.bat`
 
-See the [README](../README.md#optional-ai-advisor-byok) for supported providers and `.env` setup.
+Local mirrors while the lab is running: `/download/windows`, `/download/linux`, `/download/probe-windows`.
 
-## Is PCVerse an alternative to HWiNFO or GPU-Z?
+## Where is the probe download?
 
-For many workflows, yes — PCVerse aims to unify health scoring, reporting, history, and optional AI guidance in one local web lab. On Windows, PCVerse Probe provides deep sensor access similar to dedicated monitoring tools.
+With the lab running: **http://127.0.0.1:8080/download/probe-windows**  
+Or the [latest GitHub release](https://github.com/drmikecrypto/pc-lab-kit/releases/latest).  
+Or build: `.\scripts\build-agent-bundle.ps1`
 
-## How do I install PCVerse?
+## Is this PCVerse?
 
-Download the latest release from [GitHub Releases](https://github.com/drmikecrypto/pc-lab-kit/releases/latest):
+No. This repository is the standalone **PC Lab Kit**. It is not the PCVerse SaaS/mobile product.
 
-- **Windows:** `PCVerse-Setup-Windows-x64.exe` — run installer, optional desktop shortcut
-- **Linux:** `PCVerse-Setup-Linux-x64.run` — `chmod +x` and run
+## License
 
-Developers can clone the repo and run `scripts/install.ps1` or `scripts/install.sh`.
-
-## Can I host PCVerse as a SaaS for customers?
-
-Not under the default license. The Elastic License 2.0 restricts offering the software as a **hosted or managed service** with substantial product features to third parties. Contact the maintainer for commercial licensing.
-
-## Who maintains PCVerse?
-
-[drmikecrypto on GitHub](https://github.com/drmikecrypto). The official hosted PCVerse product will come from the licensor.
-
-## What PHP version is required?
-
-**End users:** none — the Windows and Linux installers bundle PHP 8.3 inside the app (`runtime/php/`).
-
-**Developers:** run `scripts/install.ps1` or `scripts/install.sh` — they download PHP, Composer, and build tools automatically. You only need system PHP on Linux if you are building the Linux `.run` on a machine without any PHP yet (CI provides it).
+Elastic License 2.0 — see [LICENSE](../LICENSE).

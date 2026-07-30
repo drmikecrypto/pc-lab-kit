@@ -1,13 +1,9 @@
-# PCVerse documentation
+﻿# Docs index
 
-All project documentation lives in this folder.
+| Doc | Purpose |
+|-----|---------|
+| [FAQ](FAQ.md) | Common questions |
+| [Integration](INTEGRATION.md) | Routes, probe API, product identity |
+| [Master plan](MASTER_PLAN.md) | Historical roadmap (may reference retired shells) |
 
-| Document | Audience | Purpose |
-|----------|----------|---------|
-| [FAQ.md](FAQ.md) | Users, search, AI | Common questions and answers |
-| [INTEGRATION.md](INTEGRATION.md) | Developers | Kit layout, routes, cron, web assets |
-| [API_MOBILE_ROUTES.md](API_MOBILE_ROUTES.md) | Mobile + backend devs | Flutter ↔ PHP API route map |
-| [MASTER_PLAN.md](MASTER_PLAN.md) | Product / roadmap | Long-term vision and milestones |
-| [bootstrap.routes.snippet.php](bootstrap.routes.snippet.php) | Integrators | Copy-paste route registration snippet |
-
-Root-level docs: [README.md](../README.md), [CHANGELOG.md](../CHANGELOG.md), [CONTRIBUTING.md](../CONTRIBUTING.md), [MANIFEST.md](../MANIFEST.md).
+For install and first run, see the root [README](../README.md).

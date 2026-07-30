@@ -9,7 +9,7 @@ final class Log
     public static function error(string $message, array $context = []): void
     {
         $ctx = $context !== [] ? ' ' . json_encode($context, JSON_UNESCAPED_UNICODE) : '';
-        error_log('[PCVerse] ' . $message . $ctx);
+        error_log('[PcLabKit] ' . $message . $ctx);
     }
 
     public static function warning(string $message, array $context = []): void

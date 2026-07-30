@@ -7,7 +7,7 @@ namespace App\Services;
 use App\Support\Env;
 
 /**
- * Checks GitHub releases for newer PCVerse versions.
+ * Checks GitHub releases for newer PC Lab Kit versions.
  */
 class AppUpdateService
 {
@@ -76,7 +76,7 @@ class AppUpdateService
                 'method' => 'GET',
                 'timeout' => 8,
                 'header' => implode("\r\n", [
-                    'User-Agent: PCVerse-UpdateChecker',
+                    'User-Agent: PcLabKit-UpdateChecker',
                     'Accept: application/vnd.github+json',
                 ]),
             ],
@@ -98,30 +98,37 @@ class AppUpdateService
         }
 
         $assets = is_array($json['assets'] ?? null) ? $json['assets'] : [];
-        $winUrl = '';
+        $windowsUrl = '';
         $linuxUrl = '';
+        $probeUrl = '';
+        $releaseUrl = (string) ($json['html_url'] ?? "https://github.com/{$owner}/{$repo}/releases/latest");
         foreach ($assets as $asset) {
             if (!is_array($asset)) {
                 continue;
             }
             $name = strtolower((string) ($asset['name'] ?? ''));
             $browser = (string) ($asset['browser_download_url'] ?? '');
-            if ($name === 'pcverse-setup-windows-x64.exe' || str_contains($name, 'windows')) {
-                $winUrl = $browser;
+            if ($browser === '') {
+                continue;
             }
-            if ($name === 'pcverse-setup-linux-x64.run' || str_contains($name, 'linux')) {
+            if ($name === 'pc-lab-kit-windows-x64.zip' || (str_contains($name, 'windows') && str_ends_with($name, '.zip') && !str_contains($name, 'probe'))) {
+                $windowsUrl = $browser;
+            } elseif ($name === 'pc-lab-kit-linux-x64.tar.gz' || (str_contains($name, 'linux') && (str_ends_with($name, '.tar.gz') || str_ends_with($name, '.tgz')))) {
                 $linuxUrl = $browser;
+            } elseif ($name === 'pc-lab-kit-probe-windows.zip' || str_contains($name, 'probe')) {
+                $probeUrl = $browser;
             }
         }
 
         return [
             'version' => $tag,
-            'name' => (string) ($json['name'] ?? ('PCVerse ' . $tag)),
-            'url' => (string) ($json['html_url'] ?? "https://github.com/{$owner}/{$repo}/releases/latest"),
+            'name' => (string) ($json['name'] ?? ('PC Lab Kit ' . $tag)),
+            'url' => $releaseUrl,
             'published_at' => (string) ($json['published_at'] ?? ''),
             'notes' => $this->trimNotes((string) ($json['body'] ?? '')),
-            'download_windows' => $winUrl,
-            'download_linux' => $linuxUrl,
+            'download_windows' => $windowsUrl !== '' ? $windowsUrl : $releaseUrl,
+            'download_linux' => $linuxUrl !== '' ? $linuxUrl : $releaseUrl,
+            'download_probe' => $probeUrl !== '' ? $probeUrl : ($windowsUrl !== '' ? $windowsUrl : $releaseUrl),
         ];
     }
 

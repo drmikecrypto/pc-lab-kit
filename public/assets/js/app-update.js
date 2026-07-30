@@ -1,6 +1,6 @@
-(function () {
-  const DISMISS_KEY = 'pcverse_update_dismiss';
-  const banner = document.getElementById('pcverse-update-banner');
+﻿(function () {
+  const DISMISS_KEY = 'pclab_update_dismiss';
+  const banner = document.getElementById('pclab-update-banner');
 
   function esc(s) {
     const d = document.createElement('div');
@@ -28,20 +28,20 @@
       const href = platformDownload(data);
       banner.hidden = false;
       banner.innerHTML = `
-        <div class="pcverse-update-inner">
+        <div class="pclab-update-inner">
           <div>
             <strong>Update available</strong>
-            <span class="muted fs-sm">PCVerse ${esc(data.current_version)} → ${esc(data.latest_version)}</span>
+            <span class="muted fs-sm">PC Lab Kit ${esc(data.current_version)} → ${esc(data.latest_version)}</span>
             ${data.release_notes ? `<p class="fs-xs muted m-0 mt-1">${esc(data.release_notes.split('\n')[0])}</p>` : ''}
           </div>
-          <div class="pcverse-update-actions">
+          <div class="pclab-update-actions">
             <a href="${esc(href)}" class="dx-btn primary" target="_blank" rel="noopener">Download update</a>
             <a href="${esc(data.release_url || 'https://github.com/drmikecrypto')}" class="dx-btn ghost" target="_blank" rel="noopener">Release notes</a>
-            <button type="button" class="dx-btn ghost" id="pcverse-update-dismiss">Not now</button>
+            <button type="button" class="dx-btn ghost" id="pclab-update-dismiss">Not now</button>
           </div>
         </div>`;
 
-      document.getElementById('pcverse-update-dismiss')?.addEventListener('click', () => {
+      document.getElementById('pclab-update-dismiss')?.addEventListener('click', () => {
         localStorage.setItem(DISMISS_KEY, data.latest_version);
         banner.hidden = true;
       });

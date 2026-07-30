@@ -1,25 +1,23 @@
-# PCVerse
-> Local-first PC diagnostic lab for Windows and Linux — health scan, test history, optional AI advisor. No cloud account required.
+﻿# PC Lab Kit
+> Local-first PC diagnostic lab — PHP web UI + Windows probe. Health scan, history, benchmarks, stress, RGB, optional AI advisor. No cloud account required.
 
 ## Summary
-PCVerse replaces juggling HWiNFO, GPU-Z, and manual spreadsheets with one local web laboratory. Install via GitHub Releases.
+PC Lab Kit is a standalone local laboratory. Clone the repo, install PHP deps, start the web lab, and optionally run PcLab Probe on Windows for real sensors.
 
 ## Install
-- Windows: PCVerse-Setup-Windows-x64.exe
-- Linux: PCVerse-Setup-Linux-x64.run
-- Latest: https://github.com/drmikecrypto/pc-lab-kit/releases/latest
+- Clone: https://github.com/drmikecrypto/pc-lab-kit
+- Windows probe ZIP: `pc-lab-kit-probe-windows.zip` (build with `scripts/build-agent-bundle.ps1`)
+- Releases: https://github.com/drmikecrypto/pc-lab-kit/releases/latest
 
 ## Documentation
 - README.md — overview and quick start
 - docs/README.md — documentation index
 - docs/FAQ.md — common questions
-- docs/INTEGRATION.md — developer integration guide
-- docs/API_MOBILE_ROUTES.md — Flutter ↔ PHP API map
+- docs/INTEGRATION.md — routes and probe API
 - LICENSE — Elastic License 2.0
-- TRADEMARK.md — brand policy
 
 ## Keywords
-PC diagnostic, hardware monitoring, HWiNFO alternative, GPU health, CPU thermal, local-first, Windows, Linux, benchmark, telemetry, RGB
+PC diagnostic, hardware monitoring, local-first, Windows probe, benchmark, telemetry, RGB, stress test
 
 ## Author
 https://github.com/drmikecrypto

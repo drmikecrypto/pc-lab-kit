@@ -1,4 +1,4 @@
-/* ── Intelligence Pulse · وخش × امین ── */
+﻿/* ── Intelligence Pulse · وخش × امین ── */
 .dx-pulse {
   margin: 32px auto 36px;
   position: relative;
@@ -33,13 +33,13 @@
   transform: translateY(-3px);
 }
 
-.dx-pulse-node.vakhsh {
+.dx-pulse-node.engine {
   background: linear-gradient(155deg, rgba(34, 211, 238, 0.07), rgba(17, 19, 29, 0.92));
   border: 1px solid rgba(34, 211, 238, 0.22);
   box-shadow: 0 24px 48px rgba(34, 211, 238, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.dx-pulse-node.amin {
+.dx-pulse-node.advisor {
   background: linear-gradient(155deg, rgba(242, 159, 5, 0.08), rgba(17, 19, 29, 0.92));
   border: 1px solid rgba(242, 159, 5, 0.22);
   box-shadow: 0 24px 48px rgba(242, 159, 5, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -56,12 +56,12 @@
   pointer-events: none;
 }
 
-.dx-pulse-node.vakhsh .dx-pulse-ring {
+.dx-pulse-node.engine .dx-pulse-ring {
   background: radial-gradient(circle, rgba(34, 211, 238, 0.5) 0%, transparent 70%);
   animation: dxPulseRing 3.2s ease-in-out infinite;
 }
 
-.dx-pulse-node.amin .dx-pulse-ring {
+.dx-pulse-node.advisor .dx-pulse-ring {
   background: radial-gradient(circle, rgba(242, 159, 5, 0.5) 0%, transparent 70%);
   animation: dxPulseRing 3.2s ease-in-out infinite 1.6s;
 }
@@ -80,14 +80,14 @@
   margin-bottom: 4px;
 }
 
-.dx-pulse-node.vakhsh .dx-pulse-name {
+.dx-pulse-node.engine .dx-pulse-name {
   background: linear-gradient(120deg, #22d3ee, #67e8f9);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
-.dx-pulse-node.amin .dx-pulse-name {
+.dx-pulse-node.advisor .dx-pulse-name {
   background: linear-gradient(120deg, #f29f05, #fbbf24);
   -webkit-background-clip: text;
   background-clip: text;
@@ -124,8 +124,8 @@
   margin-bottom: 2px;
 }
 
-.dx-pulse-node.vakhsh .dx-pulse-metric strong { color: #67e8f9; }
-.dx-pulse-node.amin .dx-pulse-metric strong { color: #fbbf24; }
+.dx-pulse-node.engine .dx-pulse-metric strong { color: #67e8f9; }
+.dx-pulse-node.advisor .dx-pulse-metric strong { color: #fbbf24; }
 
 .dx-pulse-metric span {
   font-size: 10px;

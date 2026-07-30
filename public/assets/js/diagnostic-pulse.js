@@ -1,5 +1,5 @@
-(function () {
-  const FP_KEY = '_pcverse_fp';
+﻿(function () {
+  const FP_KEY = 'pclab_fp';
   let whisperIdx = 0;
   let whispers = [];
   let whisperTimer = null;
@@ -95,7 +95,7 @@
       health_score: data.health_score != null ? data.health_score : null,
       bottleneck: (data.bottleneck && data.bottleneck.type) || data.bottleneck_type || '',
       bottleneck_component: (data.bottleneck && data.bottleneck.component) || '',
-      profile: data.vakhsh_oc && data.vakhsh_oc.profile ? data.vakhsh_oc.profile : '',
+      profile: data.oc_plan && data.oc_plan.profile ? data.oc_plan.profile : '',
       ram_gb: m.ram_gb != null ? m.ram_gb : null,
       vram_gb: m.vram_gb != null ? m.vram_gb : null,
       form_factor: data.form_factor || '',
@@ -131,8 +131,8 @@
 
   function renderPulse(pulse) {
     if (!pulse) return;
-    var engine = pulse.engine || pulse.vakhsh || {};
-    var advisor = pulse.advisor || pulse.amin || {};
+    var engine = pulse.engine || pulse.engine || {};
+    var advisor = pulse.advisor || pulse.advisor || {};
     var neural = pulse.neural || {};
 
     animateNum(el('dx-pulse-v-deep'), engine.deep_scans);
@@ -158,7 +158,7 @@
     if (tag) tag.textContent = pulse.tagline || pulse.tagline_fa || 'Tools — not a store. Everything in one lab.';
 
     var sync = el('dx-pulse-sync');
-    if (sync) sync.textContent = '● ' + (neural.sync_label || neural.sync_label_fa || 'PCVerse local network');
+    if (sync) sync.textContent = '● ' + (neural.sync_label || neural.sync_label_fa || 'PC Lab Kit local network');
 
     whispers = neural.whispers || neural.whispers_fa || [];
     rotateWhisper(true);

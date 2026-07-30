@@ -1,5 +1,5 @@
-(function () {
-  const cfg = window.PCVERSE_DIAGNOSTIC || {};
+﻿(function () {
+  const cfg = window.PCLAB_DIAGNOSTIC || {};
   const steps = cfg.steps || [];
   const AGENT = (cfg.agentBase || '').replace(/\/+$/, '') || 'http://127.0.0.1:18765';
 
@@ -151,7 +151,7 @@
     const consult = data.consultant || {};
     const consultHead = (consult.headline || consult.headline_fa)
       ? `<div class="dx-consultant-block mb-3 p-3" style="border-radius:12px;border:1px solid rgba(167,139,250,0.35);background:rgba(26,21,40,0.6)">
-        <div class="fs-sm" style="color:#c4b5fd;font-weight:600">PCVerse Advisor</div>
+        <div class="fs-sm" style="color:#c4b5fd;font-weight:600">PC Lab Kit Advisor</div>
         <p class="m-0 mt-2 fs-sm">${esc(consult.headline || consult.headline_fa || '')}</p>
         ${consult.honest_assessment || consult.honest_assessment_fa ? `<p class="muted fs-xs m-0 mt-2">${esc(consult.honest_assessment || consult.honest_assessment_fa || '')}</p>` : ''}
         ${consult.angle ? `<p class="muted fs-xs m-0 mt-2">${esc(consult.angle)}</p>` : ''}
@@ -167,6 +167,24 @@
       ? window.dxRenderComparison(Object.assign({}, data.comparison || {}, { ai_changes: aiChanges }))
       : '';
 
+    const pct = data.percentiles || {};
+    const pctHtml = (pct.cpu || pct.gpu || pct.gaming)
+      ? `<div class="dx-metric-grid mt-2">
+          ${pct.cpu ? `<div class="dx-metric"><strong>${pct.cpu}th</strong>CPU percentile</div>` : ''}
+          ${pct.gpu ? `<div class="dx-metric"><strong>${pct.gpu}th</strong>GPU percentile</div>` : ''}
+          ${pct.gaming ? `<div class="dx-metric"><strong>${pct.gaming}%</strong>Gaming index</div>` : ''}
+          ${pct.workstation ? `<div class="dx-metric"><strong>${pct.workstation}%</strong>Workstation</div>` : ''}
+        </div>`
+      : '';
+
+    const token = data.saved?.token || data.report_token || '';
+    const exportHtml = token
+      ? `<div class="dx-export-actions mt-3 d-flex flex-wrap gap-2">
+          <a class="dx-btn primary" href="/api/diagnostic/report/${encodeURIComponent(token)}/export" target="_blank" rel="noopener">Open Lab Report (HTML → PDF)</a>
+          <a class="dx-btn ghost" href="/api/diagnostic/report/${encodeURIComponent(token)}/export?format=json" target="_blank" rel="noopener">Report JSON</a>
+        </div>`
+      : `<p class="muted fs-xs mt-2">Save a scan to unlock the shareable Lab Report export.</p>`;
+
     targetEl.innerHTML = `
       ${compareHtml}
       <div class="d-flex flex-wrap gap-4 align-items-center mb-4">
@@ -177,6 +195,8 @@
       ${consultHead}
       ${aiPlan}
       ${metricHtml}
+      ${pctHtml}
+      ${exportHtml}
       ${risks ? '<h4>Risks</h4>' + risks : ''}
       ${issues ? '<h4>Notes</h4>' + issues : ''}
       ${gameSettings ? '<h4 class="mt-4">Game settings</h4>' + gameSettings : ''}
@@ -203,7 +223,7 @@
       window.__dxLastProbe = probePayload;
       window.dispatchEvent(new CustomEvent('dx:probe-ready', { detail: probePayload }));
     } catch (_) {
-      status.textContent = 'PCVerse Probe not found — run it locally, then click Connect again.';
+      status.textContent = 'PcLab Probe not found — run it locally, then click Connect again.';
       probePayload = null;
     }
   }
@@ -268,7 +288,7 @@
     const out = document.getElementById('dx-full-results');
     if (!btn || !out) return;
     if (!probePayload) {
-      alert('Connect PCVerse Probe or load a report file first.');
+      alert('Connect PcLab Probe or load a report file first.');
       return;
     }
     btn.disabled = true;
@@ -287,7 +307,7 @@
       const data = await parseApiResponse(res);
       showResults(data, out);
       out.scrollIntoView({ behavior: 'smooth' });
-      try { localStorage.setItem('pcverse_lab_has_deep_scan', '1'); } catch (_) {}
+      try { localStorage.setItem('pclab_lab_has_deep_scan', '1'); } catch (_) {}
     } catch (_) {
       alert(USER_ERROR);
     }

@@ -43,7 +43,10 @@ class DiagnosticOcService
 
         $cpuTemp = (float) ($cpu['thermal']['package_c'] ?? $metrics['cpu_temp_max'] ?? 0);
         $gpuTemp = (float) ($gpu['thermal']['core_c'] ?? $nvidia['temp_core_c'] ?? $metrics['gpu_temp_max'] ?? 0);
-        $gpuHot = (float) ($nvidia['temp_core_c'] ?? $gpuTemp);
+        $gpuHot = (float) ($gpu['thermal']['hot_spot_c'] ?? $nvidia['temp_hotspot_c'] ?? $metrics['gpu_hotspot_max'] ?? 0);
+        if ($gpuHot <= 0) {
+            $gpuHot = $gpuTemp;
+        }
         $throttle = (int) ($report['sensors']['throttle_count'] ?? $metrics['throttle_events'] ?? 0);
         $spikeCount = (int) ($gaming['spike_count'] ?? ($gaming['spike_map']['stats']['spike_count'] ?? 0));
         $isLaptop = ($device['form_factor'] ?? '') === 'laptop'
@@ -99,7 +102,7 @@ class DiagnosticOcService
 
         return [
             'version' => 1,
-            'engine' => 'vakhsh',
+            'engine' => 'orchestrator',
             'profile' => $this->chooseProfile($safetyScore, $headroom),
             'eligible' => $eligible,
             'safety_score' => $safetyScore,
@@ -109,7 +112,7 @@ class DiagnosticOcService
             'targets' => $targets,
             'auto_targets' => $autoTargets,
             'summary' => $this->summaryText($eligible, $blockers, $autoTargets, $safetyScore),
-            'disclaimer' => 'PCVerse only applies reversible OS/GPU settings. XMP/BIOS and manual voltage need separate confirmation.',
+            'disclaimer' => 'PC Lab Kit only applies reversible OS/GPU settings. XMP/BIOS and manual voltage need separate confirmation.',
         ];
     }
 
@@ -261,7 +264,7 @@ class DiagnosticOcService
             'configured_mhz' => $mhz,
             'timings' => $timings,
             'die_type' => $ram['primary_die'] ?? ($ram['modules'][0]['die_type'] ?? null),
-            'recommendation' => $xmpHint ?? 'Enable official XMP/EXPO in BIOS only — PCVerse does not change RAM from the OS.',
+            'recommendation' => $xmpHint ?? 'Enable official XMP/EXPO in BIOS only — PC Lab Kit does not change RAM from the OS.',
             'reason' => sprintf('RAM %d MHz CL%s — BIOS guide only.', $mhz, $cl > 0 ? (string) $cl : '?'),
             'reversible' => true,
         ]];

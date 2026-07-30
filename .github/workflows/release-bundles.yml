@@ -1,4 +1,4 @@
-name: Release installers
+name: Release PC Lab Kit
 
 on:
   push:
@@ -6,48 +6,112 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-php@v2
-        with:
-          php-version: '8.3'
-          extensions: sqlite, curl, mbstring, json
-
-      - name: Install Composer deps
-        run: composer install --no-interaction --prefer-dist --no-dev
-
-      - name: Build Windows installer
-        shell: pwsh
-        run: ./scripts/build-installer-windows.ps1
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: pcverse-windows
-          path: public/downloads/PCVerse-Setup-Windows-x64.exe
-
-  linux:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-php@v2
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: sqlite, curl, mbstring, json
+          extensions: sqlite, curl, mbstring, json, pdo
 
       - name: Install Composer deps
-        run: composer install --no-interaction --prefer-dist --no-dev
+        run: composer install --no-interaction --prefer-dist
 
-      - name: Build Linux installer
-        run: |
-          chmod +x scripts/build-installer-linux.sh scripts/stage-payload-unix.sh
-          ./scripts/build-installer-linux.sh
+      - name: Run tests
+        run: composer test
+
+  windows-app:
+    runs-on: windows-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build Windows app ZIP
+        shell: pwsh
+        run: ./scripts/build-app-windows.ps1
+
+      - name: Build Windows probe ZIP
+        shell: pwsh
+        run: ./scripts/build-agent-bundle.ps1
 
       - uses: actions/upload-artifact@v4
         with:
-          name: pcverse-linux
-          path: public/downloads/PCVerse-Setup-Linux-x64.run
+          name: windows-bundles
+          path: |
+            public/downloads/pc-lab-kit-windows-x64.zip
+            public/downloads/pc-lab-kit-probe-windows.zip
+
+  linux-app:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: sqlite, curl, mbstring, json, pdo
+          tools: composer
+
+      - name: Build Linux app tarball
+        run: |
+          chmod +x scripts/*.sh PcLabKit
+          ./scripts/build-app-linux.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-bundle
+          path: public/downloads/pc-lab-kit-linux-x64.tar.gz
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [windows-app, linux-app]
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: Collect release assets
+        run: |
+          mkdir -p release-assets
+          find dist -type f \( -name '*.zip' -o -name '*.tar.gz' \) -exec cp -v {} release-assets/ \;
+          ls -lh release-assets
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          generate_release_notes: true
+          body: |
+            ## PC Lab Kit ${{ github.ref_name }}
+
+            Portable local PC laboratory — unzip/extract and run. No installer required.
+
+            ### Downloads
+            | Asset | Platform | What it is |
+            |-------|----------|------------|
+            | `pc-lab-kit-windows-x64.zip` | Windows x64 | Web lab + bundled PHP — run `PcLabKit.bat` |
+            | `pc-lab-kit-linux-x64.tar.gz` | Linux x64 | Web lab + bundled PHP — run `./PcLabKit` |
+            | `pc-lab-kit-probe-windows.zip` | Windows | Hardware probe agent — run `Start-PcLabProbe.bat` |
+
+            ### Quick start
+            1. Download the archive for your OS and extract it.
+            2. Open the `pc-lab-kit` folder.
+            3. Windows: double-click **PcLabKit.bat**. Linux: `chmod +x PcLabKit && ./PcLabKit`.
+            4. Browser opens **http://127.0.0.1:8080/diagnostic**.
+            5. (Windows) For sensors/benchmarks/OC, also unzip the probe and run **Start-PcLabProbe.bat**, then Connect in the lab.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

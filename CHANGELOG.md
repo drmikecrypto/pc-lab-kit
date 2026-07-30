@@ -1,25 +1,29 @@
 # Changelog
 
-All notable releases of PCVerse are documented here.
+All notable releases of PC Lab Kit are documented here.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
-## [2.0.0] - 2026-06-27
+## [3.0.0] - 2026-07-30
 
 ### Added
-- Native C++20 desktop app (Qt 6): health scan, live sensors, toolkit, settings, GitHub update checker
-- `native/core` hardware/update library and `pcverse_cli` dev tool
-- Windows native installer: `PCVerse-Native-Setup-Windows-x64.exe`
-- Qt bootstrap and native build/installer scripts for Windows and Linux
+- Portable GitHub release apps: `pc-lab-kit-windows-x64.zip` and `pc-lab-kit-linux-x64.tar.gz` (bundled PHP)
+- CI publishes Windows app, Linux app, and Windows probe on `v*` tags
+- Local download routes: `/download/windows`, `/download/linux`, `/download/probe-windows`
+
+### Changed
+- Standalone rebrand: product identity is **PC Lab Kit** (probe `pclab-probe`, HwMon `PcLabHwMon`)
+- Removed PCVerse-attached shells: native Qt app, installers, Flutter stub, pitch/download marketing pages
+- Neutralized Orchestrator (was Vakhsh) and Advisor (was Amin) naming
+- App update checker prefers `pc-lab-kit-windows-x64.zip` / `pc-lab-kit-linux-x64.tar.gz` assets
 
 ## [1.0.0] - 2026-06-14
 
 ### Added
 - Local PC diagnostic lab (quick quiz + full Probe scan on Windows)
-- One-click installers: Windows `.exe`, Linux `.run`
 - Test history with before/after comparison
 - Optional AI advisor (BYOK, stored locally)
 - GitHub release update checker
-- Elastic License 2.0 + trademark policy
+- Elastic License 2.0

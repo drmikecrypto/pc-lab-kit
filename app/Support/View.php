@@ -25,7 +25,7 @@ class View
         $config = require dirname(__DIR__, 2) . '/config/app.php';
         $data = array_merge([
             'config' => $config,
-            'title' => 'PCVerse',
+            'title' => 'PC Lab Kit',
             'settings' => [],
             'footer_minimal' => false,
         ], $this->data);

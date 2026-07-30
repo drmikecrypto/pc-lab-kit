@@ -4,7 +4,7 @@
  * Refresh diagnostic game catalog (300 titles) from Steam + awards + optional RAWG/LLM.
  *
  * crontab (weekly Sunday 04:00):
- *   php /path/to/pcverse/cron/refresh_diagnostic_games.php >> storage/logs/diagnostic_games.log 2>&1
+ *   php /path/to/pc-lab-kit/cron/refresh_diagnostic_games.php >> storage/logs/diagnostic_games.log 2>&1
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';

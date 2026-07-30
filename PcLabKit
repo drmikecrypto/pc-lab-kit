@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
+
+PHP_BIN="php"
+if [[ -x "$ROOT/runtime/php/bin/php" ]]; then
+  PHP_BIN="$ROOT/runtime/php/bin/php"
+elif [[ -x "$ROOT/runtime/php/php" ]]; then
+  PHP_BIN="$ROOT/runtime/php/php"
+fi
+
+if [[ ! -f vendor/autoload.php ]]; then
+  echo "PC Lab Kit is not installed yet."
+  echo "Run: ./scripts/install.sh"
+  exit 1
+fi
+
+if [[ ! -f .env && -f .env.example ]]; then
+  cp .env.example .env
+fi
+
+mkdir -p storage/database storage/cache storage/settings public/downloads
+"$PHP_BIN" bin/migrate.php >/dev/null 2>&1 || true
+
+if command -v xdg-open >/dev/null 2>&1; then
+  xdg-open "http://127.0.0.1:8080/diagnostic" >/dev/null 2>&1 &
+elif command -v open >/dev/null 2>&1; then
+  open "http://127.0.0.1:8080/diagnostic" >/dev/null 2>&1 &
+fi
+
+exec "$PHP_BIN" -S 127.0.0.1:8080 -t public

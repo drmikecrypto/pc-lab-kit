@@ -6,7 +6,7 @@ use App\Services\SettingsService;
 
 describe('SettingsService', function () {
     test('save and load llm settings from local file', function () {
-        $dir = sys_get_temp_dir() . '/pcverse-settings-' . uniqid('', true);
+        $dir = sys_get_temp_dir() . '/pclab-settings-' . uniqid('', true);
         mkdir($dir . '/storage/settings', 0777, true);
         $svc = new SettingsService($dir);
 

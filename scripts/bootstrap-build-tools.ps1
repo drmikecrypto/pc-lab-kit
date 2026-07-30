@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
   Ensures build-cache has portable PHP (Windows), Composer PHAR, and .NET 8 SDK.
-  Used by install.ps1 and build-installer-windows.ps1 — no manual PHP/Composer/.NET install.
+  Used by install.ps1 and probe build scripts - no manual PHP/Composer/.NET install.
 #>
 $ErrorActionPreference = 'Stop'
 
@@ -12,7 +12,7 @@ function Get-BuildDepsRoot {
     } elseif ($MyInvocation.MyCommand.Path) {
         $script:BuildDepsRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
     } else {
-        throw 'Could not resolve PCVerse root for bootstrap-build-tools.ps1'
+        throw 'Could not resolve PC Lab Kit root for bootstrap-build-tools.ps1'
     }
     return $script:BuildDepsRoot
 }
@@ -40,7 +40,7 @@ function Initialize-BundledComposer {
 
     $cfg = Get-BuildDepsConfig
     $url = [string]$cfg.composer_url
-    Write-Host "Downloading latest Composer…" -ForegroundColor Cyan
+    Write-Host "Downloading latest Composer..." -ForegroundColor Cyan
     Invoke-WebRequest -Uri $url -OutFile $phar -UseBasicParsing
     return $phar
 }
@@ -53,7 +53,7 @@ function Get-BundledWindowsPhpDir {
     $cfg = Get-BuildDepsConfig
     $zipPath = Join-Path $cache 'php-win-x64.zip'
     $url = [string]$cfg.php_windows_url
-    Write-Host "Downloading PHP $($cfg.php_windows_version) for Windows…" -ForegroundColor Cyan
+    Write-Host "Downloading PHP $($cfg.php_windows_version) for Windows..." -ForegroundColor Cyan
     Invoke-WebRequest -Uri $url -OutFile $zipPath -UseBasicParsing
 
     New-Item -ItemType Directory -Force -Path $runtimeDir | Out-Null
@@ -72,22 +72,30 @@ function Initialize-BundledPhpIni {
     $ini = Join-Path $RuntimeDir 'php.ini'
     if (-not (Test-Path $iniDev)) { return }
     Copy-Item $iniDev $ini -Force
-    $extDir = Join-Path $RuntimeDir 'ext'
+    # Relative ext path so portable zips work on any machine
     $out = foreach ($line in Get-Content $ini) {
-        if ($line -match '^;extension_dir') { "extension_dir=`"$extDir`""; continue }
+        if ($line -match '^;?extension_dir\s*=') { 'extension_dir="ext"'; continue }
         if ($line -match '^;extension=curl') { 'extension=curl'; continue }
         if ($line -match '^;extension=mbstring') { 'extension=mbstring'; continue }
         if ($line -match '^;extension=openssl') { 'extension=openssl'; continue }
         if ($line -match '^;extension=pdo_sqlite') { 'extension=pdo_sqlite'; continue }
         if ($line -match '^;extension=sqlite3') { 'extension=sqlite3'; continue }
+        if ($line -match '^;extension=zip') { 'extension=zip'; continue }
         $line
     }
     Set-Content -Path $ini -Value $out -Encoding UTF8
 }
 
 function Get-BuildPhpExe {
-    $bundled = Join-Path (Get-BundledWindowsPhpDir) 'php.exe'
-    if (Test-Path $bundled) { return $bundled }
+    $bundledDir = Get-BundledWindowsPhpDir
+    $bundled = Join-Path $bundledDir 'php.exe'
+    if (Test-Path $bundled) {
+        # Isolate from host Scoop/Chocolatey PHP_INI_SCAN_DIR which otherwise
+        # merges a second php.ini and breaks extension_dir for the portable build.
+        $env:PHPRC = $bundledDir
+        $env:PHP_INI_SCAN_DIR = ''
+        return $bundled
+    }
     if (Get-Command php -ErrorAction SilentlyContinue) { return 'php' }
     throw 'Could not resolve PHP for build. Bootstrap failed.'
 }
@@ -116,7 +124,7 @@ function Initialize-BundledDotNet {
 
     $cfg = Get-BuildDepsConfig
     $installScript = Join-Path $cache 'dotnet-install.ps1'
-    Write-Host 'Downloading .NET 8 SDK (one-time, into build-cache)…' -ForegroundColor Cyan
+    Write-Host 'Downloading .NET 8 SDK (one-time, into build-cache)...' -ForegroundColor Cyan
     Invoke-WebRequest -Uri ([string]$cfg.dotnet_install_script) -OutFile $installScript -UseBasicParsing
     & $installScript -Channel ([string]$cfg.dotnet_channel) -InstallDir $dotnetRoot -Architecture x64
     if (-not (Test-Path $dotnetExe)) {
@@ -134,6 +142,7 @@ function Copy-BundledPhpToStage {
     if (Test-Path $dest) { Remove-Item $dest -Recurse -Force }
     New-Item -ItemType Directory -Force -Path $dest | Out-Null
     Copy-Item -Path (Join-Path $src '*') -Destination $dest -Recurse -Force
+    Initialize-BundledPhpIni $dest
 }
 
 function Initialize-BuildTools {

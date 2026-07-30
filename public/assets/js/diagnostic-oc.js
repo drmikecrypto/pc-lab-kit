@@ -1,7 +1,12 @@
-(function () {
-  const cfg = window.PCVERSE_DIAGNOSTIC || {};
+﻿(function () {
+  const cfg = window.PCLAB_DIAGNOSTIC || {};
   const AGENT = (cfg.agentBase || '').replace(/\/+$/, '') || 'http://127.0.0.1:18765';
   let lastOcPlan = null;
+  let lastApply = null;
+  let lastPreflight = null;
+  let lastWatch = null;
+  let countdownTimer = null;
+  let cancelCountdown = false;
 
   function esc(s) {
     const d = document.createElement('div');
@@ -34,7 +39,7 @@
       <div class="dx-oc-panel glass-effect">
         <div class="dx-oc-head">
           <div>
-            <div class="dx-oc-brand">PCVerse · Safe OC</div>
+            <div class="dx-oc-brand">PC Lab Kit · Safe OC</div>
             <h3>Conservative auto-tuning after scan</h3>
             <p class="muted fs-sm">${esc(plan.summary || plan.summary_fa || '')}</p>
           </div>
@@ -59,29 +64,79 @@
         <p class="dx-oc-disclaimer muted fs-xs">${esc(plan.disclaimer || plan.disclaimer_fa || '')}</p>
 
         <div class="dx-oc-actions">
+          <button type="button" class="dx-btn ghost" id="dx-oc-preflight" ${eligible ? '' : 'disabled'}>Pre-flight sample</button>
           <button type="button" class="dx-btn primary" id="dx-oc-apply" ${eligible ? '' : 'disabled'}>
             Apply safe tuning (${auto.length})
           </button>
           <button type="button" class="dx-btn ghost" id="dx-oc-rollback">Rollback</button>
+          <button type="button" class="dx-btn ghost" id="dx-oc-report" hidden>OC report (PDF)</button>
+          <button type="button" class="dx-btn ghost" id="dx-oc-cancel" hidden>Cancel countdown</button>
         </div>
         <div id="dx-oc-status" class="muted fs-xs mt-2"></div>
       </div>`;
 
+    mountEl.querySelector('#dx-oc-preflight')?.addEventListener('click', runPreflight);
     mountEl.querySelector('#dx-oc-apply')?.addEventListener('click', applyOc);
     mountEl.querySelector('#dx-oc-rollback')?.addEventListener('click', rollbackOc);
+    mountEl.querySelector('#dx-oc-report')?.addEventListener('click', exportOcReport);
+    mountEl.querySelector('#dx-oc-cancel')?.addEventListener('click', () => { cancelCountdown = true; });
+  }
+
+  async function runPreflight() {
+    const st = document.getElementById('dx-oc-status');
+    if (st) st.textContent = 'Pre-flight: idle + load sample (≈30s)…';
+    try {
+      const res = await fetch(`${AGENT}/oc/preflight`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idle_seconds: 10, load_seconds: 10 }),
+      });
+      lastPreflight = await res.json();
+      if (st) {
+        st.textContent = lastPreflight.message
+          || (lastPreflight.ok ? 'Pre-flight OK.' : 'Pre-flight blocked.');
+      }
+    } catch (_) {
+      if (st) st.textContent = 'Pre-flight failed — is Probe running?';
+    }
+  }
+
+  function sleep(ms) {
+    return new Promise((r) => setTimeout(r, ms));
+  }
+
+  async function countdown(seconds, st, cancelBtn) {
+    cancelCountdown = false;
+    if (cancelBtn) cancelBtn.hidden = false;
+    for (let i = seconds; i > 0; i--) {
+      if (cancelCountdown) {
+        if (cancelBtn) cancelBtn.hidden = true;
+        return false;
+      }
+      if (st) st.textContent = `Applying in ${i}s — click Cancel to abort…`;
+      await sleep(1000);
+    }
+    if (cancelBtn) cancelBtn.hidden = true;
+    return !cancelCountdown;
   }
 
   async function applyOc() {
     const st = document.getElementById('dx-oc-status');
+    const cancelBtn = document.getElementById('dx-oc-cancel');
+    const reportBtn = document.getElementById('dx-oc-report');
     if (!lastOcPlan || !lastOcPlan.eligible) return;
 
-    const ok = window.confirm(
-      'PCVerse only applies reversible OS/GPU settings.\n\n'
-      + `Profile: ${lastOcPlan.profile}\n`
-      + `Settings: ${(lastOcPlan.auto_targets || []).length}\n\n`
-      + 'Continue?'
-    );
-    if (!ok) return;
+    if (lastPreflight && lastPreflight.ok === false) {
+      if (st) st.textContent = 'Pre-flight blocked apply. Cool down, then retry.';
+      return;
+    }
+
+    const go = await countdown(10, st, cancelBtn);
+    if (!go) {
+      if (st) st.textContent = 'Apply cancelled.';
+      return;
+    }
 
     if (st) st.textContent = 'Applying via Probe…';
     try {
@@ -91,18 +146,35 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(lastOcPlan),
       });
-      const data = await res.json();
-      if (!data.ok) throw new Error('apply failed');
-      if (st) st.textContent = data.message || 'Applied — use Rollback if needed.';
+      lastApply = await res.json();
+      if (!lastApply.ok) throw new Error('apply failed');
+      if (st) st.textContent = (lastApply.message || 'Applied') + ' — watching thermals (auto-rollback on)…';
+
+      // Post-apply watch (shorter default for UI responsiveness; Probe enforces min 30s)
+      const watchRes = await fetch(`${AGENT}/oc/watch`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ seconds: 60, breach_seconds: 20, auto_rollback: true }),
+      });
+      lastWatch = await watchRes.json();
+      if (lastWatch.rolled_back) {
+        if (st) st.textContent = 'Auto-rollback triggered: ' + (lastWatch.reason || 'limits exceeded');
+      } else if (st) {
+        st.textContent = 'Watch complete — temps stayed within limits. Export OC report if needed.';
+      }
+      if (reportBtn) reportBtn.hidden = false;
+
       if (window.dxTrackLab && lastOcPlan) {
-        window.dxTrackLab('vakhsh_oc_apply', {
+        window.dxTrackLab('oc_apply', {
           profile: lastOcPlan.profile || '',
           safety_score: lastOcPlan.safety_score,
           targets: (lastOcPlan.auto_targets || []).length,
+          rolled_back: !!lastWatch?.rolled_back,
         });
       }
     } catch (_) {
-      if (st) st.textContent = 'Could not apply — run PCVerse Probe locally.';
+      if (st) st.textContent = 'Could not apply — run PcLab Probe locally.';
     }
   }
 
@@ -119,14 +191,43 @@
     }
   }
 
+  async function exportOcReport() {
+    const st = document.getElementById('dx-oc-status');
+    if (!lastOcPlan) return;
+    try {
+      const res = await fetch('/api/diagnostic/oc/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          plan: lastOcPlan,
+          apply: lastApply || {},
+          samples: lastWatch?.samples || lastPreflight?.samples_load || [],
+          preflight: lastPreflight,
+          watch: lastWatch,
+          rolled_back: !!lastWatch?.rolled_back,
+          format: 'html',
+        }),
+      });
+      const html = await res.text();
+      const w = window.open('', '_blank');
+      if (w) {
+        w.document.write(html);
+        w.document.close();
+      }
+      if (st) st.textContent = 'OC report opened — use Print → Save as PDF.';
+    } catch (_) {
+      if (st) st.textContent = 'Could not build OC report.';
+    }
+  }
+
   function onScanComplete(e) {
     const data = e.detail || {};
-    const plan = data.vakhsh_oc;
-    const mount = document.getElementById('dx-vakhsh-oc');
+    const plan = data.oc_plan;
+    const mount = document.getElementById('dx-oc-panel');
     if (mount && plan) renderOcPanel(plan, mount);
     mount?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  window.dxRenderVakhshOc = renderOcPanel;
+  window.dxRenderOcPanel = renderOcPanel;
   window.addEventListener('dx:scan-complete', onScanComplete);
 })();

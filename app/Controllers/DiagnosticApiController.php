@@ -8,6 +8,7 @@ use App\Actions\TrackUserEventAction;
 use App\Services\DiagnosticAgentService;
 use App\Services\DiagnosticAiService;
 use App\Services\DiagnosticConsultantService;
+use App\Services\DiagnosticDriverAdvisorService;
 use App\Services\DiagnosticHistoryCompareService;
 use App\Services\DiagnosticHistoryService;
 use App\Services\DiagnosticImportService;
@@ -16,7 +17,9 @@ use App\Services\DiagnosticRgbService;
 use App\Services\DiagnosticService;
 use App\Services\DiagnosticTelemetryService;
 use App\Services\DiagnosticToolCatalogService;
+use App\Services\LabReportExportService;
 use App\Services\SettingsService;
+use App\Services\StressCertificateService;
 
 class DiagnosticApiController
 {
@@ -72,7 +75,7 @@ class DiagnosticApiController
             'health_score' => isset($result['health_score']) ? (int) $result['health_score'] : null,
             'bottleneck' => is_array($bn) ? ($bn['type'] ?? '') : (string) $bn,
             'bottleneck_component' => $bnArr['component'] ?? null,
-            'profile' => ($result['vakhsh_oc']['profile'] ?? null),
+            'profile' => ($result['oc_plan']['profile'] ?? null),
             'ram_gb' => $metrics['ram_gb'] ?? null,
             'vram_gb' => $metrics['vram_gb'] ?? null,
             'form_factor' => $raw['form_factor'] ?? ($result['form_factor'] ?? ''),
@@ -188,9 +191,7 @@ class DiagnosticApiController
                 'metadata' => $this->labMetaFromAnalysis($out, $input, 'lite'),
             ]);
 
-            return json_response(array_merge($out, [
-                'skip_app_download_pitch' => strtolower(trim((string) ($_SERVER['HTTP_X_PCVERSE_CLIENT'] ?? ''))) === 'pcverse-flutter',
-            ]));
+            return json_response($out);
         } catch (\Throwable $e) {
             error_log('diagnosticLite: ' . $e->getMessage());
 
@@ -209,7 +210,7 @@ class DiagnosticApiController
         }
 
         $payload = $input;
-        if (($input['probe_version'] ?? 0) >= 2 || ($input['agent'] ?? '') === 'pcverse-probe') {
+        if (($input['probe_version'] ?? 0) >= 2 || ($input['agent'] ?? '') === 'pclab-probe') {
             $payload = (new DiagnosticAgentService())->normalize($input);
             $payload = array_merge($payload, [
                 'import_format' => $input['import_format'] ?? null,
@@ -347,6 +348,102 @@ class DiagnosticApiController
         return json_response(['report' => $report]);
     }
 
+    /** Shareable HTML lab report (print → PDF). */
+    public function diagnosticReportExport(string $token): string
+    {
+        $fp = $this->diagnosticFingerprint([]);
+        $row = (new DiagnosticHistoryService())->getByToken($token, $fp, null);
+        if (!$row) {
+            return json_response(['error' => 'Not found'], 404);
+        }
+
+        $analysis = is_array($row['report']['analysis'] ?? null) ? $row['report']['analysis'] : [];
+        if ($analysis === []) {
+            $analysis = [
+                'mode' => $row['mode'] ?? 'full',
+                'health_score' => $row['health_score'] ?? null,
+                'health_grade' => $row['health_grade'] ?? null,
+                'metrics' => $row['metrics'] ?? [],
+                'bottleneck' => [
+                    'type' => $row['bottleneck_type'] ?? null,
+                    'message' => $row['bottleneck'] ?? null,
+                ],
+                'report_summary' => $row['summary'] ?? [],
+            ];
+        }
+        if (!empty($row['comparison'])) {
+            $analysis['comparison'] = $row['comparison'];
+        }
+
+        $built = (new LabReportExportService())->buildDocument($analysis, [
+            'token' => $token,
+            'mode' => $row['mode'] ?? ($analysis['mode'] ?? 'full'),
+        ]);
+
+        $format = strtolower((string) ($_GET['format'] ?? 'html'));
+        if ($format === 'json') {
+            return json_response([
+                'title' => $built['title'],
+                'document' => $built['document'],
+                'export_url' => '/api/diagnostic/report/' . rawurlencode($token) . '/export',
+                'hint' => 'Open the HTML export and use Print → Save as PDF.',
+            ]);
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        header('Content-Disposition: inline; filename="pclab-lab-report-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $token) . '.html"');
+        http_response_code(200);
+
+        return $built['html'];
+    }
+
+    /** Issue a stress pass/fail certificate from Probe run JSON + optional samples. */
+    public function diagnosticStressCertificate(): string
+    {
+        $input = decode_json_body_limited(2_097_152);
+        if ($input === null) {
+            return json_response(['error' => 'payload_too_large'], 413);
+        }
+        $run = (array) ($input['run'] ?? $input);
+        $samples = (array) ($input['samples'] ?? []);
+        $limits = (array) ($input['limits'] ?? []);
+
+        $cert = (new StressCertificateService())->issue($run, $samples, $limits);
+
+        return json_response(['certificate' => $cert]);
+    }
+
+    /** OC safety report HTML (print → PDF). */
+    public function diagnosticOcReportExport(): string
+    {
+        $input = decode_json_body_limited(2_097_152);
+        if ($input === null) {
+            return json_response(['error' => 'payload_too_large'], 413);
+        }
+        $plan = (array) ($input['plan'] ?? []);
+        $apply = (array) ($input['apply'] ?? []);
+        $samples = (array) ($input['samples'] ?? []);
+        if ($plan === []) {
+            return json_response(['error' => 'plan required'], 400);
+        }
+
+        $built = (new LabReportExportService())->buildOcReport($plan, $apply, $samples, [
+            'preflight' => $input['preflight'] ?? null,
+            'watch' => $input['watch'] ?? null,
+            'rolled_back' => $input['rolled_back'] ?? false,
+        ]);
+
+        $format = strtolower((string) ($input['format'] ?? $_GET['format'] ?? 'html'));
+        if ($format === 'json') {
+            return json_response(['title' => $built['title'], 'document' => $built['document']]);
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        http_response_code(200);
+
+        return $built['html'];
+    }
+
     public function diagnosticTelemetryPresent(): string
     {
         $input = decode_json_body_limited(6_291_456);
@@ -358,6 +455,19 @@ class DiagnosticApiController
         }
 
         return json_response((new DiagnosticTelemetryService())->present($input));
+    }
+
+    public function diagnosticDriversPresent(): string
+    {
+        $input = decode_json_body_limited(6_291_456);
+        if ($input === null) {
+            return json_response(['error' => 'payload_too_large'], 413);
+        }
+        if ($input === []) {
+            return json_response(['error' => 'Empty probe payload'], 400);
+        }
+
+        return json_response((new DiagnosticDriverAdvisorService())->present($input));
     }
 
     public function diagnosticOcPlan(): string
@@ -372,7 +482,7 @@ class DiagnosticApiController
 
         $svc = new DiagnosticService();
         $agent = new DiagnosticAgentService();
-        $report = ($input['probe_version'] ?? 0) >= 2 || ($input['agent'] ?? '') === 'pcverse-probe'
+        $report = ($input['probe_version'] ?? 0) >= 2 || ($input['agent'] ?? '') === 'pclab-probe'
             ? $agent->normalize($input)
             : $input;
 
@@ -384,7 +494,7 @@ class DiagnosticApiController
         $analysis = $svc->analyzeFull($report);
 
         return json_response([
-            'vakhsh_oc' => $analysis['vakhsh_oc'] ?? (new DiagnosticOcService())->buildPlan($report, $analysis),
+            'oc_plan' => $analysis['oc_plan'] ?? (new DiagnosticOcService())->buildPlan($report, $analysis),
         ]);
     }
 
@@ -393,7 +503,7 @@ class DiagnosticApiController
         return json_response((new DiagnosticRgbService())->catalog());
     }
 
-    public function diagnosticVakhshOrchestrate(): string
+    public function diagnosticOrchestrate(): string
     {
         $input = decode_json_body_limited(2_097_152);
         if ($input === null) {
@@ -407,7 +517,7 @@ class DiagnosticApiController
         $fp = $this->diagnosticFingerprint($input);
         (new TrackUserEventAction())([
             'fingerprint' => $fp,
-            'event_type' => 'vakhsh_orchestrate',
+            'event_type' => 'orchestrate',
             'target_type' => 'rgb_lab',
             'metadata' => array_filter([
                 'device_count' => $ctx['device_count'] ?? count($tel['rgb']['devices'] ?? []),
@@ -418,7 +528,7 @@ class DiagnosticApiController
         return json_response($result);
     }
 
-    public function diagnosticVakhshNarrate(): string
+    public function diagnosticOrchestrateNarrate(): string
     {
         $input = decode_json_body_limited(262144);
         if ($input === null) {
@@ -500,7 +610,7 @@ class DiagnosticApiController
         if ($body !== '') {
             return substr($body, 0, 64);
         }
-        $c = trim((string) ($_COOKIE['_pcverse_fp'] ?? ''));
+        $c = trim((string) ($_COOKIE['pclab_fp'] ?? ''));
         if ($c !== '') {
             return substr($c, 0, 64);
         }

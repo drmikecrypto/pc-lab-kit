@@ -31,6 +31,9 @@ class DiagnosticTelemetryService
             'tabs' => [
                 ['id' => 'cpu', 'label_fa' => 'CPU', 'icon' => 'cpu', 'sections' => $this->cpuPanels($tel)],
                 ['id' => 'gpu', 'label_fa' => 'GPU', 'icon' => 'gpu', 'sections' => $this->gpuPanels($tel)],
+                ['id' => 'thermal', 'label_fa' => 'Hot Spots', 'icon' => 'sensor', 'sections' => $this->thermalPanels($tel, $probe)],
+                ['id' => 'drivers', 'label_fa' => 'Drivers', 'icon' => 'geek', 'sections' => $this->driverPanels($probe)],
+                ['id' => 'devices', 'label_fa' => 'Devices', 'icon' => 'board', 'sections' => $this->devicePanels($probe)],
                 ['id' => 'power', 'label_fa' => 'Power / VRM', 'icon' => 'power', 'sections' => $this->powerPanels($tel)],
                 ['id' => 'ram', 'label_fa' => 'RAM', 'icon' => 'ram', 'sections' => $this->ramPanels($tel)],
                 ['id' => 'storage', 'label_fa' => 'Storage', 'icon' => 'ssd', 'sections' => $this->storagePanels($tel)],
@@ -47,6 +50,8 @@ class DiagnosticTelemetryService
                 'cstate_bars' => $this->cstateBars($tel),
             ],
             'hwmon_available' => !empty($tel['hwmon']['available']),
+            'elevated' => !empty($probe['elevated']) || !empty($tel['elevated']) || !empty($tel['hwmon']['elevated']),
+            'drivers' => (new DiagnosticDriverAdvisorService())->present($probe),
         ];
     }
 
@@ -61,9 +66,34 @@ class DiagnosticTelemetryService
         if ($pkg) {
             $out[] = ['id' => 'cpu_temp', 'label_fa' => 'CPU Package', 'value' => $pkg, 'unit' => '°C', 'severity' => $pkg > 90 ? 'critical' : ($pkg > 80 ? 'warn' : 'ok')];
         }
+        $cpuHot = $cpu['thermal']['hotspot_c'] ?? null;
+        if ($cpuHot && $cpuHot != $pkg) {
+            $out[] = ['id' => 'cpu_hotspot', 'label_fa' => 'CPU Hot Spot', 'value' => $cpuHot, 'unit' => '°C', 'severity' => $cpuHot > 95 ? 'critical' : ($cpuHot > 85 ? 'warn' : 'ok')];
+        }
         $gt = $gpu['thermal']['core_c'] ?? null;
         if ($gt) {
             $out[] = ['id' => 'gpu_temp', 'label_fa' => 'GPU Core', 'value' => $gt, 'unit' => '°C', 'severity' => $gt > 88 ? 'critical' : ($gt > 75 ? 'warn' : 'ok')];
+        }
+        $ghs = $gpu['thermal']['hot_spot_c'] ?? null;
+        if ($ghs) {
+            $delta = $gpu['thermal']['hotspot_delta_c'] ?? null;
+            $sev = 'ok';
+            if ($delta !== null && $delta >= 27) {
+                $sev = 'critical';
+            } elseif ($delta !== null && $delta >= 20) {
+                $sev = 'warn';
+            } elseif ($ghs > 100) {
+                $sev = 'critical';
+            } elseif ($ghs > 90) {
+                $sev = 'warn';
+            }
+            $out[] = ['id' => 'gpu_hotspot', 'label_fa' => 'GPU Hot Spot', 'value' => $ghs, 'unit' => '°C', 'severity' => $sev];
+            if ($delta !== null) {
+                $out[] = ['id' => 'gpu_hotspot_delta', 'label_fa' => 'Hot Spot Δ', 'value' => $delta, 'unit' => '°C', 'severity' => $sev];
+            }
+        }
+        if (empty($probe['elevated']) && empty($tel['elevated']) && empty($tel['hwmon']['elevated'])) {
+            $out[] = ['id' => 'elevation', 'label_fa' => 'Run as Admin', 'value' => 'Needed for CPU temps', 'severity' => 'warn'];
         }
         $pw = $gpu['power']['draw_w'] ?? null;
         if ($pw) {
@@ -184,7 +214,7 @@ class DiagnosticTelemetryService
         $hwmon = (array) ($tel['hwmon'] ?? []);
         $flat = (array) ($hwmon['sensors_flat'] ?? []);
         if ($flat === []) {
-            return [$this->panel('LibreHardwareMonitor', [['key' => 'Status', 'value' => 'PcVerseHwMon.exe not available — rebuild agent bundle']])];
+            return [$this->panel('LibreHardwareMonitor', [['key' => 'Status', 'value' => 'PcLabHwMon.exe not available — rebuild agent bundle']])];
         }
 
         $byHw = [];
@@ -246,13 +276,29 @@ class DiagnosticTelemetryService
             ]),
             $this->panel('حرارت', [
                 ['key' => 'Package °C', 'value' => (string) ($thermal['package_c'] ?? '—')],
-                ['key' => 'Zones', 'value' => implode(', ', array_map('strval', (array) ($thermal['per_core_c'] ?? []))) ?: '—'],
+                ['key' => 'Hot Spot °C', 'value' => (string) ($thermal['hotspot_c'] ?? '—')],
+                ['key' => 'Average °C', 'value' => (string) ($thermal['average_c'] ?? '—')],
+                ['key' => 'TjMax °C', 'value' => (string) ($thermal['tjmax_c'] ?? '—') . ' (' . ($thermal['tjmax_source'] ?? '') . ')'],
+                ['key' => 'Headroom °C', 'value' => (string) ($thermal['headroom_c'] ?? '—')],
+                ['key' => 'Source', 'value' => (string) ($thermal['source'] ?? '—')],
+                ['key' => 'Per-core', 'value' => implode(', ', array_map('strval', (array) ($thermal['per_core_c'] ?? []))) ?: '—'],
             ]),
             $this->panel('Cache', [
+                ['key' => 'L1 KB', 'value' => (string) ($cache['l1_kb'] ?? '—')],
                 ['key' => 'L2 KB', 'value' => (string) ($cache['l2_kb'] ?? '—')],
                 ['key' => 'L3 KB', 'value' => (string) ($cache['l3_kb'] ?? '—')],
             ]),
         ];
+
+        if (!empty($arch['hybrid'])) {
+            array_unshift($panels, $this->panel('Hybrid topology', [
+                ['key' => 'P-cores', 'value' => (string) ($arch['performance_cores'] ?? '—')],
+                ['key' => 'E-cores', 'value' => (string) ($arch['efficiency_cores'] ?? '—')],
+                ['key' => 'Codename', 'value' => (string) ($arch['codename'] ?? '—')],
+            ]));
+        } elseif (!empty($arch['codename'])) {
+            $panels[0]['rows'][] = ['key' => 'Codename', 'value' => (string) $arch['codename']];
+        }
 
         $perCore = (array) ($clocks['per_core'] ?? []);
         if ($perCore !== []) {
@@ -292,8 +338,14 @@ class DiagnosticTelemetryService
             ]),
             $this->panel('حرارت / فن', [
                 ['key' => 'Core °C', 'value' => (string) ($thermal['core_c'] ?? '—')],
-                ['key' => 'VRAM °C', 'value' => (string) ($thermal['vram_c'] ?? '—')],
+                ['key' => 'Hot Spot °C', 'value' => (string) ($thermal['hot_spot_c'] ?? '—')],
+                ['key' => 'Hot Spot Δ', 'value' => (string) ($thermal['hotspot_delta_c'] ?? '—') . ' °C'],
+                ['key' => 'Hot Spot source', 'value' => (string) ($thermal['hotspot_source'] ?? '—')],
+                ['key' => 'VRAM °C', 'value' => (string) ($thermal['memory_c'] ?? $thermal['vram_c'] ?? '—')],
+                ['key' => 'VR °C', 'value' => (string) ($thermal['vr_c'] ?? '—')],
                 ['key' => 'Fan %', 'value' => (string) ($thermal['fan_pct'] ?? '—')],
+                ['key' => 'Headroom °C', 'value' => (string) ($thermal['headroom_c'] ?? '—')],
+                ['key' => 'Health', 'value' => (string) ($thermal['health'] ?? '—')],
             ]),
             $this->panel('VRAM', [
                 ['key' => 'Total MB', 'value' => (string) ($mem['vram_total_mb'] ?? '—')],
@@ -514,6 +566,193 @@ class DiagnosticTelemetryService
                 ];
             }
             $panels[] = $this->panel('ACPI sleep states', $rows);
+        }
+
+        return $panels;
+    }
+
+    /** @return list<array{title_fa: string, rows: list<array{key: string, value: string}>}> */
+    private function thermalPanels(array $tel, array $probe): array
+    {
+        $thermal = (array) ($tel['thermal'] ?? $probe['thermal'] ?? []);
+        $cpu = (array) ($thermal['cpu'] ?? $tel['cpu']['thermal'] ?? []);
+        $panels = [
+            $this->panel('Status', [
+                ['key' => 'Overall', 'value' => (string) ($thermal['status'] ?? '—')],
+                ['key' => 'Elevated', 'value' => !empty($thermal['elevated']) || !empty($probe['elevated']) ? 'Yes' : 'No — restart probe as Admin'],
+                ['key' => 'CPU source', 'value' => (string) ($cpu['source'] ?? $thermal['source'] ?? '—')],
+            ]),
+            $this->panel('CPU', [
+                ['key' => 'Model', 'value' => (string) ($cpu['model'] ?? '—')],
+                ['key' => 'Package °C', 'value' => (string) ($cpu['package_c'] ?? '—')],
+                ['key' => 'Hot Spot °C', 'value' => (string) ($cpu['hotspot_c'] ?? '—')],
+                ['key' => 'TjMax °C', 'value' => (string) ($cpu['tjmax_c'] ?? '—')],
+                ['key' => 'Headroom °C', 'value' => (string) ($cpu['headroom_c'] ?? '—')],
+                ['key' => 'Per-core', 'value' => implode(', ', array_map('strval', (array) ($cpu['per_core_c'] ?? []))) ?: '—'],
+            ]),
+        ];
+
+        foreach ((array) ($thermal['gpus'] ?? []) as $i => $g) {
+            if (!is_array($g)) {
+                continue;
+            }
+            $panels[] = $this->panel('GPU ' . ($i + 1) . ': ' . ($g['name'] ?? 'Adapter'), [
+                ['key' => 'Vendor', 'value' => (string) ($g['vendor'] ?? '—')],
+                ['key' => 'Core °C', 'value' => (string) ($g['core_c'] ?? '—')],
+                ['key' => 'Hot Spot °C', 'value' => (string) ($g['hot_spot_c'] ?? '—')],
+                ['key' => 'Hot Spot Δ', 'value' => (string) ($g['hotspot_delta_c'] ?? '—') . ' °C'],
+                ['key' => 'Source', 'value' => (string) ($g['hotspot_source'] ?? '—')],
+                ['key' => 'VRAM °C', 'value' => (string) ($g['memory_c'] ?? '—')],
+                ['key' => 'Health', 'value' => (string) ($g['health'] ?? '—')],
+                ['key' => 'Integrated', 'value' => !empty($g['is_integrated']) ? 'Yes' : 'No'],
+            ]);
+        }
+
+        $findings = (array) ($thermal['findings'] ?? []);
+        if ($findings !== []) {
+            $rows = [];
+            foreach ($findings as $f) {
+                if (!is_array($f)) {
+                    continue;
+                }
+                $rows[] = [
+                    'key' => strtoupper((string) ($f['severity'] ?? 'info')) . ' · ' . ($f['title'] ?? ''),
+                    'value' => (string) ($f['detail'] ?? ''),
+                ];
+            }
+            $panels[] = $this->panel('Findings', $rows);
+        }
+
+        return $panels;
+    }
+
+    /** @return list<array{title_fa: string, rows: list<array{key: string, value: string}>}> */
+    private function driverPanels(array $probe): array
+    {
+        $presented = (new DiagnosticDriverAdvisorService())->present($probe);
+        $panels = [
+            $this->panel('Driver health', [
+                ['key' => 'Score', 'value' => ($presented['score'] ?? '—') . ' / ' . ($presented['grade'] ?? '—')],
+                ['key' => 'Critical', 'value' => (string) ($presented['summary']['critical_actions'] ?? 0)],
+                ['key' => 'Warnings', 'value' => (string) ($presented['summary']['warn_actions'] ?? 0)],
+                ['key' => 'Devices without driver', 'value' => (string) ($presented['summary']['driverless_devices'] ?? 0)],
+                ['key' => 'Board', 'value' => trim(($presented['board']['manufacturer'] ?? '') . ' ' . ($presented['board']['product'] ?? '')) ?: '—'],
+            ]),
+        ];
+
+        foreach ((array) ($presented['install_queue'] ?? []) as $step) {
+            if (!is_array($step)) {
+                continue;
+            }
+            $linkStr = [];
+            foreach ((array) ($step['links'] ?? []) as $l) {
+                if (!empty($l['url'])) {
+                    $linkStr[] = ($l['label'] ?? 'link') . ' → ' . $l['url'];
+                }
+            }
+            $panels[] = $this->panel(($step['label'] ?? 'Step') . ' [' . ($step['status'] ?? '') . ']', [
+                ['key' => 'Why', 'value' => (string) ($step['why'] ?? '—')],
+                ['key' => 'Open actions', 'value' => (string) ($step['action_count'] ?? 0)],
+                ['key' => 'Links', 'value' => $linkStr !== [] ? implode(' | ', $linkStr) : '—'],
+            ]);
+        }
+
+        foreach (array_slice((array) ($presented['actions'] ?? []), 0, 20) as $a) {
+            if (!is_array($a)) {
+                continue;
+            }
+            $links = [];
+            foreach ((array) ($a['links'] ?? []) as $l) {
+                if (!empty($l['url'])) {
+                    $links[] = ($l['label'] ?? 'link') . ' → ' . $l['url'];
+                }
+            }
+            $panels[] = $this->panel(strtoupper((string) ($a['severity'] ?? 'info')) . ': ' . ($a['title'] ?? ''), [
+                ['key' => 'Category', 'value' => (string) ($a['category'] ?? '—')],
+                ['key' => 'Device', 'value' => (string) ($a['device'] ?? '—')],
+                ['key' => 'Detail', 'value' => (string) ($a['detail'] ?? '—')],
+                ['key' => 'Install', 'value' => $links !== [] ? implode(' | ', $links) : '—'],
+            ]);
+        }
+
+        foreach ((array) ($presented['gpus'] ?? []) as $g) {
+            if (!is_array($g)) {
+                continue;
+            }
+            $panels[] = $this->panel('GPU driver: ' . ($g['name'] ?? ''), [
+                ['key' => 'Vendor', 'value' => (string) ($g['vendor'] ?? '—')],
+                ['key' => 'Version', 'value' => (string) ($g['driver'] ?? '—')],
+                ['key' => 'Date', 'value' => (string) ($g['driver_date'] ?? '—') . ' (' . ($g['age_days'] ?? '?') . 'd)'],
+                ['key' => 'Stale / Generic', 'value' => trim((!empty($g['is_stale']) ? 'stale ' : '') . (!empty($g['is_generic']) ? 'generic' : '')) ?: 'ok'],
+                ['key' => 'Updater', 'value' => !empty($g['updater_installed']) ? (string) ($g['updater_name'] ?? 'yes') : 'not installed'],
+            ]);
+        }
+
+        return $panels;
+    }
+
+    /** @return list<array{title_fa: string, rows: list<array{key: string, value: string}>}> */
+    private function devicePanels(array $probe): array
+    {
+        $devices = (array) ($probe['devices'] ?? []);
+        $summary = (array) ($devices['summary'] ?? []);
+        $firmware = (array) ($devices['firmware'] ?? []);
+        $bios = (array) ($devices['bios'] ?? $firmware['bios'] ?? []);
+        $board = (array) ($devices['motherboard'] ?? $firmware['board'] ?? []);
+        $tpm = (array) ($devices['tpm'] ?? $firmware['tpm'] ?? []);
+
+        $panels = [
+            $this->panel('Inventory', [
+                ['key' => 'Total PnP devices', 'value' => (string) ($summary['total_devices'] ?? '—')],
+                ['key' => 'Problem devices', 'value' => (string) ($summary['problem_devices'] ?? '—')],
+                ['key' => 'Missing drivers', 'value' => (string) ($summary['driverless'] ?? '—')],
+                ['key' => 'USB devices', 'value' => (string) ($summary['usb_devices'] ?? '—')],
+                ['key' => 'PCI devices', 'value' => (string) ($summary['pci_devices'] ?? '—')],
+                ['key' => 'Monitors', 'value' => (string) ($summary['monitors'] ?? '—')],
+                ['key' => 'Audio', 'value' => (string) ($summary['audio_devices'] ?? '—')],
+            ]),
+            $this->panel('Firmware / Board', [
+                ['key' => 'Board', 'value' => trim(($board['manufacturer'] ?? '') . ' ' . ($board['product'] ?? '')) ?: '—'],
+                ['key' => 'BIOS', 'value' => trim(($bios['vendor'] ?? '') . ' ' . ($bios['version'] ?? '')) ?: '—'],
+                ['key' => 'BIOS date', 'value' => (string) ($bios['date'] ?? '—')],
+                ['key' => 'TPM', 'value' => !empty($tpm['present']) ? ((string) ($tpm['spec_version'] ?? 'present')) : 'not present'],
+                ['key' => 'Secure Boot', 'value' => isset($devices['secure_boot']) ? (!empty($devices['secure_boot']) ? 'On' : 'Off') : '—'],
+            ]),
+        ];
+
+        foreach ((array) ($devices['driverless'] ?? []) as $d) {
+            if (!is_array($d)) {
+                continue;
+            }
+            $panels[] = $this->panel('No driver: ' . ($d['name'] ?? 'Unknown'), [
+                ['key' => 'Category', 'value' => (string) ($d['category'] ?? '—')],
+                ['key' => 'Problem', 'value' => (string) ($d['problem_message'] ?? '—')],
+                ['key' => 'Vendor', 'value' => (string) ($d['vendor_name'] ?? '—')],
+                ['key' => 'Instance', 'value' => (string) ($d['instance_id'] ?? '—')],
+            ]);
+        }
+
+        foreach ((array) ($devices['monitors']['displays'] ?? []) as $i => $m) {
+            if (!is_array($m)) {
+                continue;
+            }
+            $panels[] = $this->panel('Monitor ' . ($i + 1), [
+                ['key' => 'Name', 'value' => (string) ($m['name'] ?? '—')],
+                ['key' => 'Manufacturer', 'value' => (string) ($m['manufacturer'] ?? '—')],
+                ['key' => 'Serial', 'value' => (string) ($m['serial'] ?? '—')],
+                ['key' => 'Made', 'value' => trim(($m['year'] ?? '') . ' W' . ($m['week'] ?? ''))],
+            ]);
+        }
+
+        foreach (array_slice((array) ($devices['pci'] ?? []), 0, 24) as $p) {
+            if (!is_array($p)) {
+                continue;
+            }
+            $panels[] = $this->panel('PCI: ' . ($p['name'] ?? ''), [
+                ['key' => 'Vendor', 'value' => (string) (($p['vendor_name'] ?? '') . ' [' . ($p['vendor_id'] ?? '') . ':' . ($p['device_id'] ?? '') . ']')],
+                ['key' => 'Status', 'value' => (string) ($p['status'] ?? '—')],
+                ['key' => 'Problem', 'value' => (string) ($p['problem_code'] ?? 0)],
+            ]);
         }
 
         return $panels;

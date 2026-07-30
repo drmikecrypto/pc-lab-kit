@@ -1,5 +1,5 @@
-(function () {
-  const cfg = window.PCVERSE_DIAGNOSTIC || {};
+﻿(function () {
+  const cfg = window.PCLAB_DIAGNOSTIC || {};
   const AGENT = (cfg.agentBase || '').replace(/\/+$/, '') || 'http://127.0.0.1:18765';
   let scan = null;
   let catalog = null;
@@ -56,8 +56,8 @@
       scan = await res.json();
       render();
     } catch (e) {
-      if (st) { st.textContent = 'Probe offline — Start-PCVerseProbe.bat'; st.className = 'dx-rgb-status warn'; }
-      document.getElementById('dx-rgb-devices').innerHTML = '<div class="dx-rgb-empty"><p><strong>Probe not available</strong></p><p>Run <code>Start-PCVerseProbe.bat</code>, then click Rescan RGB. Default: <code dir="ltr">127.0.0.1:18765</code></p></div>';
+      if (st) { st.textContent = 'Probe offline — Start-PcLabProbe.bat'; st.className = 'dx-rgb-status warn'; }
+      document.getElementById('dx-rgb-devices').innerHTML = '<div class="dx-rgb-empty"><p><strong>Probe not available</strong></p><p>Run <code>Start-PcLabProbe.bat</code>, then click Rescan RGB. Default: <code dir="ltr">127.0.0.1:18765</code></p></div>';
     }
   }
 
@@ -72,7 +72,7 @@
     wrap.innerHTML = `
       <div class="dx-rgb-popup">
         <button type="button" class="dx-rgb-popup-close">×</button>
-        <div class="dx-rgb-brand">PCVerse · RGB</div>
+        <div class="dx-rgb-brand">PC Lab Kit · RGB</div>
         <h3>${esc(guide.title || guide.title_fa || 'Enable RGB')}</h3>
         <p class="muted fs-sm">${esc(guide.why || guide.why_fa || '')}</p>
         <ol>${ol}</ol>
@@ -84,8 +84,8 @@
     wrap.querySelector('#dx-rgb-popup-rescan').addEventListener('click', () => { wrap.remove(); rgbScan(); });
   }
 
-  function showVakhshResult(narrative, apply) {
-    const existing = document.getElementById('dx-vakhsh-result');
+  function showOrchestratorResult(narrative, apply) {
+    const existing = document.getElementById('dx-orchestrator-result');
     if (existing) existing.remove();
 
     const did = (narrative.did || narrative.did_fa || []).map((d) => `<li>${esc(d)}</li>`).join('');
@@ -100,12 +100,12 @@
     if (apply?.fan_curve_path) paths.push(`Fan: ${apply.fan_curve_path}`);
 
     const wrap = document.createElement('div');
-    wrap.id = 'dx-vakhsh-result';
+    wrap.id = 'dx-orchestrator-result';
     wrap.className = 'dx-rgb-popup-overlay';
     wrap.innerHTML = `
       <div class="dx-vkh-result">
         <button type="button" class="dx-rgb-popup-close">×</button>
-        <div class="dx-rgb-brand">PCVerse · RGB setup</div>
+        <div class="dx-rgb-brand">PC Lab Kit · RGB setup</div>
         <h2>${esc(narrative.headline || narrative.headline_fa || 'Done.')}</h2>
         <p class="dx-vkh-why">${esc(narrative.why || narrative.why_fa || '')}</p>
         <div class="dx-vkh-section">
@@ -190,12 +190,12 @@
     });
   }
 
-  async function vakhshProSetup() {
-    const btn = document.getElementById('dx-rgb-vakhsh');
+  async function orchestratorProSetup() {
+    const btn = document.getElementById('dx-rgb-auto');
     if (btn) { btn.disabled = true; btn.textContent = 'Working…'; }
 
     try {
-      const orchRes = await fetch('/api/diagnostic/vakhsh/orchestrate', {
+      const orchRes = await fetch('/api/diagnostic/orchestrate', {
         method: 'POST',
         headers: jsonHeadersWithCsrf(),
         body: JSON.stringify({ telemetry: getTelemetry(), context: getContext() }),
@@ -203,7 +203,7 @@
       const orch = await orchRes.json();
       const plan = orch.plan;
 
-      const applyRes = await fetch(`${AGENT}/vakhsh/orchestrate`, {
+      const applyRes = await fetch(`${AGENT}/orchestrate`, {
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'application/json' },
@@ -211,7 +211,7 @@
       });
       const apply = await applyRes.json();
 
-      const narRes = await fetch('/api/diagnostic/vakhsh/narrate', {
+      const narRes = await fetch('/api/diagnostic/orchestrate/narrate', {
         method: 'POST',
         headers: jsonHeadersWithCsrf(),
         body: JSON.stringify({ plan, apply }),
@@ -224,9 +224,9 @@
       }
 
       if (window.dxTrackLab) {
-        window.dxTrackLab('vakhsh_rgb_setup', { device_count: scan?.device_count || 0, partial: !!apply.partial });
+        window.dxTrackLab('rgb_setup', { device_count: scan?.device_count || 0, partial: !!apply.partial });
       }
-      showVakhshResult(nar.narrative || orch.narrative, apply);
+      showOrchestratorResult(nar.narrative || orch.narrative, apply);
       rgbScan();
     } catch (e) {
       showEnablePopup(scan?.enable_guide);
@@ -286,7 +286,7 @@
 
   document.getElementById('dx-rgb-scan')?.addEventListener('click', rgbScan);
   document.getElementById('dx-rgb-apply')?.addEventListener('click', applyZones);
-  document.getElementById('dx-rgb-vakhsh')?.addEventListener('click', vakhshProSetup);
+  document.getElementById('dx-rgb-auto')?.addEventListener('click', orchestratorProSetup);
 
   loadCatalog().then(rgbScan);
 })();

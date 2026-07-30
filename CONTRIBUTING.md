@@ -1,12 +1,12 @@
-# Contributing to PCVerse
+# Contributing to PC Lab Kit
 
-Thanks for your interest in PCVerse.
+Thanks for your interest in PC Lab Kit.
 
 ## Before you start
 
-- Read [LICENSE](LICENSE) (Elastic License 2.0) and [TRADEMARK.md](TRADEMARK.md).
+- Read [LICENSE](LICENSE) (Elastic License 2.0).
 - Local use and contributions are welcome.
-- You may not launch a **competing hosted PCVerse service** for third parties without a commercial license.
+- You may not offer PC Lab Kit (or a substantial fork) as a hosted/managed service to third parties without a commercial license.
 
 ## Development setup
 
@@ -20,10 +20,17 @@ composer test
 
 Open http://127.0.0.1:8080/diagnostic
 
+Windows probe (optional for full scans):
+
+```powershell
+.\scripts\build-agent-bundle.ps1
+# then run agent\pclab_probe\Start-PcLabProbe.bat
+```
+
 ## Pull requests
 
 1. Fork and branch from `main`
-2. Keep changes focused
+2. Keep changes focused on the web lab and/or Windows probe
 3. Run `composer test`
 4. Describe **what** and **why** in the PR
 

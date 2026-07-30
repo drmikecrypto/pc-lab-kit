@@ -14,6 +14,6 @@ if [[ -x "$ROOT/runtime/php/bin/php" ]]; then
   PHP_BIN="$ROOT/runtime/php/bin/php"
 fi
 
-echo "PCVerse lab → http://127.0.0.1:${PORT}/diagnostic"
+echo "PC Lab Kit → http://127.0.0.1:${PORT}/diagnostic"
 echo "Press Ctrl+C to stop."
 exec "$PHP_BIN" -S "127.0.0.1:${PORT}" -t public

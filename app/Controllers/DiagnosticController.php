@@ -11,8 +11,8 @@ class DiagnosticController
         $svc = new DiagnosticService();
 
         return view('diagnostic', [
-            'title' => 'PCVerse — Diagnostic Lab',
-            'document_title' => 'PCVerse — Diagnostic Lab',
+            'title' => 'PC Lab Kit — Diagnostic Lab',
+            'document_title' => 'PC Lab Kit — Diagnostic Lab',
             'config' => $svc->getConfig(),
         ]);
     }

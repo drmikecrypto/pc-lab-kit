@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const overlay = document.getElementById('dx-settings');
   const form = document.getElementById('dx-settings-form');
   if (!overlay || !form) return;
@@ -44,7 +44,7 @@
           hintEl.textContent = 'No API key saved yet.';
         }
       }
-      window.PCVERSE_SETTINGS = data;
+      window.PCLAB_SETTINGS = data;
     } catch (_) {
       if (statusEl) statusEl.textContent = 'Could not load settings.';
     }
@@ -76,8 +76,8 @@
           ? 'Saved key: ' + data.api_key_hint + (data.source === 'env' ? ' (from .env)' : '')
           : 'No API key saved.';
       }
-      window.PCVERSE_SETTINGS = data;
-      window.dispatchEvent(new CustomEvent('pcverse:settings-updated', { detail: data }));
+      window.PCLAB_SETTINGS = data;
+      window.dispatchEvent(new CustomEvent('pclab:settings-updated', { detail: data }));
     } catch (_) {
       if (statusEl) statusEl.textContent = 'Could not save settings. Try again.';
     }

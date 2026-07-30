@@ -5,7 +5,7 @@ Set-Location $Root
 
 . (Join-Path $Root 'scripts\bootstrap-build-tools.ps1')
 
-Write-Host "PCVerse — install" -ForegroundColor Cyan
+Write-Host "PC Lab Kit - install" -ForegroundColor Cyan
 Initialize-BuildTools
 
 if (-not (Test-Path ".env")) {
@@ -14,7 +14,7 @@ if (-not (Test-Path ".env")) {
 }
 
 if (-not (Test-Path "vendor/autoload.php")) {
-    Write-Host "Installing PHP dependencies (bundled Composer)…"
+    Write-Host "Installing PHP dependencies (bundled Composer)..."
     Invoke-BundledComposer install --no-interaction --prefer-dist
 }
 

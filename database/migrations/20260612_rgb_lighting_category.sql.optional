@@ -8,7 +8,7 @@ SELECT c.id, 'هاب ARGB دیپ‌کول FH-10', 'DeepCool', 'FH-10', '{"kind":
 FROM categories c WHERE c.slug = 'rgb-lighting' LIMIT 1;
 
 INSERT IGNORE INTO parts (category_id, name_fa, brand, model, specs_json, benchmark_score, tdp_watts)
-SELECT c.id, 'نوار نور ARGB ۳۰ سانتی', 'PCVerse', 'ARGB-Strip-30', '{"kind":"strip","length_cm":30,"watts":8,"rgb":true}', 0, 8
+SELECT c.id, 'نوار نور ARGB ۳۰ سانتی', 'PcLabKit', 'ARGB-Strip-30', '{"kind":"strip","length_cm":30,"watts":8,"rgb":true}', 0, 8
 FROM categories c WHERE c.slug = 'rgb-lighting' LIMIT 1;
 
 -- Link to first approved/live provider if exists (Digikala demo id=1 in seed).

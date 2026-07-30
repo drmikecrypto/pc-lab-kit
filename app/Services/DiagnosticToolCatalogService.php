@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * Maps the 80-tool enthusiast/OEM catalog to PCVerse lab modules and coverage status.
+ * Maps the 80-tool enthusiast/OEM catalog to PC Lab Kit lab modules and coverage status.
  */
 class DiagnosticToolCatalogService
 {
@@ -110,9 +110,11 @@ class DiagnosticToolCatalogService
     public function runnableBench(): array
     {
         return [
-            ['id' => 'cpu', 'label' => 'CPU benchmark', 'desc' => 'Multi-thread synthetic score (Cinebench-class workflow)', 'replaces' => ['Cinebench', 'CPU-Z Benchmark', 'Linpack Xtreme']],
+            ['id' => 'cpu', 'label' => 'CPU micro-bench', 'desc' => 'Multi-thread + AVX-aware synthetic (Cinebench-class workflow)', 'replaces' => ['Cinebench', 'CPU-Z Benchmark', 'Linpack Xtreme']],
+            ['id' => 'cpu_mt', 'label' => 'CPU multi-thread', 'desc' => 'All-core parallel micro-benchmark', 'replaces' => ['Cinebench MT']],
             ['id' => 'memory', 'label' => 'Memory bandwidth', 'desc' => 'RAM throughput test', 'replaces' => ['PassMark RAM', 'AIDA64 Cache & Memory']],
-            ['id' => 'storage', 'label' => 'Storage benchmark', 'desc' => 'Sequential read/write on system drive', 'replaces' => ['CrystalDiskMark', 'DiskSpd', 'AS SSD Benchmark']],
+            ['id' => 'storage', 'label' => 'Storage (DiskSpd/WinSAT)', 'desc' => 'Seq + 4K via DiskSpd when present, else WinSAT/file copy', 'replaces' => ['CrystalDiskMark', 'DiskSpd', 'AS SSD Benchmark']],
+            ['id' => 'gpu', 'label' => 'GPU compute', 'desc' => 'Vulkan/OpenCL compute when available; else CUDA/DXGI inventory score', 'replaces' => ['Basemark GPU', 'FurMark (score only)']],
         ];
     }
 
@@ -120,8 +122,11 @@ class DiagnosticToolCatalogService
     public function runnableStress(): array
     {
         return [
-            ['id' => 'cpu', 'label' => 'CPU stress', 'desc' => 'All-core thermal soak with telemetry', 'replaces' => ['Prime95', 'OCCT', 'AIDA64']],
-            ['id' => 'memory', 'label' => 'Memory stress', 'desc' => 'In-OS RAM pressure test', 'replaces' => ['TestMem5', 'HCI MemTest', 'MemTest64']],
+            ['id' => 'cpu', 'label' => 'CPU stress', 'desc' => 'All-core thermal soak with telemetry certificate', 'replaces' => ['Prime95', 'OCCT', 'AIDA64']],
+            ['id' => 'memory', 'label' => 'Memory stress', 'desc' => 'In-OS RAM pressure + error counters', 'replaces' => ['TestMem5', 'HCI MemTest', 'MemTest64']],
+            ['id' => 'gpu', 'label' => 'GPU stress', 'desc' => 'GPU load via available compute path + thermal watch', 'replaces' => ['FurMark', 'MSI Kombustor']],
+            ['id' => 'combined', 'label' => 'Combined stress', 'desc' => 'CPU + memory together — one-click profile', 'replaces' => ['OCCT Power', 'AIDA64 System']],
+            ['id' => 'quick', 'label' => 'Quick profile (60s)', 'desc' => 'One-click 60s CPU+RAM soak + pass/fail certificate', 'replaces' => ['Quick burn-in']],
         ];
     }
 
@@ -181,7 +186,7 @@ class DiagnosticToolCatalogService
                 'id' => $id,
                 'name' => $t['name'],
                 'category' => $t['category'],
-                'desc' => $t['pcverse'] ?? '',
+                'desc' => $t['coverage_note'] ?? '',
             ];
         }
 
