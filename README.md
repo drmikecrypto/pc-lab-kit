@@ -14,6 +14,76 @@ Get the latest release: **https://github.com/drmikecrypto/pc-lab-kit/releases/la
 
 The lab runs **inside the app** (not in your system browser). On Windows the hardware probe starts with the app for sensors, benchmarks, and OC.
 
+## How it fits together
+
+```mermaid
+flowchart LR
+  User[You] --> Desktop[PC Lab Kit app]
+  Desktop --> PHP[Local PHP lab]
+  Desktop --> Probe[Windows probe :18765]
+  PHP --> UI[Diagnostic UI]
+  UI -->|CORS poll| Probe
+  Probe --> HW[CPU GPU RAM PnP drivers]
+  UI -->|optional BYOK| AI[AI advisor]
+```
+
+```mermaid
+flowchart TB
+  subgraph desktop [Desktop shell]
+    Tauri[Tauri window]
+    BundledPHP[Bundled PHP runtime]
+    Sidecar[Probe sidecar Windows]
+  end
+  subgraph lab [Lab on localhost]
+    Routes[Routes and APIs]
+    Analysis[Diagnostic analysis]
+    Drivers[Driver advisor]
+    Graph[Hardware knowledge graph]
+  end
+  subgraph machine [Your PC]
+    PnP[Device Manager PnP]
+    Sensors[Temps power sensors]
+  end
+  Tauri --> BundledPHP
+  Tauri --> Sidecar
+  BundledPHP --> Routes
+  Routes --> Analysis
+  Routes --> Drivers
+  Routes --> Graph
+  Sidecar --> PnP
+  Sidecar --> Sensors
+  Analysis --> Graph
+  Drivers --> PnP
+```
+
+### Driver matching
+
+When a device is missing a driver, stuck on a generic Microsoft INF, or stale, the probe and lab resolve a package link from PCI/USB IDs and board model:
+
+```mermaid
+flowchart LR
+  Device[PnP device] --> IDs[VEN DEV or VID PID]
+  IDs --> Catalog[driver-catalog.json]
+  Board[Board / OEM model] --> Catalog
+  Catalog --> Match[exact vendor board generic]
+  Match --> Queue[Install queue]
+  Queue --> Links[Vendor package links]
+```
+
+### In-app updates
+
+```mermaid
+sequenceDiagram
+  participant App as PC Lab Kit
+  participant API as Local update API
+  participant GH as GitHub Releases
+  App->>API: GET /api/app/update
+  API->>GH: latest release
+  GH-->>API: tag + Setup / AppImage URLs
+  API-->>App: update_available?
+  Note over App: Hidden Update button appears only when newer
+```
+
 ## Quick start (developers)
 
 **Requirements:** Git. On first run, `.\scripts\install.ps1` (Windows) or `./scripts/install.sh` (Linux/macOS) can bootstrap **PHP 8.4** and **Composer** into `build-cache/`. For the desktop shell: Rust + Node 20+.
@@ -54,7 +124,18 @@ chmod +x scripts/*.sh
 ./scripts/build-desktop-linux.sh      # → public/downloads/PcLabKit-Linux-x64.AppImage
 ```
 
-Tag `v*` pushes trigger GitHub Actions to publish the installers.
+Tag `v*` pushes trigger GitHub Actions to publish the installers:
+
+```mermaid
+flowchart LR
+  Tag[git tag v*] --> CI[GitHub Actions]
+  CI --> Win[Windows Setup.exe]
+  CI --> Lin[Linux AppImage]
+  CI --> ProbeZip[probe ZIP]
+  Win --> Rel[GitHub Release]
+  Lin --> Rel
+  ProbeZip --> Rel
+```
 
 ## Optional AI advisor (BYOK)
 
