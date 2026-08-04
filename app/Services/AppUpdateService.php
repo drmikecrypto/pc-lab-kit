@@ -11,6 +11,15 @@ use App\Support\Env;
  */
 class AppUpdateService
 {
+    /** @var callable|null */
+    private $releaseFetcher;
+
+    /** @param callable|null $releaseFetcher fn(string $owner, string $repo): ?array */
+    public function __construct(?callable $releaseFetcher = null)
+    {
+        $this->releaseFetcher = $releaseFetcher;
+    }
+
     /** @return array<string, mixed> */
     public function check(bool $forceRefresh = false): array
     {
@@ -52,9 +61,27 @@ class AppUpdateService
             'github_owner' => $owner,
             'github_repo' => $repo,
         ];
-        $this->writeCache($payload);
+        if ($this->releaseFetcher === null) {
+            $this->writeCache($payload);
+        }
 
         return $this->finalize($payload, $current);
+    }
+
+    /**
+     * Apply current version and update_available flag to a release payload.
+     *
+     * @param array<string, mixed> $payload
+     * @return array<string, mixed>
+     */
+    public function finalizePayload(array $payload, string $current): array
+    {
+        return $this->finalize($payload, $current);
+    }
+
+    public function versionIsNewer(string $latest, string $current): bool
+    {
+        return $this->isNewer($latest, $current);
     }
 
     /** @param array<string, mixed> $payload */
@@ -70,6 +97,12 @@ class AppUpdateService
     /** @return array<string, mixed>|null */
     private function fetchLatestRelease(string $owner, string $repo): ?array
     {
+        if ($this->releaseFetcher !== null) {
+            $result = ($this->releaseFetcher)($owner, $repo);
+
+            return is_array($result) ? $result : null;
+        }
+
         $url = "https://api.github.com/repos/{$owner}/{$repo}/releases/latest";
         $ctx = stream_context_create([
             'http' => [

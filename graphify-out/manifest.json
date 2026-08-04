@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "app/Controllers/DownloadController.php": {
-    "mtime": 1785403264.2491655,
-    "ast_hash": "7c4bf639c2143cf3911aabfcacc1c9a3",
+    "mtime": 1785576163.8869734,
+    "ast_hash": "71d75f8becf7eb820ffb0248618e2cfd",
     "semantic_hash": ""
   },
   "app/Controllers/SettingsApiController.php": {
@@ -55,8 +55,8 @@
     "semantic_hash": "3d9e52f8a8a7412560cefabb06a39a61"
   },
   "app/Services/AppUpdateService.php": {
-    "mtime": 1785403264.5941913,
-    "ast_hash": "7142d05b1c549ebc9a3efda4ffefd3ea",
+    "mtime": 1785768117.323711,
+    "ast_hash": "352c30d22a783e3ff5784b5c430727c6",
     "semantic_hash": ""
   },
   "app/Services/BenchmarkDatasetService.php": {
@@ -90,9 +90,9 @@
     "semantic_hash": "abed37d8bb32b2fa838fc0ba7e34c26d"
   },
   "app/Services/DiagnosticDriverAdvisorService.php": {
-    "mtime": 1785383919.4883442,
-    "ast_hash": "f0766af7d4e9267be24c407e6e1b42c0",
-    "semantic_hash": "f0766af7d4e9267be24c407e6e1b42c0"
+    "mtime": 1785768911.4885936,
+    "ast_hash": "b4a0d554eb18de71665d0aba557c2e1b",
+    "semantic_hash": ""
   },
   "app/Services/DiagnosticGameCatalogService.php": {
     "mtime": 1781469126.2081308,
@@ -135,8 +135,8 @@
     "semantic_hash": ""
   },
   "app/Services/DiagnosticTelemetryService.php": {
-    "mtime": 1785401314.350164,
-    "ast_hash": "de622cf19c32248423b2570f4b85427a",
+    "mtime": 1785768470.1367774,
+    "ast_hash": "6bafdb43d8a40b7c4822c4ecf7fb6358",
     "semantic_hash": ""
   },
   "app/Services/DiagnosticToolCatalogService.php": {
@@ -285,8 +285,8 @@
     "semantic_hash": "03bbfe42d7762b80f4a8f2db1824689b"
   },
   "config/app.php": {
-    "mtime": 1785403266.0356646,
-    "ast_hash": "3f7c6754a3d4e05aeb1d8e0cfaf94bda",
+    "mtime": 1785576170.5237708,
+    "ast_hash": "5bf363e2aff94434a965bf0aa90ad231",
     "semantic_hash": ""
   },
   "config/benchmark_datasets.php": {
@@ -295,7 +295,7 @@
     "semantic_hash": "53c27296a143333b3eed9cd784b3106f"
   },
   "config/build-deps.json": {
-    "mtime": 1785403762.6880932,
+    "mtime": 1785767490.4863539,
     "ast_hash": "e9bc6aab7a12d54ecc10ff0d76387c45",
     "semantic_hash": ""
   },
@@ -350,8 +350,8 @@
     "semantic_hash": "924c06891d47359a1305261fbef15e67"
   },
   "public/assets/js/app-update.js": {
-    "mtime": 1785401002.4516916,
-    "ast_hash": "fea433e097cffade8e96e92e9f08ddfd",
+    "mtime": 1785768051.1207993,
+    "ast_hash": "d31d209cff10eb02bb30888a7ff02a87",
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-compare.js": {
@@ -365,8 +365,8 @@
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-live.js": {
-    "mtime": 1785401002.457688,
-    "ast_hash": "4d1fb070f8d3f67a43aced6dfabd9e3c",
+    "mtime": 1785769046.912694,
+    "ast_hash": "a46a727565a7de060c422000b3e5486f",
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-oc.js": {
@@ -385,8 +385,8 @@
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-settings.js": {
-    "mtime": 1785401002.4692552,
-    "ast_hash": "f7a31cca32683c33a12ea31db0e73797",
+    "mtime": 1785768053.686459,
+    "ast_hash": "1103aec3b44e347fd9eac3a2ba6c0c9c",
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-tabs.js": {
@@ -395,8 +395,8 @@
     "semantic_hash": "e3a2edfd0848c00eca91f1e5ef29db35"
   },
   "public/assets/js/diagnostic-telemetry.js": {
-    "mtime": 1785401002.474252,
-    "ast_hash": "1a6a85a7df38aa02497891cd1b120137",
+    "mtime": 1785768459.8396997,
+    "ast_hash": "ff62eac9b542459878dd85fc083bd4f2",
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-toolkit.js": {
@@ -410,8 +410,8 @@
     "semantic_hash": "6123da9436ca10b9c5fee7bc20c322f1"
   },
   "resources/views/diagnostic.php": {
-    "mtime": 1785401314.40994,
-    "ast_hash": "5d7b9b29d7db67b76159e5e93ea3166f",
+    "mtime": 1785769325.4945433,
+    "ast_hash": "604d53333b303d77543bc303dfcd8ef8",
     "semantic_hash": ""
   },
   "resources/views/errors/404.php": {
@@ -420,8 +420,8 @@
     "semantic_hash": ""
   },
   "resources/views/layout.php": {
-    "mtime": 1785402849.4066975,
-    "ast_hash": "98b8b45f9d826d3268ea4c6681d17f43",
+    "mtime": 1785768556.2585993,
+    "ast_hash": "a7aebc3ccdc68825bf5ac94569981a0c",
     "semantic_hash": ""
   },
   "routes/web.php": {
@@ -505,13 +505,13 @@
     "semantic_hash": ""
   },
   ".github/workflows/release-bundles.yml": {
-    "mtime": 1785403730.3082747,
-    "ast_hash": "47be67640434ba33973f42503770df59",
+    "mtime": 1785576163.7002656,
+    "ast_hash": "8cc6b15bd23f682dc72be257e4b18db8",
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1785403290.865759,
-    "ast_hash": "9f3d9384ce60b3773832873660b4899b",
+    "mtime": 1785576185.1998098,
+    "ast_hash": "6793e05dccd1e36b2e58b23eaaf8df85",
     "semantic_hash": ""
   },
   "CONTRIBUTING.md": {
@@ -530,18 +530,18 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1785403290.0986784,
-    "ast_hash": "63a43898f63d0d238476cdb1c3f320f8",
+    "mtime": 1785576176.2438319,
+    "ast_hash": "19d289db2c4526bb942d2d99936dd8b0",
     "semantic_hash": ""
   },
   "docs/FAQ.md": {
-    "mtime": 1785403567.6886072,
-    "ast_hash": "35e1b42e85b54bbf24d26140bad17130",
+    "mtime": 1785576183.0116937,
+    "ast_hash": "2ef5566ea891673070ddd497650e528f",
     "semantic_hash": ""
   },
   "docs/INTEGRATION.md": {
-    "mtime": 1785403318.530494,
-    "ast_hash": "d5db816e0a485b51c2e29a3cfa5efe34",
+    "mtime": 1785576230.4874127,
+    "ast_hash": "6a19cf32e6760b0d63f4ba68ea1f091f",
     "semantic_hash": ""
   },
   "docs/MASTER_PLAN.md": {
@@ -580,8 +580,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/PcLabProbeServe.ps1": {
-    "mtime": 1785400889.0664582,
-    "ast_hash": "3fb00deec8a09f2de30e51c2e81acbfa",
+    "mtime": 1785768298.1795702,
+    "ast_hash": "235bbf507dd142738b258fdb84f6c30f",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/amd.ps1": {
@@ -615,8 +615,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/drivers.ps1": {
-    "mtime": 1785400888.9951782,
-    "ast_hash": "c864086ff4c915aeaa76ccfb099dd429",
+    "mtime": 1785769026.9993494,
+    "ast_hash": "4a3ac04120f59981ae346c45679dd06b",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/frametime.ps1": {
@@ -685,8 +685,8 @@
     "semantic_hash": ""
   },
   "app/Services/HardwareKnowledgeGraphService.php": {
-    "mtime": 1785399047.765941,
-    "ast_hash": "ba48c08f81a7411aea593b3deaa6fa87",
+    "mtime": 1785768369.482338,
+    "ast_hash": "28b512fb78b8a71cee69fe39ce9a9c48",
     "semantic_hash": ""
   },
   "app/Services/LabReportExportService.php": {
@@ -740,8 +740,198 @@
     "semantic_hash": ""
   },
   "scripts/stage-app-payload.sh": {
-    "mtime": 1785403597.6667695,
-    "ast_hash": "086b735b60ae61d22dbe13001ff11413",
+    "mtime": 1785576196.0801835,
+    "ast_hash": "e64f1351c73722462118d0c1f7202c1a",
+    "semantic_hash": ""
+  },
+  "agent/pclab_probe/data/driver-catalog.json": {
+    "mtime": 1785769162.043668,
+    "ast_hash": "94b20bba39f9d5fb3922bd8c03d07668",
+    "semantic_hash": ""
+  },
+  "desktop/.vscode/extensions.json": {
+    "mtime": 1785576008.0318816,
+    "ast_hash": "d1846e92ceedfa6eb08a69cbb38c190a",
+    "semantic_hash": ""
+  },
+  "desktop/package.json": {
+    "mtime": 1785576049.0567987,
+    "ast_hash": "8863ba0d514875d6e089ea2732a31e1b",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/build.rs": {
+    "mtime": 1785576008.0068097,
+    "ast_hash": "667702979da61fdc96948886b7cd7a33",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/capabilities/default.json": {
+    "mtime": 1785576051.5612519,
+    "ast_hash": "903e3c84568adc62ad97ef9b8a4a1010",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/src/lab.rs": {
+    "mtime": 1785576142.954784,
+    "ast_hash": "8f96c45331fbdc54a7f95446aa730280",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/src/lib.rs": {
+    "mtime": 1785576143.8189452,
+    "ast_hash": "f50e84475101eabf719dd27a96d2bd1a",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/src/main.rs": {
+    "mtime": 1785576081.6205816,
+    "ast_hash": "4f38034d8202695672b734b4b8a6fab6",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/tauri.conf.json": {
+    "mtime": 1785576043.3330138,
+    "ast_hash": "05c3076011ac8499a9b11923c9d8a4bc",
+    "semantic_hash": ""
+  },
+  "desktop/src/main.ts": {
+    "mtime": 1785576160.6700993,
+    "ast_hash": "1c5f732173b46d8c60daae91552fc356",
+    "semantic_hash": ""
+  },
+  "desktop/tsconfig.json": {
+    "mtime": 1785576008.0378938,
+    "ast_hash": "02c8016cb172c88abeb6ae6b5a3c545a",
+    "semantic_hash": ""
+  },
+  "desktop/vite.config.ts": {
+    "mtime": 1785576008.0378938,
+    "ast_hash": "fff65eac8110639825829bebef8c656f",
+    "semantic_hash": ""
+  },
+  "scripts/build-desktop-linux.sh": {
+    "mtime": 1785576196.0791826,
+    "ast_hash": "8ac1c4506256b7719e6e58baac6c0053",
+    "semantic_hash": ""
+  },
+  "scripts/build-desktop-windows.ps1": {
+    "mtime": 1785576109.6002357,
+    "ast_hash": "f9a28b1754a66fc056daaf08b4a4b380",
+    "semantic_hash": ""
+  },
+  "scripts/stage-desktop-payload.ps1": {
+    "mtime": 1785576104.423523,
+    "ast_hash": "1c763492f593735b110c7c15e4ba72da",
+    "semantic_hash": ""
+  },
+  "scripts/stage-desktop-payload.sh": {
+    "mtime": 1785576196.0771854,
+    "ast_hash": "df7cf2313332233febddd18c53ad4513",
+    "semantic_hash": ""
+  },
+  "tests/Unit/AppUpdateServiceTest.php": {
+    "mtime": 1785768122.2312067,
+    "ast_hash": "698b2ecac9099659d770617a5b572c58",
+    "semantic_hash": ""
+  },
+  "tests/Unit/DriverAdvisorTest.php": {
+    "mtime": 1785769312.718857,
+    "ast_hash": "bb3707be3c4a14eadf8761914a824f5d",
+    "semantic_hash": ""
+  },
+  "desktop/README.md": {
+    "mtime": 1785576145.4238708,
+    "ast_hash": "671b920b0292b88c25691575f9053b6f",
+    "semantic_hash": ""
+  },
+  "desktop/index.html": {
+    "mtime": 1785576050.4906223,
+    "ast_hash": "b7f7cc92a85ecdb68873f17e21e03b9d",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/128x128.png": {
+    "mtime": 1785576008.0078118,
+    "ast_hash": "fdd248e915476e6212afcb096c330992",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/128x128@2x.png": {
+    "mtime": 1785576008.0095427,
+    "ast_hash": "fd32cf41af4c52d279b92e9c61676130",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/32x32.png": {
+    "mtime": 1785576008.0095427,
+    "ast_hash": "1344a8f2569a67c695807140fb49cf10",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/Square107x107Logo.png": {
+    "mtime": 1785576008.0105503,
+    "ast_hash": "24754965fb63f23a0fad45db0ef2554b",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/Square142x142Logo.png": {
+    "mtime": 1785576008.0115504,
+    "ast_hash": "55d92879c6bd61fc7e79a84e1dcc51f6",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/Square150x150Logo.png": {
+    "mtime": 1785576008.0115504,
+    "ast_hash": "6e41a89b0a2b484f3e7f1b3a5db65730",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/Square284x284Logo.png": {
+    "mtime": 1785576008.0145514,
+    "ast_hash": "b5f57838809a4d93eed8ef656ce7c2c4",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/Square30x30Logo.png": {
+    "mtime": 1785576008.0155528,
+    "ast_hash": "7a18f38b895070303fda351bd8ae757d",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/Square310x310Logo.png": {
+    "mtime": 1785576008.0155528,
+    "ast_hash": "eeabbd0c2b13960e089e468c20f99e51",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/Square44x44Logo.png": {
+    "mtime": 1785576008.0210311,
+    "ast_hash": "42c67a38757b409cec4b6eb0c25c714c",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/Square71x71Logo.png": {
+    "mtime": 1785576008.0226953,
+    "ast_hash": "0670843e2fc39a0e53817a47b2b3399d",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/Square89x89Logo.png": {
+    "mtime": 1785576008.0226953,
+    "ast_hash": "2bfa099bf584686f0dd98cfafb10bda3",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/StoreLogo.png": {
+    "mtime": 1785576008.0237062,
+    "ast_hash": "02859e2326344ae7c9559f1af0abba34",
+    "semantic_hash": ""
+  },
+  "desktop/src-tauri/icons/icon.png": {
+    "mtime": 1785576008.029361,
+    "ast_hash": "3fa4420986811b429d7f1654da77ac3b",
+    "semantic_hash": ""
+  },
+  "desktop/src/assets/tauri.svg": {
+    "mtime": 1785576008.0398962,
+    "ast_hash": "f0966ff85db99f2d00771f92d18c9e7f",
+    "semantic_hash": ""
+  },
+  "desktop/src/assets/typescript.svg": {
+    "mtime": 1785576008.0358934,
+    "ast_hash": "aa7d13ebc14a4fe4725177fd15f1a830",
+    "semantic_hash": ""
+  },
+  "desktop/src/assets/vite.svg": {
+    "mtime": 1785576008.0398962,
+    "ast_hash": "8e3a10e157f75ada21ab742c022d5430",
+    "semantic_hash": ""
+  },
+  "app/Services/DriverPackageMatcherService.php": {
+    "mtime": 1785769311.9398737,
+    "ast_hash": "ff56b5b89fc99e91f062d07f399c73bc",
     "semantic_hash": ""
   }
 }

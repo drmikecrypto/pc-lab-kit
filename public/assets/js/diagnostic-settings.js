@@ -96,5 +96,38 @@
   });
   clearBtn?.addEventListener('click', () => save(true));
 
+  const checkUpdateBtn = document.getElementById('dx-settings-check-update');
+  const updateStatusEl = document.getElementById('dx-settings-update-status');
+  checkUpdateBtn?.addEventListener('click', async () => {
+    if (updateStatusEl) updateStatusEl.textContent = 'Checking GitHub Releases…';
+    checkUpdateBtn.disabled = true;
+    try {
+      const fn = window.pclabCheckForUpdates;
+      if (typeof fn !== 'function') throw new Error('update checker missing');
+      const data = await fn({ force: true });
+      if (!data || data.ok === false) {
+        if (updateStatusEl) {
+          updateStatusEl.textContent = data?.message || 'Could not reach GitHub releases.';
+        }
+        return;
+      }
+      if (data.update_available) {
+        if (typeof window.pclabClearUpdateDismiss === 'function') {
+          window.pclabClearUpdateDismiss();
+        }
+        await fn({ force: true });
+        if (updateStatusEl) {
+          updateStatusEl.textContent = `Update available: ${data.current_version} → ${data.latest_version}`;
+        }
+      } else if (updateStatusEl) {
+        updateStatusEl.textContent = `You’re up to date (v${data.current_version || data.latest_version || '—'}).`;
+      }
+    } catch (_) {
+      if (updateStatusEl) updateStatusEl.textContent = 'Update check failed. Try again later.';
+    } finally {
+      checkUpdateBtn.disabled = false;
+    }
+  });
+
   load();
 })();

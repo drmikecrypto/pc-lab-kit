@@ -23,7 +23,7 @@ $csrf = (string) $_SESSION['pclab_csrf'];
     <meta name="description" content="<?= e($meta_description ?? 'PC Lab Kit — local PC laboratory. Probe, test, monitor, tune.') ?>">
     <meta name="theme-color" content="#0a0e17">
     <meta name="csrf-token" content="<?= e($csrf) ?>">
-    <link rel="stylesheet" href="/assets/css/lab-shell.css?v=1.1.0">
+    <link rel="stylesheet" href="/assets/css/lab-shell.css?v=1.2.0">
 </head>
 <body class="pclab-body">
 <?php if (empty($footer_minimal)): ?>
@@ -33,6 +33,7 @@ $csrf = (string) $_SESSION['pclab_csrf'];
     <nav class="pclab-nav">
         <a href="/diagnostic">Lab</a>
         <a href="/download/probe-windows">Download Probe</a>
+        <button type="button" class="pclab-nav-btn pclab-update-nav-btn" id="pclab-update-btn" hidden aria-label="Update available">Update</button>
         <button type="button" class="pclab-nav-btn" id="dx-settings-open" aria-haspopup="dialog">Settings</button>
     </nav>
 </header>
@@ -71,11 +72,16 @@ $csrf = (string) $_SESSION['pclab_csrf'];
                 <button type="submit" class="dx-btn primary">Save</button>
                 <button type="button" class="dx-btn ghost" id="dx-settings-clear-key">Remove saved key</button>
             </div>
+            <div class="dx-settings-update">
+                <p class="muted fs-sm m-0">App updates come from GitHub Releases.</p>
+                <p id="dx-settings-update-status" class="dx-settings-status muted fs-xs" role="status"></p>
+                <button type="button" class="dx-btn ghost" id="dx-settings-check-update">Check for updates</button>
+            </div>
         </form>
     </div>
 </div>
-<script defer src="/assets/js/diagnostic-settings.js?v=1.0.0"></script>
-<script defer src="/assets/js/app-update.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-settings.js?v=1.1.0"></script>
+<script defer src="/assets/js/app-update.js?v=1.1.0"></script>
 <?php endif; ?>
 </body>
 </html>

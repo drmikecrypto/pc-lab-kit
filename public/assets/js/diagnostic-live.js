@@ -322,7 +322,11 @@
         }
       }
 
-      renderDriverActions(drivers, probe.devices || {});
+      const devicesForUi = { ...(probe.devices || {}) };
+      if (Array.isArray(drivers.driverless) && drivers.driverless.length) {
+        devicesForUi.driverless = drivers.driverless;
+      }
+      renderDriverActions(drivers, devicesForUi);
     } catch (_) {
       strip.classList.remove('visible');
       const note = el('dx-sensor-note');
@@ -335,31 +339,134 @@
   function renderDriverActions(drivers, devices) {
     const box = el('dx-driver-actions');
     if (!box) return;
-    const actions = (drivers.actions || []).filter((a) => a && (a.severity === 'critical' || a.severity === 'warn')).slice(0, 6);
+    const actions = (drivers.actions || []).filter((a) => a && (a.severity === 'critical' || a.severity === 'warn')).slice(0, 8);
     const driverless = (devices.driverless || []).slice(0, 4);
-    if (!actions.length && !driverless.length) {
+    const queue = (drivers.install_queue || []).filter((s) => s && s.status !== 'ok').slice(0, 6);
+    if (!actions.length && !driverless.length && !queue.length) {
       box.hidden = true;
       box.innerHTML = '';
       return;
     }
     box.hidden = false;
+
+    const hwId = (a) => {
+      const bits = [];
+      if (a.vendor_id) bits.push('VEN_' + String(a.vendor_id).toUpperCase());
+      if (a.device_id) bits.push('DEV_' + String(a.device_id).toUpperCase());
+      if (a.instance_id && !bits.length) bits.push(String(a.instance_id).slice(0, 48));
+      return bits.length ? bits.join(' · ') : '';
+    };
+
     const actionHtml = actions.map((a) => {
+      const primary = a.primary_link && a.primary_link.url ? a.primary_link : null;
       const links = (a.links || []).slice(0, 2).map((l) =>
         `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || 'Download')}</a>`
       ).join(' · ');
+      const conf = a.match_confidence ? `<span class="dx-driver-conf">${esc(a.match_confidence)}</span>` : '';
+      const ids = hwId(a);
+      const primaryBtn = primary
+        ? `<a href="${esc(primary.url)}" class="dx-btn primary dx-driver-primary" target="_blank" rel="noopener">${esc(primary.label || 'Open package')}</a>`
+        : '';
       return `<div class="dx-driver-card ${esc(a.severity || '')}">
-        <strong>${esc(a.title || '')}</strong>
+        <div class="dx-driver-card-head"><strong>${esc(a.title || '')}</strong>${conf}</div>
         <span class="muted fs-xs">${esc(a.detail || '')}</span>
-        ${links ? `<div class="dx-driver-links">${links}</div>` : ''}
+        ${ids ? `<span class="muted fs-xs dx-driver-hwid">${esc(ids)}</span>` : ''}
+        <div class="dx-driver-links">${primaryBtn}${links ? (primaryBtn ? ' · ' : '') + links : ''}</div>
       </div>`;
     }).join('');
-    const missingHtml = driverless.map((d) =>
-      `<div class="dx-driver-card critical"><strong>No driver: ${esc(d.name || 'Unknown')}</strong>
-       <span class="muted fs-xs">${esc(d.problem_message || d.category || '')}</span></div>`
-    ).join('');
-    box.innerHTML = `<h4 class="dx-driver-title">Driver advisor</h4>
-      <p class="muted fs-xs">Score ${esc(String(drivers.score ?? '—'))} / ${esc(drivers.grade || '—')} — install in chipset → GPU → audio → network order</p>
-      ${missingHtml}${actionHtml}`;
+
+    const missingHtml = driverless.map((d) => {
+      const ids = hwId(d);
+      const conf = d.match_confidence ? `<span class="dx-driver-conf">${esc(d.match_confidence)}</span>` : '';
+      const primary = d.primary_link && d.primary_link.url ? d.primary_link : null;
+      const links = (d.links || []).slice(0, 2).map((l) =>
+        `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || 'Download')}</a>`
+      ).join(' · ');
+      const primaryBtn = primary
+        ? `<a href="${esc(primary.url)}" class="dx-btn primary dx-driver-primary" target="_blank" rel="noopener">${esc(primary.label || 'Open package')}</a>`
+        : '';
+      return `<div class="dx-driver-card critical">
+        <div class="dx-driver-card-head"><strong>No driver: ${esc(d.name || 'Unknown')}</strong>${conf}</div>
+       <span class="muted fs-xs">${esc(d.problem_message || d.category || '')}</span>
+       ${ids ? `<span class="muted fs-xs dx-driver-hwid">${esc(ids)}</span>` : ''}
+       <div class="dx-driver-links">${primaryBtn}${links ? (primaryBtn ? ' · ' : '') + links : ''}</div>
+      </div>`;
+    }).join('');
+
+    const queueHtml = queue.length ? `<div class="dx-driver-queue">
+      <h5 class="dx-driver-queue-title">Install queue</h5>
+      ${queue.map((s) => {
+        const pl = s.primary_link && s.primary_link.url ? s.primary_link : ((s.links || [])[0] || null);
+        const link = pl ? `<a href="${esc(pl.url)}" target="_blank" rel="noopener">${esc(pl.label || 'Open')}</a>` : '';
+        const conf = s.match_confidence ? ` · ${esc(s.match_confidence)}` : '';
+        return `<div class="dx-driver-queue-row">
+          <span class="dx-driver-queue-status ${esc(s.status || '')}">${esc(s.status || '')}</span>
+          <span><strong>${esc(s.label || s.id || '')}</strong>${conf}
+          <span class="muted fs-xs"> — ${esc(s.why || '')}</span></span>
+          ${link}
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+    box.innerHTML = `<div class="dx-driver-head">
+        <h4 class="dx-driver-title">Driver advisor</h4>
+        <div class="dx-driver-toolbar">
+          <button type="button" class="dx-btn ghost" id="dx-driver-rescan">Rescan drivers</button>
+          <button type="button" class="dx-btn ghost" id="dx-driver-wu">Scan Windows Update drivers</button>
+        </div>
+      </div>
+      <p class="muted fs-xs">Score ${esc(String(drivers.score ?? '—'))} / ${esc(drivers.grade || '—')} — chipset → GPU → audio → network. Open the package, install, then Rescan.</p>
+      ${queueHtml}${missingHtml}${actionHtml}`;
+
+    document.getElementById('dx-driver-rescan')?.addEventListener('click', () => rescanDrivers(false));
+    document.getElementById('dx-driver-wu')?.addEventListener('click', () => rescanDrivers(true));
+  }
+
+  async function rescanDrivers(includeWu) {
+    const box = el('dx-driver-actions');
+    const note = el('dx-sensor-note');
+    try {
+      if (note) {
+        note.hidden = false;
+        note.textContent = includeWu
+          ? 'Scanning Windows Update for drivers (may take several minutes)…'
+          : 'Rescanning drivers…';
+      }
+      const url = includeWu ? `${AGENT}/drivers?wu=1` : `${AGENT}/drivers`;
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error('drivers endpoint failed');
+      const report = await res.json();
+      const drivers = report.drivers || report;
+      const devices = report.devices || {};
+      if (window.__dxLastProbe) {
+        window.__dxLastProbe.drivers = drivers;
+        window.__dxLastProbe.devices = devices;
+      } else {
+        window.__dxLastProbe = { drivers, devices };
+      }
+      window.dispatchEvent(new CustomEvent('dx:drivers-updated', { detail: { drivers, devices } }));
+
+      const driverNode = el('dx-s-drivers');
+      if (driverNode && drivers.score != null) {
+        driverNode.textContent = drivers.score + '/' + (drivers.grade || '—');
+        driverNode.className = 'dx-sensor-val';
+        if (drivers.score < 60) driverNode.classList.add('hot');
+        else if (drivers.score < 80) driverNode.classList.add('warn');
+      }
+      renderDriverActions(drivers, devices);
+      if (note) {
+        note.hidden = false;
+        note.textContent = includeWu
+          ? `WU scan done — ${drivers.summary?.wu_candidates ?? 0} optional driver candidate(s).`
+          : 'Driver rescan complete.';
+      }
+    } catch (_) {
+      if (note) {
+        note.hidden = false;
+        note.textContent = 'Could not reach Probe /drivers. Is Start-PcLabProbe.bat running?';
+      }
+      if (box) box.hidden = false;
+    }
   }
 
   function setSensor(id, val, unit, warn, hot) {

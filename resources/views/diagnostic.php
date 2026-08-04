@@ -13,7 +13,7 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-toolkit.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-pulse.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-lab.css?v=1.6.6">
-<link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.4.1">
+<link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.0.0">
 
@@ -291,7 +291,7 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-compare.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-pulse.js?v=1.0.2"></script>
 <script defer src="/assets/js/diagnostic-lab.js?v=1.7.2"></script>
-<script defer src="/assets/js/diagnostic-live.js?v=1.5.3"></script>
-<script defer src="/assets/js/diagnostic-telemetry.js?v=1.5.2"></script>
+<script defer src="/assets/js/diagnostic-live.js?v=1.6.1"></script>
+<script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.0.2"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.1.4"></script>

@@ -6,6 +6,21 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [3.1.1] - 2026-08-04
+
+### Added
+- Hidden Update control in the shell nav; shows only when a newer GitHub Release exists
+- Settings “Check for updates” (force refresh) with clearer up-to-date / available messaging
+- Driver package catalog (`agent/pclab_probe/data/driver-catalog.json`) with PCI/USB and board-model matching
+- PHP `DriverPackageMatcherService` to enrich missing/generic/stale advice with confident package links
+- Optional Windows Update driver scan via probe `/drivers?wu=1`
+- Hardware knowledge graph nodes for notable PnP / driver issues
+
+### Changed
+- Driver advisor surfaces VEN/DEV IDs, match confidence, install queue, and Rescan / WU actions in the lab UI
+- In-app update banner hardened (shared UI state for banner + nav button)
+- Version bumped to 3.1.1
+
 ## [3.1.0] - 2026-08-01
 
 ### Added

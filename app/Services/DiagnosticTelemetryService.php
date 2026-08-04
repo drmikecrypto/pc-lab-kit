@@ -652,6 +652,7 @@ class DiagnosticTelemetryService
             }
             $panels[] = $this->panel(($step['label'] ?? 'Step') . ' [' . ($step['status'] ?? '') . ']', [
                 ['key' => 'Why', 'value' => (string) ($step['why'] ?? '—')],
+                ['key' => 'Match', 'value' => (string) ($step['match_confidence'] ?? '—')],
                 ['key' => 'Open actions', 'value' => (string) ($step['action_count'] ?? 0)],
                 ['key' => 'Links', 'value' => $linkStr !== [] ? implode(' | ', $linkStr) : '—'],
             ]);
@@ -667,9 +668,18 @@ class DiagnosticTelemetryService
                     $links[] = ($l['label'] ?? 'link') . ' → ' . $l['url'];
                 }
             }
+            $hw = trim(implode(' · ', array_filter([
+                !empty($a['vendor_id']) ? 'VEN_' . strtoupper((string) $a['vendor_id']) : null,
+                !empty($a['device_id']) ? 'DEV_' . strtoupper((string) $a['device_id']) : null,
+            ])));
+            if ($hw === '' && !empty($a['instance_id'])) {
+                $hw = (string) $a['instance_id'];
+            }
             $panels[] = $this->panel(strtoupper((string) ($a['severity'] ?? 'info')) . ': ' . ($a['title'] ?? ''), [
                 ['key' => 'Category', 'value' => (string) ($a['category'] ?? '—')],
                 ['key' => 'Device', 'value' => (string) ($a['device'] ?? '—')],
+                ['key' => 'Hardware ID', 'value' => $hw !== '' ? $hw : '—'],
+                ['key' => 'Match', 'value' => (string) ($a['match_confidence'] ?? '—')],
                 ['key' => 'Detail', 'value' => (string) ($a['detail'] ?? '—')],
                 ['key' => 'Install', 'value' => $links !== [] ? implode(' | ', $links) : '—'],
             ]);

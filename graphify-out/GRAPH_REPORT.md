@@ -1,16 +1,16 @@
-# Graph Report - pc-lab-kit  (2026-07-30)
+# Graph Report - pc-lab-kit  (2026-08-03)
 
 ## Corpus Check
-- 147 files · ~1,004,877 words
+- 167 files · ~1,018,631 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 952 nodes · 1610 edges · 102 communities (63 shown, 39 thin omitted)
-- Extraction: 90% EXTRACTED · 10% INFERRED · 0% AMBIGUOUS · INFERRED: 155 edges (avg confidence: 0.79)
+- 1113 nodes · 1852 edges · 122 communities (72 shown, 50 thin omitted)
+- Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 158 edges (avg confidence: 0.79)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `216f9e1c`
+- Built from commit: `05bf24a3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -90,10 +90,25 @@
 - Linux Native Installer
 - Deploy Qt Linux
 - stage-app-payload.sh
+- bundle
 - Install Shell Script
+- package.json
 - Start Shell Script
+- compilerOptions
 - Contributor Hasti
 - Contributor Taha
+- DiagnosticHistoryCompareService
+- stress.ps1
+- default.json
+- main.ts
+- build-desktop-linux.sh
+- stage-desktop-payload.sh script
+- DiagnosticApiController.php
+- web.php
+- DiagnosticIntelligencePulseService
+- DiagnosticConsultantService
+- Get-RamSpdTelemetry
+- .__invoke
 
 ## God Nodes (most connected - your core abstractions)
 1. `BenchmarkDatasetService` - 42 edges
@@ -108,12 +123,12 @@
 10. `Get-ProbeDeepTelemetry()` - 18 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `runTest()` --indirect_call--> `e()`  [INFERRED]
-  public/assets/js/diagnostic-toolkit.js → app/helpers.php
 - `diagnostic_reports_cleanup_test_rows()` --calls--> `Database`  [INFERRED]
   tests/Unit/DiagnosticHistoryServiceTest.php → app/Database.php
 - `diagnostic_reports_ensure_sqlite_table()` --calls--> `Database`  [INFERRED]
   tests/Unit/DiagnosticHistoryServiceTest.php → app/Database.php
+- `runTest()` --indirect_call--> `e()`  [INFERRED]
+  public/assets/js/diagnostic-toolkit.js → app/helpers.php
 - `Get-ProbeCpuCacheDetail()` --calls--> `Get-CimSafe()`  [INFERRED]
   agent/pclab_probe/ProbeLib/cpu.ps1 → agent/pclab_probe/ProbeLib/common.ps1
 - `Get-ProbeCpuTelemetry()` --calls--> `Get-CimSafe()`  [INFERRED]
@@ -126,43 +141,39 @@
 - **Native CMake build graph (root → core → apps)** — native_cmakelists_pcverse_native, native_core_cmakelists_pcverse_core, native_apps_pcverse_cli_cmakelists_pcverse_cli, native_apps_pcverse_cmakelists_pcverse_desktop [EXTRACTED 1.00]
 - **Cross-platform installer release pipeline** — github_workflows_release_bundles_release_installers, readme_windows_installer, readme_linux_installer [EXTRACTED 1.00]
 
-## Communities (102 total, 39 thin omitted)
+## Communities (122 total, 50 thin omitted)
 
 ### Community 0 - "Native Core CLI Sensors"
-Cohesion: 0.05
-Nodes (64): Get-AmdSoftwareInfo(), Get-ProbeAmdGpuTelemetry(), Get-CounterSafe(), Get-ProbeCoreTopology(), Get-ProbeProcessorFeatures(), Guess-InstructionSets(), Initialize-ProbeNativeInterop(), KelvinToC() (+56 more)
+Cohesion: 0.07
+Nodes (54): Get-AmdSoftwareInfo(), Get-ProbeAmdGpuTelemetry(), Get-CounterSafe(), Get-ProbeCoreTopology(), Get-ProbeProcessorFeatures(), Guess-InstructionSets(), Initialize-ProbeNativeInterop(), KelvinToC() (+46 more)
 
 ### Community 1 - "Benchmark Dataset Service"
 Cohesion: 0.07
 Nodes (3): BenchmarkDatasetService, BenchmarkService, self
-
-### Community 2 - "Database & History"
-Cohesion: 0.07
-Nodes (8): AppUpdateController, Database, PDO, DiagnosticHistoryService, DiagnosticIntelligencePulseService, PDOException, diagnostic_reports_cleanup_test_rows(), diagnostic_reports_ensure_sqlite_table()
 
 ### Community 3 - "Docs Product Concepts"
 Cohesion: 0.83
 Nodes (4): pcverse_cli executable, pcverse Qt desktop executable, pcverse_native CMake project, pcverse_core static library target
 
 ### Community 4 - "Flutter Device Packages"
-Cohesion: 0.06
-Nodes (33): [1.0.0] - 2026-06-14, [3.0.0] - 2026-07-30, Added, Added, Changed, Changelog, [Unreleased], Before you start (+25 more)
+Cohesion: 0.05
+Nodes (39): [1.0.0] - 2026-06-14, [3.0.0] - 2026-07-30, [3.1.0] - 2026-08-01, Added, Added, Added, Changed, Changed (+31 more)
 
 ### Community 5 - "Diagnostic Agent Services"
-Cohesion: 0.12
+Cohesion: 0.11
 Nodes (4): HardwareKnowledgeGraphService, LabReportExportService, StressCertificateService, ToonSerializer
 
 ### Community 6 - "Flutter PC Test Page"
-Cohesion: 0.17
-Nodes (27): Get-CimSafe(), ConvertFrom-PnpDeviceId(), Get-ProbeAudioDevices(), Get-ProbeBatteryDetail(), Get-ProbeBluetoothDevices(), Get-ProbeConfigManagerMessage(), Get-ProbeDeviceCategory(), Get-ProbeDeviceInventory() (+19 more)
+Cohesion: 0.11
+Nodes (40): Get-CimSafe(), ConvertFrom-PnpDeviceId(), Get-ProbeAudioDevices(), Get-ProbeBatteryDetail(), Get-ProbeBluetoothDevices(), Get-ProbeConfigManagerMessage(), Get-ProbeDeviceCategory(), Get-ProbeDeviceInventory() (+32 more)
 
 ### Community 7 - "Telemetry & Games Commands"
-Cohesion: 0.11
-Nodes (8): TrackUserEventAction, DiagnosticGamesRefreshCommand, DiagnosticGameCatalogService, Log, Client, Command, InputInterface, OutputInterface
+Cohesion: 0.13
+Nodes (7): DiagnosticGamesRefreshCommand, DiagnosticGameCatalogService, Log, Client, Command, InputInterface, OutputInterface
 
 ### Community 8 - "Web Diagnostic Controllers"
 Cohesion: 0.14
-Nodes (5): DiagnosticController, e(), view(), Router, View
+Nodes (31): Arc, Child, copy_dir_recursive(), ensure_lab_ready(), http_get_ok(), LabRuntime, pick_free_port(), prepare_work_dir() (+23 more)
 
 ### Community 9 - "Mobile Diagnostic API"
 Cohesion: 0.14
@@ -216,17 +227,13 @@ Nodes (6): PHP migration path, Recommended architecture (standalone + GitHub-fri
 Cohesion: 0.50
 Nodes (4): Agent endpoints (`PcLabProbeServe.ps1`), API routes (to extract), Appendix: existing kit inventory, Benchmark datasets (19 JSON files)
 
-### Community 28 - "Diagnostic Import Service"
-Cohesion: 0.07
-Nodes (5): DiagnosticAgentService, DiagnosticConsultantService, DiagnosticDriverAdvisorService, DiagnosticHistoryCompareService, DiagnosticOcService
-
 ### Community 29 - "Live Diagnostic JS"
-Cohesion: 0.27
-Nodes (16): animateNum(), esc(), fetchLive(), formatSample(), fpQuery(), loadReport(), pollAgentSensors(), renderBenchmark() (+8 more)
+Cohesion: 0.25
+Nodes (17): animateNum(), esc(), fetchLive(), formatSample(), fpQuery(), loadReport(), pollAgentSensors(), renderBenchmark() (+9 more)
 
 ### Community 31 - "Diagnostic RGB Service"
-Cohesion: 0.18
-Nodes (15): DiagnosticRgbService, esc(), issueCertificate(), loadCatalog(), prettyResult(), probeHealth(), renderCatalog(), renderCertificate() (+7 more)
+Cohesion: 0.10
+Nodes (19): DiagnosticController, e(), view(), Router, View, esc(), issueCertificate(), loadCatalog() (+11 more)
 
 ### Community 32 - "RGB Diagnostic JS"
 Cohesion: 0.27
@@ -265,8 +272,8 @@ Cohesion: 0.67
 Nodes (3): Release installers workflow, PCVerse-Setup-Linux-x64.run, PCVerse-Setup-Windows-x64.exe
 
 ### Community 45 - "Telemetry Charts JS"
-Cohesion: 0.40
-Nodes (10): drawCstateBars(), drawSparklines(), drawSpikeMap(), esc(), fetchHistory(), fetchTelemetry(), gaugeHtml(), render() (+2 more)
+Cohesion: 0.14
+Nodes (14): DiagnosticDriverAdvisorService, DriverPackageMatcherService, drawCstateBars(), drawSparklines(), drawSpikeMap(), driverSectionsFromPresent(), esc(), fetchDriversAndPresent() (+6 more)
 
 ### Community 52 - "Bootstrap Build Tools"
 Cohesion: 0.32
@@ -285,28 +292,52 @@ Cohesion: 0.50
 Nodes (3): net8.0-windows, LibreHardwareMonitorLib (0.9.4), Microsoft.NET.Sdk
 
 ### Community 67 - "App Update JS"
-Cohesion: 0.83
-Nodes (3): checkUpdate(), esc(), platformDownload()
+Cohesion: 0.42
+Nodes (9): applyUpdateUi(), checkUpdate(), clearDismiss(), esc(), focusUpdateUi(), hideUpdateUi(), isDismissed(), platformDownload() (+1 more)
+
+### Community 83 - "bundle"
+Cohesion: 0.07
+Nodes (29): app, security, windows, withGlobalTauri, bundleMediaFramework, build, beforeBuildCommand, beforeDevCommand (+21 more)
+
+### Community 85 - "package.json"
+Cohesion: 0.12
+Nodes (16): dependencies, @tauri-apps/api, @tauri-apps/plugin-opener, devDependencies, @tauri-apps/cli, typescript, vite, name (+8 more)
+
+### Community 87 - "compilerOptions"
+Cohesion: 0.12
+Nodes (16): compilerOptions, allowImportingTsExtensions, isolatedModules, lib, module, moduleResolution, noEmit, noFallthroughCasesInSwitch (+8 more)
+
+### Community 101 - "stress.ps1"
+Cohesion: 0.17
+Nodes (5): Database, PDO, PDOException, diagnostic_reports_cleanup_test_rows(), diagnostic_reports_ensure_sqlite_table()
+
+### Community 102 - "default.json"
+Cohesion: 0.33
+Nodes (5): description, identifier, permissions, $schema, windows
+
+### Community 120 - "Get-RamSpdTelemetry"
+Cohesion: 0.80
+Nodes (4): Find-CpuZExports(), Get-RamSpdTelemetry(), Parse-CpuZMemoryBlock(), Resolve-RamDieType()
 
 ## Knowledge Gaps
-- **135 isolated node(s):** `net8.0-windows`, `LibreHardwareMonitorLib (0.9.4)`, `Microsoft.NET.Sdk`, `name`, `description` (+130 more)
+- **195 isolated node(s):** `net8.0-windows`, `LibreHardwareMonitorLib (0.9.4)`, `Microsoft.NET.Sdk`, `name`, `description` (+190 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **39 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **50 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `DiagnosticService` connect `Diagnostic Core Service` to `Web Diagnostic Controllers`, `Benchmark Dataset Service`, `Diagnostic AI Service`, `Diagnostic Import Service`?**
-  _High betweenness centrality (0.070) - this node is a cross-community bridge._
+- **Why does `DiagnosticService` connect `Diagnostic Core Service` to `Benchmark Dataset Service`, `Diagnostic AI Service`, `DiagnosticApiController.php`, `Diagnostic RGB Service`?**
+  _High betweenness centrality (0.062) - this node is a cross-community bridge._
 - **Why does `BenchmarkDatasetService` connect `Benchmark Dataset Service` to `Diagnostic Core Service`, `Benchmark Pricing`?**
-  _High betweenness centrality (0.050) - this node is a cross-community bridge._
-- **Why does `DiagnosticApiController` connect `Mobile Diagnostic API` to `Diagnostic Import Service`?**
-  _High betweenness centrality (0.033) - this node is a cross-community bridge._
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+- **Why does `DiagnosticApiController` connect `Mobile Diagnostic API` to `DiagnosticApiController.php`?**
+  _High betweenness centrality (0.045) - this node is a cross-community bridge._
 - **Are the 19 inferred relationships involving `Database` (e.g. with `.__invoke()` and `.__construct()`) actually correct?**
   _`Database` has 19 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `net8.0-windows`, `LibreHardwareMonitorLib (0.9.4)`, `Microsoft.NET.Sdk` to the rest of the system?**
-  _139 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _199 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Native Core CLI Sensors` be split into smaller, more focused modules?**
-  _Cohesion score 0.054612054612054615 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.06634615384615385 - nodes in this community are weakly interconnected._
 - **Should `Benchmark Dataset Service` be split into smaller, more focused modules?**
   _Cohesion score 0.07197763801537387 - nodes in this community are weakly interconnected._

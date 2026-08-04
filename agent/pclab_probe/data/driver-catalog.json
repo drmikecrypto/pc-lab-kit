@@ -1,0 +1,257 @@
+{
+  "version": 1,
+  "note": "Curated package entry points for common PC lab hardware. Not a live scrape.",
+  "pci": [
+    {
+      "ven": "10de",
+      "dev": "*",
+      "category": "gpu",
+      "label": "NVIDIA Game Ready / Studio",
+      "url": "https://www.nvidia.com/Download/index.aspx",
+      "note": "Use NVIDIA App when available."
+    },
+    {
+      "ven": "1002",
+      "dev": "*",
+      "category": "gpu",
+      "label": "AMD Software: Adrenalin",
+      "url": "https://www.amd.com/en/support",
+      "note": "Factory Reset install recommended on vendor switch."
+    },
+    {
+      "ven": "8086",
+      "dev": "*",
+      "category": "gpu",
+      "name_match": "Arc|UHD|Iris|Graphics",
+      "label": "Intel Arc / Graphics",
+      "url": "https://www.intel.com/content/www/us/en/download/785597/intel-arc-iris-xe-graphics-windows.html"
+    },
+    {
+      "ven": "8086",
+      "dev": "*",
+      "category": "chipset",
+      "name_match": "SMBus|Management Engine|PCI Simple Communications|Chipset|LPC|Serial IO",
+      "label": "Intel Chipset INF Utility",
+      "url": "https://www.intel.com/content/www/us/en/download/19347/chipset-inf-utility.html"
+    },
+    {
+      "ven": "1022",
+      "dev": "*",
+      "category": "chipset",
+      "label": "AMD Chipset Drivers",
+      "url": "https://www.amd.com/en/support/download/drivers.html"
+    },
+    {
+      "ven": "10ec",
+      "dev": "*",
+      "category": "network",
+      "name_match": "Ethernet|LAN|Gaming|GbE|Realtek|NIC",
+      "label": "Realtek PCIe Ethernet",
+      "url": "https://www.realtek.com/Download/List?cate_id=584"
+    },
+    {
+      "ven": "10ec",
+      "dev": "*",
+      "category": "audio",
+      "name_match": "Audio|High Definition|Sound",
+      "label": "Realtek Audio",
+      "url": "https://www.realtek.com/Download/List?cate_id=597"
+    },
+    {
+      "ven": "8086",
+      "dev": "*",
+      "category": "network",
+      "name_match": "Ethernet|Wi-Fi|Wireless|AX|BE",
+      "label": "Intel Ethernet / Wi-Fi",
+      "url": "https://www.intel.com/content/www/us/en/download-center/home.html"
+    },
+    {
+      "ven": "14e4",
+      "dev": "*",
+      "category": "network",
+      "label": "Broadcom network",
+      "url": "https://www.broadcom.com/support/download-search"
+    },
+    {
+      "ven": "1969",
+      "dev": "*",
+      "category": "network",
+      "label": "Qualcomm Atheros network",
+      "url": "https://www.qualcomm.com/support"
+    },
+    {
+      "ven": "168c",
+      "dev": "*",
+      "category": "network",
+      "label": "Qualcomm Atheros Wi-Fi",
+      "url": "https://www.qualcomm.com/support"
+    },
+    {
+      "ven": "1b21",
+      "dev": "*",
+      "category": "usb",
+      "label": "ASMedia USB / controller",
+      "url": "https://www.asmedia.com.tw/product"
+    },
+    {
+      "ven": "14c3",
+      "dev": "*",
+      "category": "network",
+      "label": "MediaTek Wi-Fi / BT",
+      "url": "https://www.mediatek.com/products/broadband-wifi"
+    },
+    {
+      "ven": "1a56",
+      "dev": "*",
+      "category": "network",
+      "name_match": "Killer",
+      "label": "Killer Networking",
+      "url": "https://www.killernetworking.com/driver-downloads/"
+    },
+    {
+      "ven": "8086",
+      "dev": "*",
+      "category": "storage",
+      "name_match": "NVMe|Volume Management|RST|VMD|Raid",
+      "label": "Intel RST / VMD",
+      "url": "https://www.intel.com/content/www/us/en/download/19512/intel-rapid-storage-technology-driver-installation-software-with-intel-optane-memory-32-bit-64-bit-for-windows-10-and-windows-11.html"
+    },
+    {
+      "ven": "1022",
+      "dev": "*",
+      "category": "storage",
+      "name_match": "RAID|SATA|NVMe|Storage",
+      "label": "AMD RAID / Ryzen storage",
+      "url": "https://www.amd.com/en/support"
+    },
+    {
+      "ven": "104c",
+      "dev": "*",
+      "category": "usb",
+      "name_match": "Thunderbolt|USB4",
+      "label": "Intel / TI Thunderbolt",
+      "url": "https://www.intel.com/content/www/us/en/download-center/home.html"
+    }
+  ],
+  "usb": [
+    {
+      "vid": "0bda",
+      "pid": "*",
+      "category": "network",
+      "label": "Realtek USB network / BT",
+      "url": "https://www.realtek.com/Download/List?cate_id=584"
+    },
+    {
+      "vid": "8087",
+      "pid": "*",
+      "category": "network",
+      "label": "Intel USB Bluetooth",
+      "url": "https://www.intel.com/content/www/us/en/download-center/home.html"
+    },
+    {
+      "vid": "0a5c",
+      "pid": "*",
+      "category": "network",
+      "label": "Broadcom USB Bluetooth",
+      "url": "https://www.broadcom.com/support/download-search"
+    },
+    {
+      "vid": "0489",
+      "pid": "*",
+      "category": "network",
+      "label": "Foxconn / MediaTek USB BT",
+      "url": "https://www.mediatek.com/products/broadband-wifi"
+    },
+    {
+      "vid": "046d",
+      "pid": "*",
+      "category": "peripherals",
+      "label": "Logitech Support",
+      "url": "https://support.logi.com/"
+    },
+    {
+      "vid": "1532",
+      "pid": "*",
+      "category": "peripherals",
+      "label": "Razer Synapse",
+      "url": "https://www.razer.com/synapse-3"
+    },
+    {
+      "vid": "1038",
+      "pid": "*",
+      "category": "peripherals",
+      "label": "SteelSeries GG",
+      "url": "https://steelseries.com/gg"
+    }
+  ],
+  "board_patterns": [
+    {
+      "match": "asus|rog|tuf|prime",
+      "label": "ASUS Support (board model)",
+      "url_template": "https://www.asus.com/searchresult?searchType=support&searchKey={product}",
+      "category": "chipset"
+    },
+    {
+      "match": "msi|micro-star|mpg|mag|pro ",
+      "label": "MSI Support (board model)",
+      "url_template": "https://www.msi.com/search/?q={product}",
+      "category": "chipset"
+    },
+    {
+      "match": "gigabyte|aorus",
+      "label": "Gigabyte Support (board model)",
+      "url_template": "https://www.gigabyte.com/Search?keyword={product}",
+      "category": "chipset"
+    },
+    {
+      "match": "asrock",
+      "label": "ASRock Support (board model)",
+      "url_template": "https://www.asrock.com/support/index.us.asp?Model={product}",
+      "category": "chipset"
+    }
+  ],
+  "oem_patterns": [
+    {
+      "match": "dell",
+      "label": "Dell SupportAssist",
+      "url": "https://www.dell.com/support/home",
+      "category": "laptop_oem"
+    },
+    {
+      "match": "hp|hewlett",
+      "label": "HP Support",
+      "url": "https://support.hp.com/",
+      "category": "laptop_oem"
+    },
+    {
+      "match": "lenovo",
+      "label": "Lenovo Vantage / Support",
+      "url": "https://support.lenovo.com/",
+      "category": "laptop_oem"
+    },
+    {
+      "match": "asus",
+      "label": "MyASUS / Support",
+      "url": "https://www.asus.com/support/",
+      "category": "laptop_oem"
+    },
+    {
+      "match": "msi|micro-star",
+      "label": "MSI Center / Support",
+      "url": "https://www.msi.com/support",
+      "category": "laptop_oem"
+    },
+    {
+      "match": "gigabyte|aorus",
+      "label": "Gigabyte Control Center",
+      "url": "https://www.gigabyte.com/Support",
+      "category": "laptop_oem"
+    },
+    {
+      "match": "acer",
+      "label": "Acer Support",
+      "url": "https://www.acer.com/support",
+      "category": "laptop_oem"
+    }
+  ]
+}

@@ -27,7 +27,7 @@ $script:Routes = @(
     @{ method = 'GET';  path = '/telemetry';          desc = 'fast counters' }
     @{ method = 'GET';  path = '/telemetry/history';  desc = "sparkline buffer ($script:RingMax samples)" }
     @{ method = 'GET';  path = '/devices';            desc = 'full PnP / PCI / USB / monitor inventory' }
-    @{ method = 'GET';  path = '/drivers';            desc = 'driver advisor + install queue' }
+    @{ method = 'GET';  path = '/drivers';            desc = 'driver advisor + install queue (?wu=1 optional WU scan)' }
     @{ method = 'GET';  path = '/thermal';            desc = 'CPU/GPU hotspot summary' }
     @{ method = 'GET';  path = '/oc/status';          desc = 'OC baseline state' }
     @{ method = 'POST'; path = '/oc/preflight';       desc = 'idle+load thermal sample before apply' }
@@ -164,10 +164,19 @@ Get-ProbeDeviceInventory | ConvertTo-Json -Depth 12 -Compress }
 "@
             }
             "/drivers" {
-                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+                $qs = $req.Url.Query
+                $wu = ($qs -match '[?&]wu=1(&|$)' -or $qs -match '^\?wu=1$' -or $qs -eq '?wu=1')
+                if ($wu) {
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$driversScript'
+Get-ProbeDriverReport -IncludeWuScan | ConvertTo-Json -Depth 12 -Compress }
+"@
+                } else {
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$driversScript'
 Get-ProbeDriverReport | ConvertTo-Json -Depth 12 -Compress }
 "@
+                }
             }
             "/thermal" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"

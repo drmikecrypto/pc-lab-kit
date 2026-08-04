@@ -129,6 +129,8 @@ class HardwareKnowledgeGraphService
             $addEdge('network', 'system', 'connected_to');
         }
 
+        $this->addDriverDeviceNodes($report, $addNode, $addEdge, $nodes);
+
         $bn = (array) ($analysis['bottleneck'] ?? []);
         $bnType = (string) ($bn['type'] ?? $bn['component'] ?? '');
         if ($bnType !== '' && $bnType !== 'balanced') {
@@ -167,6 +169,7 @@ class HardwareKnowledgeGraphService
         }
 
         $nodeList = array_values($nodes);
+        $driverNodes = count(array_filter($nodeList, static fn ($n) => ($n['type'] ?? '') === 'device'));
 
         return [
             'nodes' => $nodeList,
@@ -176,8 +179,124 @@ class HardwareKnowledgeGraphService
                 'edge_count' => count($edges),
                 'bottleneck' => $bnType !== '' ? $bnType : null,
                 'form_factor' => $form,
+                'driver_device_nodes' => $driverNodes,
             ],
         ];
+    }
+
+    /**
+     * Attach notable PnP / driver issues (capped) so AI and export see hardware identity.
+     *
+     * @param array<string, mixed> $report
+     * @param callable $addNode
+     * @param callable $addEdge
+     * @param array<string, array<string, mixed>> $nodes
+     */
+    private function addDriverDeviceNodes(array $report, callable $addNode, callable $addEdge, array &$nodes): void
+    {
+        $drivers = (array) ($report['drivers'] ?? []);
+        $devices = (array) ($report['devices'] ?? []);
+        $candidates = [];
+
+        foreach ((array) ($devices['driverless'] ?? []) as $d) {
+            if (!is_array($d)) {
+                continue;
+            }
+            $candidates[] = [
+                'severity' => 0,
+                'label' => (string) ($d['name'] ?? 'Unknown device'),
+                'relation' => 'needs_driver',
+                'attrs' => [
+                    'category' => $d['category'] ?? null,
+                    'vendor_id' => $d['vendor_id'] ?? null,
+                    'device_id' => $d['device_id'] ?? null,
+                    'instance_id' => $d['instance_id'] ?? null,
+                    'severity' => 'critical',
+                ],
+            ];
+        }
+
+        foreach ((array) ($drivers['gpus'] ?? []) as $g) {
+            if (!is_array($g)) {
+                continue;
+            }
+            if (empty($g['is_generic']) && empty($g['is_stale'])) {
+                continue;
+            }
+            $rel = !empty($g['is_generic']) ? 'generic_driver' : 'uses_driver';
+            $candidates[] = [
+                'severity' => !empty($g['is_generic']) ? 1 : 2,
+                'label' => (string) ($g['name'] ?? 'GPU'),
+                'relation' => $rel,
+                'attrs' => [
+                    'category' => 'gpu',
+                    'vendor_id' => $g['vendor_id'] ?? null,
+                    'device_id' => $g['device_id'] ?? null,
+                    'instance_id' => $g['instance_id'] ?? $g['pnp_device_id'] ?? null,
+                    'severity' => !empty($g['is_generic']) ? 'critical' : 'warn',
+                    'driver' => $g['driver'] ?? null,
+                ],
+            ];
+        }
+
+        foreach ((array) ($drivers['actions'] ?? []) as $a) {
+            if (!is_array($a)) {
+                continue;
+            }
+            $sev = (string) ($a['severity'] ?? 'info');
+            if ($sev === 'info') {
+                continue;
+            }
+            $code = (string) ($a['code'] ?? '');
+            if (!in_array($code, ['missing_driver', 'generic_driver', 'gpu_generic', 'store_newer', 'gpu_stale'], true)) {
+                continue;
+            }
+            $rel = match ($code) {
+                'missing_driver' => 'needs_driver',
+                'generic_driver', 'gpu_generic' => 'generic_driver',
+                default => 'uses_driver',
+            };
+            $candidates[] = [
+                'severity' => $sev === 'critical' ? 0 : 2,
+                'label' => (string) ($a['device'] ?? $a['title'] ?? 'Device'),
+                'relation' => $rel,
+                'attrs' => [
+                    'category' => $a['category'] ?? null,
+                    'vendor_id' => $a['vendor_id'] ?? null,
+                    'device_id' => $a['device_id'] ?? null,
+                    'instance_id' => $a['instance_id'] ?? null,
+                    'severity' => $sev,
+                    'code' => $code,
+                    'match_confidence' => $a['match_confidence'] ?? null,
+                ],
+            ];
+        }
+
+        usort($candidates, static fn ($x, $y) => ($x['severity'] <=> $y['severity']));
+        $seen = [];
+        $added = 0;
+        foreach ($candidates as $i => $c) {
+            if ($added >= 12) {
+                break;
+            }
+            $label = $c['label'];
+            if ($label === '') {
+                continue;
+            }
+            $key = strtolower($label . '|' . ($c['attrs']['instance_id'] ?? ''));
+            if (isset($seen[$key])) {
+                continue;
+            }
+            $seen[$key] = true;
+            $id = 'dev_' . $added;
+            // Prefer attaching GPU issues to the gpu node when present.
+            $parent = (isset($nodes['gpu']) && (($c['attrs']['category'] ?? '') === 'gpu')) ? 'gpu' : 'system';
+            $addNode($id, 'device', $label, $c['attrs']);
+            $addEdge($id, $parent, $c['relation'], [
+                'severity' => $c['attrs']['severity'] ?? null,
+            ]);
+            $added++;
+        }
     }
 
     /**
@@ -195,7 +314,7 @@ class HardwareKnowledgeGraphService
                 'type' => $n['type'] ?? '',
                 'label' => $n['label'] ?? '',
             ];
-            foreach (['score', 'percentile', 'temp_max', 'vram_gb', 'cores', 'speed_mhz'] as $k) {
+            foreach (['score', 'percentile', 'temp_max', 'vram_gb', 'cores', 'speed_mhz', 'vendor_id', 'device_id', 'severity', 'category'] as $k) {
                 if (isset($n[$k]) && $n[$k] !== '' && $n[$k] !== null) {
                     $row[$k] = $n[$k];
                 }

@@ -12,7 +12,7 @@ $script:ProbeDriverInstallOrder = @(
     @{ id = 'storage';     label = 'Storage (NVMe / RAID)';    why = 'Only needed when Windows Setup could not see the drive.' }
     @{ id = 'gpu';         label = 'GPU (NVIDIA / AMD / Intel)'; why = 'Biggest stability and performance win. Use DDU in Safe Mode when switching vendors.' }
     @{ id = 'audio';       label = 'Audio (Realtek / vendor)';  why = 'Board-vendor package, not the generic Microsoft HD Audio driver.' }
-    @{ id = 'network';    label = 'LAN / Wi-Fi / Bluetooth';  why = 'So the machine can reach Windows Update and vendor sites for the rest.' }
+    @{ id = 'network';     label = 'LAN / Wi-Fi / Bluetooth';  why = 'So the machine can reach Windows Update and vendor sites for the rest.' }
     @{ id = 'usb';         label = 'USB / Thunderbolt / USB4';  why = 'Type-C PD, docks, and eGPU need the vendor stack.' }
     @{ id = 'laptop_oem';  label = 'Laptop OEM package';       why = 'Hotkeys, battery thresholds, and custom ACPI. Desktops can skip this.' }
     @{ id = 'peripherals'; label = 'Mouse / Keyboard / RGB';    why = 'Optional vendor software last, after the system is stable.' }
@@ -40,12 +40,223 @@ function Test-ProbeGenericDriver {
     if ($n -match 'microsoft basic display|microsoft basic render|standard sata ahci|generic usb|usb composite device') {
         return $true
     }
-    # A Realtek / Killer / Intel NIC still on netadapterx.inf is the classic
-    # "Windows Update gave me something that works but is not the vendor package".
     if ($p -match 'microsoft' -and $n -match 'realtek|killer|intel\(r\) ethernet|intel\(r\) wi-fi|qualcomm|atheros|broadcom') {
         return $true
     }
     return $false
+}
+
+function ConvertFrom-ProbeHardwareId {
+    param([string]$InstanceId)
+
+    if (-not (Get-Command ConvertFrom-PnpDeviceId -ErrorAction SilentlyContinue)) {
+        . "$PSScriptRoot\devices.ps1"
+    }
+    return ConvertFrom-PnpDeviceId $InstanceId
+}
+
+function Get-ProbeDriverCatalog {
+    if ($script:ProbeDriverCatalog) { return $script:ProbeDriverCatalog }
+    $path = Join-Path (Split-Path -Parent $PSScriptRoot) 'data\driver-catalog.json'
+    try {
+        if (Test-Path $path) {
+            $raw = Get-Content -LiteralPath $path -Raw -Encoding UTF8
+            $script:ProbeDriverCatalog = $raw | ConvertFrom-Json
+            return $script:ProbeDriverCatalog
+        }
+    } catch {}
+    $script:ProbeDriverCatalog = [pscustomobject]@{ version = 0; pci = @(); usb = @(); board_patterns = @(); oem_patterns = @() }
+    return $script:ProbeDriverCatalog
+}
+
+function Infer-ProbeDriverCategory {
+    param(
+        [string]$Category = "",
+        [string]$DeviceName = "",
+        [string]$VendorId = "",
+        [string]$Class = ""
+    )
+    $c = "$Category".ToLower()
+    $map = @{
+        motherboard = 'chipset'; pci = 'chipset'; firmware = 'chipset'
+        wireless = 'network'; thunderbolt = 'usb'; input = 'peripherals'
+        other = ''; unknown = ''
+    }
+    if ($map.ContainsKey($c)) { $c = $map[$c] }
+    if ($c -in @('gpu','chipset','audio','network','usb','storage','laptop_oem','peripherals')) {
+        return $c
+    }
+    $n = "$DeviceName".ToLower()
+    $v = "$VendorId".ToLower()
+    $cl = "$Class".ToLower()
+    if ($cl -match 'display' -or $n -match 'geforce|radeon|arc |uhd|iris|vga|3d|gpu' -or $v -in @('10de','1002')) { return 'gpu' }
+    if ($cl -match 'net|bluetooth' -or $n -match 'ethernet|wi-?fi|wireless|bluetooth|wlan|lan ') { return 'network' }
+    if ($cl -match 'media' -or $n -match 'audio|sound|hd audio') { return 'audio' }
+    if ($n -match 'sm ?bus|management engine|mei|pch|chipset|lpc|serial io|pci simple' -or $v -in @('8086','1022')) { return 'chipset' }
+    if ($cl -match 'usb' -or $n -match 'usb|thunderbolt|usb4') { return 'usb' }
+    if ($cl -match 'hdc|scsi' -or $n -match 'nvme|ahci|sata|raid') { return 'storage' }
+    return 'chipset'
+}
+
+function Get-ProbeVendorTagFromId {
+    param([string]$VendorId, [string]$Fallback = 'unknown')
+    switch ("$VendorId".ToLower()) {
+        '10de' { return 'nvidia' }
+        '1002' { return 'amd' }
+        '1022' { return 'amd' }
+        '8086' { return 'intel' }
+        '10ec' { return 'realtek' }
+        '14e4' { return 'broadcom' }
+        '1969' { return 'qualcomm' }
+        '168c' { return 'qualcomm' }
+        '1b21' { return 'asmedia' }
+        '0bda' { return 'realtek' }
+        default { return $Fallback }
+    }
+}
+
+function Resolve-ProbeDriverPackage {
+    param(
+        [string]$Category,
+        [string]$VendorTag = 'unknown',
+        [string]$DeviceName = "",
+        [string]$InstanceId = "",
+        [string]$VendorId = "",
+        [string]$DeviceId = "",
+        [string]$BoardMfr = "",
+        [string]$BoardProduct = "",
+        [string]$SystemMfr = "",
+        [string]$SystemModel = "",
+        [string]$Class = ""
+    )
+
+    $catalog = Get-ProbeDriverCatalog
+    $hw = $null
+    if ($InstanceId) {
+        $hw = ConvertFrom-ProbeHardwareId $InstanceId
+        if (-not $VendorId -and $hw.vendor_id) { $VendorId = "$($hw.vendor_id)" }
+        if (-not $DeviceId -and $hw.device_id) { $DeviceId = "$($hw.device_id)" }
+    }
+
+    $Category = Infer-ProbeDriverCategory -Category $Category -DeviceName $DeviceName -VendorId $VendorId -Class $Class
+    if ($VendorTag -eq 'unknown' -or -not $VendorTag) {
+        $VendorTag = Get-ProbeVendorTagFromId -VendorId $VendorId -Fallback $VendorTag
+    }
+
+    $links = @()
+    $confidence = 'generic'
+    $primary = $null
+    $bestScore = -1
+
+    $bus = if ($hw -and $hw.bus) { "$($hw.bus)" } elseif ($InstanceId -match '^USB\\') { 'usb' } else { 'pci' }
+    if ($bus -eq 'usb' -and $catalog.usb) {
+        foreach ($row in @($catalog.usb)) {
+            $vid = ("$($row.vid)").ToLower()
+            $pid = ("$($row.pid)").ToLower()
+            if ($vid -and $VendorId -and $vid -ne $VendorId.ToLower()) { continue }
+            if ($pid -and $pid -ne '*' -and $DeviceId -and $pid -ne $DeviceId.ToLower()) { continue }
+            if ($row.category -and $Category -and "$($row.category)" -ne $Category -and $Category -ne 'peripherals') { continue }
+            $hit = @{ label = "$($row.label)"; url = "$($row.url)"; note = "$($row.note)"; source = 'catalog' }
+            $links += $hit
+            $score = 5
+            if ($pid -and $pid -ne '*' -and $DeviceId -and $pid -eq $DeviceId.ToLower()) { $score += 40 }
+            if ($score -gt $bestScore) {
+                $bestScore = $score
+                $primary = $hit
+                $confidence = if ($pid -and $pid -ne '*') { 'exact' } else { 'vendor' }
+            }
+        }
+    } elseif ($catalog.pci) {
+        foreach ($row in @($catalog.pci)) {
+            $ven = ("$($row.ven)").ToLower()
+            $dev = ("$($row.dev)").ToLower()
+            if ($ven -and $VendorId -and $ven -ne $VendorId.ToLower()) { continue }
+            if ($dev -and $dev -ne '*' -and $DeviceId -and $dev -ne $DeviceId.ToLower()) { continue }
+            $nameHit = $false
+            if ($row.name_match) {
+                if ($DeviceName -and ("$DeviceName" -match "$($row.name_match)")) { $nameHit = $true }
+                elseif ($DeviceName) { continue }
+            }
+            if ($row.category -and $Category -and "$($row.category)" -ne $Category) {
+                if (-not $nameHit -and ($dev -eq '*' -or -not $DeviceId)) { continue }
+            }
+            $hit = @{ label = "$($row.label)"; url = "$($row.url)"; note = "$($row.note)"; source = 'catalog' }
+            $links += $hit
+            $score = 0
+            if ($dev -and $dev -ne '*' -and $DeviceId -and $dev -eq $DeviceId.ToLower()) { $score += 40 }
+            if ($nameHit) { $score += 20 }
+            if ($row.category -and "$($row.category)" -eq $Category) { $score += 10 }
+            if ($ven -and $VendorId -and $ven -eq $VendorId.ToLower()) { $score += 5 }
+            if ($score -gt $bestScore) {
+                $bestScore = $score
+                $primary = $hit
+                $confidence = if ($dev -and $dev -ne '*' -and $DeviceId) { 'exact' } else { 'vendor' }
+            }
+        }
+    }
+
+    # Board-model aware support URLs
+    if ($catalog.board_patterns -and ($BoardMfr -or $BoardProduct -or $SystemMfr)) {
+        $hay = "$BoardMfr $BoardProduct $SystemMfr".ToLower()
+        $product = if ($BoardProduct) { $BoardProduct } else { $SystemModel }
+        $enc = [uri]::EscapeDataString("$product")
+        foreach ($row in @($catalog.board_patterns)) {
+            if ($hay -notmatch "$($row.match)") { continue }
+            if ($row.category -and $Category -and "$($row.category)" -ne $Category -and $Category -notin @('chipset', 'audio', 'network', 'usb', 'storage')) { continue }
+            $url = ("$($row.url_template)" -replace '\{product\}', $enc)
+            if (-not $url) { $url = "$($row.url)" }
+            $hit = @{ label = "$($row.label)"; url = $url; note = "Matched board/OEM pattern for $product"; source = 'board' }
+            $links += $hit
+            if ($confidence -eq 'generic' -or -not $primary) {
+                $primary = $hit
+                $confidence = 'board'
+            }
+        }
+    }
+
+    if ($Category -eq 'laptop_oem' -and $catalog.oem_patterns) {
+        $sys = "$SystemMfr".ToLower()
+        foreach ($row in @($catalog.oem_patterns)) {
+            if ($sys -notmatch "$($row.match)") { continue }
+            $hit = @{ label = "$($row.label)"; url = "$($row.url)"; source = 'oem' }
+            $links += $hit
+            if (-not $primary) { $primary = $hit; $confidence = 'board' }
+        }
+    }
+
+    $fallback = @(Get-ProbeVendorDriverLinks -Category $Category -VendorTag $VendorTag -DeviceName $DeviceName `
+            -BoardMfr $BoardMfr -BoardProduct $BoardProduct -SystemMfr $SystemMfr -SystemModel $SystemModel)
+    foreach ($f in $fallback) {
+        $dup = $false
+        foreach ($existing in $links) {
+            if ("$($existing.url)" -eq "$($f.url)") { $dup = $true; break }
+        }
+        if ($dup) { continue }
+        $f2 = @{ label = "$($f.label)"; url = "$($f.url)"; note = "$($f.note)"; source = 'vendor' }
+        $links += $f2
+        if (-not $primary) {
+            $primary = $f2
+            $confidence = 'vendor'
+        }
+    }
+
+    if (-not $primary -and $links.Count -gt 0) { $primary = $links[0] }
+    if (-not $links -or $links.Count -eq 0) {
+        $confidence = 'generic'
+        $links = @(@{ label = 'Windows Update drivers'; url = 'ms-settings:windowsupdate'; note = 'Optional updates often hide OEM drivers.'; source = 'generic' })
+        $primary = $links[0]
+    }
+
+    return @{
+        match_confidence = $confidence
+        primary_link     = $primary
+        links            = @($links)
+        vendor_id        = if ($VendorId) { $VendorId.ToLower() } else { $null }
+        device_id        = if ($DeviceId) { $DeviceId.ToLower() } else { $null }
+        bus              = $bus
+        category         = $Category
+        instance_id      = $InstanceId
+    }
 }
 
 function Get-ProbeVendorDriverLinks {
@@ -63,6 +274,8 @@ function Get-ProbeVendorDriverLinks {
     $v = "$VendorTag".ToLower()
     $board = "$BoardMfr".ToLower()
     $sys = "$SystemMfr".ToLower()
+    $product = if ($BoardProduct) { $BoardProduct } elseif ($SystemModel) { $SystemModel } else { '' }
+    $enc = if ($product) { [uri]::EscapeDataString($product) } else { '' }
 
     switch ($Category) {
         'gpu' {
@@ -78,18 +291,25 @@ function Get-ProbeVendorDriverLinks {
             }
         }
         'chipset' {
-            if ($board -match 'asus' -or $sys -match 'asus') {
+            if (($board -match 'asus' -or $sys -match 'asus') -and $enc) {
+                $links += @{ label = "ASUS Support — $product"; url = "https://www.asus.com/searchresult?searchType=support&searchKey=$enc"; note = 'Chipset + LAN + audio for this board.' }
+            } elseif ($board -match 'asus' -or $sys -match 'asus') {
                 $links += @{ label = 'ASUS Support'; url = 'https://www.asus.com/support/'; note = 'Enter the board model for chipset + LAN + audio bundle.' }
+            } elseif (($board -match 'msi|micro-star' -or $sys -match 'msi|micro-star') -and $enc) {
+                $links += @{ label = "MSI Support — $product"; url = "https://www.msi.com/search/?q=$enc"; note = 'Chipset + LAN + audio under Drivers.' }
             } elseif ($board -match 'msi|micro-star' -or $sys -match 'msi|micro-star') {
                 $links += @{ label = 'MSI Support'; url = 'https://www.msi.com/support'; note = 'Chipset + LAN + audio under Drivers.' }
+            } elseif (($board -match 'gigabyte|aorus' -or $sys -match 'gigabyte|aorus') -and $enc) {
+                $links += @{ label = "Gigabyte Support — $product"; url = "https://www.gigabyte.com/Search?keyword=$enc"; note = 'Download the chipset package for your board.' }
             } elseif ($board -match 'gigabyte|aorus' -or $sys -match 'gigabyte|aorus') {
                 $links += @{ label = 'Gigabyte Support'; url = 'https://www.gigabyte.com/Support'; note = 'Download the chipset package for your board.' }
+            } elseif (($board -match 'asrock' -or $sys -match 'asrock') -and $enc) {
+                $links += @{ label = "ASRock Support — $product"; url = "https://www.asrock.com/support/index.us.asp?Model=$enc"; note = 'Chipset first, then LAN / audio.' }
             } elseif ($board -match 'asrock' -or $sys -match 'asrock') {
                 $links += @{ label = 'ASRock Support'; url = 'https://www.asrock.com/support/'; note = 'Chipset first, then LAN / audio.' }
             } elseif ($board -match 'biostar') {
                 $links += @{ label = 'BIOSTAR Support'; url = 'https://www.biostar.com.tw/app/en/support/index.php' }
             }
-            # Always offer the silicon vendor as a fallback when the board page is unclear.
             if ($v -eq 'amd' -or $DeviceName -match 'AMD|Ryzen') {
                 $links += @{ label = 'AMD Chipset Drivers'; url = 'https://www.amd.com/en/support/download/drivers.html'; note = 'Required for Ryzen USB / NVMe power management.' }
             } else {
@@ -97,11 +317,10 @@ function Get-ProbeVendorDriverLinks {
             }
         }
         'audio' {
-            if ($board -match 'asus|msi|gigabyte|asrock' -or $sys -match 'asus|msi|gigabyte|asrock') {
-                $links += @{ label = 'Board audio package'; url = 'https://www.realtek.com/Download/List?cate_id=597'; note = 'Prefer the package from your motherboard support page over the Realtek generic.' }
-            } else {
-                $links += @{ label = 'Realtek Audio'; url = 'https://www.realtek.com/Download/List?cate_id=597' }
+            if ($enc -and ($board -match 'asus|msi|gigabyte|asrock' -or $sys -match 'asus|msi|gigabyte|asrock')) {
+                $links += @{ label = "Board audio — $product"; url = "https://www.asus.com/searchresult?searchType=support&searchKey=$enc"; note = 'Prefer the motherboard package over Realtek generic.' }
             }
+            $links += @{ label = 'Realtek Audio'; url = 'https://www.realtek.com/Download/List?cate_id=597' }
         }
         'network' {
             if ($DeviceName -match 'Realtek') {
@@ -119,7 +338,9 @@ function Get-ProbeVendorDriverLinks {
             if ($DeviceName -match 'Qualcomm|Atheros|QCN|QCA') {
                 $links += @{ label = 'Qualcomm Wi-Fi / BT'; url = 'https://www.qualcomm.com/support' }
             }
-            if ($links.Count -eq 0) {
+            if ($links.Count -eq 0 -and $enc) {
+                $links += @{ label = "Board LAN / Wi-Fi — $product"; url = "https://www.asus.com/searchresult?searchType=support&searchKey=$enc"; note = 'Use your motherboard or laptop support page.' }
+            } elseif ($links.Count -eq 0) {
                 $links += @{ label = 'Board LAN / Wi-Fi package'; url = 'https://www.asus.com/support/'; note = 'Use your motherboard or laptop support page.' }
             }
         }
@@ -147,8 +368,6 @@ function Get-ProbeVendorDriverLinks {
 function Get-ProbeInstalledDrivers {
     $list = @()
     try {
-        # Get-WindowsDriver -Online needs admin for the full store; without elevation
-        # it still returns the third-party set which is what we care about.
         $drivers = @(Get-WindowsDriver -Online -ErrorAction SilentlyContinue)
         foreach ($d in $drivers) {
             if ($d.ProviderName -match '^Microsoft' -and $d.ClassName -notmatch 'Display|Net|MEDIA|HDC|USB|Bluetooth|System') {
@@ -156,26 +375,37 @@ function Get-ProbeInstalledDrivers {
             }
             $age = Get-ProbeDriverAgeDays $d.Date
             $list += @{
-                class        = "$($d.ClassName)"
-                class_guid   = "$($d.ClassGuid)"
-                provider     = "$($d.ProviderName)"
-                version      = "$($d.Version)"
-                date         = if ($d.Date) { $d.Date.ToString('yyyy-MM-dd') } else { $null }
-                age_days     = $age
-                inf          = "$($d.Driver)"
+                class         = "$($d.ClassName)"
+                class_guid    = "$($d.ClassGuid)"
+                provider      = "$($d.ProviderName)"
+                version       = "$($d.Version)"
+                date          = if ($d.Date) { $d.Date.ToString('yyyy-MM-dd') } else { $null }
+                age_days      = $age
+                inf           = "$($d.Driver)"
                 original_name = "$($d.OriginalFileName)"
                 boot_critical = [bool]$d.BootCritical
-                inbox        = [bool]$d.Inbox
+                inbox         = [bool]$d.Inbox
             }
         }
     } catch {}
     return @($list)
 }
 
+function Compare-ProbeDriverVersion {
+    param([string]$A, [string]$B)
+    if (-not $A -or -not $B) { return 0 }
+    try {
+        $va = [version](($A -replace '[^\d\.]', ' ').Trim() -replace '\s+', '.')
+        $vb = [version](($B -replace '[^\d\.]', ' ').Trim() -replace '\s+', '.')
+        return $va.CompareTo($vb)
+    } catch {
+        return [string]::Compare("$A", "$B", $true)
+    }
+}
+
 function Get-ProbeDeviceDrivers {
     $list = @()
     try {
-        # pnputil /enum-devices /drivers is Win10 2004+ and gives the live binding.
         $raw = & pnputil.exe /enum-devices /drivers 2>$null
         if (-not $raw) { return @() }
         $block = @{}
@@ -197,25 +427,30 @@ function Get-ProbeDeviceDrivers {
         if ($block.InstanceId) { $list += $block }
     } catch {}
 
-    # Enrich with CIM manufacturer when pnputil did not give a provider.
     $out = @()
     foreach ($d in $list) {
         $age = Get-ProbeDriverAgeDays $d.Date
         $generic = Test-ProbeGenericDriver -Provider $d.Provider -InfName $d.Inf -DeviceName $d.Name
+        $hw = ConvertFrom-ProbeHardwareId $d.InstanceId
         $out += @{
-            name         = $d.Name
-            class        = $d.Class
-            instance_id  = $d.InstanceId
-            provider     = $d.Provider
-            version      = $d.Version
-            date         = $d.Date
-            age_days     = $age
-            inf          = $d.Inf
-            status       = $d.Status
-            problem_code = $d.ProblemCode
-            is_generic   = $generic
-            is_stale     = ($null -ne $age -and $age -gt 365)
+            name          = $d.Name
+            class         = $d.Class
+            instance_id   = $d.InstanceId
+            provider      = $d.Provider
+            version       = $d.Version
+            date          = $d.Date
+            age_days      = $age
+            inf           = $d.Inf
+            status        = $d.Status
+            problem_code  = $d.ProblemCode
+            is_generic    = $generic
+            is_stale      = ($null -ne $age -and $age -gt 365)
             is_very_stale = ($null -ne $age -and $age -gt 730)
+            bus           = $hw.bus
+            vendor_id     = $hw.vendor_id
+            device_id     = $hw.device_id
+            subsystem_id  = $hw.subsystem_id
+            vendor_name   = $hw.vendor_name
         }
     }
     return @($out)
@@ -227,18 +462,25 @@ function Get-ProbeGpuDriverStatus {
         $vendor = Get-ProbeVendorTag -Name "$($g.Name)"
         $age = Get-ProbeDriverAgeDays $g.DriverDate
         $generic = ("$($g.Name)" -match 'Microsoft Basic') -or ("$($g.DriverVersion)" -eq '')
+        $pnp = "$($g.PNPDeviceID)"
+        $resolved = Resolve-ProbeDriverPackage -Category 'gpu' -VendorTag $vendor -DeviceName "$($g.Name)" -InstanceId $pnp
         $entry = @{
-            name         = "$($g.Name)".Trim()
-            vendor       = $vendor
-            driver       = "$($g.DriverVersion)"
-            driver_date  = if ($g.DriverDate) { ([datetime]$g.DriverDate).ToString('yyyy-MM-dd') } else { $null }
-            age_days     = $age
-            pnp_device_id = "$($g.PNPDeviceID)"
-            status       = "$($g.Status)"
-            is_generic   = $generic
-            is_stale     = ($null -ne $age -and $age -gt 180)   # GPU drivers move fast
-            is_integrated = ("$($g.Name)" -match 'UHD|Iris|Vega \d|Radeon\(TM\) Graphics')
-            links        = @(Get-ProbeVendorDriverLinks -Category 'gpu' -VendorTag $vendor -DeviceName "$($g.Name)")
+            name              = "$($g.Name)".Trim()
+            vendor            = $vendor
+            driver            = "$($g.DriverVersion)"
+            driver_date       = if ($g.DriverDate) { ([datetime]$g.DriverDate).ToString('yyyy-MM-dd') } else { $null }
+            age_days          = $age
+            pnp_device_id     = $pnp
+            instance_id       = $pnp
+            vendor_id         = $resolved.vendor_id
+            device_id         = $resolved.device_id
+            status            = "$($g.Status)"
+            is_generic        = $generic
+            is_stale          = ($null -ne $age -and $age -gt 180)
+            is_integrated     = ("$($g.Name)" -match 'UHD|Iris|Vega \d|Radeon\(TM\) Graphics')
+            match_confidence  = $resolved.match_confidence
+            primary_link      = $resolved.primary_link
+            links             = @($resolved.links)
         }
         if ($vendor -eq 'nvidia') {
             $smi = Get-Command nvidia-smi -ErrorAction SilentlyContinue
@@ -248,7 +490,6 @@ function Get-ProbeGpuDriverStatus {
                     if ($ver) { $entry.nvidia_smi_version = "$ver".Trim() }
                 } catch {}
             }
-            # NVIDIA App / GeForce Experience install markers.
             $nvApp = Test-Path 'HKLM:\SOFTWARE\NVIDIA Corporation\NVIDIA App'
             $gfe = Test-Path 'HKLM:\SOFTWARE\NVIDIA Corporation\Global\GFExperience'
             $entry.updater_installed = ($nvApp -or $gfe)
@@ -267,35 +508,95 @@ function Get-ProbeGpuDriverStatus {
     return @($gpus)
 }
 
-function Get-ProbeWindowsUpdateDriverCandidates {
-    # pnputil /scan-devices triggers a re-enumeration; /enum-devices /problem
-    # already covers most of what an assembler needs without waiting on WU.
-    $out = @{
-        available = $false
-        note = 'Windows Update driver scan is optional and can take minutes. Use vendor links for a fresh build.'
-        problem_devices = @()
-    }
+function Get-ProbeProblemDevices {
+    $list = @()
     try {
         $raw = & pnputil.exe /enum-devices /problem 2>$null
-        if ($raw) {
-            $out.available = $true
-            $block = @{}
-            $list = @()
-            foreach ($line in @($raw)) {
-                if ($line -match '^\s*$') {
-                    if ($block.InstanceId) { $list += $block.Clone(); $block = @{} }
-                    continue
+        if (-not $raw) { return @() }
+        $block = @{}
+        foreach ($line in @($raw)) {
+            if ($line -match '^\s*$') {
+                if ($block.InstanceId) {
+                    $hw = ConvertFrom-ProbeHardwareId $block.InstanceId
+                    $list += @{
+                        name         = $block.Name
+                        instance_id  = $block.InstanceId
+                        problem      = $block.Problem
+                        code         = $block.Code
+                        vendor_id    = $hw.vendor_id
+                        device_id    = $hw.device_id
+                        vendor_name  = $hw.vendor_name
+                        bus          = $hw.bus
+                    }
+                    $block = @{}
                 }
-                if ($line -match 'Instance ID:\s*(.+)$') { $block.InstanceId = $Matches[1].Trim(); continue }
-                if ($line -match 'Device Description:\s*(.+)$') { $block.Name = $Matches[1].Trim(); continue }
-                if ($line -match 'Problem Name:\s*(.+)$') { $block.Problem = $Matches[1].Trim(); continue }
-                if ($line -match 'Problem Code:\s*(.+)$') { $block.Code = $Matches[1].Trim(); continue }
+                continue
             }
-            if ($block.InstanceId) { $list += $block }
-            $out.problem_devices = @($list)
+            if ($line -match 'Instance ID:\s*(.+)$') { $block.InstanceId = $Matches[1].Trim(); continue }
+            if ($line -match 'Device Description:\s*(.+)$') { $block.Name = $Matches[1].Trim(); continue }
+            if ($line -match 'Problem Name:\s*(.+)$') { $block.Problem = $Matches[1].Trim(); continue }
+            if ($line -match 'Problem Code:\s*(.+)$') { $block.Code = $Matches[1].Trim(); continue }
         }
+        if ($block.InstanceId) {
+            $hw = ConvertFrom-ProbeHardwareId $block.InstanceId
+            $list += @{
+                name        = $block.Name
+                instance_id = $block.InstanceId
+                problem     = $block.Problem
+                code        = $block.Code
+                vendor_id   = $hw.vendor_id
+                device_id   = $hw.device_id
+                vendor_name = $hw.vendor_name
+                bus         = $hw.bus
+            }
+        }
+    } catch {}
+    return @($list)
+}
+
+function Get-ProbeWindowsUpdateDriverCandidates {
+    param([switch]$IncludeWuScan)
+
+    $out = @{
+        available       = $false
+        scanned         = $false
+        note            = 'Windows Update driver scan is optional and can take minutes. Pass wu=1 to enable.'
+        problem_devices = @(Get-ProbeProblemDevices)
+        candidates      = @()
+    }
+    if ($out.problem_devices.Count -gt 0) { $out.available = $true }
+
+    if (-not $IncludeWuScan) {
+        return $out
+    }
+
+    $out.scanned = $true
+    $out.note = 'Scanned Microsoft Update for driver-class updates (may take several minutes).'
+    try {
+        $session = New-Object -ComObject Microsoft.Update.Session
+        $searcher = $session.CreateUpdateSearcher()
+        # Driver updates often appear under BrowseOnly / optional; cast a wide net then filter.
+        $result = $searcher.Search('IsInstalled=0 and Type=''Driver''')
+        $list = @()
+        foreach ($u in @($result.Updates)) {
+            $cats = @()
+            try {
+                foreach ($c in @($u.Categories)) { $cats += "$($c.Name)" }
+            } catch {}
+            $list += @{
+                title        = "$($u.Title)"
+                is_downloaded = [bool]$u.IsDownloaded
+                is_mandatory  = [bool]$u.IsMandatory
+                categories    = $cats
+                kb            = @($u.KBArticleIDs) -join ','
+            }
+        }
+        $out.candidates = @($list | Select-Object -First 40)
+        $out.available = $out.available -or ($out.candidates.Count -gt 0)
+        $out.candidate_count = $out.candidates.Count
     } catch {
         $out.error = $_.Exception.Message
+        $out.note = 'Windows Update COM scan failed. Problem devices from pnputil are still listed.'
     }
     return $out
 }
@@ -309,32 +610,57 @@ function New-ProbeDriverAction {
         [string]$Category,
         [string]$VendorTag = 'unknown',
         [string]$DeviceName = "",
+        [string]$InstanceId = "",
+        [string]$VendorId = "",
+        [string]$DeviceId = "",
         [string]$BoardMfr = "",
         [string]$BoardProduct = "",
         [string]$SystemMfr = "",
         [string]$SystemModel = "",
+        [string]$InfName = "",
+        [string]$Provider = "",
+        [string]$DriverVersion = "",
+        [string]$DriverDate = "",
+        $AgeDays = $null,
+        [bool]$IsGeneric = $false,
+        [bool]$IsStale = $false,
         [int]$Priority = 50
     )
 
+    $resolved = Resolve-ProbeDriverPackage -Category $Category -VendorTag $VendorTag -DeviceName $DeviceName `
+        -InstanceId $InstanceId -VendorId $VendorId -DeviceId $DeviceId `
+        -BoardMfr $BoardMfr -BoardProduct $BoardProduct -SystemMfr $SystemMfr -SystemModel $SystemModel
+
     return @{
-        severity   = $Severity
-        code       = $Code
-        title      = $Title
-        detail     = $Detail
-        category   = $Category
-        priority   = $Priority
-        device     = $DeviceName
-        links      = @(Get-ProbeVendorDriverLinks -Category $Category -VendorTag $VendorTag -DeviceName $DeviceName `
-                        -BoardMfr $BoardMfr -BoardProduct $BoardProduct -SystemMfr $SystemMfr -SystemModel $SystemModel)
+        severity         = $Severity
+        code             = $Code
+        title            = $Title
+        detail           = $Detail
+        category         = $Category
+        priority         = $Priority
+        device           = $DeviceName
+        instance_id      = if ($InstanceId) { $InstanceId } else { $resolved.instance_id }
+        vendor_id        = $resolved.vendor_id
+        device_id        = $resolved.device_id
+        bus              = $resolved.bus
+        inf              = $InfName
+        provider         = $Provider
+        driver_version   = $DriverVersion
+        driver_date      = $DriverDate
+        age_days         = $AgeDays
+        is_generic       = $IsGeneric
+        is_stale         = $IsStale
+        match_confidence = $resolved.match_confidence
+        primary_link     = $resolved.primary_link
+        links            = @($resolved.links)
     }
 }
 
-<#
- Build the action list an assembler wants on a fresh Windows install: what is
- missing, what is generic, what is stale, and the order to install it in.
-#>
 function Get-ProbeDriverAdvice {
-    param($DeviceInventory = $null)
+    param(
+        $DeviceInventory = $null,
+        [switch]$IncludeWuScan
+    )
 
     $board = Get-CimSafe "Win32_BaseBoard" | Select-Object -First 1
     $cs = Get-CimSafe "Win32_ComputerSystem" | Select-Object -First 1
@@ -358,48 +684,52 @@ function Get-ProbeDriverAdvice {
 
     $gpuStatus = @(Get-ProbeGpuDriverStatus)
     $deviceDrivers = @(Get-ProbeDeviceDrivers)
-    $wu = Get-ProbeWindowsUpdateDriverCandidates
+    $installedStore = @(Get-ProbeInstalledDrivers)
+    $wu = Get-ProbeWindowsUpdateDriverCandidates -IncludeWuScan:$IncludeWuScan
 
     $actions = @()
 
-    # --- Missing drivers (Device Manager yellow bangs) ---
     foreach ($d in @($DeviceInventory.driverless)) {
-        $cat = $d.category
-        if ($cat -eq 'motherboard' -or $cat -eq 'chipset' -or $cat -eq 'pci') { $cat = 'chipset' }
-        if ($cat -eq 'wireless') { $cat = 'network' }
-        $vendor = if ($d.vendor_name) { (Get-ProbeVendorTag -Name "$($d.vendor_name) $($d.name)") } else { $cpuVendor }
+        $cat = Infer-ProbeDriverCategory -Category $d.category -DeviceName $d.name -VendorId $d.vendor_id
+        $vendor = Get-ProbeVendorTagFromId -VendorId $d.vendor_id -Fallback (
+            if ($d.vendor_name) { (Get-ProbeVendorTag -Name "$($d.vendor_name) $($d.name)") } else { $cpuVendor }
+        )
         $actions += New-ProbeDriverAction `
             -Severity 'critical' -Code 'missing_driver' -Category $cat -VendorTag $vendor `
-            -DeviceName $d.name -BoardMfr $boardMfr -BoardProduct $boardProduct -SystemMfr $sysMfr -SystemModel $sysModel `
+            -DeviceName $d.name -InstanceId $d.instance_id -VendorId $d.vendor_id -DeviceId $d.device_id `
+            -BoardMfr $boardMfr -BoardProduct $boardProduct -SystemMfr $sysMfr -SystemModel $sysModel `
             -Priority 10 `
             -Title "No driver: $($d.name)" `
-            -Detail "$($d.problem_message). Install the vendor package for this class before benchmarking."
+            -Detail "$($d.problem_message). VEN_$("$($d.vendor_id)".ToUpper()) DEV_$("$($d.device_id)".ToUpper()) — install the matched vendor package before benchmarking."
     }
 
-    # --- GPU status ---
     foreach ($g in $gpuStatus) {
         if ($g.is_generic) {
             $actions += New-ProbeDriverAction `
                 -Severity 'critical' -Code 'gpu_generic' -Category 'gpu' -VendorTag $g.vendor `
-                -DeviceName $g.name -Priority 5 `
+                -DeviceName $g.name -InstanceId $g.instance_id -VendorId $g.vendor_id -DeviceId $g.device_id `
+                -DriverVersion $g.driver -DriverDate $g.driver_date -AgeDays $g.age_days `
+                -IsGeneric $true -Priority 5 `
                 -Title "GPU is on a generic Microsoft driver" `
                 -Detail 'Performance and hot-spot sensors will be wrong until the vendor package is installed.'
         } elseif ($g.is_stale) {
             $actions += New-ProbeDriverAction `
                 -Severity 'warn' -Code 'gpu_stale' -Category 'gpu' -VendorTag $g.vendor `
-                -DeviceName $g.name -Priority 30 `
+                -DeviceName $g.name -InstanceId $g.instance_id -VendorId $g.vendor_id -DeviceId $g.device_id `
+                -DriverVersion $g.driver -DriverDate $g.driver_date -AgeDays $g.age_days `
+                -IsStale $true -Priority 30 `
                 -Title "$($g.name) driver is $($g.age_days) days old" `
                 -Detail "Current: $($g.driver) ($($g.driver_date)). Game Ready / Adrenalin releases land every few weeks - update before a stability pass."
         } elseif (-not $g.updater_installed -and -not $g.is_integrated) {
             $actions += New-ProbeDriverAction `
                 -Severity 'info' -Code 'gpu_no_updater' -Category 'gpu' -VendorTag $g.vendor `
-                -DeviceName $g.name -Priority 60 `
+                -DeviceName $g.name -InstanceId $g.instance_id -VendorId $g.vendor_id -DeviceId $g.device_id `
+                -Priority 60 `
                 -Title "Install the $($g.vendor.ToUpper()) updater app" `
                 -Detail 'Keeps the card on a current Game Ready / Adrenalin / Arc release without manual downloads.'
         }
     }
 
-    # --- Generic board drivers that Windows Update left behind ---
     $genericWatch = @(
         @{ match = 'SM Bus Controller|SMBus'; cat = 'chipset'; title = 'SMBus is on a generic driver' }
         @{ match = 'PCI Simple Communications|Management Engine|MEI|Interface'; cat = 'chipset'; title = 'Intel ME / AMD PSP interface needs the vendor package' }
@@ -411,21 +741,61 @@ function Get-ProbeDriverAdvice {
         if (-not $d.is_generic) { continue }
         foreach ($w in $genericWatch) {
             if ("$($d.name)" -notmatch $w.match) { continue }
+            $cat = Infer-ProbeDriverCategory -Category $w.cat -DeviceName $d.name -VendorId $d.vendor_id -Class $d.class
+            $vendor = Get-ProbeVendorTagFromId -VendorId $d.vendor_id -Fallback $cpuVendor
             $actions += New-ProbeDriverAction `
-                -Severity 'warn' -Code 'generic_driver' -Category $w.cat -VendorTag $cpuVendor `
-                -DeviceName $d.name -BoardMfr $boardMfr -BoardProduct $boardProduct `
+                -Severity 'warn' -Code 'generic_driver' -Category $cat -VendorTag $vendor `
+                -DeviceName $d.name -InstanceId $d.instance_id -VendorId $d.vendor_id -DeviceId $d.device_id `
+                -BoardMfr $boardMfr -BoardProduct $boardProduct `
                 -SystemMfr $sysMfr -SystemModel $sysModel -Priority 20 `
+                -InfName $d.inf -Provider $d.provider -DriverVersion $d.version -DriverDate $d.date `
+                -AgeDays $d.age_days -IsGeneric $true `
                 -Title $w.title `
-                -Detail "Provider: $($d.provider) · INF: $($d.inf). Replace with the motherboard / OEM package."
+                -Detail "Provider: $($d.provider) · INF: $($d.inf) · VEN_$("$($d.vendor_id)".ToUpper()) DEV_$("$($d.device_id)".ToUpper()). Replace with the motherboard / OEM package."
             break
         }
     }
 
-    # --- Stale non-GPU drivers on critical classes ---
     foreach ($d in $deviceDrivers) {
         if (-not $d.is_very_stale) { continue }
         if ($d.class -notmatch 'Net|MEDIA|Display|HDC|System|USB|Bluetooth') { continue }
         if ($d.is_generic) { continue }
+        $cat = Infer-ProbeDriverCategory -Category '' -DeviceName $d.name -VendorId $d.vendor_id -Class $d.class
+        $vendor = Get-ProbeVendorTagFromId -VendorId $d.vendor_id -Fallback $cpuVendor
+        $actions += New-ProbeDriverAction `
+            -Severity 'info' -Code 'driver_stale' -Category $cat -VendorTag $vendor `
+            -DeviceName $d.name -InstanceId $d.instance_id -VendorId $d.vendor_id -DeviceId $d.device_id `
+            -BoardMfr $boardMfr -BoardProduct $boardProduct `
+            -SystemMfr $sysMfr -SystemModel $sysModel -Priority 70 `
+            -InfName $d.inf -Provider $d.provider -DriverVersion $d.version -DriverDate $d.date `
+            -AgeDays $d.age_days -IsStale $true `
+            -Title "$($d.name) driver is $($d.age_days) days old" `
+            -Detail "Provider: $($d.provider) · $($d.version) ($($d.date)) · VEN_$("$($d.vendor_id)".ToUpper()) DEV_$("$($d.device_id)".ToUpper())"
+    }
+
+    # Driver store vs active binding: newer package published but older INF still bound.
+    $storeByInf = @{}
+    foreach ($s in $installedStore) {
+        $key = ("$($s.original_name)").ToLower()
+        if (-not $key) { $key = ("$($s.inf)").ToLower() }
+        if (-not $key) { continue }
+        if (-not $storeByInf.ContainsKey($key) -or (Compare-ProbeDriverVersion $s.version $storeByInf[$key].version) -gt 0) {
+            $storeByInf[$key] = $s
+        }
+    }
+    foreach ($d in $deviceDrivers) {
+        if (-not $d.inf) { continue }
+        $infKey = ("$($d.inf)").ToLower()
+        $store = $null
+        if ($storeByInf.ContainsKey($infKey)) { $store = $storeByInf[$infKey] }
+        else {
+            foreach ($k in $storeByInf.Keys) {
+                if ($k -like "*$infKey*" -or $infKey -like "*$k*") { $store = $storeByInf[$k]; break }
+            }
+        }
+        if (-not $store) { continue }
+        if ((Compare-ProbeDriverVersion $store.version $d.version) -le 0) { continue }
+        if ($d.class -notmatch 'Net|MEDIA|Display|HDC|System|USB|Bluetooth') { continue }
         $cat = switch -Regex ($d.class) {
             'Display' { 'gpu' }
             'Net|Bluetooth' { 'network' }
@@ -435,11 +805,14 @@ function Get-ProbeDriverAdvice {
             default { 'chipset' }
         }
         $actions += New-ProbeDriverAction `
-            -Severity 'info' -Code 'driver_stale' -Category $cat -VendorTag $cpuVendor `
-            -DeviceName $d.name -BoardMfr $boardMfr -BoardProduct $boardProduct `
-            -SystemMfr $sysMfr -SystemModel $sysModel -Priority 70 `
-            -Title "$($d.name) driver is $($d.age_days) days old" `
-            -Detail "Provider: $($d.provider) · $($d.version) ($($d.date))"
+            -Severity 'warn' -Code 'store_newer' -Category $cat -VendorTag $cpuVendor `
+            -DeviceName $d.name -InstanceId $d.instance_id -VendorId $d.vendor_id -DeviceId $d.device_id `
+            -BoardMfr $boardMfr -BoardProduct $boardProduct `
+            -SystemMfr $sysMfr -SystemModel $sysModel -Priority 35 `
+            -InfName $d.inf -Provider $d.provider -DriverVersion $d.version -DriverDate $d.date `
+            -AgeDays $d.age_days `
+            -Title "Newer driver in store for $($d.name)" `
+            -Detail "Active $($d.version); store has $($store.version) ($($store.date)). Reinstall / update the binding."
     }
 
     if ($isLaptop) {
@@ -450,7 +823,17 @@ function Get-ProbeDriverAdvice {
             -Detail 'Laptop hotkeys, battery charge thresholds, and custom ACPI live in the OEM package - not in Windows Update.'
     }
 
-    # De-duplicate by title, keep highest severity.
+    if ($IncludeWuScan -and $wu.candidates -and @($wu.candidates).Count -gt 0) {
+        foreach ($c in @($wu.candidates | Select-Object -First 8)) {
+            $actions += New-ProbeDriverAction `
+                -Severity 'info' -Code 'wu_driver' -Category 'chipset' -VendorTag $cpuVendor `
+                -BoardMfr $boardMfr -BoardProduct $boardProduct -SystemMfr $sysMfr -SystemModel $sysModel `
+                -DeviceName "$($c.title)" -Priority 55 `
+                -Title "Windows Update driver: $($c.title)" `
+                -Detail 'Optional Microsoft Update driver candidate. Review before installing.'
+        }
+    }
+
     $rank = @{ critical = 0; warn = 1; info = 2 }
     $dedup = @{}
     foreach ($a in $actions) {
@@ -461,21 +844,23 @@ function Get-ProbeDriverAdvice {
     }
     $actions = @($dedup.Values | Sort-Object { $_.priority }, { $rank["$($_.severity)"] })
 
-    # Build the recommended install queue for this machine.
     $queue = @()
     foreach ($step in $script:ProbeDriverInstallOrder) {
         if ($step.id -eq 'laptop_oem' -and -not $isLaptop) { continue }
         $related = @($actions | Where-Object { $_.category -eq $step.id })
+        $resolvedStep = Resolve-ProbeDriverPackage -Category $step.id -VendorTag $cpuVendor `
+            -BoardMfr $boardMfr -BoardProduct $boardProduct -SystemMfr $sysMfr -SystemModel $sysModel
         $queue += @{
-            id       = $step.id
-            label    = $step.label
-            why      = $step.why
-            status   = if ($related | Where-Object { $_.severity -eq 'critical' }) { 'action_required' }
-                       elseif ($related.Count -gt 0) { 'recommended' }
-                       else { 'ok' }
-            actions  = @($related)
-            links    = @(Get-ProbeVendorDriverLinks -Category $step.id -VendorTag $cpuVendor `
-                            -BoardMfr $boardMfr -BoardProduct $boardProduct -SystemMfr $sysMfr -SystemModel $sysModel)
+            id               = $step.id
+            label            = $step.label
+            why              = $step.why
+            status           = if ($related | Where-Object { $_.severity -eq 'critical' }) { 'action_required' }
+                               elseif ($related.Count -gt 0) { 'recommended' }
+                               else { 'ok' }
+            actions          = @($related)
+            match_confidence = $resolvedStep.match_confidence
+            primary_link     = $resolvedStep.primary_link
+            links            = @($resolvedStep.links)
         }
     }
 
@@ -488,6 +873,40 @@ function Get-ProbeDriverAdvice {
     if ($score -lt 0) { $score = 0 }
 
     $grade = if ($score -ge 90) { 'A' } elseif ($score -ge 75) { 'B' } elseif ($score -ge 60) { 'C' } elseif ($score -ge 40) { 'D' } else { 'F' }
+
+    # Attach package matches onto inventory driverless rows for UI cards.
+    $enrichedDriverless = @()
+    foreach ($d in @($DeviceInventory.driverless)) {
+        $cat = Infer-ProbeDriverCategory -Category $d.category -DeviceName $d.name -VendorId $d.vendor_id
+        $vendor = Get-ProbeVendorTagFromId -VendorId $d.vendor_id -Fallback $cpuVendor
+        $resolved = Resolve-ProbeDriverPackage -Category $cat -VendorTag $vendor -DeviceName $d.name `
+            -InstanceId $d.instance_id -VendorId $d.vendor_id -DeviceId $d.device_id `
+            -BoardMfr $boardMfr -BoardProduct $boardProduct -SystemMfr $sysMfr -SystemModel $sysModel
+        $copy = @{} + $d
+        $copy.category = $cat
+        $copy.match_confidence = $resolved.match_confidence
+        $copy.primary_link = $resolved.primary_link
+        $copy.links = @($resolved.links)
+        $enrichedDriverless += $copy
+    }
+    if ($DeviceInventory -is [hashtable] -or $DeviceInventory.PSObject) {
+        try { $DeviceInventory.driverless = @($enrichedDriverless) } catch {}
+    }
+
+    $staleEnriched = @()
+    foreach ($d in @($deviceDrivers | Where-Object { $_.is_generic -or $_.is_very_stale } | Select-Object -First 40)) {
+        $cat = Infer-ProbeDriverCategory -Category '' -DeviceName $d.name -VendorId $d.vendor_id -Class $d.class
+        $vendor = Get-ProbeVendorTagFromId -VendorId $d.vendor_id -Fallback $cpuVendor
+        $resolved = Resolve-ProbeDriverPackage -Category $cat -VendorTag $vendor -DeviceName $d.name `
+            -InstanceId $d.instance_id -VendorId $d.vendor_id -DeviceId $d.device_id `
+            -BoardMfr $boardMfr -BoardProduct $boardProduct -SystemMfr $sysMfr -SystemModel $sysModel -Class $d.class
+        $row = @{} + $d
+        $row.match_confidence = $resolved.match_confidence
+        $row.primary_link = $resolved.primary_link
+        $row.links = @($resolved.links)
+        $row.resolved_category = $cat
+        $staleEnriched += $row
+    }
 
     return @{
         score            = $score
@@ -502,21 +921,27 @@ function Get-ProbeDriverAdvice {
             info_actions     = @($actions | Where-Object { $_.severity -eq 'info' }).Count
             gpu_count        = $gpuStatus.Count
             driver_bindings  = $deviceDrivers.Count
+            store_packages   = $installedStore.Count
+            wu_candidates    = @($wu.candidates).Count
+            driverless       = $enrichedDriverless.Count
         }
         install_order    = @($script:ProbeDriverInstallOrder)
         install_queue    = @($queue)
         actions          = @($actions)
         gpus             = @($gpuStatus)
-        stale_or_generic = @($deviceDrivers | Where-Object { $_.is_generic -or $_.is_very_stale } | Select-Object -First 40)
+        stale_or_generic = @($staleEnriched)
+        driverless       = @($enrichedDriverless)
+        driver_store     = @($installedStore | Select-Object -First 80)
         windows_update   = $wu
         collected_at     = (Get-Date).ToUniversalTime().ToString('o')
     }
 }
 
 function Get-ProbeDriverReport {
+    param([switch]$IncludeWuScan)
     . "$PSScriptRoot\devices.ps1"
     $devices = Get-ProbeDeviceInventory
-    $advice = Get-ProbeDriverAdvice -DeviceInventory $devices
+    $advice = Get-ProbeDriverAdvice -DeviceInventory $devices -IncludeWuScan:$IncludeWuScan
     return @{
         devices = $devices
         drivers = $advice

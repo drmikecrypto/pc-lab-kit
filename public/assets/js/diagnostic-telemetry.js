@@ -5,6 +5,8 @@
   let activeTab = 'cpu';
   let pollTimer = null;
   let lastProbe = null;
+  let lastDriverPresent = null;
+  let driversLoading = false;
   let history = [];
   let telemetryTracked = false;
 
@@ -77,6 +79,100 @@
     } catch (_) {}
   }
 
+  async function fetchDriversAndPresent(includeWu) {
+    if (driversLoading) return null;
+    driversLoading = true;
+    try {
+      const url = includeWu ? `${AGENT}/drivers?wu=1` : `${AGENT}/drivers`;
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error('drivers failed');
+      const report = await res.json();
+      const drivers = report.drivers || report;
+      const devices = report.devices || {};
+      if (window.__dxLastProbe) {
+        window.__dxLastProbe.drivers = drivers;
+        window.__dxLastProbe.devices = devices;
+      } else {
+        window.__dxLastProbe = { drivers, devices };
+      }
+      const t = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+      const presentRes = await fetch('/api/diagnostic/drivers/present', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': t },
+        body: JSON.stringify({ drivers, devices }),
+      });
+      if (presentRes.ok) {
+        lastDriverPresent = await presentRes.json();
+      }
+      return { drivers, devices, presented: lastDriverPresent };
+    } catch (_) {
+      // Fall back to whatever is already on the last full probe.
+      const probe = window.__dxLastProbe || {};
+      if (probe.drivers) {
+        try {
+          const t = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+          const presentRes = await fetch('/api/diagnostic/drivers/present', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': t },
+            body: JSON.stringify({ drivers: probe.drivers, devices: probe.devices || {} }),
+          });
+          if (presentRes.ok) lastDriverPresent = await presentRes.json();
+        } catch (__) {}
+      }
+      return null;
+    } finally {
+      driversLoading = false;
+    }
+  }
+
+  function driverSectionsFromPresent(presented) {
+    if (!presented) return [];
+    const sections = [];
+    sections.push({
+      title_fa: 'Driver health',
+      rows: [
+        { key: 'Score', value: `${presented.score ?? '—'} / ${presented.grade ?? '—'}` },
+        { key: 'Critical', value: String(presented.summary?.critical_actions ?? 0) },
+        { key: 'Warnings', value: String(presented.summary?.warn_actions ?? 0) },
+        { key: 'Devices without driver', value: String(presented.summary?.driverless_devices ?? 0) },
+        { key: 'WU candidates', value: String(presented.summary?.wu_candidates ?? 0) },
+        {
+          key: 'Board',
+          value: [presented.board?.manufacturer, presented.board?.product].filter(Boolean).join(' ') || '—',
+        },
+      ],
+    });
+    (presented.install_queue || []).forEach((step) => {
+      const links = (step.links || []).map((l) => `${l.label || 'link'} → ${l.url}`).join(' | ') || '—';
+      sections.push({
+        title_fa: `${step.label || 'Step'} [${step.status || ''}]`,
+        rows: [
+          { key: 'Why', value: step.why || '—' },
+          { key: 'Match', value: step.match_confidence || '—' },
+          { key: 'Open actions', value: String(step.action_count ?? 0) },
+          { key: 'Links', value: links },
+        ],
+      });
+    });
+    (presented.actions || []).slice(0, 16).forEach((a) => {
+      const hw = [a.vendor_id && `VEN_${String(a.vendor_id).toUpperCase()}`, a.device_id && `DEV_${String(a.device_id).toUpperCase()}`]
+        .filter(Boolean).join(' · ') || (a.instance_id || '—');
+      const links = (a.links || []).map((l) => `${l.label || 'link'} → ${l.url}`).join(' | ') || '—';
+      sections.push({
+        title_fa: `${String(a.severity || 'info').toUpperCase()}: ${a.title || ''}`,
+        rows: [
+          { key: 'Category', value: a.category || '—' },
+          { key: 'Device', value: a.device || '—' },
+          { key: 'Hardware ID', value: hw },
+          { key: 'Match', value: a.match_confidence || '—' },
+          { key: 'Detail', value: a.detail || '—' },
+          { key: 'Install', value: links },
+        ],
+      });
+    });
+    return sections;
+  }
+
   async function fetchTelemetry() {
     try {
       let probe = null;
@@ -98,6 +194,11 @@
       window.__dxLastProbe = probe.full ? probe : { telemetry: probe, probe_version: 4, collected_at: probe.collected_at };
 
       const payload = probe.telemetry ? probe : { telemetry: probe, probe_version: 4, collected_at: probe.collected_at };
+      // Keep any known drivers/devices from a prior full probe for Drivers tab.
+      if (window.__dxLastProbe?.drivers && !payload.drivers) {
+        payload.drivers = window.__dxLastProbe.drivers;
+        payload.devices = window.__dxLastProbe.devices || {};
+      }
       const t = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
       const res = await fetch('/api/diagnostic/telemetry/present', {
         method: 'POST',
@@ -105,6 +206,15 @@
         body: JSON.stringify(payload),
       });
       const data = await res.json();
+
+      if (activeTab === 'drivers') {
+        await fetchDriversAndPresent(false);
+        if (lastDriverPresent) {
+          const tab = (data.tabs || []).find((x) => x.id === 'drivers');
+          if (tab) tab.sections = driverSectionsFromPresent(lastDriverPresent);
+        }
+      }
+
       render(data);
       setOnline(data.collected_at || probe.collected_at, data.hwmon_available);
       fetchHistory();
@@ -248,8 +358,60 @@
     `).join('');
 
     tabs.querySelectorAll('.dx-tel-tab').forEach((btn) => {
-      btn.addEventListener('click', () => { activeTab = btn.dataset.tab; render(data); });
+      btn.addEventListener('click', async () => {
+        activeTab = btn.dataset.tab;
+        if (activeTab === 'drivers') {
+          panels.innerHTML = `<div class="dx-tel-empty"><p>Loading driver advisor…</p></div>`;
+          await fetchDriversAndPresent(false);
+          if (lastDriverPresent) {
+            const driversTab = (data.tabs || []).find((x) => x.id === 'drivers');
+            if (driversTab) driversTab.sections = driverSectionsFromPresent(lastDriverPresent);
+          }
+        }
+        render(data);
+      });
     });
+
+    if (activeTab === 'drivers') {
+      const toolbar = `<div class="dx-tel-driver-toolbar">
+        <button type="button" class="dx-btn ghost" id="dx-tel-driver-rescan">Rescan drivers</button>
+        <button type="button" class="dx-btn ghost" id="dx-tel-driver-wu">Scan Windows Update drivers</button>
+      </div>`;
+      const tab = (data.tabs || []).find((t) => t.id === activeTab) || (data.tabs || [])[0];
+      if (!tab) { panels.innerHTML = ''; return; }
+      panels.innerHTML = toolbar + (tab.sections || []).map((sec) => {
+        const wide = (sec.rows || []).length > 8;
+        return `<div class="dx-tel-panel${wide ? ' dx-tel-panel-wide' : ''}">
+          <div class="dx-tel-panel-title">${esc(sec.title_fa)}</div>
+          ${(sec.rows || []).map((r) => `
+            <div class="dx-tel-row">
+              <span class="dx-tel-row-key">${esc(r.key)}</span>
+              <span class="dx-tel-row-val">${esc(r.value)}</span>
+            </div>`).join('')}
+        </div>`;
+      }).join('');
+      document.getElementById('dx-tel-driver-rescan')?.addEventListener('click', async () => {
+        panels.innerHTML = `<div class="dx-tel-empty"><p>Rescanning drivers…</p></div>`;
+        await fetchDriversAndPresent(false);
+        if (lastDriverPresent) {
+          const driversTab = (data.tabs || []).find((x) => x.id === 'drivers');
+          if (driversTab) driversTab.sections = driverSectionsFromPresent(lastDriverPresent);
+        }
+        render(data);
+      });
+      document.getElementById('dx-tel-driver-wu')?.addEventListener('click', async () => {
+        panels.innerHTML = `<div class="dx-tel-empty"><p>Scanning Windows Update drivers (may take minutes)…</p></div>`;
+        await fetchDriversAndPresent(true);
+        if (lastDriverPresent) {
+          const driversTab = (data.tabs || []).find((x) => x.id === 'drivers');
+          if (driversTab) driversTab.sections = driverSectionsFromPresent(lastDriverPresent);
+        }
+        render(data);
+      });
+      drawSpikeMap((data.charts || {}).spike_map);
+      drawCstateBars((data.charts || {}).cstate_bars);
+      return;
+    }
 
     const tab = (data.tabs || []).find((t) => t.id === activeTab) || (data.tabs || [])[0];
     if (!tab) { panels.innerHTML = ''; return; }
