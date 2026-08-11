@@ -9,8 +9,22 @@
   const keyInput = document.getElementById('dx-settings-key');
   const baseInput = document.getElementById('dx-settings-base');
   const modelInput = document.getElementById('dx-settings-model');
+  const presetSelect = document.getElementById('dx-settings-preset');
   const hintEl = document.getElementById('dx-settings-key-hint');
   const statusEl = document.getElementById('dx-settings-status');
+
+  const PRESETS = {
+    openai: { base: 'https://api.openai.com/v1', model: 'gpt-4o-mini' },
+    anthropic: { base: 'https://api.anthropic.com/v1', model: 'claude-3-5-sonnet-latest' },
+    ollama: { base: 'http://127.0.0.1:11434/v1', model: 'llama3.2' },
+    custom: { base: '', model: '' },
+  };
+
+  function applyPreset() {
+    const p = PRESETS[presetSelect?.value] || PRESETS.custom;
+    if (p.base && baseInput) baseInput.value = p.base;
+    if (p.model && modelInput) modelInput.value = p.model;
+  }
 
   function csrfHeaders() {
     const t = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
@@ -49,6 +63,8 @@
       if (statusEl) statusEl.textContent = 'Could not load settings.';
     }
   }
+
+  presetSelect?.addEventListener('change', applyPreset);
 
   async function save(clearKey) {
     if (statusEl) statusEl.textContent = 'Saving…';

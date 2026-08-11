@@ -65,7 +65,6 @@ class BenchmarkService
             : 0;
 
         $balancePct = $this->balanceScore($cpuPct, $gpuPct, $ramPct, $storagePct);
-        $valuePct = $this->valueScore($selectedParts, $cpuScore + $gpuScore);
 
         $geekNotes = $this->geekNotes($cpuScore, $gpuScore, $ramScore, $storageScore, $bottleneck, $matches);
 
@@ -84,7 +83,6 @@ class BenchmarkService
             'gaming_score_percent' => $gamingPct,
             'workstation_score_percent' => $workPct,
             'balance_percent' => $balancePct,
-            'value_percent' => $valuePct,
             'bottleneck' => $bottleneck,
             'fps_estimates' => $fps,
             'tier' => $tier,
@@ -96,7 +94,6 @@ class BenchmarkService
                 ['axis' => 'RAM', 'value' => $ramPct, 'score' => $ramScore],
                 ['axis' => 'Storage', 'value' => $storagePct, 'score' => $storageScore],
                 ['axis' => 'Balance', 'value' => $balancePct, 'score' => 0],
-                ['axis' => 'Value', 'value' => $valuePct, 'score' => 0],
             ],
             'benchmark_board' => $this->makeBenchmarkBoard(
                 $tier,
@@ -104,7 +101,6 @@ class BenchmarkService
                 $gamingPct,
                 $workPct,
                 $balancePct,
-                $valuePct,
                 $cpuScore,
                 $gpuScore,
                 $ramScore,
@@ -127,7 +123,6 @@ class BenchmarkService
         int $gamingPct,
         int $workPct,
         int $balancePct,
-        int $valuePct,
         int $cpuScore,
         int $gpuScore,
         int $ramScore,
@@ -137,28 +132,28 @@ class BenchmarkService
     ): array {
         $tierName = (string) ($tier['name'] ?? '');
         $headline = $overallInt > 0
-            ? "{$tierName} — امتیاز ترکیبی ~" . number_format($overallInt)
-            : 'قطعات اصلی را کامل کنید تا تابلو بنچمارک فعال شود.';
+            ? "{$tierName} — combined score ~" . number_format($overallInt)
+            : 'Complete main parts to activate the benchmark board.';
 
         $fps1080 = $fps[0] ?? null;
 
         return [
+            'headline' => $headline,
             'headline_fa' => $headline,
             'tier' => $tier,
             'overall_score' => $overallInt,
             'bars' => [
-                ['key' => 'gaming', 'label_fa' => 'جهت بازی', 'pct' => $gamingPct, 'tone' => 'primary'],
-                ['key' => 'work', 'label_fa' => 'کار سنگین', 'pct' => $workPct, 'tone' => 'blue'],
-                ['key' => 'balance', 'label_fa' => 'تعادل قطعات', 'pct' => $balancePct, 'tone' => 'cyan'],
-                ['key' => 'value', 'label_fa' => 'ارزش نسبی (بنچ/قیمت)', 'pct' => $valuePct, 'tone' => 'green'],
+                ['key' => 'gaming', 'label' => 'Gaming', 'label_fa' => 'Gaming', 'pct' => $gamingPct, 'tone' => 'primary'],
+                ['key' => 'work', 'label' => 'Workstation', 'label_fa' => 'Workstation', 'pct' => $workPct, 'tone' => 'blue'],
+                ['key' => 'balance', 'label' => 'Balance', 'label_fa' => 'Balance', 'pct' => $balancePct, 'tone' => 'cyan'],
             ],
             'scores' => [
-                ['label_fa' => 'CPU PassMark', 'score' => $cpuScore],
-                ['label_fa' => 'GPU G3D', 'score' => $gpuScore],
-                ['label_fa' => 'رم (شاخص)', 'score' => $ramScore],
-                ['label_fa' => 'ذخیره‌ساز (شاخص)', 'score' => $storageScore],
+                ['label' => 'CPU PassMark', 'label_fa' => 'CPU PassMark', 'score' => $cpuScore],
+                ['label' => 'GPU G3D', 'label_fa' => 'GPU G3D', 'score' => $gpuScore],
+                ['label' => 'RAM index', 'label_fa' => 'RAM index', 'score' => $ramScore],
+                ['label' => 'Storage index', 'label_fa' => 'Storage index', 'score' => $storageScore],
             ],
-            'bottleneck_one_liner' => (string) ($bottleneck['label_fa'] ?? ''),
+            'bottleneck_one_liner' => (string) ($bottleneck['label'] ?? $bottleneck['label_fa'] ?? ''),
             'fps_highlight' => is_array($fps1080) ? $fps1080 : null,
         ];
     }
@@ -191,28 +186,14 @@ class BenchmarkService
         return (int) max(20, min(100, round(100 - ($std * 1.2))));
     }
 
-    private function valueScore(array $parts, int $totalBench): int
-    {
-        $totalPrice = 0;
-        foreach ($parts as $p) {
-            $totalPrice += (int) ($p['min_price'] ?? $p['display_price'] ?? 0);
-        }
-        if ($totalPrice <= 0 || $totalBench <= 0) {
-            return 0;
-        }
-        $millions = $totalPrice / 1_000_000;
-        $raw = $totalBench / max(0.1, $millions);
-
-        return (int) min(100, round($raw / 15));
-    }
-
     private function bottleneck(int $cpu, int $gpu, int $cpuPct, int $gpuPct): array
     {
         if ($cpu <= 0 || $gpu <= 0) {
             return [
                 'type' => 'unknown',
                 'percent' => 0,
-                'label_fa' => 'برای تحلیل گلوگاه، CPU و GPU را انتخاب کنید.',
+                'label' => 'Select CPU and GPU to analyze bottleneck.',
+                'label_fa' => 'Select CPU and GPU to analyze bottleneck.',
             ];
         }
 

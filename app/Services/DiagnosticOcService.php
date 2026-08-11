@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * وخش — conservative auto-overclock planner from diagnostic telemetry.
+ * Orchestrator — conservative auto-overclock planner from diagnostic telemetry.
  * Only recommends/applies reversible, margin-based tuning when safety gates pass.
  */
 class DiagnosticOcService

@@ -32,9 +32,9 @@ With the lab running: **http://127.0.0.1:8080/download/probe-windows**
 Or the [latest GitHub release](https://github.com/drmikecrypto/pc-lab-kit/releases/latest).  
 Or build: `.\scripts\build-agent-bundle.ps1`
 
-## Is this PCVerse?
+## What is this product?
 
-No. This repository is the standalone **PC Lab Kit**. It is not the PCVerse SaaS/mobile product.
+This repository is **PC Lab Kit** only: local diagnostics, hardware benchmarks, driver advice, stress/telemetry, and lab tools. It is not a PC builder, storefront, or cloud SaaS product.
 
 ## License
 

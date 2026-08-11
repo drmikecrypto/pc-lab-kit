@@ -154,6 +154,9 @@ class DiagnosticService
 
         $result['hardware_graph'] = (new HardwareKnowledgeGraphService())->fromProbe($normalized, $result);
         $result['oc_plan'] = (new DiagnosticOcService())->buildPlan($report, $result);
+        $result['devices'] = $normalized['devices'] ?? [];
+        $result['elevated'] = !empty($normalized['elevated']);
+        $result['drivers'] = $normalized['drivers'] ?? [];
 
         return $result;
     }
@@ -387,25 +390,34 @@ class DiagnosticService
             'ram' => (array) ($report['ram'] ?? []),
             'storage' => (array) ($report['storage'] ?? []),
             'motherboard' => (array) ($report['motherboard'] ?? []),
+            'bios' => (array) ($report['bios'] ?? []),
+            'tpm' => (array) ($report['tpm'] ?? []),
             'psu' => (array) ($report['psu'] ?? []),
             'network' => (array) ($report['network'] ?? []),
             'battery' => (array) ($report['battery'] ?? []),
             'sensors' => (array) ($report['sensors'] ?? []),
+            'hwmon' => (array) ($report['hwmon'] ?? []),
             'gaming' => (array) ($report['gaming'] ?? []),
             'peripherals' => (array) ($report['peripherals'] ?? []),
+            'devices' => (array) ($report['devices'] ?? []),
+            'drivers' => (array) ($report['drivers'] ?? []),
             'nvidia_smi' => $nvidia,
             'probe_version' => (int) ($report['probe_version'] ?? 0),
+            'elevated' => !empty($report['elevated']),
         ];
     }
 
     /** @param array<string, mixed> $base @param array<string, mixed> $overlay */
     private function mergeFullReports(array $base, array $overlay): array
     {
-        foreach (['device', 'cpu', 'gpu', 'ram', 'storage', 'battery', 'network', 'sensors', 'gaming', 'motherboard', 'psu', 'nvidia_smi'] as $key) {
+        foreach (['device', 'cpu', 'gpu', 'ram', 'storage', 'battery', 'network', 'sensors', 'gaming', 'motherboard', 'bios', 'tpm', 'psu', 'nvidia_smi', 'devices', 'drivers', 'hwmon'] as $key) {
             if (empty($overlay[$key]) || !is_array($overlay[$key])) {
                 continue;
             }
             $base[$key] = array_merge((array) ($base[$key] ?? []), $overlay[$key]);
+        }
+        if (array_key_exists('elevated', $overlay)) {
+            $base['elevated'] = !empty($overlay['elevated']);
         }
 
         return $base;

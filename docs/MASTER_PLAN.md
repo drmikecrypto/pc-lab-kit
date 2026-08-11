@@ -1,10 +1,33 @@
 # PC Lab Kit → The Unified Local PC Laboratory
 
-**Strategic master plan** — historical roadmap. Parts of this document still describe retired PCVerse shells (native Qt, installers, Flutter). The shipping product in this repository is the **standalone PHP web lab + Windows probe** only; see [INTEGRATION.md](INTEGRATION.md) and the root [README](../README.md).
+**Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Historical planning document  
-**Last updated:** 2026-07-30 (standalone note)  
+**Status:** Active — **Pillar A (Hardware Reference Lab)** shipping: exhaustive inventory + clickable drivers. Pillars B (reference benches/stress) and C (LCD GIF/video push) queued next.  
+**Last updated:** 2026-08-11  
 **Repository:** [pc-lab-kit](../README.md)
+
+> Historical sections below still mention Flutter/Qt in places. Prefer this status block and the root README for what ships today.
+
+## Shipped vs planned (2026-08)
+
+| Area | Status |
+|------|--------|
+| PHP diagnostic lab + SQLite history | Shipped |
+| Windows probe (sensors, drivers, benches, stress, OC, RGB) | Shipped |
+| Tauri installers (Windows/Linux UI) | Shipped |
+| **Command Center / Full Lab suite** (`LabSuiteService` + probe `/suite/*`) | Shipped (R1) |
+| Advisor cards + hardware graph on finalize | Shipped (R1) |
+| System tray + probe restart watchdog | Shipped (R1) |
+| Sensor Deck + Rainmeter/JSON export | Shipped (R2) |
+| Cinebench / Geekbench / 3DMark importers | Shipped (R2) |
+| External stress launchers (Prime95/OCCT/TM5 detect) | Shipped (R3) |
+| SVG topology + AI provider presets / Ollama URL | Shipped (R4) |
+| **Pillar A — Hardware Reference** (hidden PnP, EDID, SPD confidence, graph, Install button) | In progress / shipping |
+| **Pillar B — Reference stress & benches** | Queued after A |
+| **Pillar C — LCD GIF/video push to panels** | Queued after A |
+| Linux probe parity | Parked (R5+) |
+| Full Vulkan compute suite | Partial (NVML/host proxy; native Vulkan later) |
+| Windows Service forever-on probe | Parked |
 
 ---
 

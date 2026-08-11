@@ -3,13 +3,15 @@
 function Resolve-RamDieType {
     param([string]$PartNumber)
     $pn = ($PartNumber -replace '\s','').ToUpper()
-    if ($pn -eq '') { return $null }
+    if ($pn -eq '') {
+        return @{ die_type = $null; vendor_hint = $null; confidence = 'unavailable' }
+    }
 
     $rules = @(
         @{ re = 'BCPB|BCPV|BCTD|BCTB|BCRC|BCT0|BCT1|K4AAG085WB|K4A8G085WB|HMA81GU6AFR8N|M378A'; die = 'Samsung B-die'; vendor = 'Samsung' }
         @{ re = 'CBCRC|CBCPC|CBCPB|CBCPV|M391A|HMAA1GS6CJR6N'; die = 'Samsung C-die/E-die'; vendor = 'Samsung' }
         @{ re = 'M386A|M378A2K43CB2|KVR|Kingston'; die = 'Various (check part)'; vendor = 'Kingston' }
-        @{ re = 'CT16G4SFRA|CT8G4DFRA|CT32G4DFRA|CT2K|CT16G4DFD32A'; die = 'Micron / Crucial (E-die/B-die era)'; vendor = 'Crucial' }
+        @{ re = 'CT16G4SFRA|CT8G4DFRA|CT32G4DFD32A|CT2K|CT16G4DFD32A'; die = 'Micron / Crucial (E-die/B-die era)'; vendor = 'Crucial' }
         @{ re = 'F4-3200C14|F4-3600C15|F4-4000C15|F4-4133C19'; die = 'Samsung B-die (common G.Skill)'; vendor = 'G.Skill' }
         @{ re = 'F4-3600C16|F4-3200C16'; die = 'Hynix C-die / mixed'; vendor = 'G.Skill' }
         @{ re = 'HMAA|HMA8|HMA81|HMCG|HMCC'; die = 'SK Hynix'; vendor = 'Hynix' }
@@ -22,7 +24,7 @@ function Resolve-RamDieType {
             return @{ die_type = $r.die; vendor_hint = $r.vendor; confidence = 'heuristic' }
         }
     }
-    return @{ die_type = 'Unknown'; vendor_hint = $null; confidence = 'low' }
+    return @{ die_type = 'Unknown'; vendor_hint = $null; confidence = 'heuristic' }
 }
 
 function Parse-CpuZMemoryBlock {
@@ -48,7 +50,15 @@ function Parse-CpuZMemoryBlock {
                 tras = [int]$timingMatch.Groups[5].Value
                 voltage = [double]$timingMatch.Groups[6].Value
                 command_rate = '1T'
+                confidence = 'measured'
+                source = 'cpuz'
             }
+        }
+        # XMP / EXPO profile lines in CPU-Z text
+        $xmp = [regex]::Match($block, '(?im)(?:XMP|EXPO|DOCP|A-XMP)\s*-?\s*Profile\s*#?\s*(\d+)?[^\r\n]*')
+        if ($xmp.Success) {
+            $profile.profile_name = $xmp.Value.Trim()
+            $profile.overclock_profile = if ($block -match '(?i)EXPO') { 'EXPO' } elseif ($block -match '(?i)XMP|DOCP|A-XMP') { 'XMP' } else { $null }
         }
         if ($profile.part_number -or $profile.timings) {
             $die = Resolve-RamDieType $profile.part_number
@@ -79,22 +89,71 @@ function Find-CpuZExports {
     return $paths | Select-Object -First 3
 }
 
+function Get-RamFormFactorName {
+    param([int]$Code)
+    switch ($Code) {
+        8 { return 'DIMM' }
+        12 { return 'SO-DIMM' }
+        13 { return 'Micro-DIMM' }
+        default { return "form_$Code" }
+    }
+}
+
+function Get-RamMemoryTypeName {
+    param([int]$Code)
+    switch ($Code) {
+        20 { return 'DDR' }
+        21 { return 'DDR2' }
+        24 { return 'DDR3' }
+        26 { return 'DDR4' }
+        34 { return 'DDR5' }
+        default { return "type_$Code" }
+    }
+}
+
 function Get-RamSpdTelemetry {
     $modules = @(Get-CimSafe "Win32_PhysicalMemory")
     $enriched = @()
     foreach ($m in $modules) {
         $pn = ($m.PartNumber -replace '\x00','').Trim()
         $die = Resolve-RamDieType $pn
+        $typeCode = 0
+        try { $typeCode = [int]$m.SMBIOSMemoryType } catch {}
+        if ($typeCode -eq 0) { try { $typeCode = [int]$m.MemoryType } catch {} }
+        $ffCode = 0
+        try { $ffCode = [int]$m.FormFactor } catch {}
+
         $enriched += @{
-            capacity_gb = [math]::Round($m.Capacity / 1GB, 2)
-            speed_mhz = $m.Speed
-            configured_mhz = $m.ConfiguredClockSpeed
-            manufacturer = ($m.Manufacturer -replace '\x00','').Trim()
-            part_number = $pn
-            bank_label = $m.BankLabel
-            die_type = $die.die_type
-            die_confidence = $die.confidence
-            timings = $null
+            capacity_gb       = [math]::Round($m.Capacity / 1GB, 2)
+            speed_mhz         = $m.Speed
+            configured_mhz    = $m.ConfiguredClockSpeed
+            configured_voltage = $m.ConfiguredVoltage
+            manufacturer      = ($m.Manufacturer -replace '\x00','').Trim()
+            part_number       = $pn
+            serial_number     = ($m.SerialNumber -replace '\x00','').Trim()
+            bank_label        = $m.BankLabel
+            device_locator    = $m.DeviceLocator
+            data_width        = $m.DataWidth
+            total_width       = $m.TotalWidth
+            rank              = $m.Rank
+            memory_type       = Get-RamMemoryTypeName $typeCode
+            memory_type_code  = $typeCode
+            form_factor       = Get-RamFormFactorName $ffCode
+            form_factor_code  = $ffCode
+            min_voltage       = $m.MinVoltage
+            max_voltage       = $m.MaxVoltage
+            die_type          = $die.die_type
+            die_confidence    = $die.confidence
+            timings           = $null
+            timings_confidence = 'unavailable'
+            overclock_profiles = @()
+            fields = @{
+                capacity_gb    = (New-ProbeField $([math]::Round($m.Capacity / 1GB, 2)) 'measured' 'smbios')
+                speed_mhz      = (New-ProbeField $m.Speed 'measured' 'smbios')
+                configured_mhz = (New-ProbeField $m.ConfiguredClockSpeed 'measured' 'smbios')
+                part_number    = (New-ProbeField $pn 'measured' 'smbios')
+                die_type       = (New-ProbeField $die.die_type $die.confidence 'part-number-heuristic')
+            }
         }
     }
 
@@ -115,33 +174,56 @@ function Get-RamSpdTelemetry {
     if ($cpuzProfiles.Count -gt 0) {
         for ($i = 0; $i -lt $enriched.Count; $i++) {
             $cz = $cpuzProfiles[[math]::Min($i, $cpuzProfiles.Count - 1)]
-            if ($cz.timings) { $enriched[$i].timings = $cz.timings }
-            if ($cz.die_type -and $cz.die_type -ne 'Unknown') { $enriched[$i].die_type = $cz.die_type }
+            if ($cz.timings) {
+                $enriched[$i].timings = $cz.timings
+                $enriched[$i].timings_confidence = 'measured'
+                $enriched[$i].fields.timings = (New-ProbeField $cz.timings 'measured' 'cpuz')
+            }
+            if ($cz.die_type -and $cz.die_type -ne 'Unknown') {
+                $enriched[$i].die_type = $cz.die_type
+                $enriched[$i].die_confidence = $cz.die_confidence
+            }
             if ($cz.part_number) { $enriched[$i].part_number = $cz.part_number }
+            if ($cz.overclock_profile -or $cz.profile_name) {
+                $enriched[$i].overclock_profiles = @(@{
+                    name = $cz.profile_name
+                    type = $cz.overclock_profile
+                    confidence = 'measured'
+                    source = 'cpuz'
+                })
+            }
         }
     }
 
-    # XMP profile estimate from speed tier when timings still missing
+    # XMP/JEDEC estimate only when timings still missing — clearly marked heuristic
     foreach ($mod in $enriched) {
         if ($mod.timings) { continue }
         $mhz = 0
         if ($mod.configured_mhz) { $mhz = [int]$mod.configured_mhz }
         elseif ($mod.speed_mhz) { $mhz = [int]$mod.speed_mhz }
         if ($mhz -ge 3200) {
-            $mod.timings = @{ frequency_mhz = $mhz; cl = 16; trcd = 18; trp = 18; tras = 38; note = 'Estimated JEDEC/XMP tier - run CPU-Z for exact' }
+            $mod.timings = @{ frequency_mhz = $mhz; cl = 16; trcd = 18; trp = 18; tras = 38; note = 'Estimated JEDEC/XMP tier - import CPU-Z for exact'; confidence = 'heuristic'; source = 'speed-tier' }
+            $mod.timings_confidence = 'heuristic'
         } elseif ($mhz -ge 2667) {
-            $mod.timings = @{ frequency_mhz = $mhz; cl = 18; trcd = 18; trp = 18; tras = 44; note = 'Estimated DDR4-2667' }
+            $mod.timings = @{ frequency_mhz = $mhz; cl = 18; trcd = 18; trp = 18; tras = 44; note = 'Estimated DDR4-2667'; confidence = 'heuristic'; source = 'speed-tier' }
+            $mod.timings_confidence = 'heuristic'
         } elseif ($mhz -ge 2400) {
-            $mod.timings = @{ frequency_mhz = $mhz; cl = 17; trcd = 17; trp = 17; tras = 39; note = 'Estimated DDR4-2400' }
+            $mod.timings = @{ frequency_mhz = $mhz; cl = 17; trcd = 17; trp = 17; tras = 39; note = 'Estimated DDR4-2400'; confidence = 'heuristic'; source = 'speed-tier' }
+            $mod.timings_confidence = 'heuristic'
+        }
+        if ($mod.timings) {
+            $mod.fields.timings = (New-ProbeField $mod.timings $mod.timings_confidence 'speed-tier')
         }
     }
 
     $primary = $enriched | Select-Object -First 1
     return @{
         modules = $enriched
-        primary_timings = $primary.timings
-        primary_die = $primary.die_type
+        primary_timings = if ($primary) { $primary.timings } else { $null }
+        primary_die = if ($primary) { $primary.die_type } else { $null }
         cpuz_auto_import = ($cpuzProfiles.Count -gt 0)
         source = if ($cpuzProfiles.Count) { 'smbios+cpuz' } else { 'smbios+heuristic' }
+        spd_direct_read = $false
+        note = 'SPD EEPROM is not read directly; SMBIOS Type 17 + optional CPU-Z import.'
     }
 }

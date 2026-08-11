@@ -14,8 +14,10 @@ $rgbScript = Join-Path $scriptDir "ProbeLib\rgb.ps1"
 $orchestratorScript = Join-Path $scriptDir "ProbeLib\orchestrator.ps1"
 $benchScript = Join-Path $scriptDir "ProbeLib\benchmark.ps1"
 $stressScript = Join-Path $scriptDir "ProbeLib\stress.ps1"
+$suiteScript = Join-Path $scriptDir "ProbeLib\suite.ps1"
 $devicesScript = Join-Path $scriptDir "ProbeLib\devices.ps1"
 $driversScript = Join-Path $scriptDir "ProbeLib\drivers.ps1"
+. $suiteScript
 $script:RingMax = 120
 $script:Ring = New-Object System.Collections.Generic.List[object]
 
@@ -28,6 +30,8 @@ $script:Routes = @(
     @{ method = 'GET';  path = '/telemetry/history';  desc = "sparkline buffer ($script:RingMax samples)" }
     @{ method = 'GET';  path = '/devices';            desc = 'full PnP / PCI / USB / monitor inventory' }
     @{ method = 'GET';  path = '/drivers';            desc = 'driver advisor + install queue (?wu=1 optional WU scan)' }
+    @{ method = 'POST'; path = '/drivers/install';    desc = 'one-click install matched package (confirm required)' }
+    @{ method = 'GET';  path = '/drivers/install/status'; desc = 'install job status (?job=)' }
     @{ method = 'GET';  path = '/thermal';            desc = 'CPU/GPU hotspot summary' }
     @{ method = 'GET';  path = '/oc/status';          desc = 'OC baseline state' }
     @{ method = 'POST'; path = '/oc/preflight';       desc = 'idle+load thermal sample before apply' }
@@ -43,6 +47,11 @@ $script:Routes = @(
     @{ method = 'POST'; path = '/bench/run';          desc = 'CPU / CPU-MT / memory / storage / GPU bench' }
     @{ method = 'GET';  path = '/stress/catalog';     desc = 'runnable stress tests' }
     @{ method = 'POST'; path = '/stress/run';         desc = 'CPU / memory / GPU / combined / quick stress' }
+    @{ method = 'POST'; path = '/suite/start';       desc = 'start Full Lab suite (async)' }
+    @{ method = 'GET';  path = '/suite/status';      desc = 'suite progress / result' }
+    @{ method = 'POST'; path = '/suite/cancel';      desc = 'cancel running suite' }
+    @{ method = 'GET';  path = '/launchers';          desc = 'detect installed third-party stress tools' }
+    @{ method = 'POST'; path = '/launchers/run';     desc = 'launch external stress tool with telemetry overlay' }
 )
 
 function Test-ProbeElevated {
@@ -134,7 +143,7 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
             }
             "/health" {
                 $hwmon = (Test-Path (Join-Path $scriptDir "PcLabHwMon.exe")).ToString().ToLower()
-                $body = '{"ok":true,"agent":"pclab-probe","version":5,"hwmon":' + $hwmon + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true}'
+                $body = '{"ok":true,"agent":"pclab-probe","version":5,"hwmon":' + $hwmon + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true}'
             }
             "/probe" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $probeScript
@@ -178,6 +187,30 @@ Get-ProbeDriverReport | ConvertTo-Json -Depth 12 -Compress }
 "@
                 }
             }
+            "/drivers/install" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                if (-not $raw) { $code = 400; $body = '{"error":"empty body"}'; break }
+                $tmp = Join-Path $env:TEMP ("pclab_drv_inst_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$driversScript'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+`$confirm = `$false
+if (`$null -ne `$j.confirm) { `$confirm = [bool]`$j.confirm }
+Start-ProbeDriverInstall -InstanceId "`$(`$j.instance_id)" -QueueId "`$(`$j.queue_id)" -Category "`$(`$j.category)" -Confirm:`$confirm | ConvertTo-Json -Depth 10 -Compress }
+"@
+                } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+            }
+            "/drivers/install/status" {
+                $job = ''
+                if ($req.Url.Query -match 'job=([a-fA-F0-9]+)') { $job = $Matches[1] }
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$driversScript'
+Get-ProbeDriverInstallStatus -JobId '$job' | ConvertTo-Json -Depth 10 -Compress }
+"@
+            }
             "/thermal" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$scriptDir\ProbeLib\system.ps1'
@@ -188,7 +221,7 @@ Get-ProbeDriverReport | ConvertTo-Json -Depth 12 -Compress }
             "/oc/status" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$ocScript'
-`$s = Get-ProbeerseOcState
+`$s = Get-ProbeOcState
 `$p = Get-ProbeOcStorePath
 @{ state = `$s; baseline_exists = (Test-Path `$p); baseline_path = `$p } | ConvertTo-Json -Depth 5 -Compress }
 "@
@@ -219,7 +252,7 @@ Invoke-ProbeOcPreflight -IdleSeconds `$idle -LoadSeconds `$load | ConvertTo-Json
                     $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$ocScript'
 `$plan = Get-Content '$tmpPlan' -Raw | ConvertFrom-Json
-Invoke-ProbeerseOverclockApply -Plan `$plan | ConvertTo-Json -Depth 8 -Compress }
+Invoke-ProbeOverclockApply -Plan `$plan | ConvertTo-Json -Depth 8 -Compress }
 "@
                 } finally {
                     Remove-Item $tmpPlan -Force -ErrorAction SilentlyContinue
@@ -253,7 +286,7 @@ if (`$auto) {
                 if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$ocScript'
-Invoke-ProbeerseOverclockRollback | ConvertTo-Json -Depth 6 -Compress }
+Invoke-ProbeOverclockRollback | ConvertTo-Json -Depth 6 -Compress }
 "@
             }
             "/rgb/scan" {
@@ -371,6 +404,46 @@ Invoke-ProbeBenchmark -Id `$id -Options `$opts | ConvertTo-Json -Depth 8 -Compre
 if (`$j.seconds) { `$opts.seconds = [int]`$j.seconds }
 if (`$j.percent) { `$opts.percent = [int]`$j.percent }
 Invoke-ProbeStress -Id `$id -Options `$opts | ConvertTo-Json -Depth 8 -Compress }
+"@
+                } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+            }
+            "/suite/start" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $profile = 'standard'
+                try {
+                    if ($raw) {
+                        $j = $raw | ConvertFrom-Json
+                        if ($j.profile) { $profile = [string]$j.profile }
+                    }
+                } catch {}
+                $body = (Start-ProbeSuiteJob -Profile $profile -ScriptDir $scriptDir | ConvertTo-Json -Depth 10 -Compress)
+            }
+            "/suite/status" {
+                $body = (Get-ProbeSuiteStatus | ConvertTo-Json -Depth 12 -Compress)
+            }
+            "/suite/cancel" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $body = (Stop-ProbeSuiteJob | ConvertTo-Json -Depth 8 -Compress)
+            }
+            "/launchers" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\launchers.ps1'
+Get-ProbeExternalLaunchers | ConvertTo-Json -Depth 8 -Compress }
+"@
+            }
+            "/launchers/run" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $tmp = Join-Path $env:TEMP ("pclab_launch_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    if (-not $raw) { $raw = '{}' }
+                    [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\launchers.ps1'
+. '$stressScript'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+Invoke-ProbeExternalLauncher -Request `$j | ConvertTo-Json -Depth 10 -Compress }
 "@
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }

@@ -208,21 +208,80 @@ function Get-ProbeGpuAdapters {
         $qwordVram = Get-GpuVramFromRegistry -PnpDeviceId "$($g.PNPDeviceID)"
         if ($qwordVram -gt $vramBytes) { $vramBytes = $qwordVram }
 
+        $parsed = @{ vendor_id = $null; device_id = $null; subsystem_id = $null; revision = $null }
+        $pnpUpper = "$($g.PNPDeviceID)".ToUpper()
+        if ($pnpUpper -match 'VEN_([0-9A-F]{4})&DEV_([0-9A-F]{4})') {
+            $parsed.vendor_id = $Matches[1].ToLower()
+            $parsed.device_id = $Matches[2].ToLower()
+            if ($pnpUpper -match 'SUBSYS_([0-9A-F]{8})') { $parsed.subsystem_id = $Matches[1].ToLower() }
+            if ($pnpUpper -match 'REV_([0-9A-F]{2})') { $parsed.revision = $Matches[1].ToLower() }
+        }
+        $pciLoc = $null
+        if ($pnpUpper -match '&BUS_([0-9A-F]+)&DEV_([0-9A-F]+)&FUNC_([0-9A-F]+)') {
+            $pciLoc = @{
+                bus = [Convert]::ToInt32($Matches[1], 16)
+                device = [Convert]::ToInt32($Matches[2], 16)
+                function = [Convert]::ToInt32($Matches[3], 16)
+            }
+        }
+
+        $driverBranch = $null
+        $drv = "$($g.DriverVersion)"
+        if ($drv -match '^(\d+)\.(\d+)\.(\d+)\.(\d+)$') {
+            # NVIDIA often encodes branch in last two groups (e.g. 31.0.15.4617 → 546.17 style varies by OS)
+            $driverBranch = $drv
+        }
+
+        $regExtra = Get-GpuRegistryStatic -PnpDeviceId "$($g.PNPDeviceID)"
+
         $list += @{
             name          = "$($g.Name)".Trim()
             vendor        = (Get-ProbeVendorTag -Name "$($g.Name)")
+            vendor_id     = $parsed.vendor_id
+            device_id     = $parsed.device_id
+            subsystem_id  = $parsed.subsystem_id
+            revision      = $parsed.revision
             driver        = $g.DriverVersion
             driver_date   = $g.DriverDate
+            driver_branch = $driverBranch
             vram_gb       = if ($vramBytes -gt 0) { [math]::Round($vramBytes / 1GB, 2) } else { 0 }
             pnp_device_id = $g.PNPDeviceID
             video_mode    = $g.VideoModeDescription
             adapter_ram   = $vramBytes
             status        = $g.Status
             availability  = $g.Availability
+            pci_location  = $pciLoc
+            memory_bus_width = $regExtra.memory_bus_width
+            memory_vendor    = $regExtra.memory_vendor
             is_integrated = ("$($g.Name)" -match 'UHD|Iris|Vega \d|Radeon\(TM\) Graphics|Graphics Adapter|integrated')
+            fields = @{
+                driver      = (New-ProbeField $g.DriverVersion 'measured' 'cim')
+                driver_date = (New-ProbeField $g.DriverDate 'measured' 'cim')
+                vram_gb     = (New-ProbeField $(if ($vramBytes -gt 0) { [math]::Round($vramBytes / 1GB, 2) } else { $null }) $(if ($qwordVram -gt 0) { 'measured' } else { 'heuristic' }) 'registry+cim')
+                pci_location = (New-ProbeField $pciLoc $(if ($pciLoc) { 'measured' } else { 'unavailable' }) 'pnp')
+            }
         }
     }
     return @($list)
+}
+
+function Get-GpuRegistryStatic {
+    param([string]$PnpDeviceId)
+    $out = @{ memory_bus_width = $null; memory_vendor = $null }
+    if (-not $PnpDeviceId) { return $out }
+    try {
+        $base = 'HKLM:\SYSTEM\CurrentControlSet\Control\Class\{4d36e968-e325-11ce-bfc1-08002be10318}'
+        foreach ($key in (Get-ChildItem $base -ErrorAction SilentlyContinue | Where-Object { $_.PSChildName -match '^\d{4}$' })) {
+            $p = Get-ItemProperty $key.PSPath -ErrorAction SilentlyContinue
+            if (-not $p) { continue }
+            $matchId = "$($p.MatchingDeviceId)"
+            if ($matchId -and $PnpDeviceId.ToLower() -notmatch [regex]::Escape($matchId.ToLower())) { continue }
+            if ($p.'HardwareInformation.MemoryProvider') { $out.memory_vendor = "$($p.'HardwareInformation.MemoryProvider')" }
+            if ($p.MemoryBusWidth) { $out.memory_bus_width = [int]$p.MemoryBusWidth }
+            elseif ($p.'HardwareInformation.MemoryBusWidth') { $out.memory_bus_width = [int]$p.'HardwareInformation.MemoryBusWidth' }
+        }
+    } catch {}
+    return $out
 }
 
 <# Win32_VideoController truncates VRAM at 4 GB; the driver key holds the true value. #>
@@ -318,19 +377,32 @@ function Get-ProbeGpuTelemetry {
         $entry = @{
             name           = $a.name
             vendor         = $vendor
+            vendor_id      = $a.vendor_id
+            device_id      = $a.device_id
+            subsystem_id   = $a.subsystem_id
             is_integrated  = $a.is_integrated
             driver         = $a.driver
             driver_date    = $a.driver_date
+            driver_branch  = $a.driver_branch
             pnp_device_id  = $a.pnp_device_id
+            pci_location   = $a.pci_location
+            memory_bus_width = $a.memory_bus_width
+            memory_vendor  = $a.memory_vendor
             vram_gb        = $a.vram_gb
             thermal        = $thermal
             throttling     = @()
+            fields         = $a.fields
+            vbios          = $null
+            vbios_confidence = 'unavailable'
         }
         if ($nv) {
             $entry.nvidia = $nv
             $entry.vbios = $nv.vbios
+            $entry.vbios_confidence = if ($nv.vbios) { 'measured' } else { 'unavailable' }
             $entry.throttling = @($nv.throttle_reasons)
             if ($nv.vram_total_mb -gt 0) { $entry.vram_gb = [math]::Round($nv.vram_total_mb / 1024, 2) }
+            $entry.fields.vbios = (New-ProbeField $nv.vbios 'measured' 'nvidia-smi')
+            $entry.fields.driver = (New-ProbeField $nv.driver 'measured' 'nvidia-smi')
         }
         $gpus += $entry
     }

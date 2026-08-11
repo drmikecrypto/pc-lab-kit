@@ -55,6 +55,9 @@ class DiagnosticDriverAdvisorService
                 'match_confidence' => (string) ($a['match_confidence'] ?? ''),
                 'primary_link' => $this->linkOne((array) ($a['primary_link'] ?? [])),
                 'links' => $this->links((array) ($a['links'] ?? [])),
+                'install_method' => (string) ($a['install_method'] ?? ($a['primary_link']['install_method'] ?? '')),
+                'package_version' => (string) ($a['package_version'] ?? ($a['primary_link']['version'] ?? '')),
+                'installable' => !empty($a['installable']) || in_array((string) ($a['install_method'] ?? ''), ['inf_zip', 'msi', 'exe_silent', 'exe_ui', 'updater_app'], true),
             ];
         }
 
@@ -78,6 +81,10 @@ class DiagnosticDriverAdvisorService
                 'match_confidence' => (string) ($step['match_confidence'] ?? ''),
                 'primary_link' => $this->linkOne((array) ($step['primary_link'] ?? [])),
                 'links' => $this->links((array) ($step['links'] ?? [])),
+                'install_method' => (string) ($step['install_method'] ?? ($step['primary_link']['install_method'] ?? 'open_url')),
+                'package_version' => (string) ($step['package_version'] ?? ($step['primary_link']['version'] ?? '')),
+                'package_url' => (string) ($step['package_url'] ?? ($step['primary_link']['package_url'] ?? '')),
+                'installable' => !empty($step['installable']) || in_array((string) ($step['install_method'] ?? ''), ['inf_zip', 'msi', 'exe_silent', 'exe_ui', 'updater_app'], true),
             ];
         }
 
@@ -124,6 +131,9 @@ class DiagnosticDriverAdvisorService
                 'match_confidence' => (string) ($d['match_confidence'] ?? ''),
                 'primary_link' => $this->linkOne((array) ($d['primary_link'] ?? [])),
                 'links' => $this->links((array) ($d['links'] ?? [])),
+                'install_method' => (string) ($d['install_method'] ?? ($d['primary_link']['install_method'] ?? '')),
+                'package_version' => (string) ($d['package_version'] ?? ($d['primary_link']['version'] ?? '')),
+                'installable' => !empty($d['installable']) || in_array((string) ($d['install_method'] ?? ''), ['inf_zip', 'msi', 'exe_silent', 'exe_ui', 'updater_app'], true),
             ];
         }
 

@@ -9,6 +9,7 @@ use std::time::{Duration, Instant};
 
 pub struct LabRuntime {
     pub lab_url: String,
+    work_dir: PathBuf,
     php: Mutex<Option<Child>>,
     probe: Mutex<Option<Child>>,
 }
@@ -33,9 +34,38 @@ impl LabRuntime {
 
         Ok(Self {
             lab_url,
+            work_dir,
             php: Mutex::new(Some(php)),
             probe: Mutex::new(probe),
         })
+    }
+
+    pub fn probe_status(&self) -> String {
+        if let Ok(mut guard) = self.probe.lock() {
+            if let Some(child) = guard.as_mut() {
+                match child.try_wait() {
+                    Ok(None) => return "running".into(),
+                    Ok(Some(status)) => {
+                        *guard = None;
+                        return format!("exited:{status}");
+                    }
+                    Err(e) => return format!("error:{e}"),
+                }
+            }
+        }
+        "stopped".into()
+    }
+
+    pub fn ensure_probe(&self) -> Result<String, String> {
+        let status = self.probe_status();
+        if status == "running" {
+            return Ok(status);
+        }
+        let child = spawn_probe(&self.work_dir)?.ok_or_else(|| "Probe not available on this platform".to_string())?;
+        if let Ok(mut guard) = self.probe.lock() {
+            *guard = Some(child);
+        }
+        Ok("restarted".into())
     }
 
     pub fn shutdown(&self) {

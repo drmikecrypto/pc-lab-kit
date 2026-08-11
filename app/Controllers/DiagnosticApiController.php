@@ -17,9 +17,13 @@ use App\Services\DiagnosticRgbService;
 use App\Services\DiagnosticService;
 use App\Services\DiagnosticTelemetryService;
 use App\Services\DiagnosticToolCatalogService;
+use App\Services\HardwareKnowledgeGraphService;
 use App\Services\LabReportExportService;
+use App\Services\LabSuiteService;
+use App\Services\SensorDeckService;
 use App\Services\SettingsService;
 use App\Services\StressCertificateService;
+use App\Services\TopologyViewService;
 
 class DiagnosticApiController
 {
@@ -88,30 +92,7 @@ class DiagnosticApiController
                 isset($metrics['cpu_temp_max']) ? (float) $metrics['cpu_temp_max'] : null,
             ),
             'upgrade_top_category' => $this->diagnosticUpgradeTopCategory($result),
-            'catalog_pick_ids' => $this->diagnosticLabCatalogPickIds($result),
         ], static fn ($v) => $v !== null && $v !== '');
-    }
-
-    /** @param array<string, mixed> $result @return list<int> */
-    private function diagnosticLabCatalogPickIds(array $result): array
-    {
-        $c = $result['consultant'] ?? null;
-        if (!is_array($c)) {
-            return [];
-        }
-        $picks = $c['catalog_picks'] ?? [];
-        if (!is_array($picks)) {
-            return [];
-        }
-        $ids = [];
-        foreach (array_slice($picks, 0, 8) as $row) {
-            if (!is_array($row) || empty($row['part_id'])) {
-                continue;
-            }
-            $ids[] = (int) $row['part_id'];
-        }
-
-        return $ids;
     }
 
     /** @param array<string, mixed> $result */
@@ -470,6 +451,19 @@ class DiagnosticApiController
         return json_response((new DiagnosticDriverAdvisorService())->present($input));
     }
 
+    public function diagnosticInventoryPresent(): string
+    {
+        $input = decode_json_body_limited(12_582_912);
+        if ($input === null) {
+            return json_response(['error' => 'payload_too_large'], 413);
+        }
+        if ($input === []) {
+            return json_response(['error' => 'Empty inventory payload'], 400);
+        }
+
+        return json_response((new DiagnosticInventoryService())->present($input));
+    }
+
     public function diagnosticOcPlan(): string
     {
         $input = decode_json_body_limited(6_291_456);
@@ -561,6 +555,172 @@ class DiagnosticApiController
         return json_response(['success' => $ok]);
     }
 
+    public function diagnosticSuiteProfiles(): string
+    {
+        $svc = new LabSuiteService();
+
+        return json_response([
+            'ok' => true,
+            'profiles' => array_values($svc->profiles()),
+        ]);
+    }
+
+    public function diagnosticSuiteStart(): string
+    {
+        $input = decode_json_body_limited(65536) ?? [];
+        $input['fp'] = $this->diagnosticFingerprint($input);
+        $job = (new LabSuiteService())->start($input);
+        (new TrackUserEventAction())([
+            'fingerprint' => $input['fp'],
+            'event_type' => 'diagnostic_suite_start',
+            'target_type' => 'suite',
+            'target_id' => (string) ($job['id'] ?? ''),
+            'metadata' => ['profile' => $job['profile'] ?? 'standard'],
+        ]);
+
+        return json_response(['ok' => true, 'job' => $job]);
+    }
+
+    public function diagnosticSuiteStatus(string $id = ''): string
+    {
+        if ($id === '') {
+            $id = (string) ($_GET['id'] ?? '');
+        }
+        $job = (new LabSuiteService())->status($id);
+        if ($job === null) {
+            return json_response(['ok' => false, 'error' => 'not_found'], 404);
+        }
+
+        return json_response(['ok' => true, 'job' => $job]);
+    }
+
+    public function diagnosticSuiteCancel(string $id = ''): string
+    {
+        $input = decode_json_body_limited(65536) ?? [];
+        if ($id === '') {
+            $id = (string) ($input['id'] ?? $_GET['id'] ?? '');
+        }
+        $job = (new LabSuiteService())->cancel($id);
+        if ($job === null) {
+            return json_response(['ok' => false, 'error' => 'not_found'], 404);
+        }
+
+        return json_response(['ok' => true, 'job' => $job]);
+    }
+
+    public function diagnosticSuitePatch(string $id = ''): string
+    {
+        $input = decode_json_body_limited(524288) ?? [];
+        if ($id === '') {
+            $id = (string) ($input['id'] ?? '');
+        }
+        $job = (new LabSuiteService())->patch($id, $input);
+        if ($job === null) {
+            return json_response(['ok' => false, 'error' => 'not_found'], 404);
+        }
+
+        return json_response(['ok' => true, 'job' => $job]);
+    }
+
+    public function diagnosticSuiteFinalize(string $id = ''): string
+    {
+        set_time_limit(180);
+        $input = decode_json_body_limited(12_582_912);
+        if ($input === null) {
+            return json_response(['ok' => false, 'message' => 'Suite payload too large.'], 413);
+        }
+        if ($id === '') {
+            $id = (string) ($input['id'] ?? '');
+        }
+        if ($id === '') {
+            return json_response(['ok' => false, 'error' => 'id required'], 400);
+        }
+        try {
+            $job = (new LabSuiteService())->finalize($id, $input);
+        } catch (\InvalidArgumentException $e) {
+            return json_response(['ok' => false, 'error' => $e->getMessage()], 404);
+        } catch (\Throwable $e) {
+            error_log('suite finalize: ' . $e->getMessage());
+
+            return json_response(['ok' => false, 'error' => 'finalize_failed', 'message' => $e->getMessage()], 500);
+        }
+
+        $fp = $this->diagnosticFingerprint($input);
+        (new TrackUserEventAction())([
+            'fingerprint' => $fp,
+            'event_type' => 'diagnostic_suite_complete',
+            'target_type' => 'suite',
+            'target_id' => $id,
+            'metadata' => [
+                'profile' => $job['profile'] ?? null,
+                'health_score' => $job['result']['analysis']['health_score'] ?? null,
+            ],
+        ]);
+
+        return json_response(['ok' => true, 'job' => $job]);
+    }
+
+    public function diagnosticSensorDeckGet(): string
+    {
+        return json_response(['ok' => true, 'layout' => (new SensorDeckService())->get()]);
+    }
+
+    public function diagnosticSensorDeckSave(): string
+    {
+        $input = decode_json_body_limited(131072) ?? [];
+        try {
+            $layout = (new SensorDeckService())->save($input);
+        } catch (\InvalidArgumentException $e) {
+            return json_response(['ok' => false, 'error' => $e->getMessage()], 400);
+        }
+
+        return json_response(['ok' => true, 'layout' => $layout]);
+    }
+
+    public function diagnosticSensorDeckExport(): string
+    {
+        $format = strtolower(trim((string) ($_GET['format'] ?? 'json')));
+        $svc = new SensorDeckService();
+        $export = $svc->export($format);
+
+        if ($format === 'rainmeter') {
+            header('Content-Type: text/plain; charset=utf-8');
+            header('Content-Disposition: attachment; filename="PCLabKit-SensorDeck.ini"');
+
+            return (string) ($export['content'] ?? '');
+        }
+
+        return json_response(['ok' => true, 'export' => $export]);
+    }
+
+    public function diagnosticTopology(): string
+    {
+        $input = decode_json_body_limited(12_582_912) ?? [];
+        $graph = is_array($input['hardware_graph'] ?? null) ? $input['hardware_graph'] : null;
+        if ($graph === null) {
+            $probe = is_array($input['probe'] ?? null) ? (array) $input['probe'] : $input;
+            if (($probe['devices'] ?? null) || ($probe['cpu'] ?? null) || ($probe['probe_version'] ?? null)) {
+                $normalized = (new DiagnosticAgentService())->normalize($probe);
+                // Prefer lightweight graph for always-on topology; full analyze when asked.
+                if (!empty($input['analyze'])) {
+                    $analysis = (new DiagnosticService())->analyzeFull($normalized);
+                    $graph = (new HardwareKnowledgeGraphService())->fromProbe($normalized, $analysis);
+                } else {
+                    $graph = (new HardwareKnowledgeGraphService())->fromProbe($normalized, []);
+                }
+            }
+        }
+        if ($graph === null) {
+            return json_response(['ok' => false, 'error' => 'graph_or_probe required'], 400);
+        }
+
+        return json_response([
+            'ok' => true,
+            'topology' => (new TopologyViewService())->fromGraph($graph),
+            'graph' => $graph,
+        ]);
+    }
+
     /** @param array<string, mixed> $raw @param array<string, mixed> $analysis @return array<string, mixed> */
     private function finalizeDiagnostic(string $mode, array $raw, array $analysis): array
     {
@@ -575,6 +735,7 @@ class DiagnosticApiController
             'previous_snapshot' => $previous,
             'comparison' => $comparison,
         ]);
+        $analysis['advisor_cards'] = (new DiagnosticAiService())->advisorCards($analysis);
         $analysis = $this->enrichDiagnosticConsultant($analysis);
         if ($comparison !== null) {
             $analysis['comparison'] = $comparison;

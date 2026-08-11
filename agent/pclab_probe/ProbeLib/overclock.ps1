@@ -1,4 +1,4 @@
-﻿. "$PSScriptRoot\common.ps1"
+. "$PSScriptRoot\common.ps1"
 
 function Get-ProbeOcStorePath {
     $dir = Join-Path $env:LOCALAPPDATA "PcLabKit\Probe"
@@ -120,7 +120,7 @@ function Invoke-ProbeOcWatch {
             if ($elapsed -ge $BreachSeconds) {
                 $reason = "Limits exceeded for ${BreachSeconds}s"
                 if ($AutoRollback) {
-                    $rb = Invoke-ProbeerseOverclockRollback
+                    $rb = Invoke-ProbeOverclockRollback
                     $rolled = [bool]$rb.ok
                 }
                 break
@@ -145,7 +145,7 @@ function Invoke-ProbeOcWatch {
     return $result
 }
 
-function Get-ProbeerseOcState {
+function Get-ProbeOcState {
     $state = @{
         nvidia_available = $false
         power_limit_w = $null
@@ -181,7 +181,7 @@ function Get-ProbeerseOcState {
 
 function Save-ProbeOcBaseline {
     param($Extra = @{})
-    $state = Get-ProbeerseOcState
+    $state = Get-ProbeOcState
     $payload = @{
         saved_at = (Get-Date).ToUniversalTime().ToString("o")
         state = $state
@@ -191,7 +191,7 @@ function Save-ProbeOcBaseline {
     return $payload
 }
 
-function Invoke-ProbeerseOverclockRollback {
+function Invoke-ProbeOverclockRollback {
     $path = Get-ProbeOcStorePath
     if (-not (Test-Path $path)) {
         return @{ ok = $false; error = 'no_baseline'; message = 'No OC baseline saved' }
@@ -251,7 +251,7 @@ function Set-PowerCfgHighPerformance {
     return $hp
 }
 
-function Invoke-ProbeerseOverclockApply {
+function Invoke-ProbeOverclockApply {
     param(
         [Parameter(Mandatory = $true)]
         $Plan
@@ -305,7 +305,7 @@ function Invoke-ProbeerseOverclockApply {
                         $skipped += @{ action = $action; reason = 'offset out of range' }
                         continue
                     }
-                    $state = Get-ProbeerseOcState
+                    $state = Get-ProbeOcState
                     $baseCore = 0
                     if ($state.core_clock_mhz) { $baseCore = [int]$state.core_clock_mhz }
                     if ($baseCore -gt 0) {
@@ -346,6 +346,6 @@ function Invoke-ProbeerseOverclockApply {
         profile = $Plan.profile
         engine = 'orchestrator'
         message = if ($applied.Count -gt 0) { 'Safe OC applied - watch + auto-rollback available.' } else { 'Nothing applied.' }
-        message_fa = if ($applied.Count -gt 0) { 'اوورکلاک وخش اعمال شد - Rollback از Agent در دسترس است.' } else { 'هیچ تنظیمی اعمال نشد.' }
+        message_fa = if ($applied.Count -gt 0) { 'PC Lab Kit overclock اعمال شد - Rollback از Agent در دسترس است.' } else { 'هیچ تنظیمی اعمال نشد.' }
     }
 }

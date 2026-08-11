@@ -46,11 +46,13 @@ class LabReportExportService
                 'headline' => $analysis['consultant']['headline'] ?? ($analysis['consultant']['headline_fa'] ?? null),
             ] : null,
             'stress_certificate' => $certificate,
+            'advisor_cards' => is_array($analysis['advisor_cards'] ?? null) ? $analysis['advisor_cards'] : null,
             'hardware_graph' => is_array($analysis['hardware_graph'] ?? null)
                 ? (($analysis['hardware_graph']['summary'] ?? []) + [
                     'node_count' => count($analysis['hardware_graph']['nodes'] ?? []),
                 ])
                 : null,
+            'hardware_reference' => $this->hardwareReferenceSection($analysis),
         ];
 
         $title = sprintf(
@@ -95,6 +97,42 @@ class LabReportExportService
             'title' => $title,
             'html' => $this->renderOcHtml($doc, $title),
             'document' => $doc,
+        ];
+    }
+
+    /** @param array<string, mixed> $analysis @return array<string, mixed>|null */
+    private function hardwareReferenceSection(array $analysis): ?array
+    {
+        $devices = (array) ($analysis['devices'] ?? []);
+        $graph = (array) ($analysis['hardware_graph'] ?? []);
+        $summary = (array) ($devices['summary'] ?? $graph['summary'] ?? []);
+        if ($summary === [] && empty($graph['nodes']) && empty($devices['all_devices'])) {
+            return null;
+        }
+        $rows = [];
+        foreach (array_slice((array) ($devices['all_devices'] ?? $devices['problem'] ?? []), 0, 40) as $d) {
+            if (!is_array($d)) {
+                continue;
+            }
+            $rows[] = [
+                'name' => (string) ($d['name'] ?? ''),
+                'bus' => (string) ($d['bus'] ?? ''),
+                'status' => (string) ($d['status'] ?? ''),
+                'present' => array_key_exists('present', $d) ? !empty($d['present']) : true,
+                'confidence' => (string) ($d['confidence'] ?? 'measured'),
+                'problem_code' => (int) ($d['problem_code'] ?? 0),
+            ];
+        }
+
+        return [
+            'summary' => [
+                'total' => (int) ($summary['total_devices'] ?? $summary['node_count'] ?? count($rows)),
+                'hidden' => (int) ($summary['hidden_devices'] ?? 0),
+                'driverless' => (int) ($summary['driverless'] ?? 0),
+                'problem' => (int) ($summary['problem_devices'] ?? 0),
+            ],
+            'devices' => $rows,
+            'elevated' => !empty($analysis['elevated']),
         ];
     }
 
@@ -173,9 +211,60 @@ class LabReportExportService
         $cert = is_array($doc['stress_certificate'] ?? null) ? $doc['stress_certificate'] : null;
         $certHtml = '';
         if ($cert) {
+            $timelineRows = '';
+            foreach (array_slice((array) ($cert['timeline'] ?? []), 0, 80) as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $timelineRows .= '<tr><td>' . $esc((string) ($row['t'] ?? '')) . '</td>'
+                    . '<td>' . $esc((string) ($row['cpu_temp'] ?? '—')) . '</td>'
+                    . '<td>' . $esc((string) ($row['gpu_temp'] ?? '—')) . '</td></tr>';
+            }
             $certHtml = '<section class="cert"><h2>Stress certificate</h2>'
                 . '<p class="verdict">' . $esc((string) ($cert['verdict'] ?? '')) . '</p>'
-                . '<p>' . $esc((string) ($cert['summary'] ?? '')) . '</p></section>';
+                . '<p>' . $esc((string) ($cert['summary'] ?? '')) . '</p>';
+            if ($timelineRows !== '') {
+                $certHtml .= '<h3>Thermal timeline</h3><table><thead><tr><th>t</th><th>CPU</th><th>GPU</th></tr></thead><tbody>'
+                    . $timelineRows . '</tbody></table>';
+            }
+            $certHtml .= '</section>';
+        }
+
+        $cardsHtml = '';
+        $cards = is_array($doc['advisor_cards'] ?? null) ? $doc['advisor_cards'] : [];
+        if ($cards !== []) {
+            $cardsHtml = '<section><h2>Advisor cards</h2><ul>';
+            foreach ($cards as $c) {
+                if (!is_array($c)) {
+                    continue;
+                }
+                $cardsHtml .= '<li><strong>' . $esc((string) ($c['title'] ?? '')) . '</strong> — '
+                    . $esc((string) ($c['body'] ?? '')) . '</li>';
+            }
+            $cardsHtml .= '</ul></section>';
+        }
+
+        $hwHtml = '';
+        $hw = is_array($doc['hardware_reference'] ?? null) ? $doc['hardware_reference'] : null;
+        if ($hw) {
+            $hs = (array) ($hw['summary'] ?? []);
+            $hwHtml = '<section><h2>Hardware Reference</h2><p class="meta">'
+                . $esc((string) ($hs['total'] ?? 0)) . ' devices · '
+                . $esc((string) ($hs['hidden'] ?? 0)) . ' hidden · '
+                . $esc((string) ($hs['driverless'] ?? 0)) . ' driverless · '
+                . $esc((string) ($hs['problem'] ?? 0)) . ' problem'
+                . (!empty($hw['elevated']) ? '' : ' · sensors may be degraded (not elevated)')
+                . '</p><table><tr><th>Name</th><th>Bus</th><th>Status</th><th>Confidence</th></tr>';
+            foreach ((array) ($hw['devices'] ?? []) as $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                $hwHtml .= '<tr><td>' . $esc((string) ($row['name'] ?? '')) . '</td>'
+                    . '<td>' . $esc((string) ($row['bus'] ?? '')) . '</td>'
+                    . '<td>' . $esc((string) ($row['status'] ?? '')) . (empty($row['present']) ? ' (hidden)' : '') . '</td>'
+                    . '<td>' . $esc((string) ($row['confidence'] ?? '')) . '</td></tr>';
+            }
+            $hwHtml .= '</table></section>';
         }
 
         return <<<HTML
@@ -217,6 +306,8 @@ class LabReportExportService
   {$deltaHtml}
   <section><h2>Risks</h2><ul>{$riskHtml}</ul></section>
   {$aiHtml}
+  {$cardsHtml}
+  {$hwHtml}
   {$certHtml}
   <p class="meta">Local-first · data stays on your machine · print this page to PDF</p>
 </body>

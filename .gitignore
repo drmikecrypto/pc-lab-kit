@@ -2,6 +2,8 @@
 /storage/database/*.sqlite
 /storage/cache/
 /storage/settings/local.json
+/storage/settings/sensor_deck.json
+/storage/suite/
 .env
 public/downloads/*.zip
 public/downloads/*.tar.gz

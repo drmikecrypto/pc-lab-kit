@@ -367,11 +367,12 @@
       const primaryBtn = primary
         ? `<a href="${esc(primary.url)}" class="dx-btn primary dx-driver-primary" target="_blank" rel="noopener">${esc(primary.label || 'Open package')}</a>`
         : '';
+      const installBtn = `<button type="button" class="dx-btn ghost dx-driver-install" data-instance="${esc(a.instance_id || '')}" data-category="${esc(a.category || '')}" data-queue="">Install</button>`;
       return `<div class="dx-driver-card ${esc(a.severity || '')}">
         <div class="dx-driver-card-head"><strong>${esc(a.title || '')}</strong>${conf}</div>
         <span class="muted fs-xs">${esc(a.detail || '')}</span>
         ${ids ? `<span class="muted fs-xs dx-driver-hwid">${esc(ids)}</span>` : ''}
-        <div class="dx-driver-links">${primaryBtn}${links ? (primaryBtn ? ' · ' : '') + links : ''}</div>
+        <div class="dx-driver-links">${primaryBtn}${installBtn}${links ? ' · ' + links : ''}</div>
       </div>`;
     }).join('');
 
@@ -385,11 +386,12 @@
       const primaryBtn = primary
         ? `<a href="${esc(primary.url)}" class="dx-btn primary dx-driver-primary" target="_blank" rel="noopener">${esc(primary.label || 'Open package')}</a>`
         : '';
+      const installBtn = `<button type="button" class="dx-btn ghost dx-driver-install" data-instance="${esc(d.instance_id || '')}" data-category="${esc(d.category || '')}" data-queue="">Install</button>`;
       return `<div class="dx-driver-card critical">
         <div class="dx-driver-card-head"><strong>No driver: ${esc(d.name || 'Unknown')}</strong>${conf}</div>
        <span class="muted fs-xs">${esc(d.problem_message || d.category || '')}</span>
        ${ids ? `<span class="muted fs-xs dx-driver-hwid">${esc(ids)}</span>` : ''}
-       <div class="dx-driver-links">${primaryBtn}${links ? (primaryBtn ? ' · ' : '') + links : ''}</div>
+       <div class="dx-driver-links">${primaryBtn}${installBtn}${links ? ' · ' + links : ''}</div>
       </div>`;
     }).join('');
 
@@ -399,11 +401,13 @@
         const pl = s.primary_link && s.primary_link.url ? s.primary_link : ((s.links || [])[0] || null);
         const link = pl ? `<a href="${esc(pl.url)}" target="_blank" rel="noopener">${esc(pl.label || 'Open')}</a>` : '';
         const conf = s.match_confidence ? ` · ${esc(s.match_confidence)}` : '';
+        const ver = s.package_version ? ` · pkg ${esc(s.package_version)}` : '';
+        const installBtn = `<button type="button" class="dx-btn ghost dx-driver-install" data-instance="" data-category="${esc(s.id || '')}" data-queue="${esc(s.id || '')}">Install</button>`;
         return `<div class="dx-driver-queue-row">
           <span class="dx-driver-queue-status ${esc(s.status || '')}">${esc(s.status || '')}</span>
-          <span><strong>${esc(s.label || s.id || '')}</strong>${conf}
+          <span><strong>${esc(s.label || s.id || '')}</strong>${conf}${ver}
           <span class="muted fs-xs"> — ${esc(s.why || '')}</span></span>
-          ${link}
+          ${installBtn} ${link}
         </div>`;
       }).join('')}
     </div>` : '';
@@ -415,11 +419,58 @@
           <button type="button" class="dx-btn ghost" id="dx-driver-wu">Scan Windows Update drivers</button>
         </div>
       </div>
-      <p class="muted fs-xs">Score ${esc(String(drivers.score ?? '—'))} / ${esc(drivers.grade || '—')} — chipset → GPU → audio → network. Open the package, install, then Rescan.</p>
+      <p class="muted fs-xs">Score ${esc(String(drivers.score ?? '—'))} / ${esc(drivers.grade || '—')} — chipset → GPU → audio → network. Click <strong>Install</strong> for the matched latest package (confirm each step).</p>
       ${queueHtml}${missingHtml}${actionHtml}`;
 
     document.getElementById('dx-driver-rescan')?.addEventListener('click', () => rescanDrivers(false));
     document.getElementById('dx-driver-wu')?.addEventListener('click', () => rescanDrivers(true));
+    box.querySelectorAll('.dx-driver-install').forEach((btn) => {
+      btn.addEventListener('click', () => installDriver(btn));
+    });
+  }
+
+  async function installDriver(btn) {
+    const instanceId = btn.getAttribute('data-instance') || '';
+    const category = btn.getAttribute('data-category') || '';
+    const queueId = btn.getAttribute('data-queue') || '';
+    const label = category || instanceId || 'driver';
+    if (!window.confirm(`Install the matched latest driver for ${label}? This may download a vendor package or open the GPU updater.`)) {
+      return;
+    }
+    const note = el('dx-sensor-note');
+    btn.disabled = true;
+    try {
+      if (note) {
+        note.hidden = false;
+        note.textContent = 'Installing driver package…';
+      }
+      const res = await fetch(`${AGENT}/drivers/install`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          confirm: true,
+          instance_id: instanceId,
+          category,
+          queue_id: queueId,
+        }),
+      });
+      const data = await res.json();
+      if (note) {
+        note.hidden = false;
+        note.textContent = data.ok
+          ? `Install ${data.status || 'done'}${data.package_version ? ' · ' + data.package_version : ''}. Rescanning…`
+          : (`Install failed: ${data.error || data.status || 'unknown'}`);
+      }
+      await rescanDrivers(false);
+    } catch (e) {
+      if (note) {
+        note.hidden = false;
+        note.textContent = 'Install request failed — is Probe running and elevated?';
+      }
+    } finally {
+      btn.disabled = false;
+    }
   }
 
   async function rescanDrivers(includeWu) {

@@ -1,6 +1,6 @@
 [package]
 name = "pclabkit"
-version = "3.1.1"
+version = "3.2.0"
 description = "PC Lab Kit desktop shell"
 authors = ["drmikecrypto"]
 edition = "2021"
@@ -13,7 +13,7 @@ crate-type = ["staticlib", "cdylib", "rlib"]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["tray-icon"] }
 tauri-plugin-opener = "2"
 tauri-plugin-single-instance = "2"
 serde = { version = "1", features = ["derive"] }

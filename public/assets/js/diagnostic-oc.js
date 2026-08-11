@@ -52,6 +52,13 @@
         ${blockers.length ? `<div class="dx-oc-blockers">${blockers.map((b) => `<div class="dx-oc-blocker">⛔ ${esc(b)}</div>`).join('')}</div>` : ''}
         ${warnings.length ? `<div class="dx-oc-warnings">${warnings.map((w) => `<div class="dx-oc-warn">⚠ ${esc(w)}</div>`).join('')}</div>` : ''}
 
+        <div class="dx-oc-flow" aria-label="Safe OC steps">
+          <span data-oc-step="preflight">1 Preflight</span>
+          <span data-oc-step="apply">2 Apply</span>
+          <span data-oc-step="watch">3 Watch</span>
+          <span data-oc-step="rollback">4 Rollback</span>
+        </div>
+
         <div class="dx-oc-headroom">
           <span>CPU ${esc(String(plan.headroom?.cpu_temp_c ?? '—'))}°C</span>
           <span>CPU margin ${esc(String(plan.headroom?.thermal_margin_cpu ?? '—'))}°</span>
@@ -82,8 +89,15 @@
     mountEl.querySelector('#dx-oc-cancel')?.addEventListener('click', () => { cancelCountdown = true; });
   }
 
+  function setOcStep(step) {
+    document.querySelectorAll('[data-oc-step]').forEach((el) => {
+      el.classList.toggle('is-active', el.getAttribute('data-oc-step') === step);
+    });
+  }
+
   async function runPreflight() {
     const st = document.getElementById('dx-oc-status');
+    setOcStep('preflight');
     if (st) st.textContent = 'Pre-flight: idle + load sample (≈30s)…';
     try {
       const res = await fetch(`${AGENT}/oc/preflight`, {
@@ -139,6 +153,7 @@
     }
 
     if (st) st.textContent = 'Applying via Probe…';
+    setOcStep('apply');
     try {
       const res = await fetch(`${AGENT}/oc/apply`, {
         method: 'POST',
@@ -148,6 +163,7 @@
       });
       lastApply = await res.json();
       if (!lastApply.ok) throw new Error('apply failed');
+      setOcStep('watch');
       if (st) st.textContent = (lastApply.message || 'Applied') + ' — watching thermals (auto-rollback on)…';
 
       // Post-apply watch (shorter default for UI responsiveness; Probe enforces min 30s)
@@ -180,6 +196,7 @@
 
   async function rollbackOc() {
     const st = document.getElementById('dx-oc-status');
+    setOcStep('rollback');
     if (st) st.textContent = 'Rolling back…';
     try {
       const res = await fetch(`${AGENT}/oc/rollback`, { method: 'POST', mode: 'cors' });

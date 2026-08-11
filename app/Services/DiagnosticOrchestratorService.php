@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * وخش Lighting — unified RGB + fan + LCD dashboard orchestration narrative.
+ * PC Lab Kit Lighting — unified RGB + fan + LCD dashboard orchestration narrative.
  * Open-source core, commercial-grade features, zero bloat/conflict philosophy.
  */
 class DiagnosticOrchestratorService
@@ -73,9 +73,9 @@ class DiagnosticOrchestratorService
             default => 'RGB تبدیل شد به telemetry زنده — نه فقط چراغ تزئینی.',
         };
 
-        $why = 'نیمی از نرم‌افزار RGB (iCUE، Armoury Crate، CAM) سنگینن، با هم conflict دارن و telemetry رو خراب می‌کنن. '
-            . 'وخش همون قابلیت‌های حرفه‌ای رو می‌ده — sync چندبرندی، thermal warning، fan curve هوشمند، LCD dashboard — '
-            . 'ولی فقط با OpenRGB سبک + Probe محلی. هیچ سرویس پس‌زمینه‌ای نصب نمی‌کنی.';
+        $why = 'Many RGB suites (iCUE, Armoury Crate, CAM) conflict and break telemetry. '
+            . 'PC Lab Kit gives multi-brand sync, thermal warning, smart fan curves, and an LCD dashboard '
+            . 'via lightweight OpenRGB + the local Probe — no heavy background suite.';
 
         $did = [];
         if (count($applied) > 0) {
@@ -106,7 +106,7 @@ class DiagnosticOrchestratorService
             'profile' => $profile,
             'compare_fa' => [
                 'signalrgb' => 'هم‌تراز: unified sync، thermal، per-zone — بدون سنگینی SignalRGB',
-                'openrgb' => 'هسته OpenRGB + orchestration وخش',
+                'openrgb' => 'هسته OpenRGB + Orchestrator orchestration',
                 'fan_control' => 'منحنی max(sensor) مثل Fan Control — export محلی',
                 'aida64' => 'LCD dashboard سبک‌تر — HTML محلی، داده از Probe',
                 'icue_crate_cam' => 'جایگزین بدون bloat و بدون telemetry اضافی',

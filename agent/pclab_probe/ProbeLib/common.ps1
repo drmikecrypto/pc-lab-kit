@@ -252,3 +252,39 @@ function Guess-InstructionSets {
     }
     return ($sets | Select-Object -Unique)
 }
+
+<#
+ Typed field for Hardware Reference: never pretend a heuristic is silicon-measured.
+ confidence: measured | vendor_table | heuristic | unavailable
+#>
+function New-ProbeField {
+    param(
+        $Value,
+        [ValidateSet('measured', 'vendor_table', 'heuristic', 'unavailable')]
+        [string]$Confidence = 'measured',
+        [string]$Source = '',
+        [string]$Note = ''
+    )
+    if ($null -eq $Value -or "$Value" -eq '') {
+        return @{
+            value      = $null
+            confidence = 'unavailable'
+            source     = if ($Source) { $Source } else { $null }
+            note       = if ($Note) { $Note } else { $null }
+        }
+    }
+    return @{
+        value      = $Value
+        confidence = $Confidence
+        source     = if ($Source) { $Source } else { $null }
+        note       = if ($Note) { $Note } else { $null }
+    }
+}
+
+function Get-ProbeFieldValue {
+    param($Field)
+    if ($null -eq $Field) { return $null }
+    if ($Field -is [hashtable] -and $Field.ContainsKey('value')) { return $Field.value }
+    if ($Field -is [pscustomobject] -and $null -ne $Field.PSObject.Properties['value']) { return $Field.value }
+    return $Field
+}

@@ -45,6 +45,9 @@ return [
         ['id' => 'capframex_json', 'label' => 'Game performance report (JSON)', 'extensions' => ['json']],
         ['id' => 'cpuz_txt', 'label' => 'CPU report (TXT)', 'extensions' => ['txt']],
         ['id' => 'frametime_csv', 'label' => 'Frametime log (CSV)', 'extensions' => ['csv', 'txt']],
+        ['id' => 'cinebench', 'label' => 'Cinebench log (TXT)', 'extensions' => ['txt', 'log']],
+        ['id' => 'geekbench', 'label' => 'Geekbench export (JSON/TXT)', 'extensions' => ['json', 'txt']],
+        ['id' => '3dmark_xml', 'label' => '3DMark result (XML)', 'extensions' => ['xml']],
     ],
     'pro_tools' => [
         ['id' => 'hwinfo', 'name' => 'HWiNFO', 'category' => 'monitoring', 'desc' => 'VRM sensors, CPU power, VRAM, throttling, WHEA'],

@@ -55,7 +55,7 @@
   "53": "Frametime PresentMon",
   "54": "Main Window Styling",
   "55": "Probe Benchmark Lib",
-  "56": "App Release Service",
+  "56": "gpu.ps1",
   "57": "Windows Setup Installer",
   "58": "Linux Native Setup UI",
   "59": "OC Diagnostic JS",
@@ -120,5 +120,18 @@
   "118": "DiagnosticIntelligencePulseService",
   "119": "DiagnosticConsultantService",
   "120": "Get-RamSpdTelemetry",
-  "121": ".__invoke"
+  "121": ".__invoke",
+  "122": "diagnostic-sensor-deck.js",
+  "123": "HardwareKnowledgeGraphService.php",
+  "124": "LabFeaturesTest.php",
+  "125": "AmbitiousUpgradeTest",
+  "126": "SensorDeckService",
+  "127": "Contributing to PC Lab Kit",
+  "128": "INTEGRATION.md",
+  "130": "diagnostic-launchers.js",
+  "132": "PC Lab Kit Desktop",
+  "133": "Executive vision",
+  "134": "diagnostic-topology.js",
+  "135": "How it fits together",
+  "136": "suite-smoke.spec.js"
 }

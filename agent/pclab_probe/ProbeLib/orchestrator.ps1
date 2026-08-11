@@ -1,4 +1,4 @@
-﻿. "$PSScriptRoot\common.ps1"
+. "$PSScriptRoot\common.ps1"
 . "$PSScriptRoot\rgb.ps1"
 
 function Get-ProbeDataDir {
@@ -35,7 +35,7 @@ function Write-ProbeLcdDashboard {
 <html lang="fa"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=480,height=480">
-<title>وخش LCD</title>
+<title>PC Lab Kit LCD</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#0a0a12;color:#e2e8f0;font-family:Segoe UI,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center}
@@ -51,7 +51,7 @@ body{background:#0a0a12;color:#e2e8f0;font-family:Segoe UI,sans-serif;min-height
 </style></head>
 <body>
 <div class="panel">
-<div class="brand">وخش · SENSOR PANEL</div>
+<div class="brand">PC Lab Kit · SENSOR PANEL</div>
 <div class="temp" id="main">-°</div>
 <div class="sub" id="sub">PcLab Probe localhost</div>
 <div class="grid">
@@ -163,7 +163,7 @@ function Invoke-ProbeOrchestrate {
         $result.partial = $true
     }
 
-    $result.message_fa = 'وخش setup حرفه‌ای اعمال شد.'
+    $result.message_fa = 'Orchestrator setup حرفه‌ای اعمال شد.'
     return $result
 }
 
@@ -217,7 +217,7 @@ function Invoke-ProbeRgbAuto {
     $result = Invoke-RgbApplySettings -Settings @{ zones = $zones }
     $result.orchestrator = @{
         profile = 'thermal_sync'
-        summary_fa = "وخش: CPU ${cpuTemp}°C · GPU ${gpuTemp}°C -> #$color"
+        summary_fa = "Lab: CPU ${cpuTemp}°C · GPU ${gpuTemp}°C -> #$color"
     }
     return $result
 }

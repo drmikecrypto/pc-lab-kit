@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * وخش RGB Lab — unified lighting catalog + orchestration (SignalRGB-class, OpenRGB-light).
+ * PC Lab Kit RGB Lab — unified lighting catalog + orchestration (SignalRGB-class, OpenRGB-light).
  */
 class DiagnosticRgbService
 {
@@ -44,7 +44,7 @@ class DiagnosticRgbService
             ],
             'replaces_fa' => [
                 'SignalRGB' => 'unified sync + thermal — بدون سنگینی',
-                'OpenRGB' => 'هسته + orchestration وخش',
+                'OpenRGB' => 'هسته + Orchestrator orchestration',
                 'Fan Control' => 'export منحنی + قوانین max(sensor)',
                 'AIDA64 panel' => 'HTML dashboard localhost',
                 'iCUE / CAM / Crate' => 'بدون bloat و telemetry اضافه',
@@ -87,7 +87,7 @@ class DiagnosticRgbService
                 'OpenRGB.exe → agent/pclab_probe/tools/OpenRGB/',
                 'iCUE · NZXT CAM · SignalRGB · Armoury Crate را ببند',
                 'Start-PcLabProbe.bat → Run as Administrator',
-                '«setup حرفه‌ای وخش» را بزن',
+                '«Orchestrator pro setup» را بزن',
             ],
         ];
     }

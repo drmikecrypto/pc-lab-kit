@@ -82,7 +82,7 @@ class DiagnosticAgentService
             ?? $nvidia['temp_c']
             ?? null;
 
-        return [
+        $out = [
             'device' => array_merge($device, [
                 'form_factor' => $device['form_factor'] ?? 'desktop',
                 'platform' => 'windows',
@@ -121,36 +121,60 @@ class DiagnosticAgentService
                 'speed_mhz' => $ram['modules'][0]['configured_mhz'] ?? $ram['modules'][0]['speed_mhz'] ?? null,
                 'primary_timings' => $ram['primary_timings'] ?? ($ram['modules'][0]['timings'] ?? null),
                 'primary_die' => $ram['primary_die'] ?? ($ram['modules'][0]['die_type'] ?? null),
-                'spd_source' => $ram['spd_source'] ?? null,
+                'spd_source' => $ram['spd_source'] ?? $ram['source'] ?? null,
+                'spd_direct_read' => !empty($ram['spd_direct_read']),
+                'channels' => $ram['channels'] ?? null,
+                'die_type' => $ram['primary_die'] ?? ($ram['modules'][0]['die_type'] ?? null),
             ],
             'storage' => [
                 'disks' => $storageList,
                 'primary' => $primaryStorage,
                 'type' => $primaryStorage['interface'] ?? $primaryStorage['media_type'] ?? null,
             ],
-            'motherboard' => (array) ($agent['motherboard'] ?? []),
+            'motherboard' => (array) ($agent['motherboard'] ?? $devices['motherboard'] ?? []),
             'psu' => (array) ($agent['psu'] ?? []),
             'network' => [
                 'adapters' => $network,
                 'lan_speed_mbps' => $lanMbps,
                 'wifi_standard' => $this->detectWifiStandard($network),
             ],
-            'battery' => $battery,
+            'battery' => $battery !== [] ? $battery : (array) ($devices['battery'] ?? []),
             'sensors' => array_merge($sensors, [
                 'throttle_count' => (int) ($sensors['throttle_count'] ?? 0),
+                'fans' => $sensors['fans'] ?? ($agent['hwmon']['fans'] ?? ($telemetry['hwmon']['fans'] ?? [])),
             ]),
+            'hwmon' => (array) ($agent['hwmon'] ?? $telemetry['hwmon'] ?? []),
             'thermal' => $thermal,
             'devices' => $devices,
             'drivers' => $drivers,
             'gaming' => $gaming,
             'peripherals' => (array) ($agent['peripherals'] ?? []),
-            'bios' => (array) ($agent['bios'] ?? []),
+            'bios' => (array) ($agent['bios'] ?? $devices['bios'] ?? []),
+            'tpm' => (array) ($devices['tpm'] ?? $agent['tpm'] ?? []),
             'nvidia_smi' => $nvidia,
             'telemetry' => $telemetry,
             'collected_at' => $agent['collected_at'] ?? date('c'),
             'probe_version' => (int) ($agent['probe_version'] ?? 2),
             'elevated' => !empty($agent['elevated']),
         ];
+
+        // GPU-Z-class static fields from telemetry primary GPU when present
+        $telGpus = (array) ($telemetry['gpu']['gpus'] ?? []);
+        if ($telGpus !== [] && is_array($telGpus[0] ?? null)) {
+            $g0 = $telGpus[0];
+            $out['gpu'] = array_merge($out['gpu'], array_filter([
+                'vbios' => $g0['vbios'] ?? null,
+                'driver_branch' => $g0['driver_branch'] ?? null,
+                'pci_location' => $g0['pci_location'] ?? null,
+                'memory_bus_width' => $g0['memory_bus_width'] ?? null,
+                'memory_vendor' => $g0['memory_vendor'] ?? null,
+                'vendor_id' => $g0['vendor_id'] ?? null,
+                'device_id' => $g0['device_id'] ?? null,
+                'fields' => $g0['fields'] ?? null,
+            ], static fn ($v) => $v !== null && $v !== ''));
+        }
+
+        return $out;
     }
 
     /** @param mixed $network */

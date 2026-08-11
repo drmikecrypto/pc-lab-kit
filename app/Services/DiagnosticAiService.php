@@ -236,4 +236,112 @@ PROMPT;
 
         return "Health grade {$grade}. {$bn}";
     }
+
+    /**
+     * Schema-validated advisor cards (3–5) from AI payload or rule fallback.
+     *
+     * @param array<string, mixed> $analysis
+     * @return list<array{id: string, title: string, body: string, severity: string, source: string}>
+     */
+    public function advisorCards(array $analysis): array
+    {
+        $cards = [];
+        $ai = is_array($analysis['ai'] ?? null) ? $analysis['ai'] : null;
+
+        if ($ai !== null) {
+            $headline = trim((string) ($ai['headline'] ?? ''));
+            $summary = trim((string) ($ai['summary'] ?? ''));
+            if ($headline !== '' || $summary !== '') {
+                $cards[] = $this->card('finding', $headline !== '' ? $headline : 'Primary finding', $summary !== '' ? $summary : $headline, 'info', 'ai');
+            }
+            foreach (array_slice((array) ($ai['priority_actions'] ?? []), 0, 3) as $i => $action) {
+                $text = is_string($action) ? $action : (string) ($action['text'] ?? '');
+                if ($text === '') {
+                    continue;
+                }
+                $cards[] = $this->card('action_' . ($i + 1), 'Action ' . ($i + 1), $text, 'action', 'ai');
+            }
+            foreach (array_slice((array) ($ai['burn_risk'] ?? []), 0, 2) as $i => $risk) {
+                $text = is_string($risk) ? $risk : (string) ($risk['text'] ?? '');
+                if ($text === '' || stripos($text, 'none critical') !== false) {
+                    continue;
+                }
+                $cards[] = $this->card('risk_' . ($i + 1), 'Risk', $text, 'warn', 'ai');
+            }
+        }
+
+        if ($cards === []) {
+            $grade = (string) ($analysis['health_grade'] ?? '?');
+            $score = $analysis['health_score'] ?? '—';
+            $bn = is_array($analysis['bottleneck'] ?? null)
+                ? (string) ($analysis['bottleneck']['message'] ?? $analysis['bottleneck']['type'] ?? 'Unknown bottleneck')
+                : 'Run Full Lab for bottleneck detail';
+            $cards[] = $this->card('health', "Health {$grade} ({$score})", $bn, 'info', 'rules');
+
+            $cert = is_array($analysis['stress_certificate'] ?? null) ? $analysis['stress_certificate'] : null;
+            if ($cert !== null) {
+                $cards[] = $this->card(
+                    'stress',
+                    'Stress ' . ($cert['verdict'] ?? '—'),
+                    (string) ($cert['summary'] ?? ''),
+                    !empty($cert['passed']) ? 'ok' : 'warn',
+                    'rules'
+                );
+            }
+
+            foreach (array_slice((array) ($analysis['risks'] ?? []), 0, 2) as $i => $risk) {
+                $text = is_string($risk) ? $risk : (string) ($risk['message'] ?? $risk['title'] ?? '');
+                if ($text === '') {
+                    continue;
+                }
+                $cards[] = $this->card('rule_risk_' . $i, 'Watch item', $text, 'warn', 'rules');
+            }
+
+            $graph = is_array($analysis['hardware_graph'] ?? null) ? $analysis['hardware_graph'] : null;
+            if ($graph !== null) {
+                $summary = is_array($graph['summary'] ?? null) ? $graph['summary'] : [];
+                $edgeHint = (string) ($summary['primary_bottleneck'] ?? $summary['bottleneck'] ?? '');
+                if ($edgeHint !== '') {
+                    $cards[] = $this->card('graph', 'Graph bottleneck', $edgeHint, 'info', 'graph');
+                } else {
+                    $nodeCount = is_array($graph['nodes'] ?? null) ? count($graph['nodes']) : 0;
+                    $edgeCount = is_array($graph['edges'] ?? null) ? count($graph['edges']) : 0;
+                    $cards[] = $this->card('graph', 'Hardware graph', "{$nodeCount} nodes · {$edgeCount} edges captured for this run.", 'info', 'graph');
+                }
+            }
+        }
+
+        $cards = array_slice($cards, 0, 5);
+        foreach ($cards as &$c) {
+            $c = $this->validateCard($c);
+        }
+        unset($c);
+
+        return array_values(array_filter($cards));
+    }
+
+    /** @return array{id: string, title: string, body: string, severity: string, source: string} */
+    private function card(string $id, string $title, string $body, string $severity, string $source): array
+    {
+        return [
+            'id' => substr($id, 0, 32),
+            'title' => substr(trim($title), 0, 90),
+            'body' => substr(trim($body), 0, 400),
+            'severity' => in_array($severity, ['info', 'action', 'warn', 'ok'], true) ? $severity : 'info',
+            'source' => in_array($source, ['ai', 'rules', 'graph'], true) ? $source : 'rules',
+        ];
+    }
+
+    /** @param array<string, mixed> $card @return array{id: string, title: string, body: string, severity: string, source: string}|null */
+    private function validateCard(array $card): ?array
+    {
+        $id = preg_replace('/[^a-z0-9_\-]/i', '', (string) ($card['id'] ?? '')) ?: null;
+        $title = trim((string) ($card['title'] ?? ''));
+        $body = trim((string) ($card['body'] ?? ''));
+        if ($id === null || $title === '' || $body === '') {
+            return null;
+        }
+
+        return $this->card($id, $title, $body, (string) ($card['severity'] ?? 'info'), (string) ($card['source'] ?? 'rules'));
+    }
 }

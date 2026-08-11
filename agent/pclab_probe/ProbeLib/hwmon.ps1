@@ -31,6 +31,32 @@ function Get-ProbeHwMonTelemetry {
         $flat = @($data.sensors_flat)
         $cpuSensors = @($flat | Where-Object { "$($_.hardware_type)" -eq 'Cpu' -and "$($_.type)" -eq 'Temperature' })
 
+        # Tag every flat sensor with source + confidence for Hardware Reference.
+        $flatTagged = @()
+        foreach ($s in $flat) {
+            $row = @{
+                name          = $s.name
+                type          = $s.type
+                value         = $s.value
+                unit          = $s.unit
+                hardware      = $s.hardware
+                hardware_type = $s.hardware_type
+                source        = 'libre-hardware-monitor'
+                confidence    = if ($elevated -or ("$($s.hardware_type)" -ne 'Cpu')) { 'measured' } else { 'heuristic' }
+                elevated      = $elevated
+                plausible     = $true
+            }
+            if ("$($s.type)" -eq 'Temperature') {
+                $t = 0.0
+                if ([double]::TryParse("$($s.value)", [ref]$t)) {
+                    $row.plausible = ($t -ge 5 -and $t -le 125)
+                    if (-not $row.plausible) { $row.confidence = 'heuristic' }
+                }
+            }
+            $flatTagged += $row
+        }
+        $flat = $flatTagged
+
         $result = @{
             available      = $true
             collector      = "libre-hardware-monitor"

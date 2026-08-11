@@ -722,18 +722,31 @@ class DiagnosticHistoryService
         return array_intersect_key($analysis, array_flip([
             'mode', 'health_score', 'health_grade', 'metrics', 'bottleneck', 'risks',
             'issues', 'upgrade_suggestions', 'game_settings', 'report_summary',
-            'ai_narrative', 'ai_narrative_fa', 'ai',
+            'ai_narrative', 'ai_narrative_fa', 'ai', 'hardware_graph', 'devices', 'elevated',
+            'drivers',
         ]));
     }
 
     /** @param array<string, mixed> $raw */
     private function rawMeta(array $raw): array
     {
+        $devices = (array) ($raw['devices'] ?? []);
+        $summary = (array) ($devices['summary'] ?? []);
+
         return [
             'probe_version' => $raw['probe_version'] ?? null,
             'agent' => $raw['agent'] ?? null,
             'collected_at' => $raw['collected_at'] ?? null,
             'import_sources' => $raw['import_sources'] ?? [],
+            'elevated' => !empty($raw['elevated']),
+            'inventory' => [
+                'total_devices' => (int) ($summary['total_devices'] ?? 0),
+                'hidden_devices' => (int) ($summary['hidden_devices'] ?? 0),
+                'driverless' => (int) ($summary['driverless'] ?? 0),
+                'problem_devices' => (int) ($summary['problem_devices'] ?? 0),
+                'pci_devices' => (int) ($summary['pci_devices'] ?? 0),
+                'monitors' => (int) ($summary['monitors'] ?? 0),
+            ],
         ];
     }
 }

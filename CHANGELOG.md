@@ -6,6 +6,31 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [3.2.0] - 2026-08-11
+
+### Added
+- **Hardware Reference** tab: full PnP inventory including hidden/ghost devices, searchable tree, confidence-tagged fields, JSON export
+- Raw EDID parsing for monitors (preferred timing, HDR hint, manufacturer codes)
+- Deeper RAM SPD/SMBIOS fields with measured vs heuristic confidence
+- GPU-Z-class static fields (VBIOS, PCI location, driver branch, memory hints)
+- Expanded hardware knowledge graph (motherboard, chipset, BIOS/TPM, DIMMs, monitors, cooler/fans, full storage list)
+- Always-on Advanced system topology from probe inventory
+- Driver catalog v2 with `install_method` / `package_url` / version metadata
+- One-click **Install** on driver queue (probe `POST /drivers/install` — updater app, package download, or open vendor URL)
+- Command Center Full Lab suite, Sensor Deck, external stress launchers, suite smoke e2e
+- `DiagnosticInventoryService` + inventory present API
+
+### Changed
+- Probe PnP inventory no longer PresentOnly — Device Manager “show hidden” parity
+- LibreHardwareMonitor sensors tagged with source / confidence / plausible
+- Lab reports include a Hardware Reference section; history stores inventory summary
+- In-app Update button CSS hardened for Tauri WebView `[hidden]` behavior
+- Desktop package version aligned to 3.2.0
+
+### Removed
+- Store/builder leftovers: affiliate pricing (`BenchmarkPricingService`), Wallex USDT exchange, toman value scoring
+- Unused `AppReleaseService` (superseded by `AppUpdateService`)
+
 ## [3.1.1] - 2026-08-04
 
 ### Added

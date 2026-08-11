@@ -193,10 +193,11 @@ test('driver catalog json has required keys', function () {
     expect(is_file($path))->toBeTrue();
     $json = json_decode((string) file_get_contents($path), true);
     expect($json)->toBeArray()
-        ->and($json['version'] ?? null)->toBe(1)
+        ->and($json['version'] ?? null)->toBe(2)
         ->and($json['pci'])->toBeArray()->not->toBeEmpty()
         ->and($json['usb'])->toBeArray()->not->toBeEmpty()
         ->and($json['board_patterns'])->toBeArray()->not->toBeEmpty();
+    expect($json['pci'][0])->toHaveKey('install_method');
 
     foreach ($json['pci'] as $row) {
         expect($row)->toHaveKeys(['ven', 'category', 'label', 'url']);

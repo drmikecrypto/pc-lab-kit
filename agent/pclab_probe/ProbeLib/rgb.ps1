@@ -1,4 +1,4 @@
-﻿. "$PSScriptRoot\common.ps1"
+. "$PSScriptRoot\common.ps1"
 
 # Known USB RGB / LCD devices (VID/PID) - expanded as fingerprint library
 $script:KnownRgbDb = @(
@@ -193,7 +193,7 @@ function Get-RgbDeviceScan {
         }
         software = Get-RgbSoftwareHints
         enable_guide = $enableGuide
-        orchestrator_note_fa = if ($controlReady) { 'وخش می‌تواند رنگ فن‌ها و LCD را از telemetry همگام کند.' } else { 'ابتدا RGB را فعال کنید - راهنمای پاپ‌آپ را ببینید.' }
+        orchestrator_note_fa = if ($controlReady) { 'Orchestrator can رنگ فن‌ها و LCD را از telemetry همگام کند.' } else { 'ابتدا RGB را فعال کنید - راهنمای پاپ‌آپ را ببینید.' }
     }
 }
 
@@ -238,7 +238,7 @@ function Get-RgbEnableGuide {
     if ($Blocking.Count -gt 0) {
         $steps += "نرم‌افزارهای $($Blocking -join ', ') را ببندید - فقط یک کنترلر RGB همزمان می‌تواند سخت‌افزار را بگیرد."
     }
-    $steps += 'پس از فعال‌سازی، دکمه «اسکن مجدد RGB» را بزنید - وخش تنظیم خودکار را پیشنهاد می‌دهد.'
+    $steps += 'پس از فعال‌سازی، دکمه «اسکن مجدد RGB» را بزنید - Orchestrator suggests خودکار را پیشنهاد می‌دهد.'
 
     return @{
         title_fa = 'چرا RGB دیده می‌شود ولی کنترل نمی‌شود؟'

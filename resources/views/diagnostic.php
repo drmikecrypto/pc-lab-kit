@@ -16,14 +16,15 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.0.0">
 
 <div class="container dx-shell">
 
     <header class="dx-shell-hero">
         <div class="dx-shell-hero__inner">
-            <p class="dx-shell-eyebrow">PC Lab Kit diagnostic lab</p>
-            <h1 class="dx-shell-title">Check your PC in minutes</h1>
-            <p class="dx-shell-lead"><?= e($product['full_tagline'] ?? 'Quick health quiz in the browser · deep scan with PcLab Probe · history and telemetry on your machine.') ?></p>
+            <p class="dx-shell-eyebrow">PC Lab Kit</p>
+            <h1 class="dx-shell-title">PC Lab Kit</h1>
+            <p class="dx-shell-lead"><?= e($product['full_tagline'] ?? 'One local lab — Full Lab suite, live sensors, drivers, stress, RGB, optional BYOK AI.') ?></p>
             <div class="dx-shell-meta">
                 <span class="dx-shell-pill dx-shell-pill--live">Local only</span>
                 <span class="dx-shell-pill"><?= (int) $toolTotal ?> tools unified</span>
@@ -32,6 +33,29 @@ $toolTotal = $toolKit->total();
             </div>
         </div>
     </header>
+
+    <section class="dx-command-center glass-effect" id="dx-command-center" aria-label="Command Center">
+        <p class="dx-command-center__eyebrow">Command Center</p>
+        <h2 class="dx-command-center__title">Run Full Lab</h2>
+        <p class="dx-command-center__lead">One action: probe → benches → stress → scored report with advisor cards. Keep advanced tabs for power users.</p>
+        <div class="dx-command-center__row">
+            <label class="sr-only" for="dx-suite-profile">Suite profile</label>
+            <select id="dx-suite-profile" aria-label="Suite profile">
+                <option value="quick">Quick Lab (~5 min)</option>
+                <option value="standard" selected>Full Lab (~12 min)</option>
+                <option value="deep">Deep Lab (~20 min)</option>
+            </select>
+            <button type="button" class="dx-btn primary" id="dx-suite-run">Run Full Lab</button>
+            <button type="button" class="dx-btn ghost" id="dx-suite-cancel" hidden>Cancel</button>
+        </div>
+        <div class="dx-suite-progress" aria-hidden="true"><span id="dx-suite-progress-bar"></span></div>
+        <div class="dx-suite-meta">
+            <span id="dx-suite-step">Idle</span>
+            <span id="dx-suite-status">Ready when Probe is running</span>
+        </div>
+        <div id="dx-advisor-cards" class="dx-advisor-cards" hidden></div>
+        <div id="dx-suite-result" class="dx-suite-result" hidden></div>
+    </section>
 
     <section class="dx-pulse-hidden" id="dx-intelligence-pulse" aria-hidden="true">
         <div class="dx-pulse-bridge">
@@ -72,6 +96,7 @@ $toolTotal = $toolKit->total();
     <nav class="dx-tabs" aria-label="Lab sections">
         <div class="dx-tabs__list" role="tablist">
             <button type="button" class="dx-tab-btn is-active" role="tab" data-dx-tab="quick" aria-selected="true">Quick scan</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="hardware" aria-selected="false">Hardware Reference</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="full" aria-selected="false">Full scan</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="toolkit" aria-selected="false">Toolkit</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="history" aria-selected="false">History</button>
@@ -92,6 +117,37 @@ $toolTotal = $toolKit->total();
             <p class="dx-quick-hint muted fs-sm">Answer a few questions for a fast health score. For real sensors and OC suggestions, use <strong>Full scan</strong>.</p>
             <div id="dx-results" class="dx-results glass-effect" hidden></div>
         </div>
+    </div>
+
+    <div class="dx-tab-panel" data-dx-panel="hardware" role="tabpanel" id="dx-hardware-ref" hidden>
+        <section class="dx-hwref glass-effect" aria-label="Hardware Reference">
+            <div class="dx-hwref__head">
+                <div>
+                    <p class="dx-command-center__eyebrow">Hardware Reference</p>
+                    <h2>Every device · confidence tagged</h2>
+                    <p class="muted fs-sm">PnP including hidden/ghost · EDID · SPD · PCI/USB trees. Values show measured vs heuristic.</p>
+                </div>
+                <div class="dx-hwref__toolbar">
+                    <button type="button" class="dx-btn primary" id="dx-hwref-refresh">Scan inventory</button>
+                    <button type="button" class="dx-btn ghost" id="dx-hwref-export">Export JSON</button>
+                    <span class="dx-hwref__status" id="dx-hwref-status">Waiting for Probe…</span>
+                </div>
+            </div>
+            <div class="dx-hwref__banner" id="dx-hwref-elevate" hidden></div>
+            <div class="dx-hwref__filters" id="dx-hwref-filters">
+                <label><input type="checkbox" data-hw-filter="present" checked> Present</label>
+                <label><input type="checkbox" data-hw-filter="hidden" checked> Hidden</label>
+                <label><input type="checkbox" data-hw-filter="problem" checked> Problem</label>
+                <label><input type="checkbox" data-hw-filter="driverless" checked> Driverless</label>
+                <input type="search" id="dx-hwref-search" placeholder="Search name, VEN, DEV, instance…" class="dx-hwref__search">
+            </div>
+            <div class="dx-hwref__layout">
+                <div class="dx-hwref__tree" id="dx-hwref-tree"><p class="muted fs-sm">Connect Probe and scan to load the device tree.</p></div>
+                <div class="dx-hwref__detail" id="dx-hwref-detail"><p class="muted fs-sm">Select a device for every field.</p></div>
+            </div>
+            <div class="dx-hwref__topo" id="dx-hwref-topology" aria-label="System topology"></div>
+            <div class="dx-hwref__drivers" id="dx-hwref-drivers"></div>
+        </section>
     </div>
 
     <div class="dx-tab-panel" data-dx-panel="full" role="tabpanel" id="dx-full-scan" hidden>
@@ -229,6 +285,22 @@ $toolTotal = $toolKit->total();
 
     <div class="dx-tab-panel" data-dx-panel="advanced" role="tabpanel" hidden>
         <div class="dx-advanced-stack">
+            <section class="dx-sensor-deck dx-panel-card" id="dx-sensor-deck">
+                <div class="dx-tel-head">
+                    <div>
+                        <h2>Sensor Deck</h2>
+                        <p>Live gauges from Probe telemetry — save layout or export Rainmeter/JSON placeholders</p>
+                    </div>
+                    <div class="dx-tel-status" id="dx-deck-status">Waiting…</div>
+                </div>
+                <div class="dx-command-center__row" style="margin-bottom:0.75rem">
+                    <button type="button" class="dx-btn ghost" id="dx-deck-save">Save layout</button>
+                    <button type="button" class="dx-btn ghost" id="dx-deck-export-json">Export JSON</button>
+                    <button type="button" class="dx-btn ghost" id="dx-deck-export-rain">Export Rainmeter</button>
+                </div>
+                <div class="dx-sensor-deck__grid" id="dx-deck-grid"></div>
+            </section>
+
             <section class="dx-tel dx-panel-card" id="dx-telemetry">
                 <div class="dx-tel-head">
                     <div>
@@ -268,6 +340,21 @@ $toolTotal = $toolKit->total();
                     <div class="dx-rgb-devices" id="dx-rgb-devices"><div class="dx-rgb-empty">Scanning USB/HID…</div></div>
                 </div>
             </section>
+
+            <section class="dx-panel-card" id="dx-advanced-topology">
+                <div class="dx-tel-head">
+                    <div>
+                        <h2>System topology</h2>
+                        <p>Always-on graph from Probe inventory — chipset, DIMMs, cooler, PCI</p>
+                    </div>
+                    <button type="button" class="dx-btn ghost" id="dx-topo-refresh">Refresh topology</button>
+                </div>
+                <div id="dx-advanced-topo-svg" class="dx-hwref__topo"></div>
+            </section>
+
+            <section class="dx-panel-card" id="dx-launchers">
+                <p class="muted fs-sm">Loading external launchers…</p>
+            </section>
         </div>
     </div>
 
@@ -291,7 +378,12 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-compare.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-pulse.js?v=1.0.2"></script>
 <script defer src="/assets/js/diagnostic-lab.js?v=1.7.2"></script>
-<script defer src="/assets/js/diagnostic-live.js?v=1.6.1"></script>
+<script defer src="/assets/js/diagnostic-live.js?v=1.7.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
-<script defer src="/assets/js/diagnostic-oc.js?v=1.0.2"></script>
+<script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.1.4"></script>
+<script defer src="/assets/js/diagnostic-suite.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-topology.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-inventory.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-launchers.js?v=1.0.0"></script>

@@ -42,13 +42,28 @@ Identity: `"agent":"pclab-probe"`, collector `"pclab-hwmon"`.
 | GET/POST | `/rgb/*` | RGB scan / apply / LCD / auto |
 | POST | `/orchestrate` | RGB + fan + LCD orchestration |
 | GET/POST | `/bench/*`, `/stress/*` | Native benchmarks and stress |
+| POST/GET | `/suite/start\|status\|cancel` | Full Lab async suite |
+| GET/POST | `/launchers`, `/launchers/run` | Optional third-party stress tools |
+
+### Lab suite API (PHP)
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | `/api/diagnostic/suite/profiles` | Quick / Full / Deep profiles |
+| POST | `/api/diagnostic/suite/start` | Create suite job |
+| GET | `/api/diagnostic/suite/status/{id}` | Job progress |
+| POST | `/api/diagnostic/suite/cancel/{id}` | Cancel |
+| POST | `/api/diagnostic/suite/finalize/{id}` | Analyze probe suite → report + cards |
+| GET/POST | `/api/diagnostic/sensor-deck` | Sensor Deck layout |
+| GET | `/api/diagnostic/sensor-deck/export` | JSON or Rainmeter export |
+| POST | `/api/diagnostic/topology` | SVG topology from graph/probe |
 
 ## Standalone flow
 
 1. `.\scripts\install.ps1` then `.\scripts\start.ps1`
 2. Build probe: `.\scripts\build-agent-bundle.ps1`
 3. Run `agent/pclab_probe/Start-PcLabProbe.bat`
-4. Connect from the lab Full scan tab
+4. Use **Command Center → Run Full Lab**, or Connect from the Full scan tab
 
 ## Product identity
 

@@ -267,6 +267,12 @@ class DriverPackageMatcherService
         if (!$hasLinks) {
             $row['links'] = $resolved['links'];
         }
+        if (empty($row['install_method']) && is_array($resolved['primary_link'] ?? null)) {
+            $row['install_method'] = (string) ($resolved['primary_link']['install_method'] ?? 'open_url');
+            $row['package_version'] = (string) ($resolved['primary_link']['version'] ?? '');
+            $row['package_url'] = (string) ($resolved['primary_link']['package_url'] ?? '');
+            $row['installable'] = !empty($resolved['primary_link']['installable']);
+        }
 
         return $row;
     }
@@ -356,10 +362,18 @@ class DriverPackageMatcherService
      */
     private function hit(array $row, string $source): array
     {
+        $method = (string) ($row['install_method'] ?? 'open_url');
+
         return [
             'label' => (string) ($row['label'] ?? 'Driver package'),
             'url' => (string) ($row['url'] ?? ''),
             'note' => isset($row['note']) ? (string) $row['note'] : ($source !== '' ? 'source:' . $source : null),
+            'version' => isset($row['version']) ? (string) $row['version'] : null,
+            'package_url' => isset($row['package_url']) ? (string) $row['package_url'] : null,
+            'install_method' => $method,
+            'silent_args' => isset($row['silent_args']) ? (string) $row['silent_args'] : null,
+            'sha256' => isset($row['sha256']) ? (string) $row['sha256'] : null,
+            'installable' => in_array($method, ['inf_zip', 'msi', 'exe_silent', 'exe_ui', 'updater_app'], true),
         ];
     }
 

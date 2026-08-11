@@ -156,7 +156,7 @@ function Resolve-ProbeDriverPackage {
             if ($vid -and $VendorId -and $vid -ne $VendorId.ToLower()) { continue }
             if ($pid -and $pid -ne '*' -and $DeviceId -and $pid -ne $DeviceId.ToLower()) { continue }
             if ($row.category -and $Category -and "$($row.category)" -ne $Category -and $Category -ne 'peripherals') { continue }
-            $hit = @{ label = "$($row.label)"; url = "$($row.url)"; note = "$($row.note)"; source = 'catalog' }
+            $hit = New-ProbeDriverHit $row 'catalog'
             $links += $hit
             $score = 5
             if ($pid -and $pid -ne '*' -and $DeviceId -and $pid -eq $DeviceId.ToLower()) { $score += 40 }
@@ -180,7 +180,7 @@ function Resolve-ProbeDriverPackage {
             if ($row.category -and $Category -and "$($row.category)" -ne $Category) {
                 if (-not $nameHit -and ($dev -eq '*' -or -not $DeviceId)) { continue }
             }
-            $hit = @{ label = "$($row.label)"; url = "$($row.url)"; note = "$($row.note)"; source = 'catalog' }
+            $hit = New-ProbeDriverHit $row 'catalog'
             $links += $hit
             $score = 0
             if ($dev -and $dev -ne '*' -and $DeviceId -and $dev -eq $DeviceId.ToLower()) { $score += 40 }
@@ -243,9 +243,16 @@ function Resolve-ProbeDriverPackage {
     if (-not $primary -and $links.Count -gt 0) { $primary = $links[0] }
     if (-not $links -or $links.Count -eq 0) {
         $confidence = 'generic'
-        $links = @(@{ label = 'Windows Update drivers'; url = 'ms-settings:windowsupdate'; note = 'Optional updates often hide OEM drivers.'; source = 'generic' })
+        $links = @(@{
+            label = 'Windows Update drivers'; url = 'ms-settings:windowsupdate'
+            note = 'Optional updates often hide OEM drivers.'; source = 'generic'
+            install_method = 'open_url'; package_url = $null; version = $null; installable = $false
+        })
         $primary = $links[0]
     }
+
+    $method = if ($primary.install_method) { "$($primary.install_method)" } else { 'open_url' }
+    $installable = $method -in @('inf_zip', 'msi', 'exe_silent', 'exe_ui', 'updater_app')
 
     return @{
         match_confidence = $confidence
@@ -256,6 +263,31 @@ function Resolve-ProbeDriverPackage {
         bus              = $bus
         category         = $Category
         instance_id      = $InstanceId
+        install_method   = $method
+        package_version  = if ($primary.version) { "$($primary.version)" } else { $null }
+        package_url      = if ($primary.package_url) { "$($primary.package_url)" } else { $null }
+        installable      = $installable
+        silent_args      = if ($primary.silent_args) { "$($primary.silent_args)" } else { $null }
+        sha256           = if ($primary.sha256) { "$($primary.sha256)" } else { $null }
+        updater_names    = @($primary.updater_names)
+    }
+}
+
+function New-ProbeDriverHit {
+    param($Row, [string]$Source = 'catalog')
+    return @{
+        label          = "$($Row.label)"
+        url            = "$($Row.url)"
+        note           = "$($Row.note)"
+        source         = $Source
+        version        = if ($Row.version) { "$($Row.version)" } else { $null }
+        released       = if ($Row.released) { "$($Row.released)" } else { $null }
+        package_url    = if ($Row.package_url) { "$($Row.package_url)" } else { $null }
+        install_method = if ($Row.install_method) { "$($Row.install_method)" } else { 'open_url' }
+        silent_args    = if ($Row.silent_args) { "$($Row.silent_args)" } else { $null }
+        sha256         = if ($Row.sha256) { "$($Row.sha256)" } else { $null }
+        updater_names  = @($Row.updater_names)
+        installable    = ("$($Row.install_method)" -in @('inf_zip', 'msi', 'exe_silent', 'exe_ui', 'updater_app'))
     }
 }
 
@@ -653,6 +685,10 @@ function New-ProbeDriverAction {
         match_confidence = $resolved.match_confidence
         primary_link     = $resolved.primary_link
         links            = @($resolved.links)
+        install_method   = $resolved.install_method
+        package_version  = $resolved.package_version
+        package_url      = $resolved.package_url
+        installable      = [bool]$resolved.installable
     }
 }
 
@@ -861,6 +897,10 @@ function Get-ProbeDriverAdvice {
             match_confidence = $resolvedStep.match_confidence
             primary_link     = $resolvedStep.primary_link
             links            = @($resolvedStep.links)
+            install_method   = $resolvedStep.install_method
+            package_version  = $resolvedStep.package_version
+            package_url      = $resolvedStep.package_url
+            installable      = [bool]$resolvedStep.installable
         }
     }
 
@@ -887,6 +927,10 @@ function Get-ProbeDriverAdvice {
         $copy.match_confidence = $resolved.match_confidence
         $copy.primary_link = $resolved.primary_link
         $copy.links = @($resolved.links)
+        $copy.install_method = $resolved.install_method
+        $copy.package_version = $resolved.package_version
+        $copy.package_url = $resolved.package_url
+        $copy.installable = [bool]$resolved.installable
         $enrichedDriverless += $copy
     }
     if ($DeviceInventory -is [hashtable] -or $DeviceInventory.PSObject) {
@@ -945,5 +989,250 @@ function Get-ProbeDriverReport {
     return @{
         devices = $devices
         drivers = $advice
+    }
+}
+
+# ---------------------------------------------------------------------------
+# One-click driver install worker (user-confirmed via probe API)
+# ---------------------------------------------------------------------------
+
+function Get-ProbeDriverCacheDir {
+    $dir = Join-Path $env:LOCALAPPDATA 'PcLabKit\Probe\driver-cache'
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+    return $dir
+}
+
+function Get-ProbeDriverJobsDir {
+    $dir = Join-Path $env:LOCALAPPDATA 'PcLabKit\Probe\driver-jobs'
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+    return $dir
+}
+
+function Save-ProbeDriverInstallJob {
+    param($Job)
+    $path = Join-Path (Get-ProbeDriverJobsDir) ("$($Job.id).json")
+    ($Job | ConvertTo-Json -Depth 8) | Set-Content -Path $path -Encoding UTF8
+}
+
+function Start-ProbeDriverInstall {
+    param(
+        [string]$InstanceId = '',
+        [string]$QueueId = '',
+        [string]$Category = '',
+        [bool]$Confirm = $false
+    )
+
+    if (-not $Confirm) {
+        return @{ ok = $false; error = 'confirm_required'; message = 'Pass confirm=true after UI confirmation.' }
+    }
+
+    $elevated = Test-ProbeElevated
+    $jobId = [guid]::NewGuid().ToString('n').Substring(0, 12)
+    $before = $null
+    if ($InstanceId) {
+        try {
+            $d = Get-PnpDevice -InstanceId $InstanceId -ErrorAction SilentlyContinue
+            if ($d) {
+                $before = @{
+                    name = "$($d.FriendlyName)"
+                    status = "$($d.Status)"
+                    problem = if ($null -ne $d.Problem) { [int]$d.Problem } else { 0 }
+                }
+            }
+        } catch {}
+    }
+
+    . "$PSScriptRoot\devices.ps1"
+    $devices = Get-ProbeDeviceInventory
+    $board = $devices.motherboard
+    $sys = $devices.firmware.system
+    $target = $null
+    if ($InstanceId) {
+        foreach ($d in @($devices.all_devices)) {
+            if ("$($d.instance_id)" -eq $InstanceId) { $target = $d; break }
+        }
+    }
+    if (-not $Category -and $QueueId) { $Category = $QueueId }
+    if (-not $Category -and $target) { $Category = "$($target.category)" }
+    if (-not $Category) { $Category = 'chipset' }
+
+    $vendorId = if ($target) { "$($target.vendor_id)" } else { '' }
+    $deviceId = if ($target) { "$($target.device_id)" } else { '' }
+    $name = if ($target) { "$($target.name)" } else { $Category }
+    $vendor = Get-ProbeVendorTagFromId -VendorId $vendorId -Fallback 'unknown'
+    $resolved = Resolve-ProbeDriverPackage -Category $Category -VendorTag $vendor -DeviceName $name `
+        -InstanceId $InstanceId -VendorId $vendorId -DeviceId $deviceId `
+        -BoardMfr "$($board.manufacturer)" -BoardProduct "$($board.product)" `
+        -SystemMfr "$($sys.manufacturer)" -SystemModel "$($sys.model)"
+
+    $method = "$($resolved.install_method)"
+    if (-not $method) { $method = 'open_url' }
+
+    $job = @{
+        id = $jobId
+        status = 'running'
+        started_at = (Get-Date).ToUniversalTime().ToString('o')
+        instance_id = $InstanceId
+        queue_id = $QueueId
+        category = $Category
+        install_method = $method
+        package_version = $resolved.package_version
+        package_url = $resolved.package_url
+        elevated = $elevated
+        before = $before
+        log = @()
+        ok = $false
+    }
+    Save-ProbeDriverInstallJob $job
+
+    try {
+        if ($method -eq 'updater_app') {
+            $launched = $false
+            $names = @($resolved.updater_names)
+            if ($names.Count -eq 0) {
+                if ($vendor -eq 'nvidia') { $names = @('NVIDIA App', 'NVIDIA GeForce Experience') }
+                elseif ($vendor -eq 'amd') { $names = @('RadeonSoftware', 'AMDSoftware') }
+                elseif ($vendor -eq 'intel') { $names = @('IntelGraphicsSoftware', 'ArcControl') }
+            }
+            foreach ($n in $names) {
+                $p = Get-Process -Name $n -ErrorAction SilentlyContinue | Select-Object -First 1
+                if ($p) {
+                    try { Start-Process -FilePath $p.Path -ErrorAction SilentlyContinue } catch {}
+                    $launched = $true
+                    $job.log += "Focused running updater process: $n"
+                    break
+                }
+            }
+            $candidates = @(
+                "$env:ProgramFiles\NVIDIA Corporation\NVIDIA App\CEF\NVIDIA App.exe",
+                "$env:ProgramFiles\NVIDIA Corporation\NVIDIA GeForce Experience\NVIDIA GeForce Experience.exe",
+                "$env:ProgramFiles\AMD\CNext\CNext\RadeonSoftware.exe",
+                "${env:ProgramFiles(x86)}\AMD\CNext\CNext\RadeonSoftware.exe"
+            )
+            if (-not $launched) {
+                foreach ($c in $candidates) {
+                    if (Test-Path $c) {
+                        Start-Process -FilePath $c
+                        $launched = $true
+                        $job.log += "Launched updater: $c"
+                        break
+                    }
+                }
+            }
+            if (-not $launched -and $resolved.primary_link.url) {
+                Start-Process $resolved.primary_link.url
+                $job.log += "Opened vendor page (updater not installed)"
+                $job.status = 'needs_manual'
+                $job.ok = $true
+            } else {
+                $job.status = if ($launched) { 'updater_launched' } else { 'needs_manual' }
+                $job.ok = $true
+            }
+        } elseif ($method -in @('exe_silent', 'exe_ui', 'msi', 'inf_zip') -and $resolved.package_url) {
+            if (-not $elevated -and $method -ne 'exe_ui') {
+                $job.status = 'needs_elevation'
+                $job.log += 'Administrator elevation required for package install.'
+                $job.ok = $false
+            } else {
+                $cache = Get-ProbeDriverCacheDir
+                $ext = [IO.Path]::GetExtension(([uri]$resolved.package_url).AbsolutePath)
+                if (-not $ext) { $ext = '.exe' }
+                $dest = Join-Path $cache ("pkg_" + $jobId + $ext)
+                $job.log += "Downloading $($resolved.package_url)"
+                Invoke-WebRequest -Uri $resolved.package_url -OutFile $dest -UseBasicParsing -TimeoutSec 180
+                if ($resolved.sha256) {
+                    $hash = (Get-FileHash -Path $dest -Algorithm SHA256).Hash.ToLower()
+                    if ($hash -ne "$($resolved.sha256)".ToLower()) {
+                        throw "SHA256 mismatch: got $hash"
+                    }
+                    $job.log += 'SHA256 verified'
+                }
+                if ($method -eq 'msi') {
+                    $args = "/i `"$dest`" /qn /norestart"
+                    $p = Start-Process msiexec.exe -ArgumentList $args -Wait -PassThru
+                    $job.exit_code = $p.ExitCode
+                    $job.log += "msiexec exit $($p.ExitCode)"
+                } elseif ($method -eq 'inf_zip') {
+                    $extract = Join-Path $cache ("inf_" + $jobId)
+                    Expand-Archive -Path $dest -DestinationPath $extract -Force
+                    $inf = Get-ChildItem -Path $extract -Filter '*.inf' -Recurse | Select-Object -First 1
+                    if (-not $inf) { throw 'No INF in package' }
+                    $out = & pnputil.exe /add-driver $inf.FullName /install 2>&1 | Out-String
+                    $job.log += $out
+                    $job.exit_code = $LASTEXITCODE
+                } else {
+                    $args = if ($method -eq 'exe_silent' -and $resolved.silent_args) { "$($resolved.silent_args)" } else { '' }
+                    if ($method -eq 'exe_ui') {
+                        Start-Process -FilePath $dest
+                        $job.log += 'Opened installer UI'
+                        $job.status = 'installer_ui'
+                        $job.ok = $true
+                    } else {
+                        $p = Start-Process -FilePath $dest -ArgumentList $args -Wait -PassThru
+                        $job.exit_code = $p.ExitCode
+                        $job.log += "Installer exit $($p.ExitCode)"
+                    }
+                }
+                if ($job.status -eq 'running') {
+                    $job.status = 'completed'
+                    $job.ok = $true
+                }
+            }
+        } else {
+            $url = if ($resolved.primary_link.url) { $resolved.primary_link.url } else { 'ms-settings:windowsupdate' }
+            Start-Process $url
+            $job.status = 'needs_manual'
+            $job.log += "Opened $url"
+            $job.ok = $true
+        }
+    } catch {
+        $job.status = 'failed'
+        $job.error = $_.Exception.Message
+        $job.log += $_.Exception.Message
+        $job.ok = $false
+    }
+
+    $after = $null
+    if ($InstanceId) {
+        try {
+            $d = Get-PnpDevice -InstanceId $InstanceId -ErrorAction SilentlyContinue
+            if ($d) {
+                $after = @{
+                    name = "$($d.FriendlyName)"
+                    status = "$($d.Status)"
+                    problem = if ($null -ne $d.Problem) { [int]$d.Problem } else { 0 }
+                }
+            }
+        } catch {}
+    }
+    $job.after = $after
+    $job.finished_at = (Get-Date).ToUniversalTime().ToString('o')
+    Save-ProbeDriverInstallJob $job
+
+    return @{
+        ok = [bool]$job.ok
+        job = $jobId
+        status = $job.status
+        install_method = $method
+        package_version = $resolved.package_version
+        before = $before
+        after = $after
+        log = @($job.log)
+        elevated = $elevated
+        error = $job.error
+        primary_link = $resolved.primary_link
+    }
+}
+
+function Get-ProbeDriverInstallStatus {
+    param([string]$JobId)
+    if (-not $JobId) { return @{ ok = $false; error = 'unknown_job' } }
+    $path = Join-Path (Get-ProbeDriverJobsDir) ("$JobId.json")
+    if (-not (Test-Path $path)) { return @{ ok = $false; error = 'unknown_job' } }
+    try {
+        $job = Get-Content $path -Raw | ConvertFrom-Json
+        return @{ ok = $true; job = $job }
+    } catch {
+        return @{ ok = $false; error = $_.Exception.Message }
     }
 }

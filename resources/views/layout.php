@@ -23,7 +23,7 @@ $csrf = (string) $_SESSION['pclab_csrf'];
     <meta name="description" content="<?= e($meta_description ?? 'PC Lab Kit — local PC laboratory. Probe, test, monitor, tune.') ?>">
     <meta name="theme-color" content="#0a0e17">
     <meta name="csrf-token" content="<?= e($csrf) ?>">
-    <link rel="stylesheet" href="/assets/css/lab-shell.css?v=1.2.0">
+    <link rel="stylesheet" href="/assets/css/lab-shell.css?v=1.2.1">
 </head>
 <body class="pclab-body">
 <?php if (empty($footer_minimal)): ?>
@@ -54,6 +54,15 @@ $csrf = (string) $_SESSION['pclab_csrf'];
         </div>
         <p class="dx-settings-lead muted fs-sm">Optional AI advisor — stored locally in <code>storage/settings/local.json</code>. The lab works fully without it.</p>
         <form id="dx-settings-form" class="dx-settings-form">
+            <label class="dx-settings-field">
+                <span>Provider preset</span>
+                <select id="dx-settings-preset" name="llm_preset">
+                    <option value="openai">OpenAI</option>
+                    <option value="anthropic">Anthropic-compatible</option>
+                    <option value="ollama">Ollama (local)</option>
+                    <option value="custom">Custom URL</option>
+                </select>
+            </label>
             <label class="dx-settings-field">
                 <span>API key</span>
                 <input type="password" id="dx-settings-key" name="llm_api_key" autocomplete="off" placeholder="sk-… (leave blank to keep current)">

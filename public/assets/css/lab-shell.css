@@ -62,9 +62,20 @@
   background: rgba(34, 211, 238, 0.1);
 }
 
+.pclab-update-nav-btn[hidden],
+.pclab-update-banner[hidden] {
+  display: none !important;
+}
+
 .pclab-update-nav-btn:hover {
   color: #67e8f9;
   background: rgba(34, 211, 238, 0.18);
+}
+
+/* Native [hidden] is enough in browsers; reinforce for Tauri/WebView shells. */
+.pclab-update-nav-btn[hidden],
+.pclab-update-banner[hidden] {
+  display: none !important;
 }
 
 .dx-settings-update {

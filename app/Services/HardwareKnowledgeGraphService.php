@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Services;
 
 /**
- * Builds a small hardware knowledge graph from a normalized probe/report payload.
- * Nodes = components; edges = buses, thermal paths, bottlenecks, power.
+ * Builds a hardware knowledge graph from a normalized probe/report payload.
+ * Full inventory graph for UI/topology; use compact() for AI/TOON.
  */
 class HardwareKnowledgeGraphService
 {
@@ -48,6 +48,10 @@ class HardwareKnowledgeGraphService
         $storage = (array) ($report['storage'] ?? $report['disks'] ?? []);
         $sensors = (array) ($report['sensors'] ?? []);
         $network = (array) ($report['network'] ?? []);
+        $devices = (array) ($report['devices'] ?? []);
+        $board = (array) ($report['motherboard'] ?? $devices['motherboard'] ?? []);
+        $bios = (array) ($report['bios'] ?? $devices['bios'] ?? []);
+        $tpm = (array) ($devices['tpm'] ?? $report['tpm'] ?? []);
         $metrics = (array) ($analysis['metrics'] ?? []);
         $summary = (array) ($analysis['report_summary'] ?? []);
 
@@ -57,8 +61,47 @@ class HardwareKnowledgeGraphService
 
         $addNode('system', 'system', 'PC', [
             'form_factor' => $form,
-            'hostname' => $device['hostname'] ?? null,
+            'hostname' => $device['hostname'] ?? $device['computer_name'] ?? null,
+            'elevated' => !empty($report['elevated']) || !empty($device['elevated']),
         ]);
+
+        $boardLabel = trim((string) ($board['manufacturer'] ?? '') . ' ' . (string) ($board['product'] ?? ''));
+        if ($boardLabel !== '') {
+            $addNode('motherboard', 'motherboard', $boardLabel, [
+                'version' => $board['version'] ?? null,
+                'serial' => $board['serial'] ?? null,
+            ]);
+            $addEdge('motherboard', 'system', 'installed_in');
+        }
+
+        if (!empty($bios['version']) || !empty($bios['vendor'])) {
+            $addNode('bios', 'firmware', trim((string) ($bios['vendor'] ?? 'BIOS') . ' ' . (string) ($bios['version'] ?? '')), [
+                'date' => $bios['date'] ?? null,
+                'smbios' => isset($bios['smbios_major'])
+                    ? ($bios['smbios_major'] . '.' . ($bios['smbios_minor'] ?? ''))
+                    : null,
+            ]);
+            $parent = isset($nodes['motherboard']) ? 'motherboard' : 'system';
+            $addEdge('bios', $parent, 'firmware_of');
+        }
+
+        if (!empty($tpm['present'])) {
+            $addNode('tpm', 'security', 'TPM ' . (string) ($tpm['spec_version'] ?? ''), [
+                'enabled' => $tpm['enabled'] ?? null,
+                'activated' => $tpm['activated'] ?? null,
+            ]);
+            $addEdge('tpm', 'system', 'installed_in');
+        }
+
+        // Chipset heuristic from PCI / category inventory
+        $chipsetName = $this->findChipsetLabel($devices);
+        if ($chipsetName !== '') {
+            $addNode('chipset', 'chipset', $chipsetName);
+            $addEdge('chipset', isset($nodes['motherboard']) ? 'motherboard' : 'system', 'on_board');
+            if ($cpuModel !== '') {
+                $addEdge('cpu', 'chipset', 'connected_to');
+            }
+        }
 
         if ($cpuModel !== '') {
             $addNode('cpu', 'cpu', $cpuModel, [
@@ -68,6 +111,9 @@ class HardwareKnowledgeGraphService
                 'temp_max' => $metrics['cpu_temp_max'] ?? $sensors['cpu_temp_max'] ?? null,
             ]);
             $addEdge('cpu', 'system', 'installed_in');
+            if (isset($nodes['motherboard'])) {
+                $addEdge('cpu', 'motherboard', 'socketed_in');
+            }
         }
 
         if ($gpuModel !== '') {
@@ -77,6 +123,9 @@ class HardwareKnowledgeGraphService
                 'percentile' => $analysis['percentiles']['gpu'] ?? null,
                 'temp_max' => $metrics['gpu_temp_max'] ?? $sensors['gpu_temp_max'] ?? null,
                 'hotspot_max' => $metrics['gpu_hotspot_max'] ?? null,
+                'vbios' => $gpu['vbios'] ?? null,
+                'pcie_gen' => $gpu['pcie_gen'] ?? null,
+                'pcie_width' => $gpu['pcie_width'] ?? null,
             ]);
             $addEdge('gpu', 'system', 'installed_in');
             $addEdge('gpu', 'cpu', 'pcie_attached_to');
@@ -87,10 +136,33 @@ class HardwareKnowledgeGraphService
             $addNode('ram', 'memory', $ramGb . ' GB RAM', [
                 'channels' => $ram['channels'] ?? null,
                 'speed_mhz' => $ram['speed_mhz'] ?? $ram['configured_mhz'] ?? null,
-                'die_type' => $ram['die_type'] ?? null,
+                'die_type' => $ram['die_type'] ?? $ram['primary_die'] ?? null,
+                'spd_source' => $ram['spd_source'] ?? null,
             ]);
             $addEdge('ram', 'cpu', 'served_by');
             $addEdge('ram', 'system', 'installed_in');
+        }
+
+        foreach (array_values((array) ($ram['modules'] ?? [])) as $i => $mod) {
+            if (!is_array($mod)) {
+                continue;
+            }
+            $id = 'dimm_' . $i;
+            $cap = $mod['capacity_gb'] ?? null;
+            $label = trim((string) ($mod['manufacturer'] ?? '') . ' ' . (string) ($mod['part_number'] ?? ('DIMM ' . ($i + 1))));
+            if ($label === '') {
+                $label = 'DIMM ' . ($i + 1);
+            }
+            $addNode($id, 'dimm', $label, [
+                'capacity_gb' => $cap,
+                'speed_mhz' => $mod['configured_mhz'] ?? $mod['speed_mhz'] ?? null,
+                'bank' => $mod['bank_label'] ?? $mod['device_locator'] ?? null,
+                'die_type' => $mod['die_type'] ?? null,
+                'die_confidence' => $mod['die_confidence'] ?? null,
+                'timings_confidence' => $mod['timings_confidence'] ?? null,
+                'memory_type' => $mod['memory_type'] ?? null,
+            ]);
+            $addEdge($id, isset($nodes['ram']) ? 'ram' : 'system', 'module_of');
         }
 
         $watt = (int) ($psu['wattage'] ?? 0);
@@ -107,16 +179,17 @@ class HardwareKnowledgeGraphService
             }
         }
 
-        $disks = is_array($storage) && isset($storage[0]) ? $storage : (isset($storage['drives']) ? (array) $storage['drives'] : []);
-        foreach (array_slice($disks, 0, 4) as $i => $disk) {
+        $disks = is_array($storage) && isset($storage[0]) ? $storage : (isset($storage['disks']) ? (array) $storage['disks'] : (isset($storage['drives']) ? (array) $storage['drives'] : []));
+        foreach (array_values($disks) as $i => $disk) {
             if (!is_array($disk)) {
                 continue;
             }
             $label = (string) ($disk['model'] ?? $disk['name'] ?? ('Disk ' . ($i + 1)));
             $id = 'storage_' . $i;
             $addNode($id, 'storage', $label, [
-                'type' => $disk['type'] ?? $disk['media_type'] ?? null,
+                'type' => $disk['type'] ?? $disk['media_type'] ?? $disk['interface'] ?? null,
                 'size_gb' => $disk['size_gb'] ?? $disk['capacity_gb'] ?? null,
+                'health' => $disk['health'] ?? $disk['smart_status'] ?? null,
             ]);
             $addEdge($id, 'system', 'installed_in');
         }
@@ -127,6 +200,92 @@ class HardwareKnowledgeGraphService
                 'wifi' => $network['wifi_standard'] ?? null,
             ]);
             $addEdge('network', 'system', 'connected_to');
+        }
+
+        foreach (array_slice((array) (($devices['monitors']['displays'] ?? $devices['monitors'] ?? [])), 0, 8) as $i => $mon) {
+            if (!is_array($mon)) {
+                continue;
+            }
+            $id = 'monitor_' . $i;
+            $edid = is_array($mon['edid'] ?? null) ? $mon['edid'] : [];
+            $pref = is_array($edid['preferred_timing'] ?? null) ? $edid['preferred_timing'] : [];
+            $addNode($id, 'monitor', (string) ($mon['name'] ?? 'Display'), [
+                'manufacturer' => $mon['manufacturer'] ?? ($edid['manufacturer_code'] ?? null),
+                'serial' => $mon['serial'] ?? null,
+                'hdr' => $edid['hdr_capable'] ?? null,
+                'preferred' => isset($pref['width']) ? ($pref['width'] . 'x' . $pref['height'] . '@' . ($pref['refresh_hz'] ?? '?')) : null,
+                'confidence' => $mon['confidence'] ?? ($edid['confidence'] ?? null),
+            ]);
+            $addEdge($id, 'system', 'connected_to');
+        }
+
+        $batteryList = (array) ($report['battery'] ?? $devices['battery'] ?? []);
+        if ($batteryList !== [] && isset($batteryList[0]) && is_array($batteryList[0])) {
+            $b = $batteryList[0];
+            $addNode('battery', 'battery', (string) ($b['name'] ?? 'Battery'), [
+                'health_percent' => $b['health_percent'] ?? null,
+                'design_capacity' => $b['design_capacity'] ?? $b['designed_capacity_mwh'] ?? null,
+            ]);
+            $addEdge('battery', 'system', 'powers');
+        } elseif (is_array($batteryList) && isset($batteryList['health_percent'])) {
+            $addNode('battery', 'battery', 'Battery', [
+                'health_percent' => $batteryList['health_percent'] ?? null,
+            ]);
+            $addEdge('battery', 'system', 'powers');
+        }
+
+        // Cooler / fans from sensor deck
+        $fans = (array) ($sensors['fans'] ?? $report['hwmon']['fans'] ?? []);
+        if ($fans !== []) {
+            $addNode('cooler', 'cooler', 'Cooling', [
+                'fan_count' => count($fans),
+            ]);
+            $addEdge('cooler', 'cpu', 'cools');
+            $addEdge('cooler', 'system', 'installed_in');
+            foreach (array_slice($fans, 0, 6) as $fi => $fan) {
+                if (!is_array($fan)) {
+                    continue;
+                }
+                $fid = 'fan_' . $fi;
+                $addNode($fid, 'fan', (string) ($fan['name'] ?? ('Fan ' . ($fi + 1))), [
+                    'rpm' => $fan['value'] ?? $fan['rpm'] ?? null,
+                    'confidence' => $fan['confidence'] ?? 'measured',
+                ]);
+                $addEdge($fid, 'cooler', 'part_of');
+            }
+        }
+
+        foreach (array_slice((array) ($devices['usb']['devices'] ?? []), 0, 24) as $i => $u) {
+            if (!is_array($u)) {
+                continue;
+            }
+            $id = 'usb_' . $i;
+            $addNode($id, 'usb', (string) ($u['name'] ?? 'USB device'), [
+                'vendor_id' => $u['vendor_id'] ?? null,
+                'product_id' => $u['product_id'] ?? null,
+                'present' => $u['present'] ?? null,
+                'parent' => $u['parent_instance_id'] ?? null,
+            ]);
+            $addEdge($id, 'system', 'usb_attached');
+        }
+
+        foreach (array_slice((array) ($devices['pci'] ?? []), 0, 40) as $i => $p) {
+            if (!is_array($p)) {
+                continue;
+            }
+            // Skip if already represented as GPU/chipset primary
+            $name = (string) ($p['name'] ?? '');
+            if ($name === '' || stripos($name, 'Host bridge') !== false) {
+                continue;
+            }
+            $id = 'pci_' . $i;
+            $addNode($id, 'pci', $name, [
+                'vendor_id' => $p['vendor_id'] ?? null,
+                'device_id' => $p['device_id'] ?? null,
+                'present' => $p['present'] ?? null,
+                'problem_code' => $p['problem_code'] ?? null,
+            ]);
+            $addEdge($id, isset($nodes['chipset']) ? 'chipset' : 'system', 'pcie_endpoint');
         }
 
         $this->addDriverDeviceNodes($report, $addNode, $addEdge, $nodes);
@@ -180,13 +339,34 @@ class HardwareKnowledgeGraphService
                 'bottleneck' => $bnType !== '' ? $bnType : null,
                 'form_factor' => $form,
                 'driver_device_nodes' => $driverNodes,
+                'hidden_devices' => (int) ($devices['summary']['hidden_devices'] ?? 0),
+                'total_devices' => (int) ($devices['summary']['total_devices'] ?? 0),
             ],
         ];
     }
 
+    /** @param array<string, mixed> $devices */
+    private function findChipsetLabel(array $devices): string
+    {
+        foreach ((array) ($devices['by_category']['chipset'] ?? []) as $d) {
+            if (is_array($d) && !empty($d['name'])) {
+                return (string) $d['name'];
+            }
+        }
+        foreach ((array) ($devices['pci'] ?? []) as $d) {
+            if (!is_array($d)) {
+                continue;
+            }
+            $n = (string) ($d['name'] ?? '');
+            if (preg_match('/chipset|pch|LPC|SMBus|Host Bridge|Root Complex/i', $n)) {
+                return $n;
+            }
+        }
+
+        return '';
+    }
+
     /**
-     * Attach notable PnP / driver issues (capped) so AI and export see hardware identity.
-     *
      * @param array<string, mixed> $report
      * @param callable $addNode
      * @param callable $addEdge
@@ -211,6 +391,8 @@ class HardwareKnowledgeGraphService
                     'vendor_id' => $d['vendor_id'] ?? null,
                     'device_id' => $d['device_id'] ?? null,
                     'instance_id' => $d['instance_id'] ?? null,
+                    'present' => $d['present'] ?? null,
+                    'hidden' => $d['hidden'] ?? null,
                     'severity' => 'critical',
                 ],
             ];
@@ -275,7 +457,7 @@ class HardwareKnowledgeGraphService
         usort($candidates, static fn ($x, $y) => ($x['severity'] <=> $y['severity']));
         $seen = [];
         $added = 0;
-        foreach ($candidates as $i => $c) {
+        foreach ($candidates as $c) {
             if ($added >= 12) {
                 break;
             }
@@ -289,7 +471,6 @@ class HardwareKnowledgeGraphService
             }
             $seen[$key] = true;
             $id = 'dev_' . $added;
-            // Prefer attaching GPU issues to the gpu node when present.
             $parent = (isset($nodes['gpu']) && (($c['attrs']['category'] ?? '') === 'gpu')) ? 'gpu' : 'system';
             $addNode($id, 'device', $label, $c['attrs']);
             $addEdge($id, $parent, $c['relation'], [
@@ -309,12 +490,17 @@ class HardwareKnowledgeGraphService
     {
         $nodes = [];
         foreach ($graph['nodes'] as $n) {
+            $type = (string) ($n['type'] ?? '');
+            // Prefer core topology + driver issues for AI token budget
+            if (!in_array($type, ['system', 'cpu', 'gpu', 'memory', 'dimm', 'motherboard', 'chipset', 'firmware', 'storage', 'psu', 'network', 'cooler', 'monitor', 'device', 'battery', 'security'], true)) {
+                continue;
+            }
             $row = [
                 'id' => $n['id'] ?? '',
-                'type' => $n['type'] ?? '',
+                'type' => $type,
                 'label' => $n['label'] ?? '',
             ];
-            foreach (['score', 'percentile', 'temp_max', 'vram_gb', 'cores', 'speed_mhz', 'vendor_id', 'device_id', 'severity', 'category'] as $k) {
+            foreach (['score', 'percentile', 'temp_max', 'vram_gb', 'cores', 'speed_mhz', 'vendor_id', 'device_id', 'severity', 'category', 'confidence', 'present', 'hidden'] as $k) {
                 if (isset($n[$k]) && $n[$k] !== '' && $n[$k] !== null) {
                     $row[$k] = $n[$k];
                 }

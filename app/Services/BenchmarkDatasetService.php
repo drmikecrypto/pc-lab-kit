@@ -14,23 +14,16 @@ class BenchmarkDatasetService
     private array $catalog;
     /** @var array<string, array{rows: list<array>, stats: array}> */
     private array $memory = [];
-    private ?BenchmarkPricingService $pricing = null;
 
-    public function __construct(?string $projectRoot = null, ?BenchmarkPricingService $pricing = null)
+    public function __construct(?string $projectRoot = null)
     {
         $this->root = $projectRoot ?? dirname(__DIR__, 2);
         $this->catalog = require $this->root . '/config/benchmark_datasets.php';
-        $this->pricing = $pricing;
     }
 
     public function normalizeName(string $s): string
     {
         return $this->normalizeToken($s);
-    }
-
-    private function pricing(): BenchmarkPricingService
-    {
-        return $this->pricing ??= new BenchmarkPricingService(null, $this);
     }
 
     /** @return array<string, array<string, mixed>> */
@@ -102,9 +95,6 @@ class BenchmarkDatasetService
             $rows = array_values(array_filter($rows, fn ($r) => str_contains(mb_strtolower($r['name']), $needle)));
         }
 
-        $rows = $this->pricing()->applyToRows($rows);
-        $quote = $this->pricing()->quote();
-
         $sort = (string) ($opts['sort'] ?? ($meta['primary_metric'] ?? 'mark'));
         $dir = strtolower((string) ($opts['dir'] ?? 'desc')) === 'asc' ? 'asc' : 'desc';
         $rows = $this->sortRows($rows, $sort, $dir);
@@ -131,12 +121,6 @@ class BenchmarkDatasetService
                 'source_label' => self::sourceLabel(self::resolveSourceTier($meta['file'], $meta['source_tier'] ?? null)),
                 'source_label_fa' => self::sourceLabel(self::resolveSourceTier($meta['file'], $meta['source_tier'] ?? null)),
                 'stats' => $bundle['stats'],
-                'pricing' => [
-                    'usdt_rate' => $quote['rate'],
-                    'usdt_source' => $quote['source'],
-                    'usdt_stale' => $quote['stale'],
-                    'legacy_usd_toman' => UsdtExchangeService::LEGACY_USD_TOMAN,
-                ],
             ],
         ];
     }
@@ -163,12 +147,12 @@ class BenchmarkDatasetService
                     'label_fa' => $this->datasetLabel($this->catalog[$key], $key),
                 ]);
                 if (count($results) >= $limit) {
-                    return $this->rankSearchResults($this->pricing()->applyToRows($results), $needle);
+                    return $this->rankSearchResults($results, $needle);
                 }
             }
         }
 
-        return $this->rankSearchResults($this->pricing()->applyToRows($results), $needle);
+        return $this->rankSearchResults($results, $needle);
     }
 
     /** Match a catalog part — lab score primary, gold crowd data when available. */
@@ -359,20 +343,6 @@ class BenchmarkDatasetService
         return implode("\n", $lines);
     }
 
-    /** Top N performers for spark charts on palace landing. */
-    public function topPerformers(string $datasetKey, int $limit = 8): array
-    {
-        if (!isset($this->catalog[$datasetKey])) {
-            return [];
-        }
-        $meta = $this->catalog[$datasetKey];
-        $metric = $meta['primary_metric'] ?? 'mark';
-        $rows = $this->loadDataset($datasetKey)['rows'];
-        usort($rows, fn ($a, $b) => ((int) ($b[$metric] ?? 0)) <=> ((int) ($a[$metric] ?? 0)));
-
-        return array_slice($rows, 0, $limit);
-    }
-
     // --- internals ---
 
     private static function sourceLabel(string $tier): string
@@ -499,8 +469,6 @@ class BenchmarkDatasetService
             'value' => $this->fieldFloat($item, $fieldMap['value'] ?? 'Value %', ['Value %', 'CPU Value(higher is better)', 'Ratio']),
             'bench' => $this->extractBenchScore($item['Avg. bench %'] ?? null) ?? $mark,
             'mark_secondary' => $this->fieldInt($item, $fieldMap['mark_secondary'] ?? 'Secondary_Mark', ['Secondary_Mark']),
-            'price_usd' => $this->parsePriceUsd((string) ($item['Price (USD)'] ?? '')),
-            'price_toman' => $this->parsePriceToman((string) ($item['Price (Toman)'] ?? '')),
         ];
 
         if (($row['mark'] ?? 0) <= 0 && ($row['bench'] ?? 0) > 0) {
@@ -576,27 +544,6 @@ class BenchmarkDatasetService
         $clean = preg_replace('/[^\d]/', '', $val);
 
         return ($clean !== '' && $clean !== null) ? (int) $clean : null;
-    }
-
-    private function parsePriceUsd(string $val): ?float
-    {
-        if ($val === '' || $val === 'NA') {
-            return null;
-        }
-        if (!preg_match('/([\d,.]+)/', $val, $m)) {
-            return null;
-        }
-
-        return (float) str_replace(',', '', $m[1]);
-    }
-
-    private function parsePriceToman(string $val): ?int
-    {
-        if ($val === '' || $val === 'NA') {
-            return null;
-        }
-
-        return $this->parseInt($val);
     }
 
     /** @param list<array> $rows */

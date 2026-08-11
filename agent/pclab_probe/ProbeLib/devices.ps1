@@ -173,15 +173,15 @@ function Get-ProbePnpInventory {
     $devices = @()
     $problem = @()
     $driverless = @()
+    $hidden = @()
     $byCategory = @{}
 
     $raw = @()
     try {
-        # Get-PnpDevice is faster and richer than Win32_PnPEntity, and it is what
-        # Device Manager itself uses. Fall back to CIM if the module is missing.
-        $raw = @(Get-PnpDevice -PresentOnly -ErrorAction Stop)
+        # Include disconnected/hidden nodes (Device Manager "Show hidden devices").
+        $raw = @(Get-PnpDevice -ErrorAction Stop)
     } catch {
-        $raw = @(Get-CimSafe "Win32_PnPEntity" | Where-Object { $_.Present -eq $true })
+        $raw = @(Get-CimSafe "Win32_PnPEntity")
     }
 
     foreach ($d in $raw) {
@@ -195,8 +195,26 @@ function Get-ProbePnpInventory {
         if ($null -ne $d.ConfigManagerErrorCode) { $problemCode = [int]$d.ConfigManagerErrorCode }
         elseif ($null -ne $d.Problem) { $problemCode = [int]$d.Problem }
 
+        $present = $true
+        if ($null -ne $d.Present) { $present = [bool]$d.Present }
+        elseif ($problemCode -in @(45, 24)) { $present = $false }
+
+        $isGhost = (-not $present) -or ($problemCode -eq 45)
+        $isHidden = (-not $present) -or ($class -match 'SoftwareDevice|SoftwareComponent') -or $isGhost
+
         $parsed = ConvertFrom-PnpDeviceId $instanceId
         $category = Get-ProbeDeviceCategory -Class $class -Name $name -InstanceId $instanceId
+
+        $parentId = $null
+        $locationPaths = @()
+        try {
+            if (Get-Command Get-PnpDeviceProperty -ErrorAction SilentlyContinue) {
+                $parentProp = Get-PnpDeviceProperty -InstanceId $instanceId -KeyName 'DEVPKEY_Device_Parent' -ErrorAction SilentlyContinue
+                if ($parentProp -and $parentProp.Data) { $parentId = "$($parentProp.Data)" }
+                $locProp = Get-PnpDeviceProperty -InstanceId $instanceId -KeyName 'DEVPKEY_Device_LocationPaths' -ErrorAction SilentlyContinue
+                if ($locProp -and $locProp.Data) { $locationPaths = @($locProp.Data | ForEach-Object { "$_" }) }
+            }
+        } catch {}
 
         $entry = @{
             name            = $name
@@ -211,9 +229,16 @@ function Get-ProbePnpInventory {
             vendor_id       = $parsed.vendor_id
             device_id       = $parsed.device_id
             subsystem_id    = $parsed.subsystem_id
+            revision        = $parsed.revision
             vendor_name     = $parsed.vendor_name
             service         = if ($d.Service) { "$($d.Service)" } else { $null }
-            present         = $true
+            present         = $present
+            hidden          = [bool]$isHidden
+            ghost           = [bool]$isGhost
+            parent_instance_id = $parentId
+            location_paths  = @($locationPaths)
+            confidence      = 'measured'
+            source          = 'pnp'
         }
 
         # "Unknown device" with code 28 is the classic missing-driver case that
@@ -228,20 +253,27 @@ function Get-ProbePnpInventory {
 
         if ($entry.has_problem) { $problem += $entry }
         if ($isDriverless) { $driverless += $entry }
+        if ($isHidden -or -not $present) { $hidden += $entry }
     }
 
     $counts = @{}
     foreach ($k in $byCategory.Keys) { $counts[$k] = @($byCategory[$k]).Count }
 
+    $presentCount = @($devices | Where-Object { $_.present }).Count
+    $hiddenCount = @($devices | Where-Object { $_.hidden -or -not $_.present }).Count
+
     return @{
-        total          = $devices.Count
-        problem_count  = $problem.Count
+        total            = $devices.Count
+        present_count    = $presentCount
+        hidden_count     = $hiddenCount
+        problem_count    = $problem.Count
         driverless_count = $driverless.Count
-        counts         = $counts
-        by_category    = $byCategory
-        problem        = @($problem | Sort-Object { $_.problem_code } -Descending)
-        driverless     = @($driverless)
-        devices        = @($devices)
+        counts           = $counts
+        by_category      = $byCategory
+        problem          = @($problem | Sort-Object { $_.problem_code } -Descending)
+        driverless       = @($driverless)
+        hidden           = @($hidden)
+        devices          = @($devices)
     }
 }
 
@@ -249,6 +281,15 @@ function Get-ProbePciDevices {
     $list = @()
     foreach ($d in @(Get-CimSafe "Win32_PnPEntity" | Where-Object { $_.PNPDeviceID -match '^PCI\\' })) {
         $parsed = ConvertFrom-PnpDeviceId "$($d.PNPDeviceID)"
+        $present = if ($null -ne $d.Present) { [bool]$d.Present } else { $true }
+        $busLoc = $null
+        if ("$($d.PNPDeviceID)" -match 'BUS_([0-9A-F]+)&DEV_([0-9A-F]+)&FUNC_([0-9A-F]+)') {
+            $busLoc = @{
+                bus  = [Convert]::ToInt32($Matches[1], 16)
+                device = [Convert]::ToInt32($Matches[2], 16)
+                function = [Convert]::ToInt32($Matches[3], 16)
+            }
+        }
         $list += @{
             name         = "$($d.Name)"
             manufacturer = "$($d.Manufacturer)"
@@ -261,6 +302,11 @@ function Get-ProbePciDevices {
             problem_code = [int]$d.ConfigManagerErrorCode
             instance_id  = "$($d.PNPDeviceID)"
             class_guid   = "$($d.ClassGuid)"
+            present      = $present
+            hidden       = -not $present
+            pci_location = $busLoc
+            confidence   = 'measured'
+            source       = 'cim'
         }
     }
     return @($list | Sort-Object { $_.vendor_name }, { $_.name })
@@ -275,6 +321,7 @@ function Get-ProbeUsbTree {
             status       = "$($c.Status)"
             device_id    = "$($c.DeviceID)"
             pnp_id       = "$($c.PNPDeviceID)"
+            confidence   = 'measured'
         }
     }
 
@@ -285,13 +332,20 @@ function Get-ProbeUsbTree {
             status       = "$($h.Status)"
             device_id    = "$($h.DeviceID)"
             pnp_id       = "$($h.PNPDeviceID)"
+            confidence   = 'measured'
         }
     }
 
     $devices = @()
     try {
-        foreach ($d in @(Get-PnpDevice -Class USB -PresentOnly -ErrorAction SilentlyContinue)) {
+        foreach ($d in @(Get-PnpDevice -Class USB -ErrorAction SilentlyContinue)) {
             $parsed = ConvertFrom-PnpDeviceId "$($d.InstanceId)"
+            $present = if ($null -ne $d.Present) { [bool]$d.Present } else { $true }
+            $parentId = $null
+            try {
+                $pp = Get-PnpDeviceProperty -InstanceId $d.InstanceId -KeyName 'DEVPKEY_Device_Parent' -ErrorAction SilentlyContinue
+                if ($pp -and $pp.Data) { $parentId = "$($pp.Data)" }
+            } catch {}
             $devices += @{
                 name        = "$($d.FriendlyName)"
                 status      = "$($d.Status)"
@@ -300,6 +354,10 @@ function Get-ProbeUsbTree {
                 product_id  = $parsed.device_id
                 vendor_name = $parsed.vendor_name
                 class       = "$($d.Class)"
+                present     = $present
+                hidden      = -not $present
+                parent_instance_id = $parentId
+                confidence  = 'measured'
             }
         }
     } catch {
@@ -312,20 +370,131 @@ function Get-ProbeUsbTree {
                 vendor_id   = $parsed.vendor_id
                 product_id  = $parsed.device_id
                 vendor_name = $parsed.vendor_name
+                present     = if ($null -ne $d.Present) { [bool]$d.Present } else { $true }
+                confidence  = 'measured'
             }
         }
     }
 
     return @{
-        controllers = @($controllers)
-        hubs        = @($hubs)
-        devices     = @($devices)
+        controllers  = @($controllers)
+        hubs         = @($hubs)
+        devices      = @($devices)
         device_count = $devices.Count
     }
 }
 
+function ConvertFrom-ProbeEdidBytes {
+    param([byte[]]$Bytes)
+    if (-not $Bytes -or $Bytes.Length -lt 128) { return $null }
+    # EDID header must be 00 FF FF FF FF FF FF 00
+    if ($Bytes[0] -ne 0 -or $Bytes[1] -ne 0xFF -or $Bytes[7] -ne 0) { return $null }
+
+    $mfrWord = ($Bytes[8] -shl 8) -bor $Bytes[9]
+    $c1 = [char](64 + (($mfrWord -shr 10) -band 0x1F))
+    $c2 = [char](64 + (($mfrWord -shr 5) -band 0x1F))
+    $c3 = [char](64 + ($mfrWord -band 0x1F))
+    $mfrCode = "$c1$c2$c3"
+    $productCode = '{0:X4}' -f (($Bytes[11] -shl 8) -bor $Bytes[10])
+    $serial = [BitConverter]::ToUInt32($Bytes, 12)
+    $week = [int]$Bytes[16]
+    $year = 1990 + [int]$Bytes[17]
+    $edidVer = "$($Bytes[18]).$($Bytes[19])"
+    $hCm = [int]$Bytes[21]
+    $vCm = [int]$Bytes[22]
+    $gamma = if ($Bytes[23] -ne 0xFF) { [math]::Round(($Bytes[23] + 100) / 100.0, 2) } else { $null }
+
+    $feature = [int]$Bytes[24]
+    $digital = ($Bytes[20] -band 0x80) -ne 0
+    $hdrCapable = $false
+    $chroma = @{
+        rx = [math]::Round((($Bytes[27] -band 0x0C) -shr 2) / 1024.0 + ($Bytes[25] / 256.0), 4)
+        ry = [math]::Round(($Bytes[27] -band 0x03) / 1024.0 + ($Bytes[26] / 256.0), 4)
+        gx = [math]::Round((($Bytes[27] -band 0xC0) -shr 6) / 1024.0 + ($Bytes[27] / 256.0), 4)
+    }
+
+    # Preferred timing from first detailed descriptor at offset 54
+    $prefW = ($Bytes[56] + (($Bytes[58] -band 0xF0) -shl 4))
+    $prefH = ($Bytes[59] + (($Bytes[61] -band 0xF0) -shl 4))
+    $pixelClock = (($Bytes[55] -shl 8) -bor $Bytes[54]) * 10
+    $refresh = $null
+    if ($prefW -gt 0 -and $prefH -gt 0 -and $pixelClock -gt 0) {
+        $htotal = $prefW + (($Bytes[57] -band 0x0F) -shl 8) + $Bytes[57]  # rough
+        # Better: horizontal blanking
+        $hBlank = $Bytes[57] + (($Bytes[58] -band 0x0F) -shl 8)
+        $vBlank = $Bytes[60] + (($Bytes[61] -band 0x0F) -shl 8)
+        $hTotal = $prefW + $hBlank
+        $vTotal = $prefH + $vBlank
+        if ($hTotal -gt 0 -and $vTotal -gt 0) {
+            $refresh = [math]::Round(($pixelClock * 1000.0) / ($hTotal * $vTotal), 1)
+        }
+    }
+
+    # Extension blocks may advertise HDR (CTA-861)
+    if ($Bytes.Length -ge 256) {
+        for ($i = 128; $i -lt [math]::Min($Bytes.Length, 256) - 4; $i++) {
+            if ($Bytes[$i] -eq 0xE2 -and $Bytes[$i + 1] -eq 0x00) { $hdrCapable = $true; break }
+            if ($Bytes[$i] -eq 0x06 -and $Bytes[$i + 1] -eq 0xE2) { $hdrCapable = $true; break }
+        }
+    }
+
+    return @{
+        manufacturer_code = $mfrCode
+        product_code      = $productCode
+        serial_dword      = $serial
+        week              = $week
+        year              = $year
+        edid_version      = $edidVer
+        digital           = $digital
+        size_cm           = @{ width = $hCm; height = $vCm }
+        gamma             = $gamma
+        preferred_timing  = @{
+            width      = $prefW
+            height     = $prefH
+            refresh_hz = $refresh
+            pixel_clock_khz = $pixelClock
+        }
+        hdr_capable       = $hdrCapable
+        chroma_approx     = $chroma
+        feature_byte      = $feature
+        confidence        = 'measured'
+        source            = 'edid'
+    }
+}
+
+function Get-ProbeRawEdid {
+    param([string]$InstanceName)
+    # WmiMonitorDescriptorMethods: InstanceName matches WmiMonitorID
+    try {
+        $methods = Get-CimInstance -Namespace root\wmi -ClassName WmiMonitorDescriptorMethods -ErrorAction SilentlyContinue |
+            Where-Object { "$($_.InstanceName)" -eq $InstanceName }
+        foreach ($m in @($methods)) {
+            $r = Invoke-CimMethod -InputObject $m -MethodName WmiGetMonitorRawEEdidV1Block -Arguments @{ ReadOption = 0 } -ErrorAction SilentlyContinue
+            if ($r -and $r.BlockData) {
+                return ,[byte[]]$r.BlockData
+            }
+        }
+    } catch {}
+
+    # Registry EDID under DISPLAY keys
+    try {
+        $base = 'HKLM:\SYSTEM\CurrentControlSet\Enum\DISPLAY'
+        if (Test-Path $base) {
+            foreach ($mfr in (Get-ChildItem $base -ErrorAction SilentlyContinue)) {
+                foreach ($dev in (Get-ChildItem $mfr.PSPath -ErrorAction SilentlyContinue)) {
+                    $edidPath = Join-Path $dev.PSPath 'Device Parameters'
+                    $p = Get-ItemProperty -Path $edidPath -Name EDID -ErrorAction SilentlyContinue
+                    if ($p -and $p.EDID) { return ,[byte[]]$p.EDID }
+                }
+            }
+        }
+    } catch {}
+    return $null
+}
+
 function Get-ProbeMonitors {
     $list = @()
+    $edidSeen = @{}
     foreach ($m in @(Get-CimSafe "WmiMonitorID" -Namespace "root\wmi")) {
         $decode = {
             param($arr)
@@ -340,14 +509,46 @@ function Get-ProbeMonitors {
         $name = & $decode $m.UserFriendlyName
         $mfr  = & $decode $m.ManufacturerName
         $serial = & $decode $m.SerialNumberID
+        $inst = "$($m.InstanceName)"
+        $edid = $null
+        $raw = Get-ProbeRawEdid -InstanceName $inst
+        if ($raw) {
+            $edid = ConvertFrom-ProbeEdidBytes $raw
+            $key = if ($edid) { "$($edid.manufacturer_code)-$($edid.product_code)-$($edid.serial_dword)" } else { $inst }
+            if ($edidSeen.ContainsKey($key)) { $edid = $edidSeen[$key] } else { $edidSeen[$key] = $edid }
+        }
         $list += @{
-            name         = if ($name) { $name } else { 'Display' }
-            manufacturer = $mfr
-            serial       = $serial
-            year         = $m.YearOfManufacture
-            week         = $m.WeekOfManufacture
-            active       = [bool]$m.Active
-            instance_name = "$($m.InstanceName)"
+            name          = if ($name) { $name } else { 'Display' }
+            manufacturer  = $mfr
+            serial        = $serial
+            year          = $m.YearOfManufacture
+            week          = $m.WeekOfManufacture
+            active        = [bool]$m.Active
+            instance_name = $inst
+            edid          = $edid
+            confidence    = 'measured'
+            source        = if ($edid) { 'wmi+edid' } else { 'wmi' }
+        }
+    }
+
+    # If WMI ID list empty, still try registry EDID
+    if ($list.Count -eq 0) {
+        $raw = Get-ProbeRawEdid -InstanceName ''
+        if ($raw) {
+            $edid = ConvertFrom-ProbeEdidBytes $raw
+            if ($edid) {
+                $list += @{
+                    name = 'Display'
+                    manufacturer = $edid.manufacturer_code
+                    serial = "$($edid.serial_dword)"
+                    year = $edid.year
+                    week = $edid.week
+                    active = $true
+                    edid = $edid
+                    confidence = 'measured'
+                    source = 'registry-edid'
+                }
+            }
         }
     }
 
@@ -356,11 +557,13 @@ function Get-ProbeMonitors {
     foreach ($v in @(Get-CimSafe "Win32_VideoController")) {
         if (-not $v.CurrentHorizontalResolution) { continue }
         $modes += @{
-            adapter      = "$($v.Name)"
-            width        = [int]$v.CurrentHorizontalResolution
-            height       = [int]$v.CurrentVerticalResolution
-            refresh_hz   = [int]$v.CurrentRefreshRate
+            adapter        = "$($v.Name)"
+            width          = [int]$v.CurrentHorizontalResolution
+            height         = [int]$v.CurrentVerticalResolution
+            refresh_hz     = [int]$v.CurrentRefreshRate
             bits_per_pixel = [int]$v.CurrentBitsPerPixel
+            confidence     = 'measured'
+            source         = 'cim'
         }
     }
 
@@ -374,13 +577,17 @@ function Get-ProbeMonitors {
 function Get-ProbeAudioDevices {
     $list = @()
     try {
-        foreach ($d in @(Get-PnpDevice -Class MEDIA -PresentOnly -ErrorAction SilentlyContinue)) {
+        foreach ($d in @(Get-PnpDevice -Class MEDIA -ErrorAction SilentlyContinue)) {
+            $present = if ($null -ne $d.Present) { [bool]$d.Present } else { $true }
             $list += @{
-                name        = "$($d.FriendlyName)"
-                status      = "$($d.Status)"
-                instance_id = "$($d.InstanceId)"
+                name         = "$($d.FriendlyName)"
+                status       = "$($d.Status)"
+                instance_id  = "$($d.InstanceId)"
                 manufacturer = "$($d.Manufacturer)"
-                class       = 'MEDIA'
+                class        = 'MEDIA'
+                present      = $present
+                hidden       = -not $present
+                confidence   = 'measured'
             }
         }
     } catch {}
@@ -391,6 +598,8 @@ function Get-ProbeAudioDevices {
             manufacturer = "$($d.Manufacturer)"
             product_name = "$($d.ProductName)"
             class        = 'Sound'
+            present      = $true
+            confidence   = 'measured'
         }
     }
     # Deduplicate by name.
@@ -408,11 +617,15 @@ function Get-ProbeAudioDevices {
 function Get-ProbeBluetoothDevices {
     $list = @()
     try {
-        foreach ($d in @(Get-PnpDevice -Class Bluetooth -PresentOnly -ErrorAction SilentlyContinue)) {
+        foreach ($d in @(Get-PnpDevice -Class Bluetooth -ErrorAction SilentlyContinue)) {
+            $present = if ($null -ne $d.Present) { [bool]$d.Present } else { $true }
             $list += @{
                 name        = "$($d.FriendlyName)"
                 status      = "$($d.Status)"
                 instance_id = "$($d.InstanceId)"
+                present     = $present
+                hidden      = -not $present
+                confidence  = 'measured'
             }
         }
     } catch {}
@@ -597,6 +810,8 @@ function Get-ProbeDeviceInventory {
     return @{
         summary = @{
             total_devices    = $pnp.total
+            present_devices  = $pnp.present_count
+            hidden_devices   = $pnp.hidden_count
             problem_devices  = $pnp.problem_count
             driverless       = $pnp.driverless_count
             usb_devices      = $usb.device_count
@@ -622,9 +837,11 @@ function Get-ProbeDeviceInventory {
         battery      = @($battery)
         problem      = @($pnp.problem)
         driverless   = @($pnp.driverless)
+        hidden       = @($pnp.hidden)
         by_category  = $pnp.by_category
         findings     = @($findings)
         # Full dump is large; keep it available for the geek tab / export.
         all_devices  = @($pnp.devices)
+        schema       = @{ version = 2; confidence_rule = 'measured|vendor_table|heuristic|unavailable' }
     }
 }

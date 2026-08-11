@@ -87,8 +87,6 @@
     if (!data || typeof data !== 'object') return {};
     var m = data.metrics || {};
     var consultant = data.consultant || {};
-    var picks = consultant.catalog_picks || [];
-    var pickIds = [];
     var up0 = (data.upgrade_suggestions && data.upgrade_suggestions[0]) || {};
     return {
       health_grade: data.health_grade || '',
@@ -101,7 +99,6 @@
       form_factor: data.form_factor || '',
       mode: data.mode || '',
       consultant_stance: consultant.stance || '',
-      catalog_pick_ids: pickIds,
       gpu_score_bucket: gpuScoreBucket(m.gpu_score),
       thermal_band: thermalBand(m.gpu_temp_max, m.cpu_temp_max),
       upgrade_top_category: up0.category_slug || '',

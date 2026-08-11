@@ -21,6 +21,9 @@ class DiagnosticImportService
             'capframex_json', 'capframex' => $this->parseCapFrameXJson($content),
             'frametime_csv' => $this->parseFrametimeCsv($content),
             'cpuz_txt', 'cpuz' => $this->parseCpuZTxt($content),
+            'cinebench', 'cinebench_txt', 'cinebench_log' => $this->parseCinebench($content),
+            'geekbench', 'geekbench_json' => $this->parseGeekbench($content),
+            '3dmark', '3dmark_xml' => $this->parse3dMarkXml($content),
             default => ['gaming' => [], 'sensors' => [], 'source' => 'unknown'],
         };
     }
@@ -605,5 +608,108 @@ class DiagnosticImportService
         }
 
         return (float) $clean;
+    }
+
+    /**
+     * Cinebench R20/R23/2024 text log.
+     *
+     * @return array{gaming: array, sensors: array, geek?: array, source: string}
+     */
+    public function parseCinebench(string $content): array
+    {
+        $geek = [];
+        if (preg_match('/CPU\s*\(Multi[^\)]*\)\s*[:=]\s*([\d.,]+)/i', $content, $m)
+            || preg_match('/Multi[^\n]*?([\d]{3,5}(?:[.,]\d+)?)/i', $content, $m)) {
+            $geek['cinebench_mt'] = (float) str_replace(',', '', $m[1]);
+        }
+        if (preg_match('/CPU\s*\(Single[^\)]*\)\s*[:=]\s*([\d.,]+)/i', $content, $m)
+            || preg_match('/Single[^\n]*?([\d]{3,5}(?:[.,]\d+)?)/i', $content, $m)) {
+            $geek['cinebench_st'] = (float) str_replace(',', '', $m[1]);
+        }
+        if (preg_match('/Score\s*[:=]\s*([\d.,]+)/i', $content, $m) && empty($geek['cinebench_mt'])) {
+            $geek['cinebench_score'] = (float) str_replace(',', '', $m[1]);
+        }
+
+        return [
+            'gaming' => [],
+            'sensors' => [],
+            'geek' => $geek,
+            'source' => 'cinebench',
+            'imported_scores' => $geek,
+        ];
+    }
+
+    /**
+     * Geekbench 5/6 JSON export (or text with Single-Core / Multi-Core).
+     *
+     * @return array{gaming: array, sensors: array, geek?: array, source: string}
+     */
+    public function parseGeekbench(string $content): array
+    {
+        $trim = ltrim($content);
+        if (str_starts_with($trim, '{') || str_starts_with($trim, '[')) {
+            $json = json_decode($content, true);
+            if (is_array($json)) {
+                $geek = [
+                    'geekbench_single' => $json['score'] ?? $json['single_core_score'] ?? ($json['cpu']['single'] ?? null),
+                    'geekbench_multi' => $json['multicore_score'] ?? $json['multi_core_score'] ?? ($json['cpu']['multi'] ?? null),
+                    'geekbench_version' => $json['version'] ?? $json['geekbench_version'] ?? null,
+                ];
+
+                return [
+                    'gaming' => [],
+                    'sensors' => [],
+                    'geek' => array_filter($geek, static fn ($v) => $v !== null && $v !== ''),
+                    'source' => 'geekbench_json',
+                    'imported_scores' => array_filter($geek, static fn ($v) => $v !== null && $v !== ''),
+                ];
+            }
+        }
+
+        $geek = [];
+        if (preg_match('/Single[-\s]?Core[^0-9]*([\d]{3,5})/i', $content, $m)) {
+            $geek['geekbench_single'] = (int) $m[1];
+        }
+        if (preg_match('/Multi[-\s]?Core[^0-9]*([\d]{3,5})/i', $content, $m)) {
+            $geek['geekbench_multi'] = (int) $m[1];
+        }
+
+        return [
+            'gaming' => [],
+            'sensors' => [],
+            'geek' => $geek,
+            'source' => 'geekbench',
+            'imported_scores' => $geek,
+        ];
+    }
+
+    /**
+     * 3DMark XML result export (Time Spy / Fire Strike style scores).
+     *
+     * @return array{gaming: array, sensors: array, geek?: array, source: string}
+     */
+    public function parse3dMarkXml(string $content): array
+    {
+        $geek = [];
+        if (preg_match('/<(?:Score|OverallScore|threedmarkscore)[^>]*>\s*([\d.,]+)\s*</i', $content, $m)) {
+            $geek['3dmark_score'] = (float) str_replace(',', '', $m[1]);
+        }
+        if (preg_match('/<(?:GraphicsScore|GpuScore)[^>]*>\s*([\d.,]+)\s*</i', $content, $m)) {
+            $geek['3dmark_graphics'] = (float) str_replace(',', '', $m[1]);
+        }
+        if (preg_match('/<(?:PhysicsScore|CpuScore)[^>]*>\s*([\d.,]+)\s*</i', $content, $m)) {
+            $geek['3dmark_physics'] = (float) str_replace(',', '', $m[1]);
+        }
+        if (preg_match('/<(?:BenchmarkName|name)[^>]*>\s*([^<]+)\s*</i', $content, $m)) {
+            $geek['3dmark_benchmark'] = trim(html_entity_decode($m[1]));
+        }
+
+        return [
+            'gaming' => [],
+            'sensors' => [],
+            'geek' => $geek,
+            'source' => '3dmark_xml',
+            'imported_scores' => $geek,
+        ];
     }
 }
