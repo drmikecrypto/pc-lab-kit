@@ -48,14 +48,14 @@ function Get-ProbeSuiteProfiles {
         standard = @{
             id = 'standard'
             label = 'Full Lab'
-            benches = @('cpu', 'cpu_mt', 'memory', 'storage')
+            benches = @('cpu', 'cpu_mt', 'cpu_cache', 'memory', 'storage', 'gpu')
             stress_id = 'combined'
             stress_seconds = 180
         }
         deep = @{
             id = 'deep'
             label = 'Deep Lab'
-            benches = @('cpu', 'cpu_mt', 'memory', 'storage', 'gpu')
+            benches = @('cpu', 'cpu_mt', 'cpu_cache', 'memory', 'storage', 'gpu')
             stress_id = 'combined'
             stress_seconds = 300
         }

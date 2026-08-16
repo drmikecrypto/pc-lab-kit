@@ -24,7 +24,9 @@ function Copy-AppTree {
         'storage\cache',
         'public\downloads',
         'agent\pclab_probe\PcLabHwMon\bin',
-        'agent\pclab_probe\PcLabHwMon\obj'
+        'agent\pclab_probe\PcLabHwMon\obj',
+        'agent\pclab_probe\PcLabVkBench\bin',
+        'agent\pclab_probe\PcLabVkBench\obj'
     )
     $excludeFileNames = @('.env', '.DS_Store', 'Thumbs.db')
 
@@ -93,6 +95,11 @@ if (Test-Path $probeScript) {
     } catch {
         Write-Warning "PcLabHwMon build skipped: $_"
     }
+    try {
+        & (Join-Path $root 'scripts\build-pclab-vkbench.ps1')
+    } catch {
+        Write-Warning "PcLabVkBench build skipped: $_"
+    }
 }
 $probeSrc = Join-Path $root 'agent\pclab_probe'
 $probeDest = Join-Path $dest 'agent\pclab_probe'
@@ -104,6 +111,9 @@ if (Test-Path (Join-Path $probeSrc 'ProbeLib')) {
 }
 if (Test-Path (Join-Path $probeSrc 'PcLabHwMon.exe')) {
     Copy-Item (Join-Path $probeSrc 'PcLabHwMon.exe') $probeDest -Force
+}
+if (Test-Path (Join-Path $probeSrc 'PcLabVkBench.exe')) {
+    Copy-Item (Join-Path $probeSrc 'PcLabVkBench.exe') $probeDest -Force
 }
 if (Test-Path (Join-Path $probeSrc 'tools')) {
     Copy-Item (Join-Path $probeSrc 'tools') (Join-Path $probeDest 'tools') -Recurse -Force

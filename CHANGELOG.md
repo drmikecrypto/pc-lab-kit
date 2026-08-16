@@ -6,6 +6,21 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-08-17
+
+### Added
+- **Pillar D — Native Benchmark Arena**: `PcLabVkBench` GPU compute helper (D3D11 CS + Vulkan ICD detect); probe primary path for `/bench/gpu`
+- Native **CPU cache/latency** bench (`cpu_cache`) with L1/L2/L3/DRAM pointer-chase composite
+- DiskSpd **CDM-like** storage profiles (SEQ1M Q8T1/Q1T1, RND4K Q32T1/Q1T1) when `tools/DiskSpd/diskspd.exe` is present
+- Full Lab **standard/deep** profiles run GPU + `cpu_cache` alongside CPU/memory/storage
+- Toolkit catalog **Native** labels for benches; probe `/health` reports `vkbench`
+- Build/bundle scripts publish `PcLabVkBench.exe` with the probe zip and desktop payload
+
+### Changed
+- MASTER_PLAN doctrine: **capability-first** replacement via open engines (imports are bonus, not the strategy)
+- GPU NVML/`nvidia-smi` / host proxy retained only as **fallback** when the native helper is missing
+- Desktop / `APP_VERSION` aligned to 3.3.0
+
 ## [3.2.2] - 2026-08-17
 
 ### Fixed

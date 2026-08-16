@@ -1,10 +1,14 @@
+# Native benchmark arena — CPU / memory / storage / GPU (PcLabVkBench primary).
+# Dot-sourced from PcLabProbeServe.ps1
+
 function Get-ProbeBenchmarkCatalog {
     return @(
-        @{ id = 'cpu'; label = 'CPU micro-bench'; seconds_default = 5; max_seconds = 30 }
-        @{ id = 'cpu_mt'; label = 'CPU multi-thread'; seconds_default = 8; max_seconds = 45 }
-        @{ id = 'memory'; label = 'Memory bandwidth'; seconds_default = 5; max_seconds = 20 }
-        @{ id = 'storage'; label = 'Storage (DiskSpd/WinSAT)'; seconds_default = 10; max_seconds = 90 }
-        @{ id = 'gpu'; label = 'GPU compute'; seconds_default = 8; max_seconds = 40 }
+        @{ id = 'cpu'; label = 'Native CPU single-thread'; seconds_default = 5; max_seconds = 30 }
+        @{ id = 'cpu_mt'; label = 'Native CPU multi-thread'; seconds_default = 8; max_seconds = 45 }
+        @{ id = 'cpu_cache'; label = 'Native CPU cache/latency'; seconds_default = 6; max_seconds = 30 }
+        @{ id = 'memory'; label = 'Native memory bandwidth'; seconds_default = 5; max_seconds = 20 }
+        @{ id = 'storage'; label = 'Native storage (DiskSpd CDM)'; seconds_default = 10; max_seconds = 90 }
+        @{ id = 'gpu'; label = 'Native GPU compute'; seconds_default = 8; max_seconds = 40 }
     )
 }
 
@@ -27,14 +31,15 @@ function Invoke-ProbeCpuBenchmark {
         $score = if ($sw.Elapsed.TotalSeconds -gt 0) { [math]::Round($ops / $sw.Elapsed.TotalSeconds, 2) } else { 0 }
         return @{
             id = 'cpu'
-            label = 'PcLab CPU micro-bench'
+            label = 'PcLab native CPU single-thread'
             duration_s = [math]::Round($sw.Elapsed.TotalSeconds, 2)
             score = $score
             unit = 'Mops/s'
             threads = 1
             logical_processors = $threads
             method = 'single_thread_trig'
-            replaces = @('Cinebench', 'CPU-Z Benchmark', 'Linpack Xtreme')
+            engine = 'native_cpu_st'
+            replaces = @('Cinebench ST', 'CPU-Z Benchmark', 'Linpack Xtreme')
         }
     }
 
@@ -64,13 +69,78 @@ function Invoke-ProbeCpuBenchmark {
     $score = if ($sw.Elapsed.TotalSeconds -gt 0) { [math]::Round($totalOps / $sw.Elapsed.TotalSeconds, 2) } else { 0 }
     return @{
         id = 'cpu_mt'
-        label = 'PcLab CPU multi-thread'
+        label = 'PcLab native CPU multi-thread'
         duration_s = [math]::Round($sw.Elapsed.TotalSeconds, 2)
         score = $score
         unit = 'Mops/s'
         threads = $threads
         method = 'multi_thread_jobs'
+        engine = 'native_cpu_mt'
         replaces = @('Cinebench MT', 'Linpack Xtreme')
+    }
+}
+
+function Invoke-ProbeCpuCacheBenchmark {
+    param([int]$Seconds = 6)
+    $Seconds = [Math]::Max(3, [Math]::Min(30, $Seconds))
+    # Working-set sizes aim at L1 / L2 / L3-ish + DRAM (element = 8 bytes int64)
+    $profiles = @(
+        @{ name = 'l1'; kib = 32 }
+        @{ name = 'l2'; kib = 256 }
+        @{ name = 'l3'; kib = 4096 }
+        @{ name = 'dram'; kib = 16384 }
+    )
+    $latenciesNs = @{}
+    $scores = @{}
+    $swAll = [System.Diagnostics.Stopwatch]::StartNew()
+    $budgetPer = [Math]::Max(0.6, $Seconds / $profiles.Count)
+
+    foreach ($p in $profiles) {
+        $n = [Math]::Max(1024, [int](($p.kib * 1024) / 8))
+        $arr = New-Object long[] $n
+        # Coprime stride ring (fast init; still defeats simple prefetch)
+        $stride = 17L
+        if (($n % 17) -eq 0) { $stride = 19L }
+        for ($i = 0L; $i -lt $n; $i++) {
+            $arr[$i] = ($i + $stride) % $n
+        }
+
+        $steps = 0L
+        $end = (Get-Date).AddSeconds($budgetPer)
+        $sw = [System.Diagnostics.Stopwatch]::StartNew()
+        $cursor = 0L
+        while ((Get-Date) -lt $end) {
+            for ($k = 0; $k -lt 4096; $k++) {
+                $cursor = $arr[$cursor]
+            }
+            $steps += 4096
+        }
+        $sw.Stop()
+        $ns = if ($steps -gt 0 -and $sw.Elapsed.TotalSeconds -gt 0) {
+            [math]::Round(($sw.Elapsed.TotalSeconds * 1e9) / $steps, 2)
+        } else { 0 }
+        $latenciesNs[$p.name] = $ns
+        # Higher score = lower latency (index)
+        $scores[$p.name] = if ($ns -gt 0) { [math]::Round(10000.0 / $ns, 2) } else { 0 }
+    }
+    $swAll.Stop()
+    $composite = [math]::Round(
+        (0.35 * [double]$scores['l1']) +
+        (0.30 * [double]$scores['l2']) +
+        (0.25 * [double]$scores['l3']) +
+        (0.10 * [double]$scores['dram']), 2)
+
+    return @{
+        id = 'cpu_cache'
+        label = 'PcLab native CPU cache / latency'
+        duration_s = [math]::Round($swAll.Elapsed.TotalSeconds, 2)
+        score = $composite
+        unit = 'index'
+        method = 'pointer_chase'
+        engine = 'native_cpu_cache'
+        latency_ns = $latenciesNs
+        sub_scores = $scores
+        replaces = @('AIDA64 Cache', 'SiSoftware Sandra Cache')
     }
 }
 
@@ -93,11 +163,13 @@ function Invoke-ProbeMemoryBenchmark {
     $mbps = if ($sw.Elapsed.TotalSeconds -gt 0) { [math]::Round(($bytes / 1MB) / $sw.Elapsed.TotalSeconds, 1) } else { 0 }
     return @{
         id = 'memory'
-        label = 'PcLab memory bandwidth'
+        label = 'PcLab native memory bandwidth'
         duration_s = [math]::Round($sw.Elapsed.TotalSeconds, 2)
         score = $mbps
+        bandwidth_mb_s = $mbps
         unit = 'MB/s'
         buffer_mb = $sizeMb
+        engine = 'native_memory'
         replaces = @('PassMark RAM', 'AIDA64 Cache & Memory')
     }
 }
@@ -115,6 +187,27 @@ function Find-ProbeDiskSpd {
     return $null
 }
 
+function Find-ProbeVkBench {
+    $candidates = @(
+        (Join-Path $PSScriptRoot '..\PcLabVkBench.exe'),
+        (Join-Path $PSScriptRoot '..\tools\PcLabVkBench\PcLabVkBench.exe'),
+        (Join-Path $PSScriptRoot '..\PcLabVkBench\bin\PcLabVkBench.exe')
+    )
+    foreach ($c in $candidates) {
+        if (Test-Path $c) { return (Resolve-Path $c).Path }
+    }
+    return $null
+}
+
+function Get-DiskSpdTotalMbps {
+    param([string]$Output)
+    # DiskSpd table: total | MiB/s in third numeric column of "total:" line
+    if ($Output -match 'total:\s+\d+\s+\|\s+\d+\s+\|\s+([\d\.]+)') {
+        return [double]$Matches[1]
+    }
+    return $null
+}
+
 function Invoke-ProbeStorageBenchmark {
     param([string]$Drive = '')
     if (-not $Drive) { $Drive = $env:SystemDrive.TrimEnd(':') }
@@ -123,21 +216,49 @@ function Invoke-ProbeStorageBenchmark {
     $seqWrite = $null
     $rand4kRead = $null
     $rand4kWrite = $null
+    $profiles = $null
     $method = 'file_copy'
 
     $diskspd = Find-ProbeDiskSpd
     if ($diskspd) {
         $tmp = Join-Path $env:TEMP ("pclab_diskspd_" + [guid]::NewGuid().ToString('n') + ".dat")
         try {
-            # Sequential write then read, then 4K random read (short)
-            $null = & $diskspd -c64M -d3 -w100 -b64K -o4 -t1 "-f$tmp" 2>&1 | Out-String
-            $outW = & $diskspd -d3 -w100 -b64K -o4 -t1 "-f$tmp" 2>&1 | Out-String
-            $outR = & $diskspd -d3 -b64K -o4 -t1 "-f$tmp" 2>&1 | Out-String
-            $out4 = & $diskspd -d3 -b4K -o8 -t2 -r "-f$tmp" 2>&1 | Out-String
-            if ($outW -match 'total:\s+\d+\s+\|\s+\d+\s+\|\s+([\d\.]+)') { $seqWrite = [double]$Matches[1] }
-            if ($outR -match 'total:\s+\d+\s+\|\s+\d+\s+\|\s+([\d\.]+)') { $seqRead = [double]$Matches[1] }
-            if ($out4 -match 'total:\s+\d+\s+\|\s+\d+\s+\|\s+([\d\.]+)') { $rand4kRead = [double]$Matches[1] }
-            if ($seqRead -or $seqWrite) { $method = 'diskspd' }
+            # Create 1 GiB test file once (CDM-like working set; shorter duration for lab UX)
+            $null = & $diskspd -c1G -d1 -w100 -b1M -o1 -t1 "-f$tmp" 2>&1 | Out-String
+
+            # CrystalDiskMark-like presets (read then write where applicable)
+            $seq1mQ8R = & $diskspd -d5 -b1M -o8 -t1 "-f$tmp" 2>&1 | Out-String
+            $seq1mQ8W = & $diskspd -d5 -w100 -b1M -o8 -t1 "-f$tmp" 2>&1 | Out-String
+            $seq1mQ1R = & $diskspd -d5 -b1M -o1 -t1 "-f$tmp" 2>&1 | Out-String
+            $seq1mQ1W = & $diskspd -d5 -w100 -b1M -o1 -t1 "-f$tmp" 2>&1 | Out-String
+            $rnd4kQ32R = & $diskspd -d5 -b4K -o32 -t1 -r "-f$tmp" 2>&1 | Out-String
+            $rnd4kQ32W = & $diskspd -d5 -w100 -b4K -o32 -t1 -r "-f$tmp" 2>&1 | Out-String
+            $rnd4kQ1R = & $diskspd -d5 -b4K -o1 -t1 -r "-f$tmp" 2>&1 | Out-String
+            $rnd4kQ1W = & $diskspd -d5 -w100 -b4K -o1 -t1 -r "-f$tmp" 2>&1 | Out-String
+
+            $profiles = @{
+                'SEQ1M_Q8T1' = @{
+                    read_mbps = (Get-DiskSpdTotalMbps $seq1mQ8R)
+                    write_mbps = (Get-DiskSpdTotalMbps $seq1mQ8W)
+                }
+                'SEQ1M_Q1T1' = @{
+                    read_mbps = (Get-DiskSpdTotalMbps $seq1mQ1R)
+                    write_mbps = (Get-DiskSpdTotalMbps $seq1mQ1W)
+                }
+                'RND4K_Q32T1' = @{
+                    read_mbps = (Get-DiskSpdTotalMbps $rnd4kQ32R)
+                    write_mbps = (Get-DiskSpdTotalMbps $rnd4kQ32W)
+                }
+                'RND4K_Q1T1' = @{
+                    read_mbps = (Get-DiskSpdTotalMbps $rnd4kQ1R)
+                    write_mbps = (Get-DiskSpdTotalMbps $rnd4kQ1W)
+                }
+            }
+            $seqRead = $profiles['SEQ1M_Q8T1'].read_mbps
+            $seqWrite = $profiles['SEQ1M_Q8T1'].write_mbps
+            $rand4kRead = $profiles['RND4K_Q32T1'].read_mbps
+            $rand4kWrite = $profiles['RND4K_Q32T1'].write_mbps
+            if ($seqRead -or $seqWrite -or $rand4kRead) { $method = 'diskspd_cdm' }
         } catch {} finally {
             Remove-Item $tmp -Force -ErrorAction SilentlyContinue
         }
@@ -173,27 +294,40 @@ function Invoke-ProbeStorageBenchmark {
             Remove-Item $tmp -Force -ErrorAction SilentlyContinue
         }
     }
+
+    $score = 0.0
+    if ($seqRead) { $score += [double]$seqRead }
+    if ($seqWrite) { $score += [double]$seqWrite }
+    if ($rand4kRead) { $score += [double]$rand4kRead * 8 }
+    $score = [math]::Round($score, 1)
+
     return @{
         id = 'storage'
-        label = 'PcLab storage benchmark'
+        label = 'PcLab native storage (CDM-like)'
         drive = $Drive
         method = $method
+        engine = if ($method -eq 'diskspd_cdm') { 'diskspd_cdm' } else { $method }
         diskspd_available = [bool]$diskspd
+        score = $score
         seq_read_mbps = $seqRead
         seq_write_mbps = $seqWrite
+        seq_read_mb_s = $seqRead
+        seq_write_mb_s = $seqWrite
         rand_4k_read_mbps = $rand4kRead
         rand_4k_write_mbps = $rand4kWrite
+        profiles = $profiles
         unit = 'MB/s'
+        note = 'Place Microsoft DiskSpd at agent/pclab_probe/tools/DiskSpd/diskspd.exe for CDM-like SEQ1M/RND4K presets.'
         replaces = @('CrystalDiskMark', 'DiskSpd', 'AS SSD Benchmark')
     }
 }
 
-function Invoke-ProbeGpuBenchmark {
+function Invoke-ProbeGpuBenchmarkFallback {
     param([int]$Seconds = 8)
-    $Seconds = [Math]::Max(3, [Math]::Min(40, $Seconds))
     $method = 'inventory'
     $score = 0
     $detail = @{}
+    $fallback = 'nvml_or_host'
 
     if (Get-Command nvidia-smi -ErrorAction SilentlyContinue) {
         try {
@@ -203,7 +337,6 @@ function Invoke-ProbeGpuBenchmark {
                 $mem = [double]$p[1]
                 $sm = [double]$p[2]
                 $memClk = [double]$p[3]
-                # Rough open compute index (not a clone of 3DMark)
                 $score = [math]::Round(($mem / 1024.0) * 120 + ($sm / 10.0) + ($memClk / 20.0), 1)
                 $method = 'nvidia_smi_index'
                 $detail = @{
@@ -216,7 +349,6 @@ function Invoke-ProbeGpuBenchmark {
         } catch {}
     }
 
-    # Lightweight CPU-side "compute" loop as fallback / complement (Vulkan SDK not bundled)
     $sw = [System.Diagnostics.Stopwatch]::StartNew()
     $end = (Get-Date).AddSeconds([Math]::Min(4, $Seconds))
     $ops = 0L
@@ -236,16 +368,62 @@ function Invoke-ProbeGpuBenchmark {
 
     return @{
         id = 'gpu'
-        label = 'PcLab GPU compute'
+        label = 'PcLab GPU compute (fallback)'
         duration_s = [math]::Round($sw.Elapsed.TotalSeconds, 2)
         score = $score
         unit = 'index'
         method = $method
+        engine = $method
+        primary = $false
+        fallback = $fallback
         host_compute_mops = $cpuSide
         detail = $detail
-        note = 'Uses NVML/nvidia-smi when present; full Vulkan compute ships with native core. Not a 3DMark clone.'
+        note = 'Fallback path — PcLabVkBench.exe missing. Install native GPU helper for Vulkan/D3D11 compute scores.'
         replaces = @('Basemark GPU', 'SPECviewperf (workflow)')
     }
+}
+
+function Invoke-ProbeGpuBenchmark {
+    param([int]$Seconds = 8)
+    $Seconds = [Math]::Max(3, [Math]::Min(40, $Seconds))
+    $vk = Find-ProbeVkBench
+    if ($vk) {
+        try {
+            $raw = & $vk --seconds $Seconds 2>&1 | Out-String
+            $line = ($raw -split "`r?`n" | Where-Object { $_.Trim().StartsWith('{') } | Select-Object -Last 1)
+            if ($line) {
+                $j = $line | ConvertFrom-Json
+                if ($j.ok -eq $true -or $j.score) {
+                    return @{
+                        id = 'gpu'
+                        label = 'PcLab native GPU compute'
+                        duration_s = [double]($j.duration_s)
+                        score = [math]::Round([double]$j.score, 1)
+                        gflops = if ($null -ne $j.gflops) { [double]$j.gflops } else { $null }
+                        unit = if ($j.unit) { [string]$j.unit } else { 'index' }
+                        method = [string]$j.engine
+                        engine = [string]$j.engine
+                        api = [string]$j.api
+                        vulkan_available = [bool]$j.vulkan_available
+                        device = [string]$j.device
+                        adapter = [string]$j.adapter
+                        primary = $true
+                        fallback = $false
+                        detail = @{
+                            name = [string]$j.device
+                            dispatches = $j.dispatches
+                            elements = $j.elements
+                        }
+                        note = if ($j.note) { [string]$j.note } else { 'Native GPU compute via PcLabVkBench (D3D11 CS; Vulkan ICD when present).' }
+                        replaces = @('Basemark GPU', 'FurMark (score only)', '3DMark (compute workflow)')
+                    }
+                }
+            }
+        } catch {
+            # fall through to NVML/host
+        }
+    }
+    return Invoke-ProbeGpuBenchmarkFallback -Seconds $Seconds
 }
 
 function Invoke-ProbeBenchmark {
@@ -257,6 +435,7 @@ function Invoke-ProbeBenchmark {
     switch ($Id.ToLower()) {
         'cpu' { return Invoke-ProbeCpuBenchmark -Seconds $seconds }
         'cpu_mt' { return Invoke-ProbeCpuBenchmark -Seconds $seconds -MultiThread }
+        'cpu_cache' { return Invoke-ProbeCpuCacheBenchmark -Seconds $seconds }
         'memory' { return Invoke-ProbeMemoryBenchmark -Seconds $seconds }
         'storage' { return Invoke-ProbeStorageBenchmark -Drive $drive }
         'gpu' { return Invoke-ProbeGpuBenchmark -Seconds $seconds }

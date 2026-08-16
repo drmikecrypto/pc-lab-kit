@@ -110,11 +110,12 @@ class DiagnosticToolCatalogService
     public function runnableBench(): array
     {
         return [
-            ['id' => 'cpu', 'label' => 'CPU micro-bench', 'desc' => 'Multi-thread + AVX-aware synthetic (Cinebench-class workflow)', 'replaces' => ['Cinebench', 'CPU-Z Benchmark', 'Linpack Xtreme']],
-            ['id' => 'cpu_mt', 'label' => 'CPU multi-thread', 'desc' => 'All-core parallel micro-benchmark', 'replaces' => ['Cinebench MT']],
-            ['id' => 'memory', 'label' => 'Memory bandwidth', 'desc' => 'RAM throughput test', 'replaces' => ['PassMark RAM', 'AIDA64 Cache & Memory']],
-            ['id' => 'storage', 'label' => 'Storage (DiskSpd/WinSAT)', 'desc' => 'Seq + 4K via DiskSpd when present, else WinSAT/file copy', 'replaces' => ['CrystalDiskMark', 'DiskSpd', 'AS SSD Benchmark']],
-            ['id' => 'gpu', 'label' => 'GPU compute', 'desc' => 'Vulkan/OpenCL compute when available; else CUDA/DXGI inventory score', 'replaces' => ['Basemark GPU', 'FurMark (score only)']],
+            ['id' => 'cpu', 'label' => 'Native CPU single-thread', 'desc' => 'In-app ST micro-kernel — Cinebench-class workflow without proprietary binaries', 'replaces' => ['Cinebench', 'CPU-Z Benchmark', 'Linpack Xtreme']],
+            ['id' => 'cpu_mt', 'label' => 'Native CPU multi-thread', 'desc' => 'All-core parallel native micro-benchmark', 'replaces' => ['Cinebench MT']],
+            ['id' => 'cpu_cache', 'label' => 'Native CPU cache/latency', 'desc' => 'Pointer-chase L1/L2/L3/DRAM latency composite', 'replaces' => ['AIDA64 Cache', 'SiSoftware Sandra Cache']],
+            ['id' => 'memory', 'label' => 'Native memory bandwidth', 'desc' => 'In-app RAM throughput test', 'replaces' => ['PassMark RAM', 'AIDA64 Cache & Memory']],
+            ['id' => 'storage', 'label' => 'Native storage (CDM-like)', 'desc' => 'DiskSpd SEQ1M Q8/Q1 + RND4K Q32/Q1 when present; else WinSAT/file copy', 'replaces' => ['CrystalDiskMark', 'DiskSpd', 'AS SSD Benchmark']],
+            ['id' => 'gpu', 'label' => 'Native GPU compute', 'desc' => 'PcLabVkBench D3D11/Vulkan compute primary; NVML/host only as fallback', 'replaces' => ['Basemark GPU', 'FurMark (score only)']],
         ];
     }
 

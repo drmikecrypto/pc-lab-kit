@@ -19,6 +19,9 @@ final class AmbitiousUpgradeTest extends TestCase
         $svc = new LabSuiteService(dirname(__DIR__, 2));
         $profiles = $svc->profiles();
         $this->assertArrayHasKey('standard', $profiles);
+        $this->assertContains('gpu', $profiles['standard']['benches']);
+        $this->assertContains('cpu_cache', $profiles['standard']['benches']);
+        $this->assertContains('gpu', $profiles['deep']['benches']);
         $job = $svc->start(['profile' => 'quick', 'fp' => 'testfp']);
         $this->assertSame('pending', $job['status']);
         $this->assertNotEmpty($job['id']);

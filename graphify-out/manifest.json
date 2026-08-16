@@ -130,8 +130,8 @@
     "semantic_hash": ""
   },
   "app/Services/DiagnosticToolCatalogService.php": {
-    "mtime": 1785401314.3529599,
-    "ast_hash": "779ba53fb95cc7ec27a2fa3d3bbc3860",
+    "mtime": 1786923361.2125552,
+    "ast_hash": "245b74b8113733a6a3f464168d1f1c4f",
     "semantic_hash": ""
   },
   "app/Services/LlmService.php": {
@@ -270,8 +270,8 @@
     "semantic_hash": "03bbfe42d7762b80f4a8f2db1824689b"
   },
   "config/app.php": {
-    "mtime": 1786917956.51821,
-    "ast_hash": "051830e1be79b755de1d664b07ace045",
+    "mtime": 1786923461.2660303,
+    "ast_hash": "996062ecb56247a6c110fe8de32be68d",
     "semantic_hash": ""
   },
   "config/benchmark_datasets.php": {
@@ -425,8 +425,8 @@
     "semantic_hash": "c68cb6def03788595deea0f78c9fcf26"
   },
   "scripts/build-agent-bundle.ps1": {
-    "mtime": 1785400914.4857569,
-    "ast_hash": "660c735f6881b3a6ff3372c9ffe376c3",
+    "mtime": 1786923379.7357776,
+    "ast_hash": "8f2ec205272b6305e5ef3efb0b5f852e",
     "semantic_hash": ""
   },
   "scripts/generate_diagnostic_games.php": {
@@ -495,8 +495,8 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1786917963.6802113,
-    "ast_hash": "01168f9a8a423b015480e662a3ba5259",
+    "mtime": 1786923470.4355657,
+    "ast_hash": "8af9b2d603157eaafcdeed08e5c34ae9",
     "semantic_hash": ""
   },
   "CONTRIBUTING.md": {
@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "docs/MASTER_PLAN.md": {
-    "mtime": 1786918031.94432,
-    "ast_hash": "122719577d4dd235d7151e65dc904d72",
+    "mtime": 1786923474.4493883,
+    "ast_hash": "ccf992dcbf5acf2473cdfa7070a59fe6",
     "semantic_hash": ""
   },
   "docs/README.md": {
@@ -565,8 +565,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/PcLabProbeServe.ps1": {
-    "mtime": 1786887457.2156422,
-    "ast_hash": "4a2870a472ffdff87322bf97a64fdbd8",
+    "mtime": 1786923382.2096817,
+    "ast_hash": "530782d6bb7fc9736140275b63822044",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/amd.ps1": {
@@ -575,8 +575,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/benchmark.ps1": {
-    "mtime": 1785400888.9823656,
-    "ast_hash": "072740ecc5e511a409fb612378f58461",
+    "mtime": 1786923348.5929365,
+    "ast_hash": "bb2d03252fa70b43005a10ddfee7b561",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/common.ps1": {
@@ -700,8 +700,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/LabFeaturesTest.php": {
-    "mtime": 1785401083.354316,
-    "ast_hash": "6d0463b9f977f885e5f39a102503b419",
+    "mtime": 1786923461.2660303,
+    "ast_hash": "5d3b24412ff395c4bc61c6dc08243b7b",
     "semantic_hash": ""
   },
   "agent/pclab_probe/tools/OpenRGB/README.md": {
@@ -740,8 +740,8 @@
     "semantic_hash": ""
   },
   "desktop/package.json": {
-    "mtime": 1786917957.5289924,
-    "ast_hash": "90fb5376d993263bc6ce4e3e5bd8ce26",
+    "mtime": 1786923461.926579,
+    "ast_hash": "347abe9277e5aa196752df72256c5a4a",
     "semantic_hash": ""
   },
   "desktop/src-tauri/build.rs": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "desktop/src-tauri/tauri.conf.json": {
-    "mtime": 1786917958.745543,
-    "ast_hash": "2f827feffb042e5dd1bf6694ebb52985",
+    "mtime": 1786923466.4778726,
+    "ast_hash": "db2d637a0796d7c514afd79c0c5483ca",
     "semantic_hash": ""
   },
   "desktop/src/main.ts": {
@@ -800,8 +800,8 @@
     "semantic_hash": ""
   },
   "scripts/stage-desktop-payload.ps1": {
-    "mtime": 1785576104.423523,
-    "ast_hash": "1c763492f593735b110c7c15e4ba72da",
+    "mtime": 1786923381.404181,
+    "ast_hash": "8d99f66599bd6cdc19b051e568a7b66b",
     "semantic_hash": ""
   },
   "scripts/stage-desktop-payload.sh": {
@@ -925,13 +925,13 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/suite.ps1": {
-    "mtime": 1786463257.2385602,
-    "ast_hash": "a3515d23ec3b91efd31ac6fe840c5acb",
+    "mtime": 1786923361.2115495,
+    "ast_hash": "907847f49727c059e975d91cdce05435",
     "semantic_hash": ""
   },
   "app/Services/LabSuiteService.php": {
-    "mtime": 1786463257.060448,
-    "ast_hash": "f436e579e04616810e1f1f2767c39d6e",
+    "mtime": 1786923355.6027443,
+    "ast_hash": "d40b84c2c182d7b87da73f4c03ececa1",
     "semantic_hash": ""
   },
   "app/Services/SensorDeckService.php": {
@@ -970,8 +970,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/AmbitiousUpgradeTest.php": {
-    "mtime": 1786463983.4746592,
-    "ast_hash": "e91654698a0ee97bbfd73cde2f64c9ae",
+    "mtime": 1786923451.5473998,
+    "ast_hash": "9edf3fead35166b674c52228e669ceae",
     "semantic_hash": ""
   },
   "llms-full.txt": {
@@ -997,6 +997,36 @@
   "tests/Unit/RgbLabTest.php": {
     "mtime": 1786917881.3542092,
     "ast_hash": "55cdd6df6fb4bad7344f9cb81c9a9e26",
+    "semantic_hash": ""
+  },
+  "agent/pclab_probe/PcLabVkBench/PcLabVkBench.csproj": {
+    "mtime": 1786923156.7010796,
+    "ast_hash": "63b8dc549421ec8aeba835f1bc917f47",
+    "semantic_hash": ""
+  },
+  "agent/pclab_probe/PcLabVkBench/Program.cs": {
+    "mtime": 1786923237.090901,
+    "ast_hash": "de72aef5eeb8fbbd7475a32bf4df28f3",
+    "semantic_hash": ""
+  },
+  "scripts/build-pclab-vkbench.ps1": {
+    "mtime": 1786923159.6775537,
+    "ast_hash": "e3cd4c4051cc92318666e9c1550c2f5b",
+    "semantic_hash": ""
+  },
+  "tests/Unit/NativeBenchArenaTest.php": {
+    "mtime": 1786923504.5223582,
+    "ast_hash": "49be1abd211572ddd7e7ab8a3791e5cb",
+    "semantic_hash": ""
+  },
+  "agent/pclab_probe/tools/DiskSpd/README.md": {
+    "mtime": 1786923384.7976508,
+    "ast_hash": "8fb47fc34af88b4dd96191abefccb97a",
+    "semantic_hash": ""
+  },
+  "agent/pclab_probe/tools/PcLabVkBench/README.md": {
+    "mtime": 1786923385.1995933,
+    "ast_hash": "d651512d7581b32f5f79dd8332c0d701",
     "semantic_hash": ""
   }
 }

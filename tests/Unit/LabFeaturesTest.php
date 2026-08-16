@@ -90,6 +90,14 @@ test('tool catalog runnable lists expanded bench and stress profiles', function 
     $payload = (new \App\Services\DiagnosticToolCatalogService())->payload();
     $benchIds = array_column($payload['runnable']['bench'], 'id');
     $stressIds = array_column($payload['runnable']['stress'], 'id');
-    expect($benchIds)->toContain('cpu', 'cpu_mt', 'storage', 'gpu')
+    expect($benchIds)->toContain('cpu', 'cpu_mt', 'cpu_cache', 'storage', 'gpu')
         ->and($stressIds)->toContain('cpu', 'gpu', 'combined', 'quick');
+    $gpu = null;
+    foreach ($payload['runnable']['bench'] as $row) {
+        if (($row['id'] ?? '') === 'gpu') {
+            $gpu = $row;
+            break;
+        }
+    }
+    expect($gpu['label'] ?? '')->toContain('Native');
 });

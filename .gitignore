@@ -20,6 +20,9 @@ desktop/src-tauri/gen/
 agent/pclab_probe/PcLabHwMon/bin/
 agent/pclab_probe/PcLabHwMon/obj/
 agent/pclab_probe/PcLabHwMon.exe
+agent/pclab_probe/PcLabVkBench/bin/
+agent/pclab_probe/PcLabVkBench/obj/
+agent/pclab_probe/PcLabVkBench.exe
 temp.md
 /internal/
 aqtinstall.log

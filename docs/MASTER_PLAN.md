@@ -2,7 +2,7 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars **A** (Hardware Reference), **B** (reference benches/stress), and **C** (LCD GIF / blink / RGB Lab) shipped. Trust polish in **v3.2.2**.  
+**Status:** Active — Pillars A–D shipped through **v3.3.0** (Native Benchmark Arena: Vulkan/D3D11 GPU compute + stronger CPU/storage). Capability-first doctrine: own the full lab, not an import shell.  
 **Last updated:** 2026-08-17  
 **Repository:** [pc-lab-kit](../README.md)
 
@@ -19,14 +19,15 @@
 | Advisor cards + hardware graph on finalize | Shipped (R1) |
 | System tray + probe restart watchdog | Shipped (R1); Probe Status dialog + tooltip in 3.2.2 |
 | Sensor Deck + Rainmeter/JSON export | Shipped (R2); hotspot/VRAM/power/fan gauges in 3.2.2 |
-| Cinebench / Geekbench / 3DMark importers | Shipped (R2) |
+| Cinebench / Geekbench / 3DMark importers | Shipped (R2) — bonus path; native engines are primary |
 | External stress launchers (Prime95/OCCT/TM5 detect) | Shipped (R3) |
 | SVG topology + AI provider presets / Ollama URL | Shipped (R4) |
-| **Pillar A — Hardware Reference** (hidden PnP, EDID, SPD confidence, graph, Install button) | Shipped (3.2.0) |
+| **Pillar A — Hardware Reference** | Shipped (3.2.0) |
 | **Pillar B — Reference stress & benches** | Shipped |
-| **Pillar C — LCD GIF push, blink timing, RGB Lab** | Shipped (3.2.1); honest push status in 3.2.2 |
+| **Pillar C — LCD GIF push, blink timing, RGB Lab** | Shipped (3.2.1 / 3.2.2) |
+| **Pillar D — Native Benchmark Arena** (Vulkan GPU + CPU/storage suite) | Shipped (3.3.0) |
 | Linux probe parity | Parked (R5+) |
-| Full Vulkan compute suite | Partial (NVML/host proxy; native Vulkan later) |
+| Full Vulkan compute suite | Shipped compute helper in 3.3.0 (raster/3D suite later) |
 | Windows Service forever-on probe | Parked |
 | MP4 / video push to LCD panels | Backlog |
 
@@ -37,7 +38,7 @@
 1. [Executive vision](#executive-vision)
 2. [What you already have](#what-you-already-have-real-assets-not-vapor)
 3. [GitHub stars → design direction](#what-your-github-stars-tell-us-about-design-direction)
-4. [Honest scope: replacing 80 tools](#honest-scope-replacing-80-tools)
+4. [Capability scope: replace the workflow](#capability-scope-replace-the-workflow-and-exceed-it)
 5. [Module map](#module-map-80-tools--pc-lab-kit-modules)
 6. [Recommended architecture](#recommended-architecture-standalone--github-friendly)
 7. [Design system](#design-system-from-dull-sketch-to-engineering-showcase)
@@ -53,13 +54,11 @@
 
 ## Executive vision
 
-**One local app that replaces the scattered workflow** of HWiNFO + GPU-Z + OCCT + CrystalDiskMark + OpenRGB + Afterburner + upgrade spreadsheets — with a single probe, one dashboard, one AI advisor (BYOK API key), and one-click safe tuning where the OS allows it.
+**One local app that owns the full PC lab** — health, sensors, native benches, stress, drivers, RGB/LCD, safe OC, and optional BYOK AI — more capable than juggling HWiNFO + OCCT + CrystalDiskMark + iCUE + Afterburner for the same job.
 
 ### Positioning for GitHub
 
-> *"Open-source local PC laboratory — probe, benchmark, stress, monitor, sync RGB, and get specialist upgrade advice. Your data never leaves your machine except the AI call you choose to make."*
-
-This is credible because ~40% of the hard parts are already built inside this kit.
+> *"Open-source local PC laboratory — native probe, benchmark, stress, monitor, RGB/LCD, and specialist upgrade advice. Your data never leaves your machine except the AI call you choose to make."*
 
 ### Core principles
 
@@ -67,7 +66,8 @@ This is credible because ~40% of the hard parts are already built inside this ki
 |-----------|------|
 | **Local-first** | All probe, benchmark, stress, monitor, RGB, and report data stays on the user's PC |
 | **AI is optional** | User supplies their own API key (OpenAI, Anthropic, Ollama, custom URL) |
-| **Honest scope** | Unify workflow and open equivalents; import proprietary results; never pretend to clone closed ecosystems |
+| **Capability-first** | Ship real in-app engines (CPU/GPU/storage/RGB/LCD). Measure against corp apps by coverage and UX — not by trademark cloning. Imports are a bonus, not the strategy. |
+| **Open engines** | Vulkan, OpenRGB, DiskSpd, our kernels — original open implementations. No proprietary binaries as the product core. |
 | **Safety-first OC** | Reversible OS-level tuning only; BIOS/voltage/XMP = advisory, never silent apply |
 | **Engineering showcase** | Architecture, tests, and UI quality should impress reviewers and contributors |
 
@@ -108,17 +108,18 @@ Analysis based on public starred repos on [@drmikecrypto](https://github.com/drm
 
 ---
 
-## Honest scope: replacing 80 tools
+## Capability scope: replace the workflow (and exceed it)
 
-You **cannot** legally or practically clone 3DMark, Cinebench, PCMark, iCUE, Synapse, etc.
+PC Lab Kit’s job is to **be the lab** — not a thin launcher around closed apps.
 
-You **can** become the **single shell** that:
+1. **Native benches** — CPU ST/MT/cache, storage (DiskSpd CDM-class profiles), GPU (Vulkan compute helper) inside the probe
+2. **Native stress + certificates** — built-in soak with telemetry; optional launchers only as extras
+3. **Monitor everything the OS exposes** — LHM + WMI + NVML + inventory depth
+4. **RGB + LCD** — OpenRGB unified control, blink timing, GIF/panel pipeline
+5. **Advise** — local rules + optional BYOK AI
+6. **Imports** — still accepted when the user already has Cinebench/3DMark logs; never the primary path
 
-1. **Runs native open benchmarks** where equivalents exist
-2. **Imports** results from proprietary tools users already own
-3. **Monitors/stresses** via open engines + your agent
-4. **Controls RGB** via OpenRGB (already started)
-5. **Advises** with local rules + optional AI
+Corp apps (3DMark, Cinebench, iCUE, Synapse, …) are the **capability bar**, not sacred cows. We match and exceed their workflows with **our own open engines**.
 
 ### Reference: 80-tool categories
 
@@ -214,16 +215,16 @@ flowchart TB
 
 | Category | Replace strategy | Priority |
 |----------|------------------|----------|
-| **Monitoring** (HWiNFO, GPU-Z, CPU-Z, Core Temp…) | Agent + LHM C# helper — **already ~70% there** | P0 |
-| **Stress** (Prime95, OCCT, AIDA64…) | Orchestrate open tools + unified telemetry overlay | P0 |
-| **Storage bench** (CrystalDiskMark, DiskSpd…) | Embed **DiskSpd** + parse fio output | P0 |
-| **CPU bench** (Cinebench, Geekbench…) | Custom multi-thread + AVX suite + **import** Cinebench/Geekbench exports | P1 |
-| **GPU bench** (3DMark, FurMark…) | Vulkan compute + **import** 3DMark XML; optional FurMark launcher | P1 |
-| **RAM test** (MemTest86, TestMem5…) | Boot MemTest86 USB guide + TestMem5 profile runner | P1 |
-| **Full-system** (PCMark, Novabench…) | Composite score from module results + Phoronix-style suite (optional) | P2 |
-| **RGB** (iCUE, Synapse, Mystic Light…) | **OpenRGB** single protocol — document unsupported devices honestly | P0 |
-| **Sensor panels** (Rainmeter, AIDA64 panel…) | Built-in **Sensor Deck** + export to Rainmeter/HWiNFO shared memory | P2 |
-| **Enterprise** (BurnInTest, SPEC, MLPerf…) | Burn-in orchestration mode + import SPEC/MLPerf logs | P3 |
+| **Monitoring** (HWiNFO, GPU-Z, CPU-Z, Core Temp…) | Agent + LHM — deepen until it owns the dashboard | P0 |
+| **Stress** (Prime95, OCCT, AIDA64…) | Built-in soak + certificate first; launchers as optional | P0 |
+| **Storage bench** (CrystalDiskMark, DiskSpd…) | Native DiskSpd CDM-class profiles in-probe | P0 |
+| **CPU bench** (Cinebench, Geekbench…) | Native ST/MT/cache suite + percentiles; import optional | P0 |
+| **GPU bench** (3DMark, FurMark…) | Native Vulkan compute (3.3); raster suite later; import optional | P0 |
+| **RAM test** (MemTest86, TestMem5…) | In-OS stress + optional TM5 launcher | P1 |
+| **Full-system** (PCMark, Novabench…) | Composite Full Lab score from native modules | P1 |
+| **RGB** (iCUE, Synapse, Mystic Light…) | OpenRGB + Orchestrator — expand device coverage | P0 |
+| **Sensor panels** (Rainmeter, AIDA64 panel…) | Sensor Deck + LCD dashboard + GIF push | P1 |
+| **Enterprise** (BurnInTest, SPEC, MLPerf…) | Burn-in profiles + log import | P2 |
 
 ---
 
@@ -492,7 +493,7 @@ pc-lab-kit/
 
 - [x] DiskSpd integration (storage module; when binary present)
 - [x] CPU micro-benchmark suite (multi-thread, AVX, cache)
-- [ ] GPU Vulkan compute benchmark (NVML/host proxy today; native Vulkan later)
+- [x] GPU Vulkan compute benchmark (`PcLabVkBench` native helper; NVML/host only as fallback)
 - [x] Unified **Lab Report** HTML / print-to-PDF with scores + percentiles vs JSON DB
 - [x] Import parsers expanded: 3DMark XML, Cinebench log, Geekbench export
 
@@ -563,15 +564,15 @@ pc-lab-kit/
 
 ## Immediate next steps
 
-1. **Native Vulkan GPU bench** (replace NVML/host proxy) when ready for a 3.3-themed release
-2. **MP4 / video push** to cooler LCDs where OpenRGB or vendor SDK allows it
-3. **Linux probe parity** (parked R5+) for non-Windows assemblers
-4. **Community device fingerprints** — PRs for more AIO/case LCD VID/PIDs
-5. Keep English-first UI; FA remains a locale layer, not the GitHub default
+1. **Ship Pillar D (3.3.0)** — native Vulkan GPU compute + CPU ST/MT/cache + DiskSpd CDM profiles in Full Lab
+2. **RGB/LCD depth** — timelines, MP4-to-panel, more cooler fingerprints (SignalRGB/iCUE-class)
+3. **Sensor density** — HWiNFO-class shared memory / every-sensor overlays
+4. **Raster GPU suite** — after compute scores are trusted
+5. **Linux probe parity** when Windows native arena is solid
 
 ### Recommended focus
 
-Trust and hardware coverage over new pillars until Vulkan / LCD video have clear owners.
+Build capability. Imports and launchers are secondary. Vulkan + native benches first, then RGB/LCD and sensor depth.
 ---
 
 ## Assumptions

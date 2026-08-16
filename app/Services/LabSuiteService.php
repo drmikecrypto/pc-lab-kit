@@ -35,16 +35,16 @@ class LabSuiteService
             'standard' => [
                 'id' => 'standard',
                 'label' => 'Full Lab',
-                'duration_hint_min' => 12,
-                'benches' => ['cpu', 'cpu_mt', 'memory', 'storage'],
+                'duration_hint_min' => 14,
+                'benches' => ['cpu', 'cpu_mt', 'cpu_cache', 'memory', 'storage', 'gpu'],
                 'stress_id' => 'combined',
                 'stress_seconds' => 180,
             ],
             'deep' => [
                 'id' => 'deep',
                 'label' => 'Deep Lab',
-                'duration_hint_min' => 20,
-                'benches' => ['cpu', 'cpu_mt', 'memory', 'storage', 'gpu'],
+                'duration_hint_min' => 22,
+                'benches' => ['cpu', 'cpu_mt', 'cpu_cache', 'memory', 'storage', 'gpu'],
                 'stress_id' => 'combined',
                 'stress_seconds' => 300,
             ],
@@ -264,7 +264,7 @@ class LabSuiteService
                 continue;
             }
             $id = (string) ($row['id'] ?? '');
-            if ($id === 'cpu' || $id === 'cpu-mt') {
+            if ($id === 'cpu' || $id === 'cpu-mt' || $id === 'cpu_mt') {
                 if (isset($row['score'])) {
                     $metrics['cpu_score'] = (int) $row['score'];
                 }
@@ -272,19 +272,37 @@ class LabSuiteService
                     $metrics['cpu_ops'] = $row['ops_per_sec'];
                 }
             }
-            if ($id === 'memory' && isset($row['bandwidth_mb_s'])) {
-                $metrics['mem_bandwidth_mb_s'] = $row['bandwidth_mb_s'];
+            if ($id === 'cpu_cache' && isset($row['score'])) {
+                $metrics['cpu_cache_score'] = (int) $row['score'];
+            }
+            if ($id === 'memory') {
+                if (isset($row['bandwidth_mb_s'])) {
+                    $metrics['mem_bandwidth_mb_s'] = $row['bandwidth_mb_s'];
+                } elseif (isset($row['score'])) {
+                    $metrics['mem_bandwidth_mb_s'] = $row['score'];
+                }
             }
             if ($id === 'storage') {
-                if (isset($row['seq_read_mb_s'])) {
-                    $metrics['storage_read_mb_s'] = $row['seq_read_mb_s'];
+                $seqRead = $row['seq_read_mb_s'] ?? $row['seq_read_mbps'] ?? null;
+                $seqWrite = $row['seq_write_mb_s'] ?? $row['seq_write_mbps'] ?? null;
+                if ($seqRead !== null) {
+                    $metrics['storage_read_mb_s'] = $seqRead;
                 }
-                if (isset($row['seq_write_mb_s'])) {
-                    $metrics['storage_write_mb_s'] = $row['seq_write_mb_s'];
+                if ($seqWrite !== null) {
+                    $metrics['storage_write_mb_s'] = $seqWrite;
+                }
+                if (isset($row['score'])) {
+                    $metrics['storage_score'] = $row['score'];
                 }
             }
             if ($id === 'gpu' && isset($row['score'])) {
                 $metrics['gpu_score'] = (int) $row['score'];
+                if (isset($row['engine'])) {
+                    $metrics['gpu_engine'] = (string) $row['engine'];
+                }
+                if (isset($row['gflops'])) {
+                    $metrics['gpu_gflops'] = $row['gflops'];
+                }
             }
         }
         $normalized['metrics'] = $metrics;

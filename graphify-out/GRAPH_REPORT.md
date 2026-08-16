@@ -1,16 +1,16 @@
 # Graph Report - pc-lab-kit  (2026-08-17)
 
 ## Corpus Check
-- 179 files · ~1,038,203 words
+- 185 files · ~1,040,450 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1249 nodes · 2139 edges · 132 communities (76 shown, 56 thin omitted)
+- 1282 nodes · 2177 edges · 137 communities (80 shown, 57 thin omitted)
 - Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 189 edges (avg confidence: 0.78)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8d7637fa`
+- Built from commit: `db01687f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -30,6 +30,7 @@
 - Native Probe Client
 - Toolkit Coverage Page
 - Flutter Page Routes
+- diagnostic-telemetry.js
 - Native Main Window
 - Diagnostic Core Service
 - Native Sensor Client
@@ -44,6 +45,7 @@
 - Diagnostic Import Service
 - Live Diagnostic JS
 - App Update Service
+- Program
 - RGB Diagnostic JS
 - Bootstrap PHP Tools
 - Tool Catalog Service
@@ -106,11 +108,13 @@
 - DiagnosticIntelligencePulseService
 - DiagnosticConsultantService
 - Get-RamSpdTelemetry
+- README.md
 - diagnostic-sensor-deck.js
 - HardwareKnowledgeGraphService.php
 - LabFeaturesTest.php
 - AmbitiousUpgradeTest
 - SensorDeckService
+- README.md
 - SensorDeckService
 - diagnostic-launchers.js
 - HardwareKnowledgeGraphService
@@ -151,7 +155,7 @@
 - **Native CMake build graph (root → core → apps)** — native_cmakelists_pcverse_native, native_core_cmakelists_pcverse_core, native_apps_pcverse_cli_cmakelists_pcverse_cli, native_apps_pcverse_cmakelists_pcverse_desktop [EXTRACTED 1.00]
 - **Cross-platform installer release pipeline** — github_workflows_release_bundles_release_installers, readme_windows_installer, readme_linux_installer [EXTRACTED 1.00]
 
-## Communities (132 total, 56 thin omitted)
+## Communities (137 total, 57 thin omitted)
 
 ### Community 0 - "Native Core CLI Sensors"
 Cohesion: 0.06
@@ -193,6 +197,10 @@ Nodes (4): DiagnosticApiController, SettingsApiController, decode_json_body_limi
 Cohesion: 0.16
 Nodes (28): Export-ProbeFanCurves(), Get-ProbeDataDir(), Invoke-ProbeOrchestrate(), Invoke-ProbeRgbAuto(), Map-RgbZonesFromPlan(), Write-ProbeLcdDashboard(), Get-OpenRgbDeviceList(), Get-OpenRgbExecutable() (+20 more)
 
+### Community 11 - "Diagnostic AI Service"
+Cohesion: 0.08
+Nodes (4): DownloadController, DiagnosticAiService, LlmService, SettingsService
+
 ### Community 12 - "Native Probe Client"
 Cohesion: 0.17
 Nodes (12): Assumptions, Critical gap (historical — resolved), Immediate next steps, Module map: 80 tools → PC Lab Kit modules, PC Lab Kit → The Unified Local PC Laboratory, Recommended focus, Replace strategy by category, Shipped vs planned (2026-08) (+4 more)
@@ -203,15 +211,15 @@ Nodes (11): Get-ProbeOcSample(), Get-ProbeOcState(), Get-ProbeOcStorePath(), Get
 
 ### Community 14 - "Flutter Page Routes"
 Cohesion: 0.18
-Nodes (11): AIO LCD Screens, Sensor Panels & GIF Displays, CPU Benchmarks & Stress Tests, Enterprise / OEM validation (common stacks), Full-System Benchmarks, GPU Benchmarks & Stress Tests, Honest scope: replacing 80 tools, RAM & Memory Testing, Reference: 80-tool categories (+3 more)
+Nodes (11): AIO LCD Screens, Sensor Panels & GIF Displays, Capability scope: replace the workflow (and exceed it), CPU Benchmarks & Stress Tests, Enterprise / OEM validation (common stacks), Full-System Benchmarks, GPU Benchmarks & Stress Tests, RAM & Memory Testing, Reference: 80-tool categories (+3 more)
 
-### Community 17 - "Diagnostic Core Service"
-Cohesion: 0.08
-Nodes (3): DiagnosticAiService, DiagnosticService, LlmService
+### Community 15 - "diagnostic-telemetry.js"
+Cohesion: 0.36
+Nodes (12): drawCstateBars(), drawSparklines(), drawSpikeMap(), driverSectionsFromPresent(), esc(), fetchDriversAndPresent(), fetchHistory(), fetchTelemetry() (+4 more)
 
 ### Community 21 - "Linux Sensor Collector"
-Cohesion: 0.13
-Nodes (24): Find-ProbeDiskSpd(), Invoke-ProbeBenchmark(), Invoke-ProbeCpuBenchmark(), Invoke-ProbeGpuBenchmark(), Invoke-ProbeMemoryBenchmark(), Invoke-ProbeStorageBenchmark(), Get-ProbeExternalLaunchers(), Invoke-ProbeExternalLauncher() (+16 more)
+Cohesion: 0.12
+Nodes (28): Find-ProbeDiskSpd(), Find-ProbeVkBench(), Get-DiskSpdTotalMbps(), Invoke-ProbeBenchmark(), Invoke-ProbeCpuBenchmark(), Invoke-ProbeCpuCacheBenchmark(), Invoke-ProbeGpuBenchmark(), Invoke-ProbeGpuBenchmarkFallback() (+20 more)
 
 ### Community 22 - "Windows Setup Form UI"
 Cohesion: 0.25
@@ -245,6 +253,10 @@ Nodes (18): animateNum(), esc(), fetchLive(), formatSample(), fpQuery(), install
 Cohesion: 0.07
 Nodes (8): AppUpdateController, DiagnosticController, e(), view(), Router, AppUpdateService, Env, View
 
+### Community 31 - "Program"
+Cohesion: 0.27
+Nodes (6): string, Program, PcLabVkBench, Dictionary, ID3D11Device, ID3D11DeviceContext
+
 ### Community 32 - "RGB Diagnostic JS"
 Cohesion: 0.22
 Nodes (18): applyZones(), blinkControlsHtml(), blinkDefaults(), conflictBanner(), effectOptions(), esc(), getContext(), getTelemetry() (+10 more)
@@ -262,8 +274,8 @@ Cohesion: 0.50
 Nodes (4): Launch checklist for GitHub impact, Naming, Open-source & GitHub growth strategy, Target repo structure (monorepo)
 
 ### Community 37 - "Pulse Diagnostic JS"
-Cohesion: 0.26
-Nodes (13): animateNum(), delay(), el(), ensureFp(), esc(), gpuScoreBucket(), initSynapseCanvas(), metaFromScan() (+5 more)
+Cohesion: 0.33
+Nodes (5): net8.0-windows, Microsoft.NET.Sdk, Vortice.D3DCompiler (3.6.2), Vortice.Direct3D11 (3.6.2), Vortice.DXGI (3.6.2)
 
 ### Community 39 - "Composer Manifest Meta"
 Cohesion: 0.06
@@ -282,8 +294,8 @@ Cohesion: 0.67
 Nodes (3): Release installers workflow, PCVerse-Setup-Linux-x64.run, PCVerse-Setup-Windows-x64.exe
 
 ### Community 45 - "Telemetry Charts JS"
-Cohesion: 0.14
-Nodes (14): DiagnosticDriverAdvisorService, DriverPackageMatcherService, drawCstateBars(), drawSparklines(), drawSpikeMap(), driverSectionsFromPresent(), esc(), fetchDriversAndPresent() (+6 more)
+Cohesion: 0.12
+Nodes (15): DiagnosticDriverAdvisorService, DriverPackageMatcherService, animateNum(), delay(), el(), ensureFp(), esc(), gpuScoreBucket() (+7 more)
 
 ### Community 52 - "Bootstrap Build Tools"
 Cohesion: 0.32
@@ -299,7 +311,7 @@ Nodes (4): csrfHeaders(), load(), open(), save()
 
 ### Community 63 - "PcVerseHwMon C#"
 Cohesion: 0.50
-Nodes (3): net8.0-windows, LibreHardwareMonitorLib (0.9.4), Microsoft.NET.Sdk
+Nodes (3): net8.0-windows, Microsoft.NET.Sdk, LibreHardwareMonitorLib (0.9.4)
 
 ### Community 67 - "App Update JS"
 Cohesion: 0.42
@@ -318,8 +330,8 @@ Cohesion: 0.12
 Nodes (16): compilerOptions, allowImportingTsExtensions, isolatedModules, lib, module, moduleResolution, noEmit, noFallthroughCasesInSwitch (+8 more)
 
 ### Community 101 - "stress.ps1"
-Cohesion: 0.08
-Nodes (24): [1.0.0] - 2026-06-14, [3.0.0] - 2026-07-30, [3.1.0] - 2026-08-01, [3.1.1] - 2026-08-04, [3.2.0] - 2026-08-11, [3.2.1] - 2026-08-16, [3.2.2] - 2026-08-17, Added (+16 more)
+Cohesion: 0.07
+Nodes (27): [1.0.0] - 2026-06-14, [3.0.0] - 2026-07-30, [3.1.0] - 2026-08-01, [3.1.1] - 2026-08-04, [3.2.0] - 2026-08-11, [3.2.1] - 2026-08-16, [3.2.2] - 2026-08-17, [3.3.0] - 2026-08-17 (+19 more)
 
 ### Community 102 - "default.json"
 Cohesion: 0.33
@@ -337,6 +349,10 @@ Nodes (12): activeFilters(), bind(), el(), esc(), exportJson(), loadTopology(), 
 Cohesion: 0.44
 Nodes (8): boot(), csrfHeaders(), exportLayout(), loadLayout(), pick(), render(), saveLayout(), tick()
 
+### Community 125 - "AmbitiousUpgradeTest"
+Cohesion: 0.15
+Nodes (3): TestCase, AmbitiousUpgradeTest, NativeBenchArenaTest
+
 ### Community 130 - "diagnostic-launchers.js"
 Cohesion: 0.70
 Nodes (4): boot(), esc(), refresh(), run()
@@ -346,23 +362,23 @@ Cohesion: 0.67
 Nodes (3): Core principles, Executive vision, Positioning for GitHub
 
 ## Knowledge Gaps
-- **209 isolated node(s):** `net8.0-windows`, `LibreHardwareMonitorLib (0.9.4)`, `Microsoft.NET.Sdk`, `name`, `description` (+204 more)
+- **219 isolated node(s):** `net8.0-windows`, `LibreHardwareMonitorLib (0.9.4)`, `Microsoft.NET.Sdk`, `net8.0-windows`, `Vortice.Direct3D11 (3.6.2)` (+214 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **56 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **57 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `DiagnosticService` connect `Diagnostic Core Service` to `Get-RamSpdTelemetry`, `Benchmark Dataset Service`, `App Update Service`?**
-  _High betweenness centrality (0.039) - this node is a cross-community bridge._
-- **Why does `DiagnosticTelemetryService` connect `Telemetry Panel Builder` to `Get-RamSpdTelemetry`?**
-  _High betweenness centrality (0.030) - this node is a cross-community bridge._
+- **Why does `DiagnosticService` connect `Diagnostic Core Service` to `Get-RamSpdTelemetry`, `Benchmark Dataset Service`, `Diagnostic AI Service`, `App Update Service`?**
+  _High betweenness centrality (0.052) - this node is a cross-community bridge._
 - **Why does `DiagnosticApiController` connect `Mobile Diagnostic API` to `Get-RamSpdTelemetry`?**
-  _High betweenness centrality (0.028) - this node is a cross-community bridge._
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
+- **Why does `DiagnosticDriverAdvisorService` connect `Telemetry Charts JS` to `Diagnostic Agent Services`?**
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **Are the 35 inferred relationships involving `json_response()` (e.g. with `.check()` and `.diagnosticAgent()`) actually correct?**
   _`json_response()` has 35 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `net8.0-windows`, `LibreHardwareMonitorLib (0.9.4)`, `Microsoft.NET.Sdk` to the rest of the system?**
-  _213 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _223 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Native Core CLI Sensors` be split into smaller, more focused modules?**
   _Cohesion score 0.05775638652350981 - nodes in this community are weakly interconnected._
 - **Should `Benchmark Dataset Service` be split into smaller, more focused modules?**
