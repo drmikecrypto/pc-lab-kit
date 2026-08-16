@@ -126,14 +126,30 @@ function Get-OpenRgbExecutable {
 }
 
 function Get-RgbBlockingProcesses {
-    $names = @('iCUE','SignalRgb','RazerAppEngine','ArmouryCrate','LightingService','MSI.CentralServer','NZXT CAM','LConnect','TT RGB Plus','CAM')
-    $found = @()
-    foreach ($n in $names) {
-        if (Get-Process -Name $n -ErrorAction SilentlyContinue) {
-            $found += $n
+    # Match real ProcessName tokens; wildcards allowed (Get-Process -Name)
+    $candidates = @(
+        @{ pattern = 'iCUE'; label = 'iCUE' }
+        @{ pattern = 'SignalRgb'; label = 'SignalRGB' }
+        @{ pattern = 'RazerAppEngine'; label = 'Razer Synapse' }
+        @{ pattern = 'ArmouryCrate*'; label = 'Armoury Crate' }
+        @{ pattern = 'LightingService'; label = 'Aura / LightingService' }
+        @{ pattern = 'MSI.CentralServer'; label = 'MSI Center' }
+        @{ pattern = 'CAM'; label = 'NZXT CAM' }
+        @{ pattern = 'L-Connect*'; label = 'L-Connect' }
+        @{ pattern = 'TtRgb*'; label = 'TT RGB Plus' }
+        @{ pattern = 'TT*RGB*'; label = 'TT RGB Plus' }
+    )
+    $found = [System.Collections.Generic.List[string]]::new()
+    $seen = @{}
+    foreach ($c in $candidates) {
+        if (Get-Process -Name $c.pattern -ErrorAction SilentlyContinue) {
+            if (-not $seen.ContainsKey($c.label)) {
+                $seen[$c.label] = $true
+                $found.Add($c.label)
+            }
         }
     }
-    return $found
+    return @($found)
 }
 
 function Match-KnownRgbDevice {
@@ -543,6 +559,7 @@ function Invoke-ProbeLcdPush {
     if (-not $openRgb) {
         return @{
             pushed = $false
+            attempted = $false
             reason = 'openrgb_missing'
             message = 'GIF saved locally. Install OpenRGB Portable to attempt hardware push.'
         }
@@ -550,6 +567,7 @@ function Invoke-ProbeLcdPush {
     if ($blocking.Count -gt 0) {
         return @{
             pushed = $false
+            attempted = $false
             reason = 'blocking_process'
             blocking_processes = $blocking
             message = "GIF saved locally. Close $($blocking -join ', ') then retry push."
@@ -567,6 +585,7 @@ function Invoke-ProbeLcdPush {
     if ($target -lt 0) {
         return @{
             pushed = $false
+            attempted = $false
             reason = 'no_lcd_device'
             message = 'GIF saved locally. No OpenRGB LCD-capable device matched — use sensor dashboard or vendor app once.'
             path = $GifPath
@@ -589,14 +608,15 @@ function Invoke-ProbeLcdPush {
     Copy-Item -Path $GifPath -Destination $stagePath -Force -ErrorAction SilentlyContinue
 
     return @{
-        pushed = $true
+        pushed = $false
+        attempted = $true
         reason = 'openrgb_custom_attempted'
         openrgb_device = $target
         modes_tried = $modesTried
         staged_path = $stagePath
         path = $GifPath
-        message = 'GIF cached and OpenRGB Custom/Direct applied on the matched LCD device. If the panel still shows the old image, import the staged GIF once in CAM/iCUE or use the local sensor dashboard.'
-        note = 'Full animated GIF streaming depends on device SDK support; OpenRGB coverage varies by cooler.'
+        message = 'GIF cached and OpenRGB Custom/Direct modes were attempted. Verify on the panel — OpenRGB cannot confirm animated GIF apply. Import the staged file in CAM/iCUE if needed, or use the local sensor dashboard.'
+        note = 'Full animated GIF streaming depends on device SDK support; OpenRGB coverage varies by cooler. pushed=false until a vendor/SDK path confirms apply.'
     }
 }
 
@@ -644,8 +664,12 @@ function Save-ProbeLcdGif {
     if ($push.staged_path) { $next += "Staged for OpenRGB: $($push.staged_path)" }
     if (Test-Path $dashPath) { $next += "Sensor dashboard (browser / panel Chromium): $dashPath" }
     if (-not $push.pushed) {
-        $next += 'Close iCUE / CAM / SignalRGB, then Rescan and re-upload to retry hardware push.'
-        $next += 'Or open the GIF once in your cooler vendor app if OpenRGB cannot drive this LCD.'
+        if ($push.attempted) {
+            $next += 'OpenRGB mode push was attempted — check the cooler LCD; import staged GIF in vendor app if unchanged.'
+        } else {
+            $next += 'Close iCUE / CAM / SignalRGB, then Rescan and re-upload to retry hardware push.'
+            $next += 'Or open the GIF once in your cooler vendor app if OpenRGB cannot drive this LCD.'
+        }
     }
 
     return @{
@@ -658,11 +682,14 @@ function Save-ProbeLcdGif {
         accepted_with_mismatch = $accepted_with_mismatch
         dimension_warning = $dimensionWarning
         pushed = [bool]$push.pushed
+        attempted = [bool]$push.attempted
         push = $push
         lcd_dashboard_path = if (Test-Path $dashPath) { $dashPath } else { $null }
         next_steps = $next
         message = if ($push.pushed) {
-            'GIF saved locally and hardware push attempted via OpenRGB.'
+            'GIF saved locally and confirmed on device.'
+        } elseif ($push.attempted) {
+            'GIF saved locally. OpenRGB push attempted — verify on the panel (not claimed as applied).'
         } else {
             'GIF saved on this PC only — not uploaded to any cloud. Hardware push skipped: ' + $push.reason
         }

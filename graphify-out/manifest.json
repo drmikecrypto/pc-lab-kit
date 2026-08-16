@@ -270,8 +270,8 @@
     "semantic_hash": "03bbfe42d7762b80f4a8f2db1824689b"
   },
   "config/app.php": {
-    "mtime": 1786464963.1534207,
-    "ast_hash": "6818380c51f686f28aff434df336a90b",
+    "mtime": 1786917956.51821,
+    "ast_hash": "051830e1be79b755de1d664b07ace045",
     "semantic_hash": ""
   },
   "config/benchmark_datasets.php": {
@@ -365,8 +365,8 @@
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-rgb.js": {
-    "mtime": 1786887876.3062463,
-    "ast_hash": "7f7bb87c0f0b99879e123c434ede50b2",
+    "mtime": 1786917928.862681,
+    "ast_hash": "9387646decfad09fc9b1cf63a25dd4b5",
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-settings.js": {
@@ -495,8 +495,8 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1786887909.8391955,
-    "ast_hash": "c6cd5b9eab777bb27aa648520c7aab69",
+    "mtime": 1786917963.6802113,
+    "ast_hash": "01168f9a8a423b015480e662a3ba5259",
     "semantic_hash": ""
   },
   "CONTRIBUTING.md": {
@@ -525,13 +525,13 @@
     "semantic_hash": ""
   },
   "docs/INTEGRATION.md": {
-    "mtime": 1786464076.314158,
-    "ast_hash": "29e4b193b15e62f73a8530a7661ca74c",
+    "mtime": 1786917988.9707077,
+    "ast_hash": "361b86698ab8ff35d6b4d0102c152b27",
     "semantic_hash": ""
   },
   "docs/MASTER_PLAN.md": {
-    "mtime": 1786887348.2133982,
-    "ast_hash": "7302af21bd5207c91f898547b7b36ab0",
+    "mtime": 1786918031.94432,
+    "ast_hash": "122719577d4dd235d7151e65dc904d72",
     "semantic_hash": ""
   },
   "docs/README.md": {
@@ -645,8 +645,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/rgb.ps1": {
-    "mtime": 1786887888.39648,
-    "ast_hash": "37e9a4b7b71678f0ff867421b11fcce1",
+    "mtime": 1786917903.4940946,
+    "ast_hash": "df7be62acb118476f099ee00c7ff7748",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/stress.ps1": {
@@ -665,8 +665,8 @@
     "semantic_hash": ""
   },
   "app/Services/DiagnosticOrchestratorService.php": {
-    "mtime": 1786465093.4526231,
-    "ast_hash": "6c770956398fad7c6c552a60622a2c3d",
+    "mtime": 1786917855.4189243,
+    "ast_hash": "b7d7f84e0fc1106998d0c1cff3b27b3f",
     "semantic_hash": ""
   },
   "app/Services/HardwareKnowledgeGraphService.php": {
@@ -740,8 +740,8 @@
     "semantic_hash": ""
   },
   "desktop/package.json": {
-    "mtime": 1786887910.537901,
-    "ast_hash": "73ecf85815cf0c8527cc766072c8afc9",
+    "mtime": 1786917957.5289924,
+    "ast_hash": "90fb5376d993263bc6ce4e3e5bd8ce26",
     "semantic_hash": ""
   },
   "desktop/src-tauri/build.rs": {
@@ -760,8 +760,8 @@
     "semantic_hash": ""
   },
   "desktop/src-tauri/src/lib.rs": {
-    "mtime": 1786464051.4409602,
-    "ast_hash": "68ec7f05417d7cbcc7bd6c89ac3f9de8",
+    "mtime": 1786918142.005978,
+    "ast_hash": "b3ea95613e8152574b1815cd8b71e6d0",
     "semantic_hash": ""
   },
   "desktop/src-tauri/src/main.rs": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "desktop/src-tauri/tauri.conf.json": {
-    "mtime": 1786887911.3159788,
-    "ast_hash": "7df75939ef9bfbcc4694e930645e50d1",
+    "mtime": 1786917958.745543,
+    "ast_hash": "2f827feffb042e5dd1bf6694ebb52985",
     "semantic_hash": ""
   },
   "desktop/src/main.ts": {
@@ -935,8 +935,8 @@
     "semantic_hash": ""
   },
   "app/Services/SensorDeckService.php": {
-    "mtime": 1786463429.4513493,
-    "ast_hash": "42a2a8726c75d9f4218fafd46204c66c",
+    "mtime": 1786917932.1676922,
+    "ast_hash": "d3febb8d386e2fa088a0906a45daec15",
     "semantic_hash": ""
   },
   "app/Services/TopologyViewService.php": {
@@ -955,8 +955,8 @@
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-sensor-deck.js": {
-    "mtime": 1786463607.9233918,
-    "ast_hash": "c20a970e664e94ca1c776c63528a7f5c",
+    "mtime": 1786917950.4706397,
+    "ast_hash": "7e19e9b538fe1ad4cc1b28c96f292cc4",
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-suite.js": {
@@ -995,8 +995,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/RgbLabTest.php": {
-    "mtime": 1786887913.6798935,
-    "ast_hash": "d9e9bf3cc63b64697885b925e47bc5e6",
+    "mtime": 1786917881.3542092,
+    "ast_hash": "55cdd6df6fb4bad7344f9cb81c9a9e26",
     "semantic_hash": ""
   }
 }

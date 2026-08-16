@@ -3,13 +3,43 @@ mod lab;
 use lab::{resolve_resource_lab, LabRuntime};
 use std::sync::Arc;
 use tauri::menu::{Menu, MenuItem};
-use tauri::tray::TrayIconBuilder;
+use tauri::tray::{TrayIconBuilder, TrayIconId};
 use tauri::Manager;
 use tauri::path::BaseDirectory;
 
 struct AppState {
     runtime: std::sync::Mutex<Option<Arc<LabRuntime>>>,
     error: std::sync::Mutex<Option<String>>,
+}
+
+fn format_probe_tooltip(status: &str) -> String {
+    format!("PC Lab Kit · Probe: {status}")
+}
+
+fn probe_status_message(status: &str) -> String {
+    match status {
+        "running" => "Probe is running on 127.0.0.1:18765.\nSensors, RGB, and benches are available.".into(),
+        "unavailable" => "Probe is unavailable on this platform (or not bundled).\nLab UI still works for history and imports.".into(),
+        s if s.starts_with("error") => format!("Probe error:\n{s}\n\nTry Restart Probe from this menu."),
+        s if s.contains("exited") || s.contains("stopped") => {
+            format!("Probe status: {s}\n\nUse Restart Probe to bring it back.")
+        }
+        other => format!("Probe status: {other}"),
+    }
+}
+
+fn show_probe_status_dialog(app: &tauri::AppHandle, status: &str) {
+    let msg = probe_status_message(status);
+    let escaped = msg
+        .replace('\\', "\\\\")
+        .replace('`', "\\`")
+        .replace("${", "\\${");
+    if let Some(window) = app.get_webview_window("main") {
+        let _ = window.show();
+        let _ = window.set_focus();
+        let js = format!("window.alert(`PC Lab Kit — Probe Status\\n\\n{escaped}`)");
+        let _ = window.eval(&js);
+    }
 }
 
 #[tauri::command]
@@ -86,8 +116,9 @@ pub fn run() {
                 }
             };
 
-            match LabRuntime::start(&lab_dir) {
+            let initial_probe = match LabRuntime::start(&lab_dir) {
                 Ok(rt) => {
+                    let status = rt.probe_status();
                     let rt = Arc::new(rt);
                     if let Some(state) = app.try_state::<AppState>() {
                         if let Ok(mut g) = state.runtime.lock() {
@@ -95,6 +126,7 @@ pub fn run() {
                         }
                     }
                     app.manage(ShutdownHandle(rt));
+                    status
                 }
                 Err(err) => {
                     eprintln!("PC Lab Kit failed to start: {err}");
@@ -103,8 +135,9 @@ pub fn run() {
                             *g = Some(err);
                         }
                     }
+                    "error".into()
                 }
-            }
+            };
 
             let show_i = MenuItem::with_id(app, "show", "Open Lab", true, None::<&str>)?;
             let probe_i = MenuItem::with_id(app, "probe", "Restart Probe", true, None::<&str>)?;
@@ -112,9 +145,10 @@ pub fn run() {
             let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
             let menu = Menu::with_items(app, &[&show_i, &probe_i, &status_i, &quit_i])?;
 
-            let mut tray = TrayIconBuilder::new()
+            let tray_id = TrayIconId::new("main");
+            let mut tray = TrayIconBuilder::with_id(tray_id.clone())
                 .menu(&menu)
-                .tooltip("PC Lab Kit")
+                .tooltip(format_probe_tooltip(&initial_probe))
                 .on_menu_event(|app, event| match event.id.as_ref() {
                     "show" => {
                         if let Some(window) = app.get_webview_window("main") {
@@ -123,25 +157,40 @@ pub fn run() {
                         }
                     }
                     "probe" => {
+                        let mut msg = "Probe restart unavailable".to_string();
                         if let Some(state) = app.try_state::<AppState>() {
                             if let Ok(guard) = state.runtime.lock() {
                                 if let Some(rt) = guard.as_ref() {
-                                    match rt.ensure_probe() {
-                                        Ok(s) => eprintln!("probe: {s}"),
-                                        Err(e) => eprintln!("probe restart failed: {e}"),
+                                    msg = match rt.ensure_probe() {
+                                        Ok(s) => format!("Probe: {s}"),
+                                        Err(e) => format!("Probe restart failed: {e}"),
+                                    };
+                                    if let Some(tray) = app.tray_by_id("main") {
+                                        let st = rt.probe_status();
+                                        let _ = tray.set_tooltip(Some(format_probe_tooltip(&st)));
                                     }
                                 }
                             }
                         }
+                        show_probe_status_dialog(app, &msg);
                     }
                     "status" => {
-                        if let Some(state) = app.try_state::<AppState>() {
+                        let status = if let Some(state) = app.try_state::<AppState>() {
                             if let Ok(guard) = state.runtime.lock() {
-                                if let Some(rt) = guard.as_ref() {
-                                    eprintln!("probe status: {}", rt.probe_status());
-                                }
+                                guard
+                                    .as_ref()
+                                    .map(|rt| rt.probe_status())
+                                    .unwrap_or_else(|| "unavailable".into())
+                            } else {
+                                "unavailable".into()
                             }
+                        } else {
+                            "unavailable".into()
+                        };
+                        if let Some(tray) = app.tray_by_id("main") {
+                            let _ = tray.set_tooltip(Some(format_probe_tooltip(&status)));
                         }
+                        show_probe_status_dialog(app, &status);
                     }
                     "quit" => {
                         if let Some(handle) = app.try_state::<ShutdownHandle>() {
@@ -156,7 +205,7 @@ pub fn run() {
             }
             let _tray = tray.build(app)?;
 
-            // Soft watchdog: if probe exited, try once to bring it back.
+            // Soft watchdog: if probe exited, try once to bring it back; keep tooltip fresh.
             let handle = app.handle().clone();
             std::thread::spawn(move || {
                 loop {
@@ -164,9 +213,16 @@ pub fn run() {
                     if let Some(state) = handle.try_state::<AppState>() {
                         if let Ok(guard) = state.runtime.lock() {
                             if let Some(rt) = guard.as_ref() {
-                                let st = rt.probe_status();
-                                if st != "running" && st != "unavailable" && !st.starts_with("error") {
+                                let mut st = rt.probe_status();
+                                if st != "running"
+                                    && st != "unavailable"
+                                    && !st.starts_with("error")
+                                {
                                     let _ = rt.ensure_probe();
+                                    st = rt.probe_status();
+                                }
+                                if let Some(tray) = handle.tray_by_id("main") {
+                                    let _ = tray.set_tooltip(Some(format_probe_tooltip(&st)));
                                 }
                             }
                         }

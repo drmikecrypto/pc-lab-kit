@@ -16,8 +16,12 @@
     const map = {
       cpu_temp: sample.cpu_temp ?? sample.cpu_temp_max ?? sample?.cpu?.thermal?.package_c,
       gpu_temp: sample.gpu_temp ?? sample.gpu_temp_max ?? sample?.gpu?.thermal?.core_c,
-      cpu_load: sample.cpu_load ?? sample.cpu_util ?? sample?.cpu?.util,
-      gpu_load: sample.gpu_load ?? sample.gpu_util ?? sample?.gpu?.util,
+      gpu_hotspot: sample.gpu_hotspot ?? sample?.gpu?.thermal?.hot_spot_c ?? sample?.gpu?.thermal?.hotspot_c,
+      cpu_load: sample.cpu_load ?? sample.cpu_util ?? sample?.cpu?.util ?? sample?.cpu?.render?.util_pct,
+      gpu_load: sample.gpu_load ?? sample.gpu_util ?? sample?.gpu?.util ?? sample?.gpu?.render?.gpu_util_pct,
+      vram_used_pct: sample.vram_used_pct ?? sample?.gpu?.memory?.used_pct ?? sample?.gpu?.vram?.used_pct,
+      package_power_w: sample.package_power_w ?? sample?.cpu?.power?.package_w ?? sample?.power?.package_w ?? sample?.cpu?.power?.package,
+      fan_rpm: sample.fan_rpm ?? sample?.fans?.[0]?.rpm ?? sample?.cooling?.fan_rpm ?? sample?.cpu?.fans?.rpm,
       ram_used_pct: sample.ram_used_pct ?? sample?.ram?.used_pct,
     };
     const v = map[source] ?? sample[source];

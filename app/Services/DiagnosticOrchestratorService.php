@@ -51,7 +51,7 @@ class DiagnosticOrchestratorService
     }
 
     /**
-     * Friendly Persian story after orchestration.
+     * Friendly bilingual story after orchestration (English-first for GitHub UI).
      *
      * @param array<string, mixed> $plan
      * @param array<string, mixed> $applyResult From agent
@@ -59,13 +59,19 @@ class DiagnosticOrchestratorService
     public function narrate(array $plan, array $applyResult = []): array
     {
         $profile = (string) ($plan['profile'] ?? 'dashboard_thermal');
-        $snap = (array) ($plan['telemetry_snapshot'] ?? []);
         $applied = (array) ($applyResult['applied'] ?? []);
         $fanFile = (string) ($applyResult['fan_curve_path'] ?? $plan['fans']['export_path'] ?? '');
         $lcdPath = (string) ($applyResult['lcd_dashboard_path'] ?? $plan['lcd']['local_path'] ?? '');
         $blocked = (array) ($applyResult['conflicts_closed'] ?? []);
 
         $headline = match ($profile) {
+            'thermal_warning' => 'Thermal dashboard mode — lights warn when the system runs hot.',
+            'gaming_pulse' => 'Gaming mode: RGB follows GPU load.',
+            'stealth_idle' => 'Stealth mode — dim LEDs, no extra flashing.',
+            'health_sync' => 'RGB synced to system health score.',
+            default => 'RGB follows live telemetry — not just decoration.',
+        };
+        $headlineFa = match ($profile) {
             'thermal_warning' => 'کیست الان مثل داشبورد حرارتیه — داغ شد، رنگ هشدار می‌ده.',
             'gaming_pulse' => 'حالت گیمینگ: RGB با load پules هم‌زمان شد.',
             'stealth_idle' => 'حالت آرام — LED کم‌نور و بدون فلashing اضافی.',
@@ -78,40 +84,69 @@ class DiagnosticOrchestratorService
             . 'via lightweight OpenRGB + the local Probe — no heavy background suite.';
 
         $did = [];
+        $didFa = [];
         if (count($applied) > 0) {
-            $did[] = sprintf('%d zone RGB تنظیم شد (فن، حلقه، strip) — هرکدوم نقش خودش رو داره.', count($applied));
+            $n = count($applied);
+            $did[] = sprintf('%d RGB zone(s) applied (fans, rings, strips) — each zone has its own role.', $n);
+            $didFa[] = sprintf('%d zone RGB تنظیم شد (فن، حلقه، strip) — هرکدوم نقش خودش رو داره.', $n);
         }
         if ($fanFile !== '') {
-            $did[] = 'منحنی فن حرفه‌ای (سبک Fan Control) ساخته شد: max(CPU, GPU, hotspot) با hysteresis — فایل محلی برای import.';
+            $did[] = 'Professional fan curve (Fan Control–style) saved: max(CPU, GPU, hotspot) with hysteresis — local import file.';
+            $didFa[] = 'منحنی فن حرفه‌ای (سبک Fan Control) ساخته شد: max(CPU, GPU, hotspot) با hysteresis — فایل محلی برای import.';
         }
         if ($lcdPath !== '') {
-            $did[] = 'داشبورد LCD/sensor panel محلی ساخته شد — temps، clocks، util زنده از Agent (بدون AIDA64 سنگین).';
+            $did[] = 'Local LCD / sensor panel dashboard built — live temps, clocks, util from the Probe (no heavy AIDA64).';
+            $didFa[] = 'داشبورد LCD/sensor panel محلی ساخته شد — temps، clocks، util زنده از Agent (بدون AIDA64 سنگین).';
         }
         if ($blocked !== []) {
-            $did[] = 'این processها conflict می‌ساختن و بستیم/شناسایی کردیم: ' . implode('، ', $blocked) . '.';
+            $list = implode(', ', $blocked);
+            $did[] = 'Conflicting processes detected/closed: ' . $list . '.';
+            $didFa[] = 'این processها conflict می‌ساختن و بستیم/شناسایی کردیم: ' . implode('، ', $blocked) . '.';
         }
         if ($did === []) {
-            $did[] = 'پلن آماده است — OpenRGB portable را فعال کن و دوباره «setup حرفه‌ای» بزن.';
+            $did[] = 'Plan is ready — enable OpenRGB Portable and run Auto setup again.';
+            $didFa[] = 'پلن آماده است — OpenRGB portable را فعال کن و دوباره «setup حرفه‌ای» بزن.';
         }
 
-        $benefit = 'دیگه RGB فقط «رنگ بازی» نیست: وقتی GPU از ۸۵°C رد بشه قرمز می‌بینی، '
+        $benefit = 'RGB is no longer just “pretty lights”: when the GPU crosses 85°C you see red, '
+            . 'fans ramp before throttle, and the case LCD shows what HWiNFO would — on the case itself. '
+            . 'No RAM leak, and PcLab Probe telemetry stays intact.';
+        $benefitFa = 'دیگه RGB فقط «رنگ بازی» نیست: وقتی GPU از ۸۵°C رد بشه قرمز می‌بینی، '
             . 'فن‌ها قبل از throttle بالا می‌رن، و LCD کیست همون چیزی رو نشون می‌ده که HWiNFO نشون می‌ده — '
             . 'ولی روی خود کیس. RAM leak نداری، telemetry PcLab Probe خراب نمی‌شه.';
 
+        $compare = [
+            'signalrgb' => 'Parity: unified sync, thermal, per-zone — without SignalRGB bloat',
+            'openrgb' => 'OpenRGB core + Orchestrator',
+            'fan_control' => 'max(sensor) curves like Fan Control — local export',
+            'aida64' => 'Lighter LCD dashboard — local HTML, Probe data',
+            'icue_crate_cam' => 'Replacement without bloat or extra telemetry',
+        ];
+        $compareFa = [
+            'signalrgb' => 'هم‌تراز: unified sync، thermal، per-zone — بدون سنگینی SignalRGB',
+            'openrgb' => 'هسته OpenRGB + Orchestrator orchestration',
+            'fan_control' => 'منحنی max(sensor) مثل Fan Control — export محلی',
+            'aida64' => 'LCD dashboard سبک‌تر — HTML محلی، داده از Probe',
+            'icue_crate_cam' => 'جایگزین بدون bloat و بدون telemetry اضافی',
+        ];
+
+        $next = $this->nextSteps($applyResult);
+        $nextFa = $this->nextStepsFa($applyResult);
+
         return [
-            'headline_fa' => $headline,
+            'headline' => $headline,
+            'why' => $why,
+            'did' => $did,
+            'benefit' => $benefit,
+            'compare' => $compare,
+            'next_steps' => $next,
+            'headline_fa' => $headlineFa,
             'why_fa' => $why,
-            'did_fa' => $did,
-            'benefit_fa' => $benefit,
+            'did_fa' => $didFa,
+            'benefit_fa' => $benefitFa,
             'profile' => $profile,
-            'compare_fa' => [
-                'signalrgb' => 'هم‌تراز: unified sync، thermal، per-zone — بدون سنگینی SignalRGB',
-                'openrgb' => 'هسته OpenRGB + Orchestrator orchestration',
-                'fan_control' => 'منحنی max(sensor) مثل Fan Control — export محلی',
-                'aida64' => 'LCD dashboard سبک‌تر — HTML محلی، داده از Probe',
-                'icue_crate_cam' => 'جایگزین بدون bloat و بدون telemetry اضافی',
-            ],
-            'next_steps_fa' => $this->nextSteps($applyResult),
+            'compare_fa' => $compareFa,
+            'next_steps_fa' => $nextFa,
         ];
     }
 
@@ -200,6 +235,25 @@ class DiagnosticOrchestratorService
 
     /** @param array<string, mixed> $applyResult @return list<string> */
     private function nextSteps(array $applyResult): array
+    {
+        $steps = [];
+        if (empty($applyResult['ok'])) {
+            $steps[] = 'Place OpenRGB.exe in tools/OpenRGB/ and run the Probe as Administrator.';
+            $steps[] = 'Close iCUE / Armoury Crate / CAM — only one RGB controller at a time.';
+        }
+        if (!empty($applyResult['lcd_dashboard_path'])) {
+            $steps[] = 'Open lcd-dashboard/index.html on the case LCD or as an OBS Browser Source.';
+        }
+        if (!empty($applyResult['fan_curve_path'])) {
+            $steps[] = 'Import fan-curves.json into Fan Control (optional — pro curve).';
+        }
+        $steps[] = 'Personal GIF for the LCD? Upload from the zone section — stays local only.';
+
+        return $steps;
+    }
+
+    /** @param array<string, mixed> $applyResult @return list<string> */
+    private function nextStepsFa(array $applyResult): array
     {
         $steps = [];
         if (empty($applyResult['ok'])) {

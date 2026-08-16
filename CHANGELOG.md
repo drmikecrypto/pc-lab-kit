@@ -6,6 +6,23 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [3.2.2] - 2026-08-17
+
+### Fixed
+- Auto setup narrate is English-first (`headline` / `did` / `next_steps`) while keeping FA keys
+- LCD GIF upload no longer claims “Applied to device” after OpenRGB Custom/Direct attempts — `pushed` vs `attempted`
+- RGB conflict detection uses real process names (CAM, L-Connect*, ArmouryCrate*, TtRgb*)
+- In-app `APP_VERSION` / `.env.example` aligned with desktop package (was stale 3.2.0 / 3.1.1)
+
+### Added
+- Tray Probe Status dialog + live tooltip (`PC Lab Kit · Probe: …`)
+- RGB Apply / Stop blink status feedback (zone counts, errors)
+- Sensor Deck gauges: GPU hotspot, VRAM %, package power, fan RPM
+
+### Changed
+- MASTER_PLAN Pillar C marked shipped; INTEGRATION documents `/rgb/stop` and LCD push shape
+- Desktop package version aligned to 3.2.2
+
 ## [3.2.1] - 2026-08-16
 
 ### Added

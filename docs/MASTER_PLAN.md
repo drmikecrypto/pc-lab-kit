@@ -2,8 +2,8 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars **A** (Hardware Reference) and **B** (reference benches/stress) shipped. **Pillar C** (LCD GIF push, blink timing, assembler RGB Lab) shipping in **v3.2.1**.  
-**Last updated:** 2026-08-16  
+**Status:** Active — Pillars **A** (Hardware Reference), **B** (reference benches/stress), and **C** (LCD GIF / blink / RGB Lab) shipped. Trust polish in **v3.2.2**.  
+**Last updated:** 2026-08-17  
 **Repository:** [pc-lab-kit](../README.md)
 
 > Historical sections below still mention Flutter/Qt in places. Prefer this status block and the root README for what ships today.
@@ -17,18 +17,18 @@
 | Tauri installers (Windows/Linux UI) | Shipped |
 | **Command Center / Full Lab suite** (`LabSuiteService` + probe `/suite/*`) | Shipped (R1) |
 | Advisor cards + hardware graph on finalize | Shipped (R1) |
-| System tray + probe restart watchdog | Shipped (R1) |
-| Sensor Deck + Rainmeter/JSON export | Shipped (R2) |
+| System tray + probe restart watchdog | Shipped (R1); Probe Status dialog + tooltip in 3.2.2 |
+| Sensor Deck + Rainmeter/JSON export | Shipped (R2); hotspot/VRAM/power/fan gauges in 3.2.2 |
 | Cinebench / Geekbench / 3DMark importers | Shipped (R2) |
 | External stress launchers (Prime95/OCCT/TM5 detect) | Shipped (R3) |
 | SVG topology + AI provider presets / Ollama URL | Shipped (R4) |
 | **Pillar A — Hardware Reference** (hidden PnP, EDID, SPD confidence, graph, Install button) | Shipped (3.2.0) |
 | **Pillar B — Reference stress & benches** | Shipped |
-| **Pillar C — LCD GIF push, blink timing, RGB Lab** | Shipping (3.2.1) — GIF/MP4 video-to-panel later |
+| **Pillar C — LCD GIF push, blink timing, RGB Lab** | Shipped (3.2.1); honest push status in 3.2.2 |
 | Linux probe parity | Parked (R5+) |
 | Full Vulkan compute suite | Partial (NVML/host proxy; native Vulkan later) |
 | Windows Service forever-on probe | Parked |
-| MP4 / video push to LCD panels | Backlog (after 3.2.1) |
+| MP4 / video push to LCD panels | Backlog |
 
 ---
 
@@ -85,16 +85,9 @@ This is credible because ~40% of the hard parts are already built inside this ki
 | **AI** | Optional LLM | Rule-based fallback exists; persona "Advisor" + structured JSON output |
 | **OC safety** | Real | Thermal margins, blockers, baseline save, one-click rollback in `overclock.ps1` |
 
-### Critical gap
+### Critical gap (historical — resolved)
 
-This is an **integration bundle**, not a standalone product:
-
-- No `composer.json`, no API controller in-kit
-- No runnable desktop installer
-- Benchmark JSON disconnected from analysis services
-- HTTP handlers still live in monolith `ApiController.php` (~lines 2720–3199)
-
-See [INTEGRATION.md](./INTEGRATION.md) for extraction checklist.
+Phases 0–5 and Pillars A–C ship today as the Tauri + PHP + probe stack. Remaining product gaps are intentional backlog: native Vulkan compute, Windows Service forever-on probe, Linux probe parity, MP4-to-LCD.
 
 ---
 
@@ -570,20 +563,15 @@ pc-lab-kit/
 
 ## Immediate next steps
 
-1. **Confirm product direction:** Tauri desktop vs Flutter Windows-first
-2. **Confirm language:** English-first for GitHub, bilingual UI
-3. **Phase 0 sprint:** Standalone runnable kit (biggest unblocker)
-4. **Design pass:** 3D topology mock + Command Center layout
-5. **Rename personas** for international README while keeping Engine/Advisor in FA locale
+1. **Native Vulkan GPU bench** (replace NVML/host proxy) when ready for a 3.3-themed release
+2. **MP4 / video push** to cooler LCDs where OpenRGB or vendor SDK allows it
+3. **Linux probe parity** (parked R5+) for non-Windows assemblers
+4. **Community device fingerprints** — PRs for more AIO/case LCD VID/PIDs
+5. Keep English-first UI; FA remains a locale layer, not the GitHub default
 
-### Recommended start
+### Recommended focus
 
-**Phase 0 + design refresh in parallel:**
-
-- Runnable standalone demo with existing web UI restored and benchmark JSON wired
-- Command Center + 3D topology shell design
-- Demo-able in ~2 weeks with a GitHub-ready story before heavier Tauri/Rust migration
-
+Trust and hardware coverage over new pillars until Vulkan / LCD video have clear owners.
 ---
 
 ## Assumptions
@@ -610,7 +598,7 @@ pc-lab-kit/
 | `GET /telemetry` | Fast counters + ring buffer sample |
 | `GET /telemetry/history` | 120-sample sparkline buffer |
 | `GET /oc/status`, `POST /oc/apply`, `POST /oc/rollback` | Orchestrator auto-OC |
-| `GET /rgb/scan`, `POST /rgb/apply`, `POST /rgb/lcd`, `POST /rgb/auto` | RGB/LCD control |
+| `GET /rgb/scan`, `POST /rgb/apply`, `POST /rgb/lcd`, `POST /rgb/stop`, `POST /rgb/auto` | RGB/LCD control (LCD: `pushed` / `attempted`) |
 | `POST /orchestrate` | Professional RGB+fan+LCD setup |
 
 ### API routes (to extract)

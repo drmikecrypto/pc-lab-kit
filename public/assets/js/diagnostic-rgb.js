@@ -67,7 +67,7 @@
       render();
     } catch (e) {
       if (st) { st.textContent = 'Probe offline — Start-PcLabProbe.bat'; st.className = 'dx-rgb-status warn'; }
-      document.getElementById('dx-rgb-devices').innerHTML = '<div class="dx-rgb-empty"><p><strong>Probe not available</strong></p><p>Run <code>Start-PcLabProbe.bat</code>, then click Rescan RGB. Default: <code dir="ltr">127.0.0.1:18765</code></p></div>';
+      document.getElementById('dx-rgb-devices').innerHTML = '<div class="dx-rgb-empty"><p><strong>Probe not available</strong></p><p>Use <strong>Restart Probe</strong> from the system tray, or run <code>Start-PcLabProbe.bat</code>. Default: <code dir="ltr">127.0.0.1:18765</code></p></div>';
     }
   }
 
@@ -287,6 +287,7 @@
       showEnablePopup(scan?.enable_guide);
       return;
     }
+    const stEl = document.getElementById('dx-rgb-status');
     const d = blinkDefaults();
     const zones = Object.entries(zoneState).map(([zone_id, s]) => {
       const z = {
@@ -304,20 +305,47 @@
       return z;
     }).filter((z) => z.openrgb_device != null);
 
-    const res = await fetch(`${AGENT}/rgb/apply`, {
-      method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ zones }),
-    });
-    const data = await res.json();
-    if (!data.ok) showEnablePopup(data.enable_guide || scan.enable_guide);
+    if (!zones.length) {
+      if (stEl) { stEl.textContent = 'No OpenRGB zones to apply — Rescan after enabling OpenRGB'; stEl.className = 'dx-rgb-status warn'; }
+      return;
+    }
+
+    try {
+      const res = await fetch(`${AGENT}/rgb/apply`, {
+        method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ zones }),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        if (stEl) { stEl.textContent = 'Apply failed'; stEl.className = 'dx-rgb-status warn'; }
+        showEnablePopup(data.enable_guide || scan.enable_guide);
+        return;
+      }
+      const applied = (data.applied || []).filter((a) => !a.error);
+      const errors = (data.applied || []).filter((a) => a.error);
+      if (stEl) {
+        stEl.textContent = errors.length
+          ? `Applied ${applied.length} · ${errors.length} error(s)`
+          : `✓ Applied ${applied.length} zone(s)`;
+        stEl.className = 'dx-rgb-status ' + (errors.length ? 'warn' : 'ok');
+      }
+    } catch (_) {
+      if (stEl) { stEl.textContent = 'Apply request failed — is the Probe running?'; stEl.className = 'dx-rgb-status warn'; }
+    }
   }
 
   async function stopBlink() {
+    const stEl = document.getElementById('dx-rgb-status');
     try {
-      await fetch(`${AGENT}/rgb/stop`, { method: 'POST', mode: 'cors' });
-      const st = document.getElementById('dx-rgb-status');
-      if (st) { st.textContent = 'Blink stopped'; st.className = 'dx-rgb-status ok'; }
-    } catch (_) { /* ignore */ }
+      const res = await fetch(`${AGENT}/rgb/stop`, { method: 'POST', mode: 'cors' });
+      const data = await res.json().catch(() => ({}));
+      if (stEl) {
+        stEl.textContent = data.message || 'Blink stopped · jobs cleared';
+        stEl.className = 'dx-rgb-status ok';
+      }
+    } catch (_) {
+      if (stEl) { stEl.textContent = 'Stop blink failed — Probe offline?'; stEl.className = 'dx-rgb-status warn'; }
+    }
   }
 
   function setLcdStatus(devId, html, cls) {
@@ -370,10 +398,15 @@
         return;
       }
       const steps = (data.next_steps || []).map((s) => `<li>${esc(s)}</li>`).join('');
-      const pushCls = data.pushed ? 'ok' : 'warn';
-      const headline = data.pushed
-        ? 'Applied to device (OpenRGB push attempted)'
-        : 'Saved locally — hardware push skipped';
+      let pushCls = 'warn';
+      let headline = 'Saved locally — hardware push skipped';
+      if (data.pushed) {
+        pushCls = 'ok';
+        headline = 'Applied to device';
+      } else if (data.attempted || data.push?.attempted) {
+        pushCls = 'warn';
+        headline = 'Push attempted — verify on panel';
+      }
       let dash = '';
       if (data.lcd_dashboard_path) {
         dash = `<p class="mt-1"><a class="dx-rgb-dash-link" href="file:///${esc(data.lcd_dashboard_path.replace(/\\/g, '/'))}">Open sensor dashboard</a></p>`;

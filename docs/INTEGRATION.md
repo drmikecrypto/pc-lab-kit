@@ -39,7 +39,9 @@ Identity: `"agent":"pclab-probe"`, collector `"pclab-hwmon"`.
 | GET | `/telemetry`, `/telemetry/history` | Live counters |
 | GET | `/devices`, `/drivers`, `/thermal` | Inventory / advisors |
 | GET/POST | `/oc/*` | Safe OC status / preflight / apply / watch / rollback |
-| GET/POST | `/rgb/*` | RGB scan / apply / LCD / auto |
+| GET/POST | `/rgb/*` | RGB scan / apply / LCD / auto / stop |
+| POST | `/rgb/stop` | Stop blink timers; set OpenRGB zones off |
+| POST | `/rgb/lcd` | Upload GIF (local cache; `pushed` / `attempted` in response) |
 | POST | `/orchestrate` | RGB + fan + LCD orchestration |
 | GET/POST | `/bench/*`, `/stress/*` | Native benchmarks and stress |
 | POST/GET | `/suite/start\|status\|cancel` | Full Lab async suite |

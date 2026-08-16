@@ -30,8 +30,12 @@ class SensorDeckService
             'widgets' => [
                 ['id' => 'cpu_temp', 'type' => 'gauge', 'source' => 'cpu_temp', 'label' => 'CPU °C', 'min' => 20, 'max' => 100],
                 ['id' => 'gpu_temp', 'type' => 'gauge', 'source' => 'gpu_temp', 'label' => 'GPU °C', 'min' => 20, 'max' => 100],
+                ['id' => 'gpu_hotspot', 'type' => 'gauge', 'source' => 'gpu_hotspot', 'label' => 'Hotspot °C', 'min' => 20, 'max' => 110],
                 ['id' => 'cpu_load', 'type' => 'gauge', 'source' => 'cpu_load', 'label' => 'CPU %', 'min' => 0, 'max' => 100],
                 ['id' => 'gpu_load', 'type' => 'gauge', 'source' => 'gpu_load', 'label' => 'GPU %', 'min' => 0, 'max' => 100],
+                ['id' => 'vram_used', 'type' => 'gauge', 'source' => 'vram_used_pct', 'label' => 'VRAM %', 'min' => 0, 'max' => 100],
+                ['id' => 'pkg_power', 'type' => 'gauge', 'source' => 'package_power_w', 'label' => 'CPU W', 'min' => 0, 'max' => 250],
+                ['id' => 'fan_rpm', 'type' => 'gauge', 'source' => 'fan_rpm', 'label' => 'Fan RPM', 'min' => 0, 'max' => 3000],
                 ['id' => 'ram_used', 'type' => 'gauge', 'source' => 'ram_used_pct', 'label' => 'RAM %', 'min' => 0, 'max' => 100],
                 ['id' => 'temps_spark', 'type' => 'sparkline', 'source' => 'history_temps', 'label' => 'Temp history'],
             ],

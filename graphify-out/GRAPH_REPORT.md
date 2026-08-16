@@ -1,16 +1,16 @@
-# Graph Report - pc-lab-kit  (2026-08-16)
+# Graph Report - pc-lab-kit  (2026-08-17)
 
 ## Corpus Check
-- 179 files · ~1,036,964 words
+- 179 files · ~1,038,203 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1240 nodes · 2124 edges · 140 communities (84 shown, 56 thin omitted)
+- 1249 nodes · 2139 edges · 132 communities (76 shown, 56 thin omitted)
 - Extraction: 91% EXTRACTED · 9% INFERRED · 0% AMBIGUOUS · INFERRED: 189 edges (avg confidence: 0.78)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `bbbd9a80`
+- Built from commit: `8d7637fa`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -30,7 +30,6 @@
 - Native Probe Client
 - Toolkit Coverage Page
 - Flutter Page Routes
-- Benchmark Pricing
 - Native Main Window
 - Diagnostic Core Service
 - Native Sensor Client
@@ -45,7 +44,6 @@
 - Diagnostic Import Service
 - Live Diagnostic JS
 - App Update Service
-- Diagnostic RGB Service
 - RGB Diagnostic JS
 - Bootstrap PHP Tools
 - Tool Catalog Service
@@ -108,25 +106,19 @@
 - DiagnosticIntelligencePulseService
 - DiagnosticConsultantService
 - Get-RamSpdTelemetry
-- .__invoke
 - diagnostic-sensor-deck.js
 - HardwareKnowledgeGraphService.php
 - LabFeaturesTest.php
 - AmbitiousUpgradeTest
 - SensorDeckService
-- Contributing to PC Lab Kit
-- INTEGRATION.md
 - SensorDeckService
 - diagnostic-launchers.js
 - HardwareKnowledgeGraphService
-- PC Lab Kit Desktop
 - Executive vision
 - diagnostic-topology.js
 - How it fits together
 - suite-smoke.spec.js
 - DiagnosticInventoryService
-- [3.0.0] - 2026-07-30
-- [3.1.1] - 2026-08-04
 
 ## God Nodes (most connected - your core abstractions)
 1. `DiagnosticApiController` - 41 edges
@@ -159,7 +151,7 @@
 - **Native CMake build graph (root → core → apps)** — native_cmakelists_pcverse_native, native_core_cmakelists_pcverse_core, native_apps_pcverse_cli_cmakelists_pcverse_cli, native_apps_pcverse_cmakelists_pcverse_desktop [EXTRACTED 1.00]
 - **Cross-platform installer release pipeline** — github_workflows_release_bundles_release_installers, readme_windows_installer, readme_linux_installer [EXTRACTED 1.00]
 
-## Communities (140 total, 56 thin omitted)
+## Communities (132 total, 56 thin omitted)
 
 ### Community 0 - "Native Core CLI Sensors"
 Cohesion: 0.06
@@ -178,8 +170,8 @@ Cohesion: 0.83
 Nodes (4): pcverse_cli executable, pcverse Qt desktop executable, pcverse_native CMake project, pcverse_core static library target
 
 ### Community 4 - "Flutter Device Packages"
-Cohesion: 0.16
-Nodes (10): Build desktop installers, Docs, Download (end users), Driver matching, How it fits together, In-app updates, License, Optional AI advisor (BYOK) (+2 more)
+Cohesion: 0.06
+Nodes (33): Before you start, Contributing to PC Lab Kit, Development setup, Pull requests, Reporting bugs, Build installers, Develop, PC Lab Kit Desktop (+25 more)
 
 ### Community 6 - "Flutter PC Test Page"
 Cohesion: 0.11
@@ -190,8 +182,8 @@ Cohesion: 0.11
 Nodes (8): TrackUserEventAction, DiagnosticGamesRefreshCommand, DiagnosticGameCatalogService, Log, Client, Command, InputInterface, OutputInterface
 
 ### Community 8 - "Web Diagnostic Controllers"
-Cohesion: 0.14
-Nodes (33): Arc, Child, copy_dir_recursive(), ensure_lab_ready(), http_get_ok(), LabRuntime, pick_free_port(), prepare_work_dir() (+25 more)
+Cohesion: 0.12
+Nodes (37): AppHandle, Arc, Child, copy_dir_recursive(), ensure_lab_ready(), http_get_ok(), LabRuntime, pick_free_port() (+29 more)
 
 ### Community 9 - "Mobile Diagnostic API"
 Cohesion: 0.11
@@ -201,13 +193,9 @@ Nodes (4): DiagnosticApiController, SettingsApiController, decode_json_body_limi
 Cohesion: 0.16
 Nodes (28): Export-ProbeFanCurves(), Get-ProbeDataDir(), Invoke-ProbeOrchestrate(), Invoke-ProbeRgbAuto(), Map-RgbZonesFromPlan(), Write-ProbeLcdDashboard(), Get-OpenRgbDeviceList(), Get-OpenRgbExecutable() (+20 more)
 
-### Community 11 - "Diagnostic AI Service"
-Cohesion: 0.09
-Nodes (3): DiagnosticAiService, LlmService, SettingsService
-
 ### Community 12 - "Native Probe Client"
 Cohesion: 0.17
-Nodes (12): Assumptions, Critical gap, Immediate next steps, Module map: 80 tools → PC Lab Kit modules, PC Lab Kit → The Unified Local PC Laboratory, Recommended start, Replace strategy by category, Shipped vs planned (2026-08) (+4 more)
+Nodes (12): Assumptions, Critical gap (historical — resolved), Immediate next steps, Module map: 80 tools → PC Lab Kit modules, PC Lab Kit → The Unified Local PC Laboratory, Recommended focus, Replace strategy by category, Shipped vs planned (2026-08) (+4 more)
 
 ### Community 13 - "Toolkit Coverage Page"
 Cohesion: 0.33
@@ -217,9 +205,9 @@ Nodes (11): Get-ProbeOcSample(), Get-ProbeOcState(), Get-ProbeOcStorePath(), Get
 Cohesion: 0.18
 Nodes (11): AIO LCD Screens, Sensor Panels & GIF Displays, CPU Benchmarks & Stress Tests, Enterprise / OEM validation (common stacks), Full-System Benchmarks, GPU Benchmarks & Stress Tests, Honest scope: replacing 80 tools, RAM & Memory Testing, Reference: 80-tool categories (+3 more)
 
-### Community 15 - "Benchmark Pricing"
-Cohesion: 0.67
-Nodes (3): [3.2.1] - 2026-08-16, Added, Changed
+### Community 17 - "Diagnostic Core Service"
+Cohesion: 0.08
+Nodes (3): DiagnosticAiService, DiagnosticService, LlmService
 
 ### Community 21 - "Linux Sensor Collector"
 Cohesion: 0.13
@@ -254,12 +242,8 @@ Cohesion: 0.25
 Nodes (18): animateNum(), esc(), fetchLive(), formatSample(), fpQuery(), installDriver(), loadReport(), pollAgentSensors() (+10 more)
 
 ### Community 30 - "App Update Service"
-Cohesion: 0.15
-Nodes (3): AppUpdateController, AppUpdateService, Env
-
-### Community 31 - "Diagnostic RGB Service"
-Cohesion: 0.10
-Nodes (6): DiagnosticController, DownloadController, e(), view(), Router, View
+Cohesion: 0.07
+Nodes (8): AppUpdateController, DiagnosticController, e(), view(), Router, AppUpdateService, Env, View
 
 ### Community 32 - "RGB Diagnostic JS"
 Cohesion: 0.22
@@ -334,8 +318,8 @@ Cohesion: 0.12
 Nodes (16): compilerOptions, allowImportingTsExtensions, isolatedModules, lib, module, moduleResolution, noEmit, noFallthroughCasesInSwitch (+8 more)
 
 ### Community 101 - "stress.ps1"
-Cohesion: 0.17
-Nodes (11): [1.0.0] - 2026-06-14, [3.1.0] - 2026-08-01, [3.2.0] - 2026-08-11, Added, Added, Added, Changed, Changed (+3 more)
+Cohesion: 0.08
+Nodes (24): [1.0.0] - 2026-06-14, [3.0.0] - 2026-07-30, [3.1.0] - 2026-08-01, [3.1.1] - 2026-08-04, [3.2.0] - 2026-08-11, [3.2.1] - 2026-08-16, [3.2.2] - 2026-08-17, Added (+16 more)
 
 ### Community 102 - "default.json"
 Cohesion: 0.33
@@ -349,60 +333,36 @@ Nodes (11): boot(), cancelSuite(), csrfHeaders(), el(), esc(), fp(), pollProbeSu
 Cohesion: 0.42
 Nodes (12): activeFilters(), bind(), el(), esc(), exportJson(), loadTopology(), matchesFilters(), refreshInventory() (+4 more)
 
-### Community 121 - ".__invoke"
-Cohesion: 0.22
-Nodes (9): Does anything leave my PC?, Does the lab open in my browser?, FAQ — PC Lab Kit, How do I get CPU temperatures?, License, What is this?, What is this product?, Where do I download the app? (+1 more)
-
 ### Community 122 - "diagnostic-sensor-deck.js"
 Cohesion: 0.44
 Nodes (8): boot(), csrfHeaders(), exportLayout(), loadLayout(), pick(), render(), saveLayout(), tick()
-
-### Community 127 - "Contributing to PC Lab Kit"
-Cohesion: 0.33
-Nodes (5): Before you start, Contributing to PC Lab Kit, Development setup, Pull requests, Reporting bugs
-
-### Community 128 - "INTEGRATION.md"
-Cohesion: 0.29
-Nodes (6): Lab suite API (PHP), Layout, Probe HTTP API (localhost:18765), Product identity, Standalone flow, Web routes
 
 ### Community 130 - "diagnostic-launchers.js"
 Cohesion: 0.70
 Nodes (4): boot(), esc(), refresh(), run()
 
-### Community 132 - "PC Lab Kit Desktop"
-Cohesion: 0.50
-Nodes (3): Build installers, Develop, PC Lab Kit Desktop
-
 ### Community 133 - "Executive vision"
 Cohesion: 0.67
 Nodes (3): Core principles, Executive vision, Positioning for GitHub
 
-### Community 138 - "[3.0.0] - 2026-07-30"
-Cohesion: 0.67
-Nodes (3): [3.0.0] - 2026-07-30, Added, Changed
-
-### Community 139 - "[3.1.1] - 2026-08-04"
-Cohesion: 0.67
-Nodes (3): [3.1.1] - 2026-08-04, Added, Changed
-
 ## Knowledge Gaps
-- **206 isolated node(s):** `net8.0-windows`, `LibreHardwareMonitorLib (0.9.4)`, `Microsoft.NET.Sdk`, `name`, `description` (+201 more)
+- **209 isolated node(s):** `net8.0-windows`, `LibreHardwareMonitorLib (0.9.4)`, `Microsoft.NET.Sdk`, `name`, `description` (+204 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **56 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `DiagnosticService` connect `Diagnostic Core Service` to `Get-RamSpdTelemetry`, `Benchmark Dataset Service`, `Diagnostic AI Service`, `Diagnostic RGB Service`?**
+- **Why does `DiagnosticService` connect `Diagnostic Core Service` to `Get-RamSpdTelemetry`, `Benchmark Dataset Service`, `App Update Service`?**
   _High betweenness centrality (0.039) - this node is a cross-community bridge._
 - **Why does `DiagnosticTelemetryService` connect `Telemetry Panel Builder` to `Get-RamSpdTelemetry`?**
   _High betweenness centrality (0.030) - this node is a cross-community bridge._
 - **Why does `DiagnosticApiController` connect `Mobile Diagnostic API` to `Get-RamSpdTelemetry`?**
-  _High betweenness centrality (0.027) - this node is a cross-community bridge._
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
 - **Are the 35 inferred relationships involving `json_response()` (e.g. with `.check()` and `.diagnosticAgent()`) actually correct?**
   _`json_response()` has 35 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `net8.0-windows`, `LibreHardwareMonitorLib (0.9.4)`, `Microsoft.NET.Sdk` to the rest of the system?**
-  _210 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _213 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Native Core CLI Sensors` be split into smaller, more focused modules?**
   _Cohesion score 0.05775638652350981 - nodes in this community are weakly interconnected._
 - **Should `Benchmark Dataset Service` be split into smaller, more focused modules?**
