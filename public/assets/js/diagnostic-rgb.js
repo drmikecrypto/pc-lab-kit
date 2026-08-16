@@ -38,12 +38,22 @@
     };
   }
 
+  function blinkDefaults() {
+    return catalog?.blink_defaults || { on_ms: 500, off_ms: 500, min_ms: 50, max_ms: 60000 };
+  }
+
   async function loadCatalog() {
     try {
       const res = await fetch('/api/diagnostic/rgb/catalog');
       catalog = await res.json();
     } catch (_) {
-      catalog = { effects: [{ id: 'static', label: 'Static' }] };
+      catalog = {
+        effects: [
+          { id: 'static', label: 'Static' },
+          { id: 'blink', label: 'Blink', blink_timing: true },
+        ],
+        blink_defaults: { on_ms: 500, off_ms: 500, min_ms: 50, max_ms: 60000 },
+      };
     }
   }
 
@@ -126,42 +136,74 @@
     wrap.addEventListener('click', (e) => { if (e.target === wrap) wrap.remove(); });
   }
 
-  function effectOptions(cap) {
+  function effectOptions(cap, selected) {
     const fx = cap?.effects || catalog?.effects?.map((e) => e.id) || ['static'];
     return (catalog?.effects || [])
       .filter((e) => fx.includes(e.id))
-      .map((e) => `<option value="${esc(e.id)}">${esc(e.label || e.label_fa || e.id)}</option>`)
+      .map((e) => `<option value="${esc(e.id)}"${e.id === selected ? ' selected' : ''}>${esc(e.label || e.label_fa || e.id)}</option>`)
       .join('');
+  }
+
+  function blinkControlsHtml(zid, st) {
+    const d = blinkDefaults();
+    const on = st.blink_on_ms ?? d.on_ms;
+    const off = st.blink_off_ms ?? d.off_ms;
+    return `<div class="dx-rgb-blink" data-blink-for="${esc(zid)}">
+      <label>On ms <input type="number" min="${d.min_ms}" max="${d.max_ms}" step="50" value="${on}" data-z="${esc(zid)}" data-k="blink_on_ms"></label>
+      <label>Off ms <input type="number" min="${d.min_ms}" max="${d.max_ms}" step="50" value="${off}" data-z="${esc(zid)}" data-k="blink_off_ms"></label>
+    </div>`;
   }
 
   function renderDevice(dev) {
     const zones = (dev.zones || []).map((z) => {
       const zid = z.zone_id;
+      const d = blinkDefaults();
       if (!zoneState[zid]) {
-        zoneState[zid] = { color: '#22d3ee', effect: 'static', speed: 50, openrgb_device: z.openrgb_device, openrgb_zone: z.openrgb_zone };
+        zoneState[zid] = {
+          color: '#22d3ee',
+          effect: 'static',
+          speed: 50,
+          blink_on_ms: d.on_ms,
+          blink_off_ms: d.off_ms,
+          openrgb_device: z.openrgb_device,
+          openrgb_zone: z.openrgb_zone,
+        };
+      } else {
+        zoneState[zid].openrgb_device = z.openrgb_device;
+        zoneState[zid].openrgb_zone = z.openrgb_zone;
       }
       const st = zoneState[zid];
+      const showBlink = st.effect === 'blink';
       return `<div class="dx-rgb-zone">
         <div class="dx-rgb-zone-lbl">${esc(z.label || z.label_fa || z.zone_type)}</div>
         <div class="dx-rgb-controls">
           <input type="color" value="${esc(st.color)}" data-z="${esc(zid)}" data-k="color">
-          <select data-z="${esc(zid)}" data-k="effect">${effectOptions(z.capabilities)}</select>
-          <input type="range" min="0" max="100" value="${st.speed}" data-z="${esc(zid)}" data-k="speed" style="width:80px">
+          <select data-z="${esc(zid)}" data-k="effect">${effectOptions(z.capabilities, st.effect)}</select>
+          <input type="range" min="0" max="100" value="${st.speed}" data-z="${esc(zid)}" data-k="speed" title="Speed" style="width:80px">
         </div>
+        ${showBlink ? blinkControlsHtml(zid, st) : ''}
       </div>`;
     }).join('');
 
     let lcd = '';
     if (dev.lcd && dev.lcd.gif_supported) {
       const round = dev.lcd.width === dev.lcd.height;
+      const ogi = dev.openrgb_index != null ? dev.openrgb_index : (dev.lcd.openrgb_index != null ? dev.lcd.openrgb_index : '');
       lcd = `<div class="dx-rgb-lcd">
-        <div class="dx-rgb-zone-lbl">LCD ${dev.lcd.width}×${dev.lcd.height}</div>
+        <div class="dx-rgb-zone-lbl">LCD ${dev.lcd.width}×${dev.lcd.height} <span class="dx-rgb-lcd-badge">GIF</span></div>
         <div class="dx-rgb-lcd-preview${round ? '' : ' square'}" id="lcd-prev-${esc(dev.id)}"><span class="muted fs-xs">Preview</span></div>
-        <input type="file" accept="image/gif" class="dx-file-input" data-lcd-dev="${esc(dev.id)}" data-lcd-w="${dev.lcd.width}" data-lcd-h="${dev.lcd.height}">
+        <input type="file" accept="image/gif" class="dx-file-input" data-lcd-dev="${esc(dev.id)}" data-lcd-w="${dev.lcd.width}" data-lcd-h="${dev.lcd.height}" data-lcd-ogi="${ogi}">
+        <div class="dx-rgb-lcd-status muted fs-xs" id="lcd-st-${esc(dev.id)}"></div>
       </div>`;
     }
 
     return `<div class="dx-rgb-device"><div class="dx-rgb-device-head"><strong>${esc(dev.label)}</strong><span class="dx-rgb-type">${esc(dev.device_type || 'rgb')}</span></div>${zones}${lcd}</div>`;
+  }
+
+  function conflictBanner() {
+    const blocking = scan?.control?.blocking_processes || [];
+    if (!blocking.length) return '';
+    return `<div class="dx-rgb-conflict">Competing RGB software is running: <strong>${esc(blocking.join(', '))}</strong>. Close it so OpenRGB can control your lights.</div>`;
   }
 
   function render() {
@@ -170,19 +212,24 @@
     if (!scan || !list) return;
     const ready = scan.control?.ready;
     if (st) {
-      st.textContent = ready ? `✓ ${scan.device_count} devices · unified control` : `${scan.device_count || 0} detected · ${scan.control?.backend || '—'}`;
+      st.textContent = ready
+        ? `✓ ${scan.device_count} devices · unified control`
+        : `${scan.device_count || 0} detected · ${scan.control?.backend || '—'}`;
       st.className = 'dx-rgb-status ' + (ready ? 'ok' : 'warn');
     }
     if (!scan.devices?.length) {
       list.innerHTML = '<div class="dx-rgb-empty">No RGB LED or controller found. Check USB cables, ARGB hub, or competing software (e.g. iCUE) blocking OpenRGB.</div>';
       return;
     }
-    list.innerHTML = scan.devices.map(renderDevice).join('');
+    list.innerHTML = conflictBanner() + scan.devices.map(renderDevice).join('');
     list.querySelectorAll('input[data-z], select[data-z]').forEach((el) => {
       el.addEventListener('input', () => {
         const zid = el.dataset.z;
         if (!zoneState[zid]) return;
-        zoneState[zid][el.dataset.k] = el.type === 'range' ? parseInt(el.value, 10) : el.value;
+        let val = el.value;
+        if (el.type === 'range' || el.type === 'number') val = parseInt(el.value, 10);
+        zoneState[zid][el.dataset.k] = val;
+        if (el.dataset.k === 'effect') render();
       });
     });
     list.querySelectorAll('input[type=file][data-lcd-dev]').forEach((inp) => {
@@ -240,17 +287,44 @@
       showEnablePopup(scan?.enable_guide);
       return;
     }
-    const zones = Object.entries(zoneState).map(([zone_id, s]) => ({
-      zone_id, openrgb_device: s.openrgb_device, openrgb_zone: s.openrgb_zone,
-      effect: s.effect, color: (s.color || '#22d3ee').replace('#', ''), speed: s.speed || 50,
-    })).filter((z) => z.openrgb_device != null);
+    const d = blinkDefaults();
+    const zones = Object.entries(zoneState).map(([zone_id, s]) => {
+      const z = {
+        zone_id,
+        openrgb_device: s.openrgb_device,
+        openrgb_zone: s.openrgb_zone,
+        effect: s.effect,
+        color: (s.color || '#22d3ee').replace('#', ''),
+        speed: s.speed || 50,
+      };
+      if (s.effect === 'blink') {
+        z.blink_on_ms = s.blink_on_ms ?? d.on_ms;
+        z.blink_off_ms = s.blink_off_ms ?? d.off_ms;
+      }
+      return z;
+    }).filter((z) => z.openrgb_device != null);
 
     const res = await fetch(`${AGENT}/rgb/apply`, {
       method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ zones }),
     });
     const data = await res.json();
-    if (!data.ok) showEnablePopup(scan.enable_guide);
+    if (!data.ok) showEnablePopup(data.enable_guide || scan.enable_guide);
+  }
+
+  async function stopBlink() {
+    try {
+      await fetch(`${AGENT}/rgb/stop`, { method: 'POST', mode: 'cors' });
+      const st = document.getElementById('dx-rgb-status');
+      if (st) { st.textContent = 'Blink stopped'; st.className = 'dx-rgb-status ok'; }
+    } catch (_) { /* ignore */ }
+  }
+
+  function setLcdStatus(devId, html, cls) {
+    const el = document.getElementById(`lcd-st-${devId}`);
+    if (!el) return;
+    el.className = 'dx-rgb-lcd-status fs-xs ' + (cls || 'muted');
+    el.innerHTML = html;
   }
 
   async function uploadGif(input) {
@@ -260,26 +334,54 @@
     const dim = parseGifDimensions(buf);
     const ew = parseInt(input.dataset.lcdW, 10);
     const eh = parseInt(input.dataset.lcdH, 10);
+    const devId = input.dataset.lcdDev;
+    let mismatchNote = '';
     if (dim && ew && eh && (dim.w !== ew || dim.h !== eh)) {
-      alert(`GIF must be ${ew}×${eh} — got ${dim.w}×${dim.h}`);
-      return;
+      mismatchNote = `GIF ${dim.w}×${dim.h} vs panel ${ew}×${eh} — will store as-is (device may letterbox). `;
     }
-    const prev = document.getElementById(`lcd-prev-${input.dataset.lcdDev}`);
+    const prev = document.getElementById(`lcd-prev-${devId}`);
     if (prev) {
       prev.innerHTML = '';
       const img = document.createElement('img');
       img.src = URL.createObjectURL(file);
       prev.appendChild(img);
     }
+    setLcdStatus(devId, mismatchNote + 'Uploading…', 'muted');
     const bytes = new Uint8Array(buf);
     let binary = '';
     for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
-    const res = await fetch(`${AGENT}/rgb/lcd`, {
-      method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ device_id: input.dataset.lcdDev, expected_w: ew, expected_h: eh, gif_base64: btoa(binary) }),
-    });
-    const data = await res.json();
-    if (!data.ok) alert(data.message_fa || data.error);
+    const payload = {
+      device_id: devId,
+      expected_w: ew,
+      expected_h: eh,
+      gif_base64: btoa(binary),
+    };
+    const ogi = input.dataset.lcdOgi;
+    if (ogi !== '' && ogi != null) payload.openrgb_index = parseInt(ogi, 10);
+
+    try {
+      const res = await fetch(`${AGENT}/rgb/lcd`, {
+        method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!data.ok) {
+        setLcdStatus(devId, esc(data.message || data.message_fa || data.error || 'Upload failed'), 'warn');
+        return;
+      }
+      const steps = (data.next_steps || []).map((s) => `<li>${esc(s)}</li>`).join('');
+      const pushCls = data.pushed ? 'ok' : 'warn';
+      const headline = data.pushed
+        ? 'Applied to device (OpenRGB push attempted)'
+        : 'Saved locally — hardware push skipped';
+      let dash = '';
+      if (data.lcd_dashboard_path) {
+        dash = `<p class="mt-1"><a class="dx-rgb-dash-link" href="file:///${esc(data.lcd_dashboard_path.replace(/\\/g, '/'))}">Open sensor dashboard</a></p>`;
+      }
+      setLcdStatus(devId, `<strong class="dx-rgb-lcd-${pushCls}">${headline}</strong><p>${esc(data.message || '')}</p>${data.dimension_warning ? `<p>${esc(data.dimension_warning)}</p>` : ''}${steps ? `<ol class="dx-rgb-lcd-steps">${steps}</ol>` : ''}${dash}`, pushCls);
+    } catch (e) {
+      setLcdStatus(devId, 'Probe request failed', 'warn');
+    }
   }
 
   window.addEventListener('dx:scan-complete', (e) => { window.__dxLastScan = e.detail; });
@@ -287,6 +389,7 @@
   document.getElementById('dx-rgb-scan')?.addEventListener('click', rgbScan);
   document.getElementById('dx-rgb-apply')?.addEventListener('click', applyZones);
   document.getElementById('dx-rgb-auto')?.addEventListener('click', orchestratorProSetup);
+  document.getElementById('dx-rgb-stop')?.addEventListener('click', stopBlink);
 
   loadCatalog().then(rgbScan);
 })();

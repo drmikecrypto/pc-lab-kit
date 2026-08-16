@@ -40,8 +40,9 @@ $script:Routes = @(
     @{ method = 'POST'; path = '/oc/rollback';        desc = 'restore baseline' }
     @{ method = 'GET';  path = '/rgb/scan';           desc = 'detect case/fan/LCD RGB' }
     @{ method = 'POST'; path = '/rgb/apply';          desc = 'apply zone colors/effects' }
-    @{ method = 'POST'; path = '/rgb/lcd';            desc = 'upload GIF (local only, base64 JSON)' }
-    @{ method = 'POST'; path = '/rgb/auto';         desc = 'auto RGB' }
+    @{ method = 'POST'; path = '/rgb/lcd';            desc = 'upload GIF (local cache + OpenRGB push attempt)' }
+    @{ method = 'POST'; path = '/rgb/stop';           desc = 'stop blink timers / set zones off' }
+    @{ method = 'POST'; path = '/rgb/auto';           desc = 'auto RGB' }
     @{ method = 'POST'; path = '/orchestrate'; desc = 'full setup (RGB + fan + LCD)' }
     @{ method = 'GET';  path = '/bench/catalog';      desc = 'runnable benchmarks' }
     @{ method = 'POST'; path = '/bench/run';          desc = 'CPU / CPU-MT / memory / storage / GPU bench' }
@@ -320,9 +321,18 @@ Invoke-RgbApplySettings -Settings `$s | ConvertTo-Json -Depth 8 -Compress }
 & { . '$rgbScript'
 `$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
 `$bytes = [Convert]::FromBase64String(`$j.gif_base64)
-Save-ProbeLcdGif -DeviceId `$j.device_id -Bytes `$bytes -ExpectedW ([int]`$j.expected_w) -ExpectedH ([int]`$j.expected_h) | ConvertTo-Json -Depth 6 -Compress }
+`$ogi = -1
+if (`$null -ne `$j.openrgb_index) { `$ogi = [int]`$j.openrgb_index }
+Save-ProbeLcdGif -DeviceId `$j.device_id -Bytes `$bytes -ExpectedW ([int]`$j.expected_w) -ExpectedH ([int]`$j.expected_h) -OpenRgbIndex `$ogi | ConvertTo-Json -Depth 8 -Compress }
 "@
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+            }
+            "/rgb/stop" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$rgbScript'
+Invoke-RgbStop | ConvertTo-Json -Depth 6 -Compress }
+"@
             }
             "/rgb/auto" {
                 if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }

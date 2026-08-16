@@ -335,7 +335,8 @@ $toolTotal = $toolKit->total();
                     <div class="dx-rgb-toolbar">
                         <button type="button" class="dx-btn ghost" id="dx-rgb-scan">Rescan RGB</button>
                         <button type="button" class="dx-btn primary" id="dx-rgb-auto">Auto setup</button>
-                        <button type="button" class="dx-btn ghost" id="dx-rgb-apply">Manual zone</button>
+                        <button type="button" class="dx-btn ghost" id="dx-rgb-apply">Apply zones</button>
+                        <button type="button" class="dx-btn ghost" id="dx-rgb-stop">Stop blink</button>
                     </div>
                     <div class="dx-rgb-devices" id="dx-rgb-devices"><div class="dx-rgb-empty">Scanning USB/HID…</div></div>
                 </div>

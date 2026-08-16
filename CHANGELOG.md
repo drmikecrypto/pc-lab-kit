@@ -6,6 +6,20 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-08-16
+
+### Added
+- **RGB Lab blink**: per-zone Blink effect with custom on/off duration (ms); OpenRGB flashing when available, otherwise detached software timer
+- **Stop blink** control + probe `POST /rgb/stop`
+- **LCD Studio push path**: GIF still cached locally; OpenRGB Custom/Direct attempt + staged copy; clear pushed vs local-only status and next steps
+- Soft-accept GIF dimension mismatch (letterbox/crop note) instead of hard-fail
+- Expanded cooler/case LCD fingerprints (Corsair, NZXT, Lian Li, DeepCool, Thermaltake, Cooler Master, generic USB panel)
+- English-first RGB catalog, enable guide, and zone labels
+
+### Changed
+- MASTER_PLAN status aligned with shipped Phases 0–5 / Pillars A–B; Pillar C shipping in 3.2.1
+- Desktop package version aligned to 3.2.1
+
 ## [3.2.0] - 2026-08-11
 
 ### Added

@@ -155,7 +155,7 @@
       "label": "Test-ProbeElevated()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/PcLabProbeServe.ps1",
-      "source_location": "L57",
+      "source_location": "L58",
       "_origin": "ast",
       "id": "agent_pclab_probe_pclabprobeserve_test_probeelevated",
       "community": 26,
@@ -165,7 +165,7 @@
       "label": "Add-RingSample()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/PcLabProbeServe.ps1",
-      "source_location": "L64",
+      "source_location": "L65",
       "_origin": "ast",
       "id": "agent_pclab_probe_pclabprobeserve_add_ringsample",
       "community": 26,
@@ -175,7 +175,7 @@
       "label": "Read-RequestBody()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/PcLabProbeServe.ps1",
-      "source_location": "L71",
+      "source_location": "L72",
       "_origin": "ast",
       "id": "agent_pclab_probe_pclabprobeserve_read_requestbody",
       "community": 26,
@@ -298,7 +298,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common",
-      "community": 37,
+      "community": 0,
       "norm_label": "common.ps1"
     },
     {
@@ -308,7 +308,7 @@
       "source_location": "L2",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_get_cimsafe",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-cimsafe()"
     },
     {
@@ -318,7 +318,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_kelvintoc",
-      "community": 37,
+      "community": 0,
       "norm_label": "kelvintoc()"
     },
     {
@@ -338,7 +338,7 @@
       "source_location": "L43",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_initialize_probenativeinterop",
-      "community": 37,
+      "community": 0,
       "norm_label": "initialize-probenativeinterop()"
     },
     {
@@ -348,7 +348,7 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_test_probeelevated",
-      "community": 126,
+      "community": 0,
       "norm_label": "test-probeelevated()"
     },
     {
@@ -358,7 +358,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_get_probeprocessorfeatures",
-      "community": 37,
+      "community": 0,
       "norm_label": "get-probeprocessorfeatures()"
     },
     {
@@ -368,7 +368,7 @@
       "source_location": "L160",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_get_probecoretopology",
-      "community": 37,
+      "community": 0,
       "norm_label": "get-probecoretopology()"
     },
     {
@@ -378,7 +378,7 @@
       "source_location": "L219",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_parse_featureset",
-      "community": 37,
+      "community": 0,
       "norm_label": "parse-featureset()"
     },
     {
@@ -388,7 +388,7 @@
       "source_location": "L238",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_guess_instructionsets",
-      "community": 37,
+      "community": 0,
       "norm_label": "guess-instructionsets()"
     },
     {
@@ -398,7 +398,7 @@
       "source_location": "L260",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_new_probefield",
-      "community": 56,
+      "community": 0,
       "norm_label": "new-probefield()"
     },
     {
@@ -408,7 +408,7 @@
       "source_location": "L284",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_common_get_probefieldvalue",
-      "community": 37,
+      "community": 0,
       "norm_label": "get-probefieldvalue()"
     },
     {
@@ -418,7 +418,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_cpu",
-      "community": 37,
+      "community": 0,
       "norm_label": "cpu.ps1"
     },
     {
@@ -428,7 +428,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_cpu_get_probecpucodename",
-      "community": 37,
+      "community": 0,
       "norm_label": "get-probecpucodename()"
     },
     {
@@ -438,7 +438,7 @@
       "source_location": "L48",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_cpu_get_probecpucachedetail",
-      "community": 37,
+      "community": 0,
       "norm_label": "get-probecpucachedetail()"
     },
     {
@@ -448,7 +448,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_cpu_get_probecputelemetry",
-      "community": 37,
+      "community": 0,
       "norm_label": "get-probecputelemetry()"
     },
     {
@@ -478,7 +478,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices",
-      "community": 28,
+      "community": 6,
       "norm_label": "devices.ps1"
     },
     {
@@ -488,7 +488,7 @@
       "source_location": "L38",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probepcivendorname",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probepcivendorname()"
     },
     {
@@ -498,7 +498,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probeusbvendorname",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probeusbvendorname()"
     },
     {
@@ -508,7 +508,7 @@
       "source_location": "L52",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_convertfrom_pnpdeviceid",
-      "community": 28,
+      "community": 6,
       "norm_label": "convertfrom-pnpdeviceid()"
     },
     {
@@ -518,7 +518,7 @@
       "source_location": "L101",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probedevicecategory",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probedevicecategory()"
     },
     {
@@ -528,7 +528,7 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probeconfigmanagermessage",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probeconfigmanagermessage()"
     },
     {
@@ -538,7 +538,7 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probepnpinventory",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probepnpinventory()"
     },
     {
@@ -548,7 +548,7 @@
       "source_location": "L280",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probepcidevices",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probepcidevices()"
     },
     {
@@ -558,7 +558,7 @@
       "source_location": "L315",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probeusbtree",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probeusbtree()"
     },
     {
@@ -568,7 +568,7 @@
       "source_location": "L387",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_convertfrom_probeedidbytes",
-      "community": 28,
+      "community": 6,
       "norm_label": "convertfrom-probeedidbytes()"
     },
     {
@@ -578,7 +578,7 @@
       "source_location": "L465",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_proberawedid",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-proberawedid()"
     },
     {
@@ -588,7 +588,7 @@
       "source_location": "L495",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probemonitors",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probemonitors()"
     },
     {
@@ -598,7 +598,7 @@
       "source_location": "L577",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probeaudiodevices",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probeaudiodevices()"
     },
     {
@@ -608,7 +608,7 @@
       "source_location": "L617",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probebluetoothdevices",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probebluetoothdevices()"
     },
     {
@@ -618,7 +618,7 @@
       "source_location": "L635",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probesystemslots",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probesystemslots()"
     },
     {
@@ -628,7 +628,7 @@
       "source_location": "L652",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probeports",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probeports()"
     },
     {
@@ -638,7 +638,7 @@
       "source_location": "L666",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probebatterydetail",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probebatterydetail()"
     },
     {
@@ -648,7 +648,7 @@
       "source_location": "L706",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probefirmwareinfo",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probefirmwareinfo()"
     },
     {
@@ -658,7 +658,7 @@
       "source_location": "L770",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_devices_get_probedeviceinventory",
-      "community": 28,
+      "community": 6,
       "norm_label": "get-probedeviceinventory()"
     },
     {
@@ -908,7 +908,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_frametime",
-      "community": 124,
+      "community": 0,
       "norm_label": "frametime.ps1"
     },
     {
@@ -918,7 +918,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_frametime_build_frametimespikemap",
-      "community": 124,
+      "community": 0,
       "norm_label": "build-frametimespikemap()"
     },
     {
@@ -928,7 +928,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_frametime_find_capframexexports",
-      "community": 124,
+      "community": 0,
       "norm_label": "find-capframexexports()"
     },
     {
@@ -938,7 +938,7 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_frametime_parse_capframexframetimes",
-      "community": 124,
+      "community": 0,
       "norm_label": "parse-capframexframetimes()"
     },
     {
@@ -948,7 +948,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_frametime_get_frametimetelemetry",
-      "community": 124,
+      "community": 0,
       "norm_label": "get-frametimetelemetry()"
     },
     {
@@ -958,7 +958,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu",
-      "community": 56,
+      "community": 0,
       "norm_label": "gpu.ps1"
     },
     {
@@ -968,7 +968,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_invoke_nvidiasmiquery",
-      "community": 56,
+      "community": 0,
       "norm_label": "invoke-nvidiasmiquery()"
     },
     {
@@ -978,7 +978,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_convertto_nvnumber",
-      "community": 56,
+      "community": 0,
       "norm_label": "convertto-nvnumber()"
     },
     {
@@ -988,7 +988,7 @@
       "source_location": "L26",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_convertto_nvtext",
-      "community": 56,
+      "community": 0,
       "norm_label": "convertto-nvtext()"
     },
     {
@@ -998,7 +998,7 @@
       "source_location": "L41",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_get_nvidiasmitemperaturedetail",
-      "community": 56,
+      "community": 0,
       "norm_label": "get-nvidiasmitemperaturedetail()"
     },
     {
@@ -1008,7 +1008,7 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_get_nvidiagpulist",
-      "community": 56,
+      "community": 0,
       "norm_label": "get-nvidiagpulist()"
     },
     {
@@ -1018,7 +1018,7 @@
       "source_location": "L167",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_get_nvidiathrottlereasons",
-      "community": 56,
+      "community": 0,
       "norm_label": "get-nvidiathrottlereasons()"
     },
     {
@@ -1028,7 +1028,7 @@
       "source_location": "L201",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_get_probegpuadapters",
-      "community": 56,
+      "community": 0,
       "norm_label": "get-probegpuadapters()"
     },
     {
@@ -1038,7 +1038,7 @@
       "source_location": "L268",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_get_gpuregistrystatic",
-      "community": 56,
+      "community": 0,
       "norm_label": "get-gpuregistrystatic()"
     },
     {
@@ -1048,7 +1048,7 @@
       "source_location": "L288",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_get_gpuvramfromregistry",
-      "community": 56,
+      "community": 0,
       "norm_label": "get-gpuvramfromregistry()"
     },
     {
@@ -1058,7 +1058,7 @@
       "source_location": "L315",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_get_probegputelemetry",
-      "community": 56,
+      "community": 0,
       "norm_label": "get-probegputelemetry()"
     },
     {
@@ -1068,7 +1068,7 @@
       "source_location": "L477",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_gpu_test_gpunamematch",
-      "community": 56,
+      "community": 0,
       "norm_label": "test-gpunamematch()"
     },
     {
@@ -1078,7 +1078,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_hwmon",
-      "community": 126,
+      "community": 0,
       "norm_label": "hwmon.ps1"
     },
     {
@@ -1088,7 +1088,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_hwmon_get_probehwmontelemetry",
-      "community": 126,
+      "community": 0,
       "norm_label": "get-probehwmontelemetry()"
     },
     {
@@ -1098,7 +1098,7 @@
       "source_location": "L95",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_hwmon_find_sensorvalue",
-      "community": 126,
+      "community": 0,
       "norm_label": "find-sensorvalue()"
     },
     {
@@ -1108,7 +1108,7 @@
       "source_location": "L107",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_hwmon_find_sensors",
-      "community": 126,
+      "community": 0,
       "norm_label": "find-sensors()"
     },
     {
@@ -1378,7 +1378,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_presentmon",
-      "community": 124,
+      "community": 0,
       "norm_label": "presentmon.ps1"
     },
     {
@@ -1388,7 +1388,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_presentmon_get_probepresentmontelemetry",
-      "community": 124,
+      "community": 0,
       "norm_label": "get-probepresentmontelemetry()"
     },
     {
@@ -1398,7 +1398,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_ram_spd",
-      "community": 125,
+      "community": 0,
       "norm_label": "ram-spd.ps1"
     },
     {
@@ -1408,7 +1408,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_ram_spd_resolve_ramdietype",
-      "community": 125,
+      "community": 0,
       "norm_label": "resolve-ramdietype()"
     },
     {
@@ -1418,7 +1418,7 @@
       "source_location": "L30",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_ram_spd_parse_cpuzmemoryblock",
-      "community": 125,
+      "community": 0,
       "norm_label": "parse-cpuzmemoryblock()"
     },
     {
@@ -1428,7 +1428,7 @@
       "source_location": "L73",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_ram_spd_find_cpuzexports",
-      "community": 125,
+      "community": 0,
       "norm_label": "find-cpuzexports()"
     },
     {
@@ -1438,7 +1438,7 @@
       "source_location": "L92",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_ram_spd_get_ramformfactorname",
-      "community": 125,
+      "community": 0,
       "norm_label": "get-ramformfactorname()"
     },
     {
@@ -1448,7 +1448,7 @@
       "source_location": "L102",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_ram_spd_get_rammemorytypename",
-      "community": 125,
+      "community": 0,
       "norm_label": "get-rammemorytypename()"
     },
     {
@@ -1458,7 +1458,7 @@
       "source_location": "L114",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_ram_spd_get_ramspdtelemetry",
-      "community": 125,
+      "community": 0,
       "norm_label": "get-ramspdtelemetry()"
     },
     {
@@ -1472,10 +1472,40 @@
       "norm_label": "rgb.ps1"
     },
     {
+      "label": "Get-RgbBlinkStateDir()",
+      "file_type": "code",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L35",
+      "_origin": "ast",
+      "id": "agent_pclab_probe_probelib_rgb_get_rgbblinkstatedir",
+      "community": 10,
+      "norm_label": "get-rgbblinkstatedir()"
+    },
+    {
+      "label": "Stop-RgbBlinkJobs()",
+      "file_type": "code",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L41",
+      "_origin": "ast",
+      "id": "agent_pclab_probe_probelib_rgb_stop_rgbblinkjobs",
+      "community": 10,
+      "norm_label": "stop-rgbblinkjobs()"
+    },
+    {
+      "label": "Start-RgbSoftwareBlink()",
+      "file_type": "code",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L61",
+      "_origin": "ast",
+      "id": "agent_pclab_probe_probelib_rgb_start_rgbsoftwareblink",
+      "community": 10,
+      "norm_label": "start-rgbsoftwareblink()"
+    },
+    {
       "label": "Get-OpenRgbExecutable()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L20",
+      "source_location": "L113",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_get_openrgbexecutable",
       "community": 10,
@@ -1485,7 +1515,7 @@
       "label": "Get-RgbBlockingProcesses()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L35",
+      "source_location": "L128",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_get_rgbblockingprocesses",
       "community": 10,
@@ -1495,7 +1525,7 @@
       "label": "Match-KnownRgbDevice()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L46",
+      "source_location": "L139",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_match_knownrgbdevice",
       "community": 10,
@@ -1505,7 +1535,7 @@
       "label": "Get-RgbHidDevices()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L62",
+      "source_location": "L155",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_get_rgbhiddevices",
       "community": 10,
@@ -1515,7 +1545,7 @@
       "label": "Get-OpenRgbDeviceList()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L86",
+      "source_location": "L179",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_get_openrgbdevicelist",
       "community": 10,
@@ -1525,27 +1555,27 @@
       "label": "Get-RgbSoftwareHints()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L105",
+      "source_location": "L198",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_get_rgbsoftwarehints",
       "community": 10,
       "norm_label": "get-rgbsoftwarehints()"
     },
     {
-      "label": "Get-RgbDeviceScan()",
+      "label": "Get-ZoneLabel()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L121",
+      "source_location": "L215",
       "_origin": "ast",
-      "id": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
+      "id": "agent_pclab_probe_probelib_rgb_get_zonelabel",
       "community": 10,
-      "norm_label": "get-rgbdevicescan()"
+      "norm_label": "get-zonelabel()"
     },
     {
       "label": "Get-ZoneLabelFa()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L200",
+      "source_location": "L232",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_get_zonelabelfa",
       "community": 10,
@@ -1555,7 +1585,7 @@
       "label": "Get-ZoneCapabilities()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L216",
+      "source_location": "L248",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_get_zonecapabilities",
       "community": 10,
@@ -1565,41 +1595,101 @@
       "label": "Get-RgbEnableGuide()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L228",
+      "source_location": "L260",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_get_rgbenableguide",
       "community": 10,
       "norm_label": "get-rgbenableguide()"
     },
     {
+      "label": "Get-RgbDeviceScan()",
+      "file_type": "code",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L288",
+      "_origin": "ast",
+      "id": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
+      "community": 10,
+      "norm_label": "get-rgbdevicescan()"
+    },
+    {
       "label": "Get-ProbeLcdCacheDir()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L253",
+      "source_location": "L391",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_get_probelcdcachedir",
       "community": 10,
       "norm_label": "get-probelcdcachedir()"
     },
     {
-      "label": "Save-ProbeLcdGif()",
+      "label": "Get-ProbeLcdDashboardPath()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L259",
+      "source_location": "L397",
       "_origin": "ast",
-      "id": "agent_pclab_probe_probelib_rgb_save_probelcdgif",
+      "id": "agent_pclab_probe_probelib_rgb_get_probelcddashboardpath",
       "community": 10,
-      "norm_label": "save-probelcdgif()"
+      "norm_label": "get-probelcddashboardpath()"
+    },
+    {
+      "label": "Invoke-OpenRgbMode()",
+      "file_type": "code",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L402",
+      "_origin": "ast",
+      "id": "agent_pclab_probe_probelib_rgb_invoke_openrgbmode",
+      "community": 10,
+      "norm_label": "invoke-openrgbmode()"
+    },
+    {
+      "label": "Resolve-BlinkOpenRgbMode()",
+      "file_type": "code",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L421",
+      "_origin": "ast",
+      "id": "agent_pclab_probe_probelib_rgb_resolve_blinkopenrgbmode",
+      "community": 10,
+      "norm_label": "resolve-blinkopenrgbmode()"
+    },
+    {
+      "label": "Invoke-RgbStop()",
+      "file_type": "code",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L427",
+      "_origin": "ast",
+      "id": "agent_pclab_probe_probelib_rgb_invoke_rgbstop",
+      "community": 10,
+      "norm_label": "invoke-rgbstop()"
     },
     {
       "label": "Invoke-RgbApplySettings()",
       "file_type": "code",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L299",
+      "source_location": "L448",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_rgb_invoke_rgbapplysettings",
       "community": 10,
       "norm_label": "invoke-rgbapplysettings()"
+    },
+    {
+      "label": "Invoke-ProbeLcdPush()",
+      "file_type": "code",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L535",
+      "_origin": "ast",
+      "id": "agent_pclab_probe_probelib_rgb_invoke_probelcdpush",
+      "community": 10,
+      "norm_label": "invoke-probelcdpush()"
+    },
+    {
+      "label": "Save-ProbeLcdGif()",
+      "file_type": "code",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L603",
+      "_origin": "ast",
+      "id": "agent_pclab_probe_probelib_rgb_save_probelcdgif",
+      "community": 10,
+      "norm_label": "save-probelcdgif()"
     },
     {
       "label": "stress.ps1",
@@ -1858,7 +1948,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal",
-      "community": 116,
+      "community": 0,
       "norm_label": "thermal.ps1"
     },
     {
@@ -1868,7 +1958,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_get_probevendortag",
-      "community": 116,
+      "community": 0,
       "norm_label": "get-probevendortag()"
     },
     {
@@ -1878,7 +1968,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_get_probecputjmax",
-      "community": 116,
+      "community": 0,
       "norm_label": "get-probecputjmax()"
     },
     {
@@ -1888,7 +1978,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_get_probegputhermallimits",
-      "community": 116,
+      "community": 0,
       "norm_label": "get-probegputhermallimits()"
     },
     {
@@ -1898,7 +1988,7 @@
       "source_location": "L122",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_select_probesensors",
-      "community": 116,
+      "community": 0,
       "norm_label": "select-probesensors()"
     },
     {
@@ -1908,7 +1998,7 @@
       "source_location": "L138",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_get_probesensorvalue",
-      "community": 116,
+      "community": 0,
       "norm_label": "get-probesensorvalue()"
     },
     {
@@ -1918,7 +2008,7 @@
       "source_location": "L154",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_test_probeplausibletemp",
-      "community": 116,
+      "community": 0,
       "norm_label": "test-probeplausibletemp()"
     },
     {
@@ -1928,7 +2018,7 @@
       "source_location": "L162",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_new_probeheadroom",
-      "community": 116,
+      "community": 0,
       "norm_label": "new-probeheadroom()"
     },
     {
@@ -1938,7 +2028,7 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_resolve_probecputhermal",
-      "community": 116,
+      "community": 0,
       "norm_label": "resolve-probecputhermal()"
     },
     {
@@ -1948,7 +2038,7 @@
       "source_location": "L301",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_resolve_probegputhermal",
-      "community": 116,
+      "community": 0,
       "norm_label": "resolve-probegputhermal()"
     },
     {
@@ -1958,7 +2048,7 @@
       "source_location": "L383",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_find_probegpusensornode",
-      "community": 116,
+      "community": 0,
       "norm_label": "find-probegpusensornode()"
     },
     {
@@ -1968,7 +2058,7 @@
       "source_location": "L419",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_get_probegputhermalhealth",
-      "community": 116,
+      "community": 0,
       "norm_label": "get-probegputhermalhealth()"
     },
     {
@@ -1978,7 +2068,7 @@
       "source_location": "L436",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_get_probegputhermalfindings",
-      "community": 116,
+      "community": 0,
       "norm_label": "get-probegputhermalfindings()"
     },
     {
@@ -1988,7 +2078,7 @@
       "source_location": "L501",
       "_origin": "ast",
       "id": "agent_pclab_probe_probelib_thermal_get_probecputhermalfindings",
-      "community": 37,
+      "community": 21,
       "norm_label": "get-probecputhermalfindings()"
     },
     {
@@ -2118,7 +2208,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_controllers_appupdatecontroller",
-      "community": 2,
+      "community": 30,
       "norm_label": "appupdatecontroller.php"
     },
     {
@@ -2128,7 +2218,7 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "app_controllers_appupdatecontroller_appupdatecontroller",
-      "community": 2,
+      "community": 30,
       "norm_label": "appupdatecontroller"
     },
     {
@@ -2138,7 +2228,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "app_controllers_appupdatecontroller_appupdatecontroller_check",
-      "community": 2,
+      "community": 30,
       "norm_label": ".check()"
     },
     {
@@ -2598,7 +2688,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_controllers_downloadcontroller",
-      "community": 11,
+      "community": 31,
       "norm_label": "downloadcontroller.php"
     },
     {
@@ -2608,7 +2698,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "app_controllers_downloadcontroller_downloadcontroller",
-      "community": 11,
+      "community": 31,
       "norm_label": "downloadcontroller"
     },
     {
@@ -2618,7 +2708,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_controllers_downloadcontroller_downloadcontroller_downloadsroot",
-      "community": 11,
+      "community": 31,
       "norm_label": ".downloadsroot()"
     },
     {
@@ -2628,7 +2718,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "app_controllers_downloadcontroller_downloadcontroller_windowsapp",
-      "community": 11,
+      "community": 31,
       "norm_label": ".windowsapp()"
     },
     {
@@ -2638,7 +2728,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "app_controllers_downloadcontroller_downloadcontroller_linuxapp",
-      "community": 11,
+      "community": 31,
       "norm_label": ".linuxapp()"
     },
     {
@@ -2648,7 +2738,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "app_controllers_downloadcontroller_downloadcontroller_probewindows",
-      "community": 11,
+      "community": 31,
       "norm_label": ".probewindows()"
     },
     {
@@ -2658,7 +2748,7 @@
       "source_location": "L47",
       "_origin": "ast",
       "id": "app_controllers_downloadcontroller_downloadcontroller_sendfile",
-      "community": 11,
+      "community": 31,
       "norm_label": ".sendfile()"
     },
     {
@@ -2668,7 +2758,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_controllers_settingsapicontroller",
-      "community": 11,
+      "community": 9,
       "norm_label": "settingsapicontroller.php"
     },
     {
@@ -2888,7 +2978,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_appupdateservice",
-      "community": 2,
+      "community": 30,
       "norm_label": "appupdateservice.php"
     },
     {
@@ -3468,7 +3558,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_diagnosticagentservice",
-      "community": 120,
+      "community": 135,
       "norm_label": "diagnosticagentservice.php"
     },
     {
@@ -3478,7 +3568,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "app_services_diagnosticagentservice_diagnosticagentservice",
-      "community": 120,
+      "community": 135,
       "norm_label": "diagnosticagentservice"
     },
     {
@@ -3488,7 +3578,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "app_services_diagnosticagentservice_diagnosticagentservice_normalize",
-      "community": 120,
+      "community": 135,
       "norm_label": ".normalize()"
     },
     {
@@ -3498,7 +3588,7 @@
       "source_location": "L181",
       "_origin": "ast",
       "id": "app_services_diagnosticagentservice_diagnosticagentservice_detectwifistandard",
-      "community": 120,
+      "community": 135,
       "norm_label": ".detectwifistandard()"
     },
     {
@@ -3628,7 +3718,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_diagnosticconsultantservice",
-      "community": 120,
+      "community": 123,
       "norm_label": "diagnosticconsultantservice.php"
     },
     {
@@ -3638,7 +3728,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "app_services_diagnosticconsultantservice_diagnosticconsultantservice",
-      "community": 120,
+      "community": 123,
       "norm_label": "diagnosticconsultantservice"
     },
     {
@@ -3648,7 +3738,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "app_services_diagnosticconsultantservice_diagnosticconsultantservice_plan",
-      "community": 120,
+      "community": 123,
       "norm_label": ".plan()"
     },
     {
@@ -3658,7 +3748,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "app_services_diagnosticconsultantservice_diagnosticconsultantservice_pack",
-      "community": 120,
+      "community": 123,
       "norm_label": ".pack()"
     },
     {
@@ -3668,7 +3758,7 @@
       "source_location": "L103",
       "_origin": "ast",
       "id": "app_services_diagnosticconsultantservice_diagnosticconsultantservice_honesttext",
-      "community": 120,
+      "community": 123,
       "norm_label": ".honesttext()"
     },
     {
@@ -3678,7 +3768,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "app_services_diagnosticconsultantservice_diagnosticconsultantservice_focustext",
-      "community": 120,
+      "community": 123,
       "norm_label": ".focustext()"
     },
     {
@@ -3688,7 +3778,7 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "app_services_diagnosticconsultantservice_diagnosticconsultantservice_horizontext",
-      "community": 120,
+      "community": 123,
       "norm_label": ".horizontext()"
     },
     {
@@ -4668,7 +4758,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "app_services_diagnosticinventoryservice_diagnosticinventoryservice",
-      "community": 5,
+      "community": 137,
       "norm_label": "diagnosticinventoryservice"
     },
     {
@@ -4678,7 +4768,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_services_diagnosticinventoryservice_diagnosticinventoryservice_present",
-      "community": 5,
+      "community": 137,
       "norm_label": ".present()"
     },
     {
@@ -4688,7 +4778,7 @@
       "source_location": "L132",
       "_origin": "ast",
       "id": "app_services_diagnosticinventoryservice_diagnosticinventoryservice_devicerow",
-      "community": 5,
+      "community": 137,
       "norm_label": ".devicerow()"
     },
     {
@@ -4698,7 +4788,7 @@
       "source_location": "L183",
       "_origin": "ast",
       "id": "app_services_diagnosticinventoryservice_diagnosticinventoryservice_flattenfields",
-      "community": 5,
+      "community": 137,
       "norm_label": ".flattenfields()"
     },
     {
@@ -4718,7 +4808,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice",
-      "community": 120,
+      "community": 56,
       "norm_label": "diagnosticocservice"
     },
     {
@@ -4728,7 +4818,7 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice_buildplan",
-      "community": 120,
+      "community": 56,
       "norm_label": ".buildplan()"
     },
     {
@@ -4738,7 +4828,7 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice_collectblockers",
-      "community": 120,
+      "community": 56,
       "norm_label": ".collectblockers()"
     },
     {
@@ -4748,7 +4838,7 @@
       "source_location": "L161",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice_plangputargets",
-      "community": 120,
+      "community": 56,
       "norm_label": ".plangputargets()"
     },
     {
@@ -4758,7 +4848,7 @@
       "source_location": "L219",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice_plancputargets",
-      "community": 120,
+      "community": 56,
       "norm_label": ".plancputargets()"
     },
     {
@@ -4768,7 +4858,7 @@
       "source_location": "L243",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice_planramtargets",
-      "community": 120,
+      "community": 56,
       "norm_label": ".planramtargets()"
     },
     {
@@ -4778,7 +4868,7 @@
       "source_location": "L274",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice_planpowerplantargets",
-      "community": 120,
+      "community": 56,
       "norm_label": ".planpowerplantargets()"
     },
     {
@@ -4788,7 +4878,7 @@
       "source_location": "L289",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice_safetyscore",
-      "community": 120,
+      "community": 56,
       "norm_label": ".safetyscore()"
     },
     {
@@ -4798,7 +4888,7 @@
       "source_location": "L306",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice_chooseprofile",
-      "community": 120,
+      "community": 56,
       "norm_label": ".chooseprofile()"
     },
     {
@@ -4808,7 +4898,7 @@
       "source_location": "L319",
       "_origin": "ast",
       "id": "app_services_diagnosticocservice_diagnosticocservice_summarytext",
-      "community": 120,
+      "community": 56,
       "norm_label": ".summarytext()"
     },
     {
@@ -4908,7 +4998,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "app_services_diagnosticrgbservice",
-      "community": 120,
+      "community": 124,
       "norm_label": "diagnosticrgbservice.php"
     },
     {
@@ -4918,7 +5008,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "app_services_diagnosticrgbservice_diagnosticrgbservice",
-      "community": 120,
+      "community": 124,
       "norm_label": "diagnosticrgbservice"
     },
     {
@@ -4928,37 +5018,47 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "app_services_diagnosticrgbservice_diagnosticrgbservice_catalog",
-      "community": 120,
+      "community": 124,
       "norm_label": ".catalog()"
     },
     {
       "label": ".orchestrate()",
       "file_type": "code",
       "source_file": "app/Services/DiagnosticRgbService.php",
-      "source_location": "L60",
+      "source_location": "L85",
       "_origin": "ast",
       "id": "app_services_diagnosticrgbservice_diagnosticrgbservice_orchestrate",
-      "community": 120,
+      "community": 124,
       "norm_label": ".orchestrate()"
     },
     {
       "label": ".narrateApply()",
       "file_type": "code",
       "source_file": "app/Services/DiagnosticRgbService.php",
-      "source_location": "L75",
+      "source_location": "L100",
       "_origin": "ast",
       "id": "app_services_diagnosticrgbservice_diagnosticrgbservice_narrateapply",
-      "community": 120,
+      "community": 124,
       "norm_label": ".narrateapply()"
+    },
+    {
+      "label": ".normalizeBlinkTiming()",
+      "file_type": "code",
+      "source_file": "app/Services/DiagnosticRgbService.php",
+      "source_location": "L111",
+      "_origin": "ast",
+      "id": "app_services_diagnosticrgbservice_diagnosticrgbservice_normalizeblinktiming",
+      "community": 124,
+      "norm_label": ".normalizeblinktiming()"
     },
     {
       "label": ".defaultEnableGuide()",
       "file_type": "code",
       "source_file": "app/Services/DiagnosticRgbService.php",
-      "source_location": "L81",
+      "source_location": "L126",
       "_origin": "ast",
       "id": "app_services_diagnosticrgbservice_diagnosticrgbservice_defaultenableguide",
-      "community": 120,
+      "community": 124,
       "norm_label": ".defaultenableguide()"
     },
     {
@@ -5718,7 +5818,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "app_services_hardwareknowledgegraphservice_hardwareknowledgegraphservice",
-      "community": 5,
+      "community": 131,
       "norm_label": "hardwareknowledgegraphservice"
     },
     {
@@ -5728,7 +5828,7 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "app_services_hardwareknowledgegraphservice_hardwareknowledgegraphservice_fromprobe",
-      "community": 5,
+      "community": 131,
       "norm_label": ".fromprobe()"
     },
     {
@@ -5738,7 +5838,7 @@
       "source_location": "L349",
       "_origin": "ast",
       "id": "app_services_hardwareknowledgegraphservice_hardwareknowledgegraphservice_findchipsetlabel",
-      "community": 5,
+      "community": 131,
       "norm_label": ".findchipsetlabel()"
     },
     {
@@ -5748,7 +5848,7 @@
       "source_location": "L375",
       "_origin": "ast",
       "id": "app_services_hardwareknowledgegraphservice_hardwareknowledgegraphservice_adddriverdevicenodes",
-      "community": 5,
+      "community": 131,
       "norm_label": ".adddriverdevicenodes()"
     },
     {
@@ -5758,7 +5858,7 @@
       "source_location": "L489",
       "_origin": "ast",
       "id": "app_services_hardwareknowledgegraphservice_hardwareknowledgegraphservice_compact",
-      "community": 5,
+      "community": 131,
       "norm_label": ".compact()"
     },
     {
@@ -5778,7 +5878,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "app_services_labreportexportservice_labreportexportservice",
-      "community": 5,
+      "community": 126,
       "norm_label": "labreportexportservice"
     },
     {
@@ -5788,7 +5888,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "app_services_labreportexportservice_labreportexportservice_builddocument",
-      "community": 5,
+      "community": 126,
       "norm_label": ".builddocument()"
     },
     {
@@ -5798,7 +5898,7 @@
       "source_location": "L78",
       "_origin": "ast",
       "id": "app_services_labreportexportservice_labreportexportservice_buildocreport",
-      "community": 5,
+      "community": 126,
       "norm_label": ".buildocreport()"
     },
     {
@@ -5808,7 +5908,7 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "app_services_labreportexportservice_labreportexportservice_hardwarereferencesection",
-      "community": 5,
+      "community": 126,
       "norm_label": ".hardwarereferencesection()"
     },
     {
@@ -5818,7 +5918,7 @@
       "source_location": "L140",
       "_origin": "ast",
       "id": "app_services_labreportexportservice_labreportexportservice_renderhtml",
-      "community": 5,
+      "community": 126,
       "norm_label": ".renderhtml()"
     },
     {
@@ -5828,7 +5928,7 @@
       "source_location": "L319",
       "_origin": "ast",
       "id": "app_services_labreportexportservice_labreportexportservice_renderochtml",
-      "community": 5,
+      "community": 126,
       "norm_label": ".renderochtml()"
     },
     {
@@ -6068,7 +6168,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "app_services_sensordeckservice_sensordeckservice",
-      "community": 120,
+      "community": 129,
       "norm_label": "sensordeckservice"
     },
     {
@@ -6078,7 +6178,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "app_services_sensordeckservice_sensordeckservice_construct",
-      "community": 120,
+      "community": 129,
       "norm_label": ".__construct()"
     },
     {
@@ -6088,7 +6188,7 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "app_services_sensordeckservice_sensordeckservice_defaultlayout",
-      "community": 120,
+      "community": 129,
       "norm_label": ".defaultlayout()"
     },
     {
@@ -6098,7 +6198,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "app_services_sensordeckservice_sensordeckservice_get",
-      "community": 120,
+      "community": 129,
       "norm_label": ".get()"
     },
     {
@@ -6108,7 +6208,7 @@
       "source_location": "L53",
       "_origin": "ast",
       "id": "app_services_sensordeckservice_sensordeckservice_save",
-      "community": 120,
+      "community": 129,
       "norm_label": ".save()"
     },
     {
@@ -6118,7 +6218,7 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "app_services_sensordeckservice_sensordeckservice_export",
-      "community": 120,
+      "community": 129,
       "norm_label": ".export()"
     },
     {
@@ -6318,7 +6418,7 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "app_services_toonserializer_toonserializer",
-      "community": 5,
+      "community": 116,
       "norm_label": "toonserializer"
     },
     {
@@ -6328,7 +6428,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "id": "app_services_toonserializer_toonserializer_encode",
-      "community": 5,
+      "community": 116,
       "norm_label": ".encode()"
     },
     {
@@ -6338,7 +6438,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "app_services_toonserializer_toonserializer_encodenode",
-      "community": 5,
+      "community": 116,
       "norm_label": ".encodenode()"
     },
     {
@@ -6348,7 +6448,7 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "app_services_toonserializer_toonserializer_cell",
-      "community": 5,
+      "community": 116,
       "norm_label": ".cell()"
     },
     {
@@ -6358,7 +6458,7 @@
       "source_location": "L124",
       "_origin": "ast",
       "id": "app_services_toonserializer_toonserializer_num",
-      "community": 5,
+      "community": 116,
       "norm_label": ".num()"
     },
     {
@@ -6368,7 +6468,7 @@
       "source_location": "L134",
       "_origin": "ast",
       "id": "app_services_toonserializer_toonserializer_quote",
-      "community": 5,
+      "community": 116,
       "norm_label": ".quote()"
     },
     {
@@ -6378,7 +6478,7 @@
       "source_location": "L145",
       "_origin": "ast",
       "id": "app_services_toonserializer_toonserializer_islist",
-      "community": 5,
+      "community": 116,
       "norm_label": ".islist()"
     },
     {
@@ -6388,7 +6488,7 @@
       "source_location": "L151",
       "_origin": "ast",
       "id": "app_services_toonserializer_toonserializer_isscalarlist",
-      "community": 5,
+      "community": 116,
       "norm_label": ".isscalarlist()"
     },
     {
@@ -6398,7 +6498,7 @@
       "source_location": "L163",
       "_origin": "ast",
       "id": "app_services_toonserializer_toonserializer_isuniformassoclist",
-      "community": 5,
+      "community": 116,
       "norm_label": ".isuniformassoclist()"
     },
     {
@@ -8988,7 +9088,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse",
-      "community": 45,
+      "community": 37,
       "norm_label": "diagnostic-pulse.js"
     },
     {
@@ -8998,7 +9098,7 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_el",
-      "community": 45,
+      "community": 37,
       "norm_label": "el()"
     },
     {
@@ -9008,7 +9108,7 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_ensurefp",
-      "community": 45,
+      "community": 37,
       "norm_label": "ensurefp()"
     },
     {
@@ -9018,7 +9118,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_delay",
-      "community": 45,
+      "community": 37,
       "norm_label": "delay()"
     },
     {
@@ -9028,7 +9128,7 @@
       "source_location": "L27",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_retryaftermsfrom429",
-      "community": 45,
+      "community": 37,
       "norm_label": "retryaftermsfrom429()"
     },
     {
@@ -9038,7 +9138,7 @@
       "source_location": "L42",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_tracklab",
-      "community": 45,
+      "community": 37,
       "norm_label": "tracklab()"
     },
     {
@@ -9048,7 +9148,7 @@
       "source_location": "L66",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_gpuscorebucket",
-      "community": 45,
+      "community": 37,
       "norm_label": "gpuscorebucket()"
     },
     {
@@ -9058,7 +9158,7 @@
       "source_location": "L76",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_thermalband",
-      "community": 45,
+      "community": 37,
       "norm_label": "thermalband()"
     },
     {
@@ -9068,7 +9168,7 @@
       "source_location": "L86",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_metafromscan",
-      "community": 45,
+      "community": 37,
       "norm_label": "metafromscan()"
     },
     {
@@ -9078,7 +9178,7 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_animatenum",
-      "community": 45,
+      "community": 37,
       "norm_label": "animatenum()"
     },
     {
@@ -9088,7 +9188,7 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_renderpulse",
-      "community": 45,
+      "community": 37,
       "norm_label": "renderpulse()"
     },
     {
@@ -9098,7 +9198,7 @@
       "source_location": "L172",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_rotatewhisper",
-      "community": 45,
+      "community": 37,
       "norm_label": "rotatewhisper()"
     },
     {
@@ -9108,7 +9208,7 @@
       "source_location": "L192",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_esc",
-      "community": 45,
+      "community": 37,
       "norm_label": "esc()"
     },
     {
@@ -9118,7 +9218,7 @@
       "source_location": "L198",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_pulse_initsynapsecanvas",
-      "community": 45,
+      "community": 37,
       "norm_label": "initsynapsecanvas()"
     },
     {
@@ -9182,10 +9282,20 @@
       "norm_label": "getcontext()"
     },
     {
-      "label": "loadCatalog()",
+      "label": "blinkDefaults()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
       "source_location": "L41",
+      "_origin": "ast",
+      "id": "public_assets_js_diagnostic_rgb_blinkdefaults",
+      "community": 32,
+      "norm_label": "blinkdefaults()"
+    },
+    {
+      "label": "loadCatalog()",
+      "file_type": "code",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L45",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_loadcatalog",
       "community": 32,
@@ -9195,7 +9305,7 @@
       "label": "rgbScan()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L50",
+      "source_location": "L60",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_rgbscan",
       "community": 32,
@@ -9205,7 +9315,7 @@
       "label": "showEnablePopup()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L64",
+      "source_location": "L74",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_showenablepopup",
       "community": 32,
@@ -9215,7 +9325,7 @@
       "label": "showOrchestratorResult()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L87",
+      "source_location": "L97",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_showorchestratorresult",
       "community": 32,
@@ -9225,27 +9335,47 @@
       "label": "effectOptions()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L129",
+      "source_location": "L139",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_effectoptions",
       "community": 32,
       "norm_label": "effectoptions()"
     },
     {
+      "label": "blinkControlsHtml()",
+      "file_type": "code",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L147",
+      "_origin": "ast",
+      "id": "public_assets_js_diagnostic_rgb_blinkcontrolshtml",
+      "community": 32,
+      "norm_label": "blinkcontrolshtml()"
+    },
+    {
       "label": "renderDevice()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L137",
+      "source_location": "L157",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_renderdevice",
       "community": 32,
       "norm_label": "renderdevice()"
     },
     {
+      "label": "conflictBanner()",
+      "file_type": "code",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L203",
+      "_origin": "ast",
+      "id": "public_assets_js_diagnostic_rgb_conflictbanner",
+      "community": 32,
+      "norm_label": "conflictbanner()"
+    },
+    {
       "label": "render()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L167",
+      "source_location": "L209",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_render",
       "community": 32,
@@ -9255,7 +9385,7 @@
       "label": "orchestratorProSetup()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L193",
+      "source_location": "L240",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_orchestratorprosetup",
       "community": 32,
@@ -9265,17 +9395,37 @@
       "label": "applyZones()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L238",
+      "source_location": "L285",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_applyzones",
       "community": 32,
       "norm_label": "applyzones()"
     },
     {
+      "label": "stopBlink()",
+      "file_type": "code",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L315",
+      "_origin": "ast",
+      "id": "public_assets_js_diagnostic_rgb_stopblink",
+      "community": 32,
+      "norm_label": "stopblink()"
+    },
+    {
+      "label": "setLcdStatus()",
+      "file_type": "code",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L323",
+      "_origin": "ast",
+      "id": "public_assets_js_diagnostic_rgb_setlcdstatus",
+      "community": 32,
+      "norm_label": "setlcdstatus()"
+    },
+    {
       "label": "uploadGif()",
       "file_type": "code",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L256",
+      "source_location": "L330",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_rgb_uploadgif",
       "community": 32,
@@ -9588,7 +9738,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry",
-      "community": 123,
+      "community": 45,
       "norm_label": "diagnostic-telemetry.js"
     },
     {
@@ -9598,7 +9748,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_esc",
-      "community": 123,
+      "community": 45,
       "norm_label": "esc()"
     },
     {
@@ -9608,7 +9758,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_gaugehtml",
-      "community": 123,
+      "community": 45,
       "norm_label": "gaugehtml()"
     },
     {
@@ -9618,7 +9768,7 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_drawsparklines",
-      "community": 123,
+      "community": 45,
       "norm_label": "drawsparklines()"
     },
     {
@@ -9628,7 +9778,7 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_fetchhistory",
-      "community": 123,
+      "community": 45,
       "norm_label": "fetchhistory()"
     },
     {
@@ -9638,7 +9788,7 @@
       "source_location": "L82",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_fetchdriversandpresent",
-      "community": 123,
+      "community": 45,
       "norm_label": "fetchdriversandpresent()"
     },
     {
@@ -9648,7 +9798,7 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_driversectionsfrompresent",
-      "community": 123,
+      "community": 45,
       "norm_label": "driversectionsfrompresent()"
     },
     {
@@ -9658,7 +9808,7 @@
       "source_location": "L176",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_fetchtelemetry",
-      "community": 123,
+      "community": 45,
       "norm_label": "fetchtelemetry()"
     },
     {
@@ -9668,7 +9818,7 @@
       "source_location": "L226",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_setonline",
-      "community": 123,
+      "community": 45,
       "norm_label": "setonline()"
     },
     {
@@ -9678,7 +9828,7 @@
       "source_location": "L239",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_setoffline",
-      "community": 123,
+      "community": 45,
       "norm_label": "setoffline()"
     },
     {
@@ -9688,7 +9838,7 @@
       "source_location": "L256",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_drawspikemap",
-      "community": 123,
+      "community": 45,
       "norm_label": "drawspikemap()"
     },
     {
@@ -9698,7 +9848,7 @@
       "source_location": "L319",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_drawcstatebars",
-      "community": 123,
+      "community": 45,
       "norm_label": "drawcstatebars()"
     },
     {
@@ -9708,7 +9858,7 @@
       "source_location": "L337",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_telemetry_render",
-      "community": 123,
+      "community": 45,
       "norm_label": "render()"
     },
     {
@@ -9718,7 +9868,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit",
-      "community": 31,
+      "community": 28,
       "norm_label": "diagnostic-toolkit.js"
     },
     {
@@ -9728,7 +9878,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_esc",
-      "community": 31,
+      "community": 28,
       "norm_label": "esc()"
     },
     {
@@ -9738,7 +9888,7 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_probehealth",
-      "community": 31,
+      "community": 28,
       "norm_label": "probehealth()"
     },
     {
@@ -9748,7 +9898,7 @@
       "source_location": "L35",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_loadcatalog",
-      "community": 31,
+      "community": 28,
       "norm_label": "loadcatalog()"
     },
     {
@@ -9758,7 +9908,7 @@
       "source_location": "L45",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_rendersummary",
-      "community": 31,
+      "community": 28,
       "norm_label": "rendersummary()"
     },
     {
@@ -9768,7 +9918,7 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_renderfilters",
-      "community": 31,
+      "community": 28,
       "norm_label": "renderfilters()"
     },
     {
@@ -9778,7 +9928,7 @@
       "source_location": "L75",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_rendergrid",
-      "community": 31,
+      "community": 28,
       "norm_label": "rendergrid()"
     },
     {
@@ -9788,7 +9938,7 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_rendercatalog",
-      "community": 31,
+      "community": 28,
       "norm_label": "rendercatalog()"
     },
     {
@@ -9798,7 +9948,7 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_renderrunbuttons",
-      "community": 31,
+      "community": 28,
       "norm_label": "renderrunbuttons()"
     },
     {
@@ -9808,7 +9958,7 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_startoverlay",
-      "community": 31,
+      "community": 28,
       "norm_label": "startoverlay()"
     },
     {
@@ -9818,7 +9968,7 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_stopoverlay",
-      "community": 31,
+      "community": 28,
       "norm_label": "stopoverlay()"
     },
     {
@@ -9828,7 +9978,7 @@
       "source_location": "L146",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_rendercertificate",
-      "community": 31,
+      "community": 28,
       "norm_label": "rendercertificate()"
     },
     {
@@ -9838,7 +9988,7 @@
       "source_location": "L158",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_issuecertificate",
-      "community": 31,
+      "community": 28,
       "norm_label": "issuecertificate()"
     },
     {
@@ -9848,7 +9998,7 @@
       "source_location": "L173",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_prettyresult",
-      "community": 31,
+      "community": 28,
       "norm_label": "prettyresult()"
     },
     {
@@ -9858,7 +10008,7 @@
       "source_location": "L196",
       "_origin": "ast",
       "id": "public_assets_js_diagnostic_toolkit_runtest",
-      "community": 31,
+      "community": 28,
       "norm_label": "runtest()"
     },
     {
@@ -9938,7 +10088,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "routes_web",
-      "community": 2,
+      "community": 31,
       "norm_label": "web.php"
     },
     {
@@ -10502,7 +10652,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "id": "tests_unit_ambitiousupgradetest_ambitiousupgradetest",
-      "community": 120,
+      "community": 125,
       "norm_label": "ambitiousupgradetest"
     },
     {
@@ -10512,7 +10662,7 @@
       "source_location": "",
       "_origin": "ast",
       "id": "testcase",
-      "community": 120,
+      "community": 125,
       "norm_label": "testcase"
     },
     {
@@ -10522,7 +10672,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "tests_unit_ambitiousupgradetest_ambitiousupgradetest_testsuiteprofilesandstartcancel",
-      "community": 120,
+      "community": 125,
       "norm_label": ".testsuiteprofilesandstartcancel()"
     },
     {
@@ -10532,7 +10682,7 @@
       "source_location": "L31",
       "_origin": "ast",
       "id": "tests_unit_ambitiousupgradetest_ambitiousupgradetest_testadvisorcardsfallback",
-      "community": 120,
+      "community": 125,
       "norm_label": ".testadvisorcardsfallback()"
     },
     {
@@ -10542,7 +10692,7 @@
       "source_location": "L46",
       "_origin": "ast",
       "id": "tests_unit_ambitiousupgradetest_ambitiousupgradetest_testsensordecksaveandexport",
-      "community": 120,
+      "community": 125,
       "norm_label": ".testsensordecksaveandexport()"
     },
     {
@@ -10552,7 +10702,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "tests_unit_ambitiousupgradetest_ambitiousupgradetest_testtopologyfromgraph",
-      "community": 120,
+      "community": 125,
       "norm_label": ".testtopologyfromgraph()"
     },
     {
@@ -10562,7 +10712,7 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "tests_unit_ambitiousupgradetest_ambitiousupgradetest_testimportcinebenchgeekbench3dmark",
-      "community": 120,
+      "community": 125,
       "norm_label": ".testimportcinebenchgeekbench3dmark()"
     },
     {
@@ -10572,7 +10722,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_appupdateservicetest",
-      "community": 2,
+      "community": 30,
       "norm_label": "appupdateservicetest.php"
     },
     {
@@ -10592,7 +10742,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "tests_unit_diagnosticconsultantservicetest",
-      "community": 120,
+      "community": 123,
       "norm_label": "diagnosticconsultantservicetest.php"
     },
     {
@@ -10676,6 +10826,16 @@
       "norm_label": "labfeaturestest.php"
     },
     {
+      "label": "RgbLabTest.php",
+      "file_type": "code",
+      "source_file": "tests/Unit/RgbLabTest.php",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "tests_unit_rgblabtest",
+      "community": 124,
+      "norm_label": "rgblabtest.php"
+    },
+    {
       "label": "SettingsServiceTest.php",
       "file_type": "code",
       "source_file": "tests/Unit/SettingsServiceTest.php",
@@ -10742,38 +10902,48 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "changelog_unreleased",
-      "community": 15,
+      "community": 101,
       "norm_label": "[unreleased]"
     },
     {
-      "label": "Removed",
+      "label": "[3.2.1] - 2026-08-16",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
       "source_location": "L9",
       "_origin": "ast",
-      "id": "changelog_removed",
+      "id": "changelog_3_2_1_2026_08_16",
       "community": 15,
-      "norm_label": "removed"
+      "norm_label": "[3.2.1] - 2026-08-16"
     },
     {
       "label": "Added",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L14",
+      "source_location": "L11",
       "_origin": "ast",
       "id": "changelog_added",
       "community": 15,
       "norm_label": "added"
     },
     {
-      "label": "[3.1.1] - 2026-08-04",
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L19",
+      "_origin": "ast",
+      "id": "changelog_changed",
+      "community": 15,
+      "norm_label": "changed"
+    },
+    {
+      "label": "[3.2.0] - 2026-08-11",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
       "source_location": "L23",
       "_origin": "ast",
-      "id": "changelog_3_1_1_2026_08_04",
+      "id": "changelog_3_2_0_2026_08_11",
       "community": 101,
-      "norm_label": "[3.1.1] - 2026-08-04"
+      "norm_label": "[3.2.0] - 2026-08-11"
     },
     {
       "label": "Added",
@@ -10789,60 +10959,40 @@
       "label": "Changed",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L33",
+      "source_location": "L37",
       "_origin": "ast",
-      "id": "changelog_changed",
+      "id": "changelog_changed_37",
       "community": 101,
       "norm_label": "changed"
     },
     {
-      "label": "[3.1.0] - 2026-08-01",
+      "label": "Removed",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L38",
+      "source_location": "L44",
       "_origin": "ast",
-      "id": "changelog_3_1_0_2026_08_01",
+      "id": "changelog_removed",
       "community": 101,
-      "norm_label": "[3.1.0] - 2026-08-01"
+      "norm_label": "removed"
+    },
+    {
+      "label": "[3.1.1] - 2026-08-04",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L48",
+      "_origin": "ast",
+      "id": "changelog_3_1_1_2026_08_04",
+      "community": 139,
+      "norm_label": "[3.1.1] - 2026-08-04"
     },
     {
       "label": "Added",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L40",
+      "source_location": "L50",
       "_origin": "ast",
-      "id": "changelog_added_40",
-      "community": 101,
-      "norm_label": "added"
-    },
-    {
-      "label": "Changed",
-      "file_type": "document",
-      "source_file": "CHANGELOG.md",
-      "source_location": "L46",
-      "_origin": "ast",
-      "id": "changelog_changed_46",
-      "community": 101,
-      "norm_label": "changed"
-    },
-    {
-      "label": "[3.0.0] - 2026-07-30",
-      "file_type": "document",
-      "source_file": "CHANGELOG.md",
-      "source_location": "L51",
-      "_origin": "ast",
-      "id": "changelog_3_0_0_2026_07_30",
-      "community": 101,
-      "norm_label": "[3.0.0] - 2026-07-30"
-    },
-    {
-      "label": "Added",
-      "file_type": "document",
-      "source_file": "CHANGELOG.md",
-      "source_location": "L53",
-      "_origin": "ast",
-      "id": "changelog_added_53",
-      "community": 101,
+      "id": "changelog_added_50",
+      "community": 139,
       "norm_label": "added"
     },
     {
@@ -10852,14 +11002,74 @@
       "source_location": "L58",
       "_origin": "ast",
       "id": "changelog_changed_58",
+      "community": 139,
+      "norm_label": "changed"
+    },
+    {
+      "label": "[3.1.0] - 2026-08-01",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L63",
+      "_origin": "ast",
+      "id": "changelog_3_1_0_2026_08_01",
       "community": 101,
+      "norm_label": "[3.1.0] - 2026-08-01"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L65",
+      "_origin": "ast",
+      "id": "changelog_added_65",
+      "community": 101,
+      "norm_label": "added"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L71",
+      "_origin": "ast",
+      "id": "changelog_changed_71",
+      "community": 101,
+      "norm_label": "changed"
+    },
+    {
+      "label": "[3.0.0] - 2026-07-30",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L76",
+      "_origin": "ast",
+      "id": "changelog_3_0_0_2026_07_30",
+      "community": 138,
+      "norm_label": "[3.0.0] - 2026-07-30"
+    },
+    {
+      "label": "Added",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L78",
+      "_origin": "ast",
+      "id": "changelog_added_78",
+      "community": 138,
+      "norm_label": "added"
+    },
+    {
+      "label": "Changed",
+      "file_type": "document",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L83",
+      "_origin": "ast",
+      "id": "changelog_changed_83",
+      "community": 138,
       "norm_label": "changed"
     },
     {
       "label": "[1.0.0] - 2026-06-14",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L64",
+      "source_location": "L89",
       "_origin": "ast",
       "id": "changelog_1_0_0_2026_06_14",
       "community": 101,
@@ -10869,9 +11079,9 @@
       "label": "Added",
       "file_type": "document",
       "source_file": "CHANGELOG.md",
-      "source_location": "L66",
+      "source_location": "L91",
       "_origin": "ast",
-      "id": "changelog_added_66",
+      "id": "changelog_added_91",
       "community": 101,
       "norm_label": "added"
     },
@@ -11042,7 +11252,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "readme_how_it_fits_together",
-      "community": 135,
+      "community": 4,
       "norm_label": "how it fits together"
     },
     {
@@ -11052,7 +11262,7 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "readme_driver_matching",
-      "community": 135,
+      "community": 4,
       "norm_label": "driver matching"
     },
     {
@@ -11062,7 +11272,7 @@
       "source_location": "L77",
       "_origin": "ast",
       "id": "readme_in_app_updates",
-      "community": 135,
+      "community": 4,
       "norm_label": "in-app updates"
     },
     {
@@ -11399,7 +11609,7 @@
       "label": "Table of contents",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L34",
+      "source_location": "L35",
       "_origin": "ast",
       "id": "docs_master_plan_table_of_contents",
       "community": 12,
@@ -11409,7 +11619,7 @@
       "label": "Executive vision",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L53",
+      "source_location": "L54",
       "_origin": "ast",
       "id": "docs_master_plan_executive_vision",
       "community": 133,
@@ -11419,7 +11629,7 @@
       "label": "Positioning for GitHub",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L57",
+      "source_location": "L58",
       "_origin": "ast",
       "id": "docs_master_plan_positioning_for_github",
       "community": 133,
@@ -11429,7 +11639,7 @@
       "label": "Core principles",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L63",
+      "source_location": "L64",
       "_origin": "ast",
       "id": "docs_master_plan_core_principles",
       "community": 133,
@@ -11439,7 +11649,7 @@
       "label": "What you already have (real assets, not vapor)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L75",
+      "source_location": "L76",
       "_origin": "ast",
       "id": "docs_master_plan_what_you_already_have_real_assets_not_vapor",
       "community": 12,
@@ -11449,7 +11659,7 @@
       "label": "Critical gap",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L87",
+      "source_location": "L88",
       "_origin": "ast",
       "id": "docs_master_plan_critical_gap",
       "community": 12,
@@ -11459,7 +11669,7 @@
       "label": "What your GitHub stars tell us about design direction",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L100",
+      "source_location": "L101",
       "_origin": "ast",
       "id": "docs_master_plan_what_your_github_stars_tell_us_about_design_direction",
       "community": 12,
@@ -11469,7 +11679,7 @@
       "label": "Honest scope: replacing 80 tools",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L117",
+      "source_location": "L118",
       "_origin": "ast",
       "id": "docs_master_plan_honest_scope_replacing_80_tools",
       "community": 14,
@@ -11479,7 +11689,7 @@
       "label": "Reference: 80-tool categories",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L129",
+      "source_location": "L130",
       "_origin": "ast",
       "id": "docs_master_plan_reference_80_tool_categories",
       "community": 14,
@@ -11489,7 +11699,7 @@
       "label": "CPU Benchmarks & Stress Tests",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L134",
+      "source_location": "L135",
       "_origin": "ast",
       "id": "docs_master_plan_cpu_benchmarks_stress_tests",
       "community": 14,
@@ -11499,7 +11709,7 @@
       "label": "GPU Benchmarks & Stress Tests",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L137",
+      "source_location": "L138",
       "_origin": "ast",
       "id": "docs_master_plan_gpu_benchmarks_stress_tests",
       "community": 14,
@@ -11509,7 +11719,7 @@
       "label": "RAM & Memory Testing",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L140",
+      "source_location": "L141",
       "_origin": "ast",
       "id": "docs_master_plan_ram_memory_testing",
       "community": 14,
@@ -11519,7 +11729,7 @@
       "label": "Full-System Benchmarks",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L143",
+      "source_location": "L144",
       "_origin": "ast",
       "id": "docs_master_plan_full_system_benchmarks",
       "community": 14,
@@ -11529,7 +11739,7 @@
       "label": "Temperature, Voltage, Power & Sensor Monitoring",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L146",
+      "source_location": "L147",
       "_origin": "ast",
       "id": "docs_master_plan_temperature_voltage_power_sensor_monitoring",
       "community": 14,
@@ -11539,7 +11749,7 @@
       "label": "SSD, HDD & Storage Testing",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L149",
+      "source_location": "L150",
       "_origin": "ast",
       "id": "docs_master_plan_ssd_hdd_storage_testing",
       "community": 14,
@@ -11549,7 +11759,7 @@
       "label": "RGB, ARGB & Lighting Control",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L152",
+      "source_location": "L153",
       "_origin": "ast",
       "id": "docs_master_plan_rgb_argb_lighting_control",
       "community": 14,
@@ -11559,7 +11769,7 @@
       "label": "AIO LCD Screens, Sensor Panels & GIF Displays",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L155",
+      "source_location": "L156",
       "_origin": "ast",
       "id": "docs_master_plan_aio_lcd_screens_sensor_panels_gif_displays",
       "community": 14,
@@ -11569,7 +11779,7 @@
       "label": "Enterprise / OEM validation (common stacks)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L158",
+      "source_location": "L159",
       "_origin": "ast",
       "id": "docs_master_plan_enterprise_oem_validation_common_stacks",
       "community": 14,
@@ -11579,7 +11789,7 @@
       "label": "Module map: 80 tools \u2192 PC Lab Kit modules",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L165",
+      "source_location": "L166",
       "_origin": "ast",
       "id": "docs_master_plan_module_map_80_tools_pc_lab_kit_modules",
       "community": 12,
@@ -11589,7 +11799,7 @@
       "label": "Replace strategy by category",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L219",
+      "source_location": "L220",
       "_origin": "ast",
       "id": "docs_master_plan_replace_strategy_by_category",
       "community": 12,
@@ -11599,7 +11809,7 @@
       "label": "Recommended architecture (standalone + GitHub-friendly)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L236",
+      "source_location": "L237",
       "_origin": "ast",
       "id": "docs_master_plan_recommended_architecture_standalone_github_friendly",
       "community": 25,
@@ -11609,7 +11819,7 @@
       "label": "Target stack",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L238",
+      "source_location": "L239",
       "_origin": "ast",
       "id": "docs_master_plan_target_stack",
       "community": 25,
@@ -11619,7 +11829,7 @@
       "label": "Why Tauri over pure Flutter for v1 OSS launch",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L259",
+      "source_location": "L260",
       "_origin": "ast",
       "id": "docs_master_plan_why_tauri_over_pure_flutter_for_v1_oss_launch",
       "community": 25,
@@ -11629,7 +11839,7 @@
       "label": "Why keep the agent separate",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L266",
+      "source_location": "L267",
       "_origin": "ast",
       "id": "docs_master_plan_why_keep_the_agent_separate",
       "community": 25,
@@ -11639,7 +11849,7 @@
       "label": "PHP migration path",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L270",
+      "source_location": "L271",
       "_origin": "ast",
       "id": "docs_master_plan_php_migration_path",
       "community": 25,
@@ -11649,7 +11859,7 @@
       "label": "Three surfaces, one stack (current \u2192 target)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L274",
+      "source_location": "L275",
       "_origin": "ast",
       "id": "docs_master_plan_three_surfaces_one_stack_current_target",
       "community": 25,
@@ -11659,7 +11869,7 @@
       "label": "Design system: from dull sketch to engineering showcase",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L293",
+      "source_location": "L294",
       "_origin": "ast",
       "id": "docs_master_plan_design_system_from_dull_sketch_to_engineering_showcase",
       "community": 35,
@@ -11669,7 +11879,7 @@
       "label": "Brand evolution",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L295",
+      "source_location": "L296",
       "_origin": "ast",
       "id": "docs_master_plan_brand_evolution",
       "community": 35,
@@ -11679,7 +11889,7 @@
       "label": "UI pillars",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L310",
+      "source_location": "L311",
       "_origin": "ast",
       "id": "docs_master_plan_ui_pillars",
       "community": 35,
@@ -11689,7 +11899,7 @@
       "label": "Motion principles",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L320",
+      "source_location": "L321",
       "_origin": "ast",
       "id": "docs_master_plan_motion_principles",
       "community": 35,
@@ -11699,7 +11909,7 @@
       "label": "AI advisor architecture (the differentiator)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L330",
+      "source_location": "L331",
       "_origin": "ast",
       "id": "docs_master_plan_ai_advisor_architecture_the_differentiator",
       "community": 24,
@@ -11709,7 +11919,7 @@
       "label": "Principles",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L332",
+      "source_location": "L333",
       "_origin": "ast",
       "id": "docs_master_plan_principles",
       "community": 24,
@@ -11719,7 +11929,7 @@
       "label": "Pipeline",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L338",
+      "source_location": "L339",
       "_origin": "ast",
       "id": "docs_master_plan_pipeline",
       "community": 24,
@@ -11729,7 +11939,7 @@
       "label": "Advisor outputs (specialist-grade)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L354",
+      "source_location": "L355",
       "_origin": "ast",
       "id": "docs_master_plan_advisor_outputs_specialist_grade",
       "community": 24,
@@ -11739,7 +11949,7 @@
       "label": "Existing AI integration",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L363",
+      "source_location": "L364",
       "_origin": "ast",
       "id": "docs_master_plan_existing_ai_integration",
       "community": 24,
@@ -11749,7 +11959,7 @@
       "label": "Supported AI providers (target)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L370",
+      "source_location": "L371",
       "_origin": "ast",
       "id": "docs_master_plan_supported_ai_providers_target",
       "community": 24,
@@ -11759,7 +11969,7 @@
       "label": "One-click OC (safe, real, bounded)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L381",
+      "source_location": "L382",
       "_origin": "ast",
       "id": "docs_master_plan_one_click_oc_safe_real_bounded",
       "community": 42,
@@ -11769,7 +11979,7 @@
       "label": "Already implemented philosophy",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L383",
+      "source_location": "L384",
       "_origin": "ast",
       "id": "docs_master_plan_already_implemented_philosophy",
       "community": 42,
@@ -11779,7 +11989,7 @@
       "label": "Enhancements for v1 launch",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L414",
+      "source_location": "L415",
       "_origin": "ast",
       "id": "docs_master_plan_enhancements_for_v1_launch",
       "community": 42,
@@ -11789,7 +11999,7 @@
       "label": "Open-source & GitHub growth strategy",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L424",
+      "source_location": "L425",
       "_origin": "ast",
       "id": "docs_master_plan_open_source_github_growth_strategy",
       "community": 36,
@@ -11799,7 +12009,7 @@
       "label": "Target repo structure (monorepo)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L426",
+      "source_location": "L427",
       "_origin": "ast",
       "id": "docs_master_plan_target_repo_structure_monorepo",
       "community": 36,
@@ -11809,7 +12019,7 @@
       "label": "Launch checklist for GitHub impact",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L444",
+      "source_location": "L445",
       "_origin": "ast",
       "id": "docs_master_plan_launch_checklist_for_github_impact",
       "community": 36,
@@ -11819,7 +12029,7 @@
       "label": "Naming",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L454",
+      "source_location": "L455",
       "_origin": "ast",
       "id": "docs_master_plan_naming",
       "community": 36,
@@ -11829,7 +12039,7 @@
       "label": "Phased roadmap",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L465",
+      "source_location": "L466",
       "_origin": "ast",
       "id": "docs_master_plan_phased_roadmap",
       "community": 22,
@@ -11839,7 +12049,7 @@
       "label": "Phase 0 \u2014 Foundation (2\u20133 weeks)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L467",
+      "source_location": "L468",
       "_origin": "ast",
       "id": "docs_master_plan_phase_0_foundation_2_3_weeks",
       "community": 22,
@@ -11849,7 +12059,7 @@
       "label": "Phase 1 \u2014 Desktop shell (3\u20134 weeks)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L482",
+      "source_location": "L483",
       "_origin": "ast",
       "id": "docs_master_plan_phase_1_desktop_shell_3_4_weeks",
       "community": 22,
@@ -11859,7 +12069,7 @@
       "label": "Phase 2 \u2014 Native benchmarks (4\u20136 weeks)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L495",
+      "source_location": "L496",
       "_origin": "ast",
       "id": "docs_master_plan_phase_2_native_benchmarks_4_6_weeks",
       "community": 22,
@@ -11869,7 +12079,7 @@
       "label": "Phase 3 \u2014 Stress orchestration (3\u20134 weeks)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L509",
+      "source_location": "L510",
       "_origin": "ast",
       "id": "docs_master_plan_phase_3_stress_orchestration_3_4_weeks",
       "community": 22,
@@ -11879,7 +12089,7 @@
       "label": "Phase 4 \u2014 AI + Knowledge Graph (3\u20134 weeks)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L522",
+      "source_location": "L523",
       "_origin": "ast",
       "id": "docs_master_plan_phase_4_ai_knowledge_graph_3_4_weeks",
       "community": 22,
@@ -11889,27 +12099,27 @@
       "label": "Phase 5 \u2014 RGB + Sensor Deck (3\u20134 weeks)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L536",
+      "source_location": "L537",
       "_origin": "ast",
       "id": "docs_master_plan_phase_5_rgb_sensor_deck_3_4_weeks",
       "community": 22,
       "norm_label": "phase 5 \u2014 rgb + sensor deck (3\u20134 weeks)"
     },
     {
-      "label": "Phase 6 \u2014 Enterprise mode (optional)",
+      "label": "Phase 6 \u2014 Enterprise mode (optional) \u2014 backlog",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L548",
+      "source_location": "L549",
       "_origin": "ast",
-      "id": "docs_master_plan_phase_6_enterprise_mode_optional",
+      "id": "docs_master_plan_phase_6_enterprise_mode_optional_backlog",
       "community": 22,
-      "norm_label": "phase 6 \u2014 enterprise mode (optional)"
+      "norm_label": "phase 6 \u2014 enterprise mode (optional) \u2014 backlog"
     },
     {
       "label": "What makes this stand out vs existing OSS",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L556",
+      "source_location": "L557",
       "_origin": "ast",
       "id": "docs_master_plan_what_makes_this_stand_out_vs_existing_oss",
       "community": 12,
@@ -11919,7 +12129,7 @@
       "label": "Immediate next steps",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L570",
+      "source_location": "L571",
       "_origin": "ast",
       "id": "docs_master_plan_immediate_next_steps",
       "community": 12,
@@ -11929,7 +12139,7 @@
       "label": "Recommended start",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L578",
+      "source_location": "L579",
       "_origin": "ast",
       "id": "docs_master_plan_recommended_start",
       "community": 12,
@@ -11939,7 +12149,7 @@
       "label": "Assumptions",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L588",
+      "source_location": "L589",
       "_origin": "ast",
       "id": "docs_master_plan_assumptions",
       "community": 12,
@@ -11949,7 +12159,7 @@
       "label": "Appendix: existing kit inventory",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L601",
+      "source_location": "L602",
       "_origin": "ast",
       "id": "docs_master_plan_appendix_existing_kit_inventory",
       "community": 27,
@@ -11959,7 +12169,7 @@
       "label": "Agent endpoints (`PcLabProbeServe.ps1`)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L603",
+      "source_location": "L604",
       "_origin": "ast",
       "id": "docs_master_plan_agent_endpoints_pclabprobeserve_ps1",
       "community": 27,
@@ -11969,7 +12179,7 @@
       "label": "API routes (to extract)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L615",
+      "source_location": "L616",
       "_origin": "ast",
       "id": "docs_master_plan_api_routes_to_extract",
       "community": 27,
@@ -11979,7 +12189,7 @@
       "label": "Benchmark datasets (19 JSON files)",
       "file_type": "document",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L624",
+      "source_location": "L625",
       "_origin": "ast",
       "id": "docs_master_plan_benchmark_datasets_19_json_files",
       "community": 27,
@@ -12480,7 +12690,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/PcLabProbeServe.ps1",
-      "source_location": "L64",
+      "source_location": "L65",
       "weight": 1.0,
       "source": "agent_pclab_probe_pclabprobeserve",
       "target": "agent_pclab_probe_pclabprobeserve_add_ringsample",
@@ -12490,7 +12700,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/PcLabProbeServe.ps1",
-      "source_location": "L71",
+      "source_location": "L72",
       "weight": 1.0,
       "source": "agent_pclab_probe_pclabprobeserve",
       "target": "agent_pclab_probe_pclabprobeserve_read_requestbody",
@@ -12500,7 +12710,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/PcLabProbeServe.ps1",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0,
       "source": "agent_pclab_probe_pclabprobeserve",
       "target": "agent_pclab_probe_pclabprobeserve_test_probeelevated",
@@ -15442,7 +15652,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L86",
+      "source_location": "L179",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_openrgbdevicelist",
@@ -15452,7 +15662,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L20",
+      "source_location": "L113",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_openrgbexecutable",
@@ -15462,10 +15672,20 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L253",
+      "source_location": "L391",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_probelcdcachedir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L397",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb",
+      "target": "agent_pclab_probe_probelib_rgb_get_probelcddashboardpath",
       "confidence_score": 1.0
     },
     {
@@ -15475,6 +15695,16 @@
       "source_location": "L35",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
+      "target": "agent_pclab_probe_probelib_rgb_get_rgbblinkstatedir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L128",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbblockingprocesses",
       "confidence_score": 1.0
     },
@@ -15482,7 +15712,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L121",
+      "source_location": "L288",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
@@ -15492,7 +15722,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L228",
+      "source_location": "L260",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbenableguide",
@@ -15502,7 +15732,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L62",
+      "source_location": "L155",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbhiddevices",
@@ -15512,7 +15742,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L105",
+      "source_location": "L198",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbsoftwarehints",
@@ -15522,7 +15752,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L216",
+      "source_location": "L248",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_zonecapabilities",
@@ -15532,7 +15762,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L200",
+      "source_location": "L215",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb",
+      "target": "agent_pclab_probe_probelib_rgb_get_zonelabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L232",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_get_zonelabelfa",
@@ -15542,7 +15782,27 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L299",
+      "source_location": "L402",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb",
+      "target": "agent_pclab_probe_probelib_rgb_invoke_openrgbmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L535",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb",
+      "target": "agent_pclab_probe_probelib_rgb_invoke_probelcdpush",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L448",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_invoke_rgbapplysettings",
@@ -15552,7 +15812,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L46",
+      "source_location": "L427",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb",
+      "target": "agent_pclab_probe_probelib_rgb_invoke_rgbstop",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L139",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_match_knownrgbdevice",
@@ -15562,17 +15832,107 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L259",
+      "source_location": "L421",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb",
+      "target": "agent_pclab_probe_probelib_rgb_resolve_blinkopenrgbmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L603",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb",
       "target": "agent_pclab_probe_probelib_rgb_save_probelcdgif",
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L61",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb",
+      "target": "agent_pclab_probe_probelib_rgb_start_rgbsoftwareblink",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb",
+      "target": "agent_pclab_probe_probelib_rgb_stop_rgbblinkjobs",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L123",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_start_rgbsoftwareblink",
+      "target": "agent_pclab_probe_probelib_rgb_get_rgbblinkstatedir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L43",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_stop_rgbblinkjobs",
+      "target": "agent_pclab_probe_probelib_rgb_get_rgbblinkstatedir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L471",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_rgbapplysettings",
+      "target": "agent_pclab_probe_probelib_rgb_stop_rgbblinkjobs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L428",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_rgbstop",
+      "target": "agent_pclab_probe_probelib_rgb_stop_rgbblinkjobs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L75",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_start_rgbsoftwareblink",
+      "target": "agent_pclab_probe_probelib_rgb_stop_rgbblinkjobs",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L509",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_rgbapplysettings",
+      "target": "agent_pclab_probe_probelib_rgb_start_rgbsoftwareblink",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L290",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
       "target": "agent_pclab_probe_probelib_rgb_get_openrgbexecutable",
@@ -15582,7 +15942,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L111",
+      "source_location": "L204",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_get_rgbsoftwarehints",
       "target": "agent_pclab_probe_probelib_rgb_get_openrgbexecutable",
@@ -15592,7 +15952,17 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L302",
+      "source_location": "L541",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_probelcdpush",
+      "target": "agent_pclab_probe_probelib_rgb_get_openrgbexecutable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L451",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_invoke_rgbapplysettings",
       "target": "agent_pclab_probe_probelib_rgb_get_openrgbexecutable",
@@ -15602,7 +15972,17 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L124",
+      "source_location": "L429",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_rgbstop",
+      "target": "agent_pclab_probe_probelib_rgb_get_openrgbexecutable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L291",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbblockingprocesses",
@@ -15612,7 +15992,17 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L304",
+      "source_location": "L542",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_probelcdpush",
+      "target": "agent_pclab_probe_probelib_rgb_get_rgbblockingprocesses",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L453",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_invoke_rgbapplysettings",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbblockingprocesses",
@@ -15622,7 +16012,17 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L67",
+      "source_location": "L431",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_rgbstop",
+      "target": "agent_pclab_probe_probelib_rgb_get_rgbblockingprocesses",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L160",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_get_rgbhiddevices",
       "target": "agent_pclab_probe_probelib_rgb_match_knownrgbdevice",
@@ -15632,7 +16032,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L122",
+      "source_location": "L289",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbhiddevices",
@@ -15642,7 +16042,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L127",
+      "source_location": "L294",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
       "target": "agent_pclab_probe_probelib_rgb_get_openrgbdevicelist",
@@ -15652,7 +16052,27 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L194",
+      "source_location": "L561",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_probelcdpush",
+      "target": "agent_pclab_probe_probelib_rgb_get_openrgbdevicelist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L432",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_rgbstop",
+      "target": "agent_pclab_probe_probelib_rgb_get_openrgbdevicelist",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L380",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbsoftwarehints",
@@ -15662,27 +16082,17 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L181",
+      "source_location": "L310",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
-      "target": "agent_pclab_probe_probelib_rgb_get_rgbenableguide",
+      "target": "agent_pclab_probe_probelib_rgb_get_zonelabel",
       "confidence_score": 1.0
     },
     {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L144",
-      "weight": 1.0,
-      "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
-      "target": "agent_pclab_probe_probelib_rgb_get_zonecapabilities",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "confidence": "EXTRACTED",
-      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L143",
+      "source_location": "L311",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
       "target": "agent_pclab_probe_probelib_rgb_get_zonelabelfa",
@@ -15692,7 +16102,27 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L304",
+      "source_location": "L312",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
+      "target": "agent_pclab_probe_probelib_rgb_get_zonecapabilities",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L367",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_get_rgbdevicescan",
+      "target": "agent_pclab_probe_probelib_rgb_get_rgbenableguide",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L453",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_invoke_rgbapplysettings",
       "target": "agent_pclab_probe_probelib_rgb_get_rgbenableguide",
@@ -15702,10 +16132,70 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
-      "source_location": "L285",
+      "source_location": "L633",
       "weight": 1.0,
       "source": "agent_pclab_probe_probelib_rgb_save_probelcdgif",
       "target": "agent_pclab_probe_probelib_rgb_get_probelcdcachedir",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L636",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_save_probelcdgif",
+      "target": "agent_pclab_probe_probelib_rgb_get_probelcddashboardpath",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L581",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_probelcdpush",
+      "target": "agent_pclab_probe_probelib_rgb_invoke_openrgbmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L472",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_rgbapplysettings",
+      "target": "agent_pclab_probe_probelib_rgb_invoke_openrgbmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L435",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_rgbstop",
+      "target": "agent_pclab_probe_probelib_rgb_invoke_openrgbmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L491",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_invoke_rgbapplysettings",
+      "target": "agent_pclab_probe_probelib_rgb_resolve_blinkopenrgbmode",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "agent/pclab_probe/ProbeLib/rgb.ps1",
+      "source_location": "L639",
+      "weight": 1.0,
+      "source": "agent_pclab_probe_probelib_rgb_save_probelcdgif",
+      "target": "agent_pclab_probe_probelib_rgb_invoke_probelcdpush",
       "confidence_score": 1.0
     },
     {
@@ -23331,6 +23821,17 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/Unit/RgbLabTest.php",
+      "source_location": "L5",
+      "weight": 1.0,
+      "source": "tests_unit_rgblabtest",
+      "target": "app_services_diagnosticrgbservice",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/DiagnosticRgbService.php",
@@ -23344,7 +23845,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/DiagnosticRgbService.php",
-      "source_location": "L81",
+      "source_location": "L126",
       "weight": 1.0,
       "source": "app_services_diagnosticrgbservice_diagnosticrgbservice",
       "target": "app_services_diagnosticrgbservice_diagnosticrgbservice_defaultenableguide",
@@ -23354,7 +23855,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/DiagnosticRgbService.php",
-      "source_location": "L75",
+      "source_location": "L100",
       "weight": 1.0,
       "source": "app_services_diagnosticrgbservice_diagnosticrgbservice",
       "target": "app_services_diagnosticrgbservice_diagnosticrgbservice_narrateapply",
@@ -23364,10 +23865,31 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "app/Services/DiagnosticRgbService.php",
-      "source_location": "L60",
+      "source_location": "L111",
+      "weight": 1.0,
+      "source": "app_services_diagnosticrgbservice_diagnosticrgbservice",
+      "target": "app_services_diagnosticrgbservice_diagnosticrgbservice_normalizeblinktiming",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/DiagnosticRgbService.php",
+      "source_location": "L85",
       "weight": 1.0,
       "source": "app_services_diagnosticrgbservice_diagnosticrgbservice",
       "target": "app_services_diagnosticrgbservice_diagnosticrgbservice_orchestrate",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "app/Services/DiagnosticRgbService.php",
+      "source_location": "L113",
+      "weight": 1.0,
+      "source": "app_services_diagnosticrgbservice_diagnosticrgbservice_normalizeblinktiming",
+      "target": "app_services_diagnosticrgbservice_diagnosticrgbservice_catalog",
       "confidence_score": 1.0
     },
     {
@@ -30512,7 +31034,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L238",
+      "source_location": "L285",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_applyzones",
@@ -30522,7 +31044,37 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L129",
+      "source_location": "L147",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb",
+      "target": "public_assets_js_diagnostic_rgb_blinkcontrolshtml",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L41",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb",
+      "target": "public_assets_js_diagnostic_rgb_blinkdefaults",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L203",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb",
+      "target": "public_assets_js_diagnostic_rgb_conflictbanner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L139",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_effectoptions",
@@ -30572,7 +31124,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L41",
+      "source_location": "L45",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_loadcatalog",
@@ -30582,7 +31134,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L193",
+      "source_location": "L240",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_orchestratorprosetup",
@@ -30602,7 +31154,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L167",
+      "source_location": "L209",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_render",
@@ -30612,7 +31164,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L137",
+      "source_location": "L157",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_renderdevice",
@@ -30622,7 +31174,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L50",
+      "source_location": "L60",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_rgbscan",
@@ -30632,7 +31184,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L64",
+      "source_location": "L323",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb",
+      "target": "public_assets_js_diagnostic_rgb_setlcdstatus",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L74",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_showenablepopup",
@@ -30642,7 +31204,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L87",
+      "source_location": "L97",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_showorchestratorresult",
@@ -30652,7 +31214,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L256",
+      "source_location": "L315",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb",
+      "target": "public_assets_js_diagnostic_rgb_stopblink",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L330",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb",
       "target": "public_assets_js_diagnostic_rgb_uploadgif",
@@ -30663,7 +31235,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L200",
+      "source_location": "L247",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_orchestratorprosetup",
       "target": "public_assets_js_diagnostic_rgb_jsonheaderswithcsrf",
@@ -30674,7 +31246,29 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L133",
+      "source_location": "L151",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb_blinkcontrolshtml",
+      "target": "public_assets_js_diagnostic_rgb_esc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L206",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb_conflictbanner",
+      "target": "public_assets_js_diagnostic_rgb_esc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L143",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_effectoptions",
       "target": "public_assets_js_diagnostic_rgb_esc",
@@ -30685,7 +31279,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L145",
+      "source_location": "L178",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_renderdevice",
       "target": "public_assets_js_diagnostic_rgb_esc",
@@ -30696,7 +31290,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L68",
+      "source_location": "L78",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_showenablepopup",
       "target": "public_assets_js_diagnostic_rgb_esc",
@@ -30707,7 +31301,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L91",
+      "source_location": "L101",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_showorchestratorresult",
       "target": "public_assets_js_diagnostic_rgb_esc",
@@ -30718,7 +31312,18 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L260",
+      "source_location": "L369",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb_uploadgif",
+      "target": "public_assets_js_diagnostic_rgb_esc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L334",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_uploadgif",
       "target": "public_assets_js_diagnostic_rgb_parsegifdimensions",
@@ -30729,7 +31334,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L201",
+      "source_location": "L248",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_orchestratorprosetup",
       "target": "public_assets_js_diagnostic_rgb_gettelemetry",
@@ -30740,7 +31345,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L201",
+      "source_location": "L248",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_orchestratorprosetup",
       "target": "public_assets_js_diagnostic_rgb_getcontext",
@@ -30751,7 +31356,40 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L230",
+      "source_location": "L290",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb_applyzones",
+      "target": "public_assets_js_diagnostic_rgb_blinkdefaults",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L148",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb_blinkcontrolshtml",
+      "target": "public_assets_js_diagnostic_rgb_blinkdefaults",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L160",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb_renderdevice",
+      "target": "public_assets_js_diagnostic_rgb_blinkdefaults",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L277",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_orchestratorprosetup",
       "target": "public_assets_js_diagnostic_rgb_rgbscan",
@@ -30762,7 +31400,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L57",
+      "source_location": "L67",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_rgbscan",
       "target": "public_assets_js_diagnostic_rgb_render",
@@ -30773,7 +31411,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L84",
+      "source_location": "L94",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_showenablepopup",
       "target": "public_assets_js_diagnostic_rgb_rgbscan",
@@ -30784,7 +31422,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L240",
+      "source_location": "L287",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_applyzones",
       "target": "public_assets_js_diagnostic_rgb_showenablepopup",
@@ -30795,7 +31433,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L222",
+      "source_location": "L269",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_orchestratorprosetup",
       "target": "public_assets_js_diagnostic_rgb_showenablepopup",
@@ -30806,7 +31444,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L229",
+      "source_location": "L276",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_orchestratorprosetup",
       "target": "public_assets_js_diagnostic_rgb_showorchestratorresult",
@@ -30817,10 +31455,21 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L148",
+      "source_location": "L181",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_renderdevice",
       "target": "public_assets_js_diagnostic_rgb_effectoptions",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L184",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb_renderdevice",
+      "target": "public_assets_js_diagnostic_rgb_blinkcontrolshtml",
       "confidence_score": 1.0
     },
     {
@@ -30828,7 +31477,7 @@
       "context": "argument",
       "confidence": "INFERRED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L180",
+      "source_location": "L224",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_render",
       "target": "public_assets_js_diagnostic_rgb_renderdevice",
@@ -30839,10 +31488,32 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "public/assets/js/diagnostic-rgb.js",
-      "source_location": "L189",
+      "source_location": "L224",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb_render",
+      "target": "public_assets_js_diagnostic_rgb_conflictbanner",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L236",
       "weight": 1.0,
       "source": "public_assets_js_diagnostic_rgb_render",
       "target": "public_assets_js_diagnostic_rgb_uploadgif",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "public/assets/js/diagnostic-rgb.js",
+      "source_location": "L349",
+      "weight": 1.0,
+      "source": "public_assets_js_diagnostic_rgb_uploadgif",
+      "target": "public_assets_js_diagnostic_rgb_setlcdstatus",
       "confidence_score": 1.0
     },
     {
@@ -32684,7 +33355,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "CHANGELOG.md",
-      "source_location": "L64",
+      "source_location": "L89",
       "weight": 1.0,
       "source": "changelog_changelog",
       "target": "changelog_1_0_0_2026_06_14",
@@ -32694,7 +33365,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "CHANGELOG.md",
-      "source_location": "L51",
+      "source_location": "L76",
       "weight": 1.0,
       "source": "changelog_changelog",
       "target": "changelog_3_0_0_2026_07_30",
@@ -32704,7 +33375,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "CHANGELOG.md",
-      "source_location": "L38",
+      "source_location": "L63",
       "weight": 1.0,
       "source": "changelog_changelog",
       "target": "changelog_3_1_0_2026_08_01",
@@ -32714,10 +33385,30 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "CHANGELOG.md",
-      "source_location": "L23",
+      "source_location": "L48",
       "weight": 1.0,
       "source": "changelog_changelog",
       "target": "changelog_3_1_1_2026_08_04",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L23",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_3_2_0_2026_08_11",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L9",
+      "weight": 1.0,
+      "source": "changelog_changelog",
+      "target": "changelog_3_2_1_2026_08_16",
       "confidence_score": 1.0
     },
     {
@@ -32734,9 +33425,9 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "CHANGELOG.md",
-      "source_location": "L14",
+      "source_location": "L11",
       "weight": 1.0,
-      "source": "changelog_unreleased",
+      "source": "changelog_3_2_1_2026_08_16",
       "target": "changelog_added",
       "confidence_score": 1.0
     },
@@ -32744,10 +33435,10 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "CHANGELOG.md",
-      "source_location": "L9",
+      "source_location": "L19",
       "weight": 1.0,
-      "source": "changelog_unreleased",
-      "target": "changelog_removed",
+      "source": "changelog_3_2_1_2026_08_16",
+      "target": "changelog_changed",
       "confidence_score": 1.0
     },
     {
@@ -32756,7 +33447,7 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L25",
       "weight": 1.0,
-      "source": "changelog_3_1_1_2026_08_04",
+      "source": "changelog_3_2_0_2026_08_11",
       "target": "changelog_added_25",
       "confidence_score": 1.0
     },
@@ -32764,40 +33455,30 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "CHANGELOG.md",
-      "source_location": "L33",
+      "source_location": "L37",
+      "weight": 1.0,
+      "source": "changelog_3_2_0_2026_08_11",
+      "target": "changelog_changed_37",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L44",
+      "weight": 1.0,
+      "source": "changelog_3_2_0_2026_08_11",
+      "target": "changelog_removed",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L50",
       "weight": 1.0,
       "source": "changelog_3_1_1_2026_08_04",
-      "target": "changelog_changed",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "CHANGELOG.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "source": "changelog_3_1_0_2026_08_01",
-      "target": "changelog_added_40",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "CHANGELOG.md",
-      "source_location": "L46",
-      "weight": 1.0,
-      "source": "changelog_3_1_0_2026_08_01",
-      "target": "changelog_changed_46",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "CHANGELOG.md",
-      "source_location": "L53",
-      "weight": 1.0,
-      "source": "changelog_3_0_0_2026_07_30",
-      "target": "changelog_added_53",
+      "target": "changelog_added_50",
       "confidence_score": 1.0
     },
     {
@@ -32806,7 +33487,7 @@
       "source_file": "CHANGELOG.md",
       "source_location": "L58",
       "weight": 1.0,
-      "source": "changelog_3_0_0_2026_07_30",
+      "source": "changelog_3_1_1_2026_08_04",
       "target": "changelog_changed_58",
       "confidence_score": 1.0
     },
@@ -32814,10 +33495,50 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "CHANGELOG.md",
-      "source_location": "L66",
+      "source_location": "L65",
+      "weight": 1.0,
+      "source": "changelog_3_1_0_2026_08_01",
+      "target": "changelog_added_65",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L71",
+      "weight": 1.0,
+      "source": "changelog_3_1_0_2026_08_01",
+      "target": "changelog_changed_71",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L78",
+      "weight": 1.0,
+      "source": "changelog_3_0_0_2026_07_30",
+      "target": "changelog_added_78",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L83",
+      "weight": 1.0,
+      "source": "changelog_3_0_0_2026_07_30",
+      "target": "changelog_changed_83",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "CHANGELOG.md",
+      "source_location": "L91",
       "weight": 1.0,
       "source": "changelog_1_0_0_2026_06_14",
-      "target": "changelog_added_66",
+      "target": "changelog_added_91",
       "confidence_score": 1.0
     },
     {
@@ -33294,7 +34015,7 @@
       "relation": "references",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L96",
+      "source_location": "L97",
       "weight": 1.0,
       "source": "docs_master_plan",
       "target": "docs_integration",
@@ -33344,7 +34065,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L330",
+      "source_location": "L331",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_ai_advisor_architecture_the_differentiator",
@@ -33354,7 +34075,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L601",
+      "source_location": "L602",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_appendix_existing_kit_inventory",
@@ -33364,7 +34085,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L588",
+      "source_location": "L589",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_assumptions",
@@ -33374,7 +34095,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L293",
+      "source_location": "L294",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_design_system_from_dull_sketch_to_engineering_showcase",
@@ -33384,7 +34105,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L53",
+      "source_location": "L54",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_executive_vision",
@@ -33394,7 +34115,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L117",
+      "source_location": "L118",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_honest_scope_replacing_80_tools",
@@ -33404,7 +34125,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L570",
+      "source_location": "L571",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_immediate_next_steps",
@@ -33414,7 +34135,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L165",
+      "source_location": "L166",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_module_map_80_tools_pc_lab_kit_modules",
@@ -33424,7 +34145,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L381",
+      "source_location": "L382",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_one_click_oc_safe_real_bounded",
@@ -33434,7 +34155,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L424",
+      "source_location": "L425",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_open_source_github_growth_strategy",
@@ -33444,7 +34165,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L465",
+      "source_location": "L466",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_phased_roadmap",
@@ -33454,7 +34175,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L236",
+      "source_location": "L237",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_recommended_architecture_standalone_github_friendly",
@@ -33474,7 +34195,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L34",
+      "source_location": "L35",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_table_of_contents",
@@ -33484,7 +34205,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L556",
+      "source_location": "L557",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_what_makes_this_stand_out_vs_existing_oss",
@@ -33494,7 +34215,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L75",
+      "source_location": "L76",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_what_you_already_have_real_assets_not_vapor",
@@ -33504,7 +34225,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L100",
+      "source_location": "L101",
       "weight": 1.0,
       "source": "docs_master_plan_pc_lab_kit_the_unified_local_pc_laboratory",
       "target": "docs_master_plan_what_your_github_stars_tell_us_about_design_direction",
@@ -33514,7 +34235,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L63",
+      "source_location": "L64",
       "weight": 1.0,
       "source": "docs_master_plan_executive_vision",
       "target": "docs_master_plan_core_principles",
@@ -33524,7 +34245,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L57",
+      "source_location": "L58",
       "weight": 1.0,
       "source": "docs_master_plan_executive_vision",
       "target": "docs_master_plan_positioning_for_github",
@@ -33534,7 +34255,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L87",
+      "source_location": "L88",
       "weight": 1.0,
       "source": "docs_master_plan_what_you_already_have_real_assets_not_vapor",
       "target": "docs_master_plan_critical_gap",
@@ -33544,7 +34265,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L129",
+      "source_location": "L130",
       "weight": 1.0,
       "source": "docs_master_plan_honest_scope_replacing_80_tools",
       "target": "docs_master_plan_reference_80_tool_categories",
@@ -33554,7 +34275,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L155",
+      "source_location": "L156",
       "weight": 1.0,
       "source": "docs_master_plan_reference_80_tool_categories",
       "target": "docs_master_plan_aio_lcd_screens_sensor_panels_gif_displays",
@@ -33564,7 +34285,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L134",
+      "source_location": "L135",
       "weight": 1.0,
       "source": "docs_master_plan_reference_80_tool_categories",
       "target": "docs_master_plan_cpu_benchmarks_stress_tests",
@@ -33574,7 +34295,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L158",
+      "source_location": "L159",
       "weight": 1.0,
       "source": "docs_master_plan_reference_80_tool_categories",
       "target": "docs_master_plan_enterprise_oem_validation_common_stacks",
@@ -33584,7 +34305,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L143",
+      "source_location": "L144",
       "weight": 1.0,
       "source": "docs_master_plan_reference_80_tool_categories",
       "target": "docs_master_plan_full_system_benchmarks",
@@ -33594,7 +34315,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L137",
+      "source_location": "L138",
       "weight": 1.0,
       "source": "docs_master_plan_reference_80_tool_categories",
       "target": "docs_master_plan_gpu_benchmarks_stress_tests",
@@ -33604,7 +34325,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L140",
+      "source_location": "L141",
       "weight": 1.0,
       "source": "docs_master_plan_reference_80_tool_categories",
       "target": "docs_master_plan_ram_memory_testing",
@@ -33614,7 +34335,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L152",
+      "source_location": "L153",
       "weight": 1.0,
       "source": "docs_master_plan_reference_80_tool_categories",
       "target": "docs_master_plan_rgb_argb_lighting_control",
@@ -33624,7 +34345,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L149",
+      "source_location": "L150",
       "weight": 1.0,
       "source": "docs_master_plan_reference_80_tool_categories",
       "target": "docs_master_plan_ssd_hdd_storage_testing",
@@ -33634,7 +34355,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L146",
+      "source_location": "L147",
       "weight": 1.0,
       "source": "docs_master_plan_reference_80_tool_categories",
       "target": "docs_master_plan_temperature_voltage_power_sensor_monitoring",
@@ -33644,7 +34365,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L219",
+      "source_location": "L220",
       "weight": 1.0,
       "source": "docs_master_plan_module_map_80_tools_pc_lab_kit_modules",
       "target": "docs_master_plan_replace_strategy_by_category",
@@ -33654,7 +34375,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L270",
+      "source_location": "L271",
       "weight": 1.0,
       "source": "docs_master_plan_recommended_architecture_standalone_github_friendly",
       "target": "docs_master_plan_php_migration_path",
@@ -33664,7 +34385,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L238",
+      "source_location": "L239",
       "weight": 1.0,
       "source": "docs_master_plan_recommended_architecture_standalone_github_friendly",
       "target": "docs_master_plan_target_stack",
@@ -33674,7 +34395,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L274",
+      "source_location": "L275",
       "weight": 1.0,
       "source": "docs_master_plan_recommended_architecture_standalone_github_friendly",
       "target": "docs_master_plan_three_surfaces_one_stack_current_target",
@@ -33684,7 +34405,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L266",
+      "source_location": "L267",
       "weight": 1.0,
       "source": "docs_master_plan_recommended_architecture_standalone_github_friendly",
       "target": "docs_master_plan_why_keep_the_agent_separate",
@@ -33694,7 +34415,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L259",
+      "source_location": "L260",
       "weight": 1.0,
       "source": "docs_master_plan_recommended_architecture_standalone_github_friendly",
       "target": "docs_master_plan_why_tauri_over_pure_flutter_for_v1_oss_launch",
@@ -33704,7 +34425,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L295",
+      "source_location": "L296",
       "weight": 1.0,
       "source": "docs_master_plan_design_system_from_dull_sketch_to_engineering_showcase",
       "target": "docs_master_plan_brand_evolution",
@@ -33714,7 +34435,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L320",
+      "source_location": "L321",
       "weight": 1.0,
       "source": "docs_master_plan_design_system_from_dull_sketch_to_engineering_showcase",
       "target": "docs_master_plan_motion_principles",
@@ -33724,7 +34445,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L310",
+      "source_location": "L311",
       "weight": 1.0,
       "source": "docs_master_plan_design_system_from_dull_sketch_to_engineering_showcase",
       "target": "docs_master_plan_ui_pillars",
@@ -33734,7 +34455,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L354",
+      "source_location": "L355",
       "weight": 1.0,
       "source": "docs_master_plan_ai_advisor_architecture_the_differentiator",
       "target": "docs_master_plan_advisor_outputs_specialist_grade",
@@ -33744,7 +34465,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L363",
+      "source_location": "L364",
       "weight": 1.0,
       "source": "docs_master_plan_ai_advisor_architecture_the_differentiator",
       "target": "docs_master_plan_existing_ai_integration",
@@ -33754,7 +34475,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L338",
+      "source_location": "L339",
       "weight": 1.0,
       "source": "docs_master_plan_ai_advisor_architecture_the_differentiator",
       "target": "docs_master_plan_pipeline",
@@ -33764,7 +34485,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L332",
+      "source_location": "L333",
       "weight": 1.0,
       "source": "docs_master_plan_ai_advisor_architecture_the_differentiator",
       "target": "docs_master_plan_principles",
@@ -33774,7 +34495,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L370",
+      "source_location": "L371",
       "weight": 1.0,
       "source": "docs_master_plan_ai_advisor_architecture_the_differentiator",
       "target": "docs_master_plan_supported_ai_providers_target",
@@ -33784,7 +34505,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L383",
+      "source_location": "L384",
       "weight": 1.0,
       "source": "docs_master_plan_one_click_oc_safe_real_bounded",
       "target": "docs_master_plan_already_implemented_philosophy",
@@ -33794,7 +34515,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L414",
+      "source_location": "L415",
       "weight": 1.0,
       "source": "docs_master_plan_one_click_oc_safe_real_bounded",
       "target": "docs_master_plan_enhancements_for_v1_launch",
@@ -33804,7 +34525,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L444",
+      "source_location": "L445",
       "weight": 1.0,
       "source": "docs_master_plan_open_source_github_growth_strategy",
       "target": "docs_master_plan_launch_checklist_for_github_impact",
@@ -33814,7 +34535,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L454",
+      "source_location": "L455",
       "weight": 1.0,
       "source": "docs_master_plan_open_source_github_growth_strategy",
       "target": "docs_master_plan_naming",
@@ -33824,7 +34545,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L426",
+      "source_location": "L427",
       "weight": 1.0,
       "source": "docs_master_plan_open_source_github_growth_strategy",
       "target": "docs_master_plan_target_repo_structure_monorepo",
@@ -33834,7 +34555,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L467",
+      "source_location": "L468",
       "weight": 1.0,
       "source": "docs_master_plan_phased_roadmap",
       "target": "docs_master_plan_phase_0_foundation_2_3_weeks",
@@ -33844,7 +34565,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L482",
+      "source_location": "L483",
       "weight": 1.0,
       "source": "docs_master_plan_phased_roadmap",
       "target": "docs_master_plan_phase_1_desktop_shell_3_4_weeks",
@@ -33854,7 +34575,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L495",
+      "source_location": "L496",
       "weight": 1.0,
       "source": "docs_master_plan_phased_roadmap",
       "target": "docs_master_plan_phase_2_native_benchmarks_4_6_weeks",
@@ -33864,7 +34585,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L509",
+      "source_location": "L510",
       "weight": 1.0,
       "source": "docs_master_plan_phased_roadmap",
       "target": "docs_master_plan_phase_3_stress_orchestration_3_4_weeks",
@@ -33874,7 +34595,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L522",
+      "source_location": "L523",
       "weight": 1.0,
       "source": "docs_master_plan_phased_roadmap",
       "target": "docs_master_plan_phase_4_ai_knowledge_graph_3_4_weeks",
@@ -33884,7 +34605,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L536",
+      "source_location": "L537",
       "weight": 1.0,
       "source": "docs_master_plan_phased_roadmap",
       "target": "docs_master_plan_phase_5_rgb_sensor_deck_3_4_weeks",
@@ -33894,17 +34615,17 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L548",
+      "source_location": "L549",
       "weight": 1.0,
       "source": "docs_master_plan_phased_roadmap",
-      "target": "docs_master_plan_phase_6_enterprise_mode_optional",
+      "target": "docs_master_plan_phase_6_enterprise_mode_optional_backlog",
       "confidence_score": 1.0
     },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L578",
+      "source_location": "L579",
       "weight": 1.0,
       "source": "docs_master_plan_immediate_next_steps",
       "target": "docs_master_plan_recommended_start",
@@ -33914,7 +34635,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L603",
+      "source_location": "L604",
       "weight": 1.0,
       "source": "docs_master_plan_appendix_existing_kit_inventory",
       "target": "docs_master_plan_agent_endpoints_pclabprobeserve_ps1",
@@ -33924,7 +34645,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L615",
+      "source_location": "L616",
       "weight": 1.0,
       "source": "docs_master_plan_appendix_existing_kit_inventory",
       "target": "docs_master_plan_api_routes_to_extract",
@@ -33934,7 +34655,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "docs/MASTER_PLAN.md",
-      "source_location": "L624",
+      "source_location": "L625",
       "weight": 1.0,
       "source": "docs_master_plan_appendix_existing_kit_inventory",
       "target": "docs_master_plan_benchmark_datasets_19_json_files",
@@ -34050,5 +34771,5 @@
       "source_file": ".github/workflows/release-bundles.yml"
     }
   ],
-  "built_at_commit": "8dd38c093ad9055cef43f8b556ec3edaa34928ee"
+  "built_at_commit": "bbbd9a80d9b72e0f4d7b7bdaeaf35e084cf07d6b"
 }

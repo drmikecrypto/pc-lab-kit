@@ -2,8 +2,8 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — **Pillar A (Hardware Reference Lab)** shipping: exhaustive inventory + clickable drivers. Pillars B (reference benches/stress) and C (LCD GIF/video push) queued next.  
-**Last updated:** 2026-08-11  
+**Status:** Active — Pillars **A** (Hardware Reference) and **B** (reference benches/stress) shipped. **Pillar C** (LCD GIF push, blink timing, assembler RGB Lab) shipping in **v3.2.1**.  
+**Last updated:** 2026-08-16  
 **Repository:** [pc-lab-kit](../README.md)
 
 > Historical sections below still mention Flutter/Qt in places. Prefer this status block and the root README for what ships today.
@@ -22,12 +22,13 @@
 | Cinebench / Geekbench / 3DMark importers | Shipped (R2) |
 | External stress launchers (Prime95/OCCT/TM5 detect) | Shipped (R3) |
 | SVG topology + AI provider presets / Ollama URL | Shipped (R4) |
-| **Pillar A — Hardware Reference** (hidden PnP, EDID, SPD confidence, graph, Install button) | In progress / shipping |
-| **Pillar B — Reference stress & benches** | Queued after A |
-| **Pillar C — LCD GIF/video push to panels** | Queued after A |
+| **Pillar A — Hardware Reference** (hidden PnP, EDID, SPD confidence, graph, Install button) | Shipped (3.2.0) |
+| **Pillar B — Reference stress & benches** | Shipped |
+| **Pillar C — LCD GIF push, blink timing, RGB Lab** | Shipping (3.2.1) — GIF/MP4 video-to-panel later |
 | Linux probe parity | Parked (R5+) |
 | Full Vulkan compute suite | Partial (NVML/host proxy; native Vulkan later) |
 | Windows Service forever-on probe | Parked |
+| MP4 / video push to LCD panels | Backlog (after 3.2.1) |
 
 ---
 
@@ -413,11 +414,11 @@ Source: `app/Services/DiagnosticOcService.php`, `agent/pclab_probe/ProbeLib/over
 
 ### Enhancements for v1 launch
 
-- [ ] Pre-flight 60s idle + 60s load sample before apply
-- [ ] Apply → monitor 5 min → confirm or auto-rollback
-- [ ] Auto-rollback if post-apply telemetry exceeds limits for 30s
-- [ ] Export OC report PDF for warranty/RMA documentation
-- [ ] 10-second countdown UI before apply with cancel button
+- [x] Pre-flight idle + load sample before apply (UI: 10s+10s; plan target 60s+60s remains optional tightening)
+- [x] Apply → monitor → confirm or auto-rollback (UI: 60s watch / 20s breach; 5 min watch optional)
+- [x] Auto-rollback if post-apply telemetry exceeds limits
+- [x] Export OC report (HTML / print-to-PDF via lab export)
+- [x] 10-second countdown UI before apply with cancel button
 
 ---
 
@@ -466,14 +467,14 @@ pc-lab-kit/
 
 ### Phase 0 — Foundation (2–3 weeks)
 
-**Goal:** Runnable standalone demo
+**Goal:** Runnable standalone demo — **DONE**
 
-- [ ] Extract `DiagnosticApiController` from monolith `ApiController.php`
-- [ ] Wire `BenchmarkDatasetService` to 19 JSON files in `benchmark/`
-- [ ] Restore full `diagnostic.php` route (stop pitch redirect)
-- [ ] Add `composer.json`, env template, SQLite for reports
-- [ ] Build agent zip + OpenRGB bundle script
-- [ ] English UI strings alongside FA
+- [x] Extract `DiagnosticApiController` from monolith `ApiController.php`
+- [x] Wire `BenchmarkDatasetService` to 19 JSON files in `benchmark/`
+- [x] Restore full `diagnostic.php` route (stop pitch redirect)
+- [x] Add `composer.json`, env template, SQLite for reports
+- [x] Build agent zip + OpenRGB bundle script
+- [x] English UI strings alongside FA
 
 **Exit criteria:** Clone → `install.ps1` → agent health → full scan → scored report
 
@@ -481,12 +482,12 @@ pc-lab-kit/
 
 ### Phase 1 — Desktop shell (3–4 weeks)
 
-**Goal:** Single installable app
+**Goal:** Single installable app — **DONE** (tray sidecar; Windows Service still parked)
 
-- [ ] Tauri 2 wrapper embedding existing web UI
-- [ ] Auto-start agent as Windows service / tray app
-- [ ] Settings: AI API key, locale, telemetry retention
-- [ ] Report history offline in SQLite
+- [x] Tauri 2 wrapper embedding existing web UI
+- [x] Auto-start agent as tray app + soft restart watchdog (Windows Service = backlog)
+- [x] Settings: AI API key, locale, telemetry retention
+- [x] Report history offline in SQLite
 
 **Exit criteria:** `.msi` or portable zip; no manual PHP server setup
 
@@ -494,13 +495,13 @@ pc-lab-kit/
 
 ### Phase 2 — Native benchmarks (4–6 weeks)
 
-**Goal:** Replace "run CrystalDiskMark separately"
+**Goal:** Replace "run CrystalDiskMark separately" — **mostly DONE**
 
-- [ ] DiskSpd integration (storage module)
-- [ ] CPU micro-benchmark suite (multi-thread, AVX, cache)
-- [ ] GPU Vulkan compute benchmark
-- [ ] Unified **Lab Report PDF** with all scores + percentiles vs JSON DB
-- [ ] Import parsers expanded: 3DMark XML, Cinebench log, Geekbench export
+- [x] DiskSpd integration (storage module; when binary present)
+- [x] CPU micro-benchmark suite (multi-thread, AVX, cache)
+- [ ] GPU Vulkan compute benchmark (NVML/host proxy today; native Vulkan later)
+- [x] Unified **Lab Report** HTML / print-to-PDF with scores + percentiles vs JSON DB
+- [x] Import parsers expanded: 3DMark XML, Cinebench log, Geekbench export
 
 **Exit criteria:** One button "Run Full Lab" → ~15 min → complete report
 
@@ -508,12 +509,12 @@ pc-lab-kit/
 
 ### Phase 3 — Stress orchestration (3–4 weeks)
 
-**Goal:** Replace OCCT/Prime95 workflow
+**Goal:** Replace OCCT/Prime95 workflow — **mostly DONE**
 
-- [ ] Stress profiles: CPU / GPU / RAM / Combined / PSU suspicion
-- [ ] Launch Prime95/OCCT/TestMem5 with unified telemetry overlay
-- [ ] WHEA / BSOD event log correlation
-- [ ] Pass/fail certificate with thermal graphs
+- [x] Stress profiles: CPU / GPU / RAM / Combined / PSU suspicion
+- [x] Launch Prime95/OCCT/TestMem5 with unified telemetry overlay
+- [x] WHEA event sampling in stress/cert (full BSOD timeline = later polish)
+- [x] Pass/fail certificate with thermal graphs
 
 **Exit criteria:** Stress run produces pass/fail certificate with full thermal timeline
 
@@ -521,13 +522,13 @@ pc-lab-kit/
 
 ### Phase 4 — AI + Knowledge Graph (3–4 weeks)
 
-**Goal:** Specialist advisor that justifies BYOK API
+**Goal:** Specialist advisor that justifies BYOK API — **DONE**
 
-- [ ] Hardware graph builder from probe JSON
-- [ ] TOON context serializer
-- [ ] Multi-provider AI settings (OpenAI, Anthropic, Ollama, custom)
-- [ ] Schema-validated advisor cards in UI
-- [ ] Optional Ollama for offline basic tips
+- [x] Hardware graph builder from probe JSON
+- [x] TOON context serializer
+- [x] Multi-provider AI settings (OpenAI, Anthropic, Ollama, custom)
+- [x] Schema-validated advisor cards in UI
+- [x] Optional Ollama for offline basic tips
 
 **Exit criteria:** Full scan → local graph → AI cards with validated JSON schema
 
@@ -535,17 +536,17 @@ pc-lab-kit/
 
 ### Phase 5 — RGB + Sensor Deck (3–4 weeks)
 
-**Goal:** Replace SignalRGB + Rainmeter slice
+**Goal:** Replace SignalRGB + Rainmeter slice — **DONE** (LCD polish in 3.2.1)
 
-- [ ] Full Flutter/Tauri parity for RGB apply + Orchestrator orchestration
-- [ ] Sensor Deck: drag-drop gauges, export Rainmeter/HWiNFO SM
-- [ ] LCD GIF pipeline polish
+- [x] Tauri/web parity for RGB apply + Orchestrator orchestration
+- [x] Sensor Deck: gauges, export Rainmeter/JSON
+- [x] LCD GIF pipeline polish (blink timing + push path in 3.2.1; MP4 later)
 
 **Exit criteria:** RGB apply + fan/LCD orchestration works from desktop shell; Sensor Deck exportable
 
 ---
 
-### Phase 6 — Enterprise mode (optional)
+### Phase 6 — Enterprise mode (optional) — backlog
 
 - [ ] Burn-in 24h profile
 - [ ] Batch reporting CLI for OEM/reviewers

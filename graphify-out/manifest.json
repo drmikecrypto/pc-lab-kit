@@ -115,8 +115,8 @@
     "semantic_hash": ""
   },
   "app/Services/DiagnosticRgbService.php": {
-    "mtime": 1786465039.4885478,
-    "ast_hash": "99dbd260692d5bdd7df3719b3e663059",
+    "mtime": 1786887457.7928584,
+    "ast_hash": "a3430d6b6c785898de10815f787fa267",
     "semantic_hash": ""
   },
   "app/Services/DiagnosticService.php": {
@@ -280,7 +280,7 @@
     "semantic_hash": ""
   },
   "config/build-deps.json": {
-    "mtime": 1786462138.3960702,
+    "mtime": 1786527816.516037,
     "ast_hash": "e9bc6aab7a12d54ecc10ff0d76387c45",
     "semantic_hash": ""
   },
@@ -365,8 +365,8 @@
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-rgb.js": {
-    "mtime": 1785401002.4669733,
-    "ast_hash": "21e98b2515757cbd3513b3a287cc47c5",
+    "mtime": 1786887876.3062463,
+    "ast_hash": "7f7bb87c0f0b99879e123c434ede50b2",
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-settings.js": {
@@ -395,8 +395,8 @@
     "semantic_hash": "6123da9436ca10b9c5fee7bc20c322f1"
   },
   "resources/views/diagnostic.php": {
-    "mtime": 1786467773.3515234,
-    "ast_hash": "c5e32340c705761c1afc2a9e769dc60c",
+    "mtime": 1786887500.5638757,
+    "ast_hash": "074b52810ade0e25ff2454b69a0301ab",
     "semantic_hash": ""
   },
   "resources/views/errors/404.php": {
@@ -495,8 +495,8 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1786465061.9485428,
-    "ast_hash": "e722b078714eb300cf81894b2fcb8bbe",
+    "mtime": 1786887909.8391955,
+    "ast_hash": "c6cd5b9eab777bb27aa648520c7aab69",
     "semantic_hash": ""
   },
   "CONTRIBUTING.md": {
@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "docs/MASTER_PLAN.md": {
-    "mtime": 1786467677.9595351,
-    "ast_hash": "a0e6dd2531713659aee8e9bf38155bc3",
+    "mtime": 1786887348.2133982,
+    "ast_hash": "7302af21bd5207c91f898547b7b36ab0",
     "semantic_hash": ""
   },
   "docs/README.md": {
@@ -565,8 +565,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/PcLabProbeServe.ps1": {
-    "mtime": 1786467561.6300647,
-    "ast_hash": "2cbbebc2ec66a28dea528807a1794f66",
+    "mtime": 1786887457.2156422,
+    "ast_hash": "4a2870a472ffdff87322bf97a64fdbd8",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/amd.ps1": {
@@ -645,8 +645,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/rgb.ps1": {
-    "mtime": 1786465039.4991994,
-    "ast_hash": "5a2d120652ed294e078b27ecdf944820",
+    "mtime": 1786887888.39648,
+    "ast_hash": "37e9a4b7b71678f0ff867421b11fcce1",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/stress.ps1": {
@@ -675,7 +675,7 @@
     "semantic_hash": ""
   },
   "app/Services/LabReportExportService.php": {
-    "mtime": 1786467669.0680614,
+    "mtime": 1786527816.516037,
     "ast_hash": "373e6790f288f31efa7c502324e6414f",
     "semantic_hash": ""
   },
@@ -705,8 +705,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/tools/OpenRGB/README.md": {
-    "mtime": 1785400889.0477405,
-    "ast_hash": "f6e9b0706c6de5997f9014fd28040349",
+    "mtime": 1786887881.979116,
+    "ast_hash": "61fb921a13bb5fc08d0581d175f7852b",
     "semantic_hash": ""
   },
   "tests/Unit/SourceEncodingTest.php": {
@@ -740,8 +740,8 @@
     "semantic_hash": ""
   },
   "desktop/package.json": {
-    "mtime": 1786468439.576169,
-    "ast_hash": "ab8606d6244158350ffe1db8edbbdd34",
+    "mtime": 1786887910.537901,
+    "ast_hash": "73ecf85815cf0c8527cc766072c8afc9",
     "semantic_hash": ""
   },
   "desktop/src-tauri/build.rs": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "desktop/src-tauri/tauri.conf.json": {
-    "mtime": 1786464009.5320878,
-    "ast_hash": "c37bef17456977a39a0c34352eec05e7",
+    "mtime": 1786887911.3159788,
+    "ast_hash": "7df75939ef9bfbcc4694e930645e50d1",
     "semantic_hash": ""
   },
   "desktop/src/main.ts": {
@@ -992,6 +992,11 @@
   "tests/Unit/HardwareReferenceTest.php": {
     "mtime": 1786467712.115383,
     "ast_hash": "203178b6c79a5e07344809227e27ad02",
+    "semantic_hash": ""
+  },
+  "tests/Unit/RgbLabTest.php": {
+    "mtime": 1786887913.6798935,
+    "ast_hash": "d9e9bf3cc63b64697885b925e47bc5e6",
     "semantic_hash": ""
   }
 }

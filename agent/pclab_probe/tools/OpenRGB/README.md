@@ -13,14 +13,15 @@ Download: https://openrgb.org/releases/release_0.9/openrgb_0.9.1240_64-win64.zip
 PcLab Probe uses OpenRGB in user-mode to control:
 
 - Case LED strips and hubs
-- Fan ring / center LEDs
+- Fan ring / center LEDs (static, breathing, blink with on/off ms)
 - Many AIO pump rings
-- Some LCD devices (GIF stored locally under `%LOCALAPPDATA%\PcLabKit\Probe\lcd-cache\`)
+- LCD coolers / case panels (GIF cached locally; OpenRGB Custom/Direct push when supported)
 
 ## Before scanning
 
-1. Close **iCUE**, **NZXT CAM**, **SignalRGB** (only one controller can own the bus).
+1. Close **iCUE**, **NZXT CAM**, **SignalRGB**, **Armoury Crate** (only one controller can own the bus).
 2. Run **Start-PcLabProbe.bat** as Administrator once.
-3. Open `/diagnostic` → **RGB Lab** → **اسکن مجدد RGB**.
+3. Open the lab → **RGB Lab** → **Rescan RGB**.
 
-GIF files are never uploaded to pclab servers — only sent to `127.0.0.1:18765`.
+GIF files are never uploaded to PC Lab Kit servers — only sent to `127.0.0.1:18765`.
+Staged copies for manual import live under `OpenRGB/pclab-lcd/` and `%LOCALAPPDATA%\PcLabKit\Probe\lcd-cache\`.

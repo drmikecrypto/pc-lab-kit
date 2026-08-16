@@ -48,6 +48,32 @@
   flex: 1; min-width: 100px; padding: 8px 10px; border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.4); color: #fff; font-size: 12px;
 }
+.dx-rgb-blink {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;
+  padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.08);
+}
+.dx-rgb-blink label {
+  font-size: 11px; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 6px;
+}
+.dx-rgb-blink input[type=number] {
+  width: 88px; padding: 6px 8px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.4); color: #fff; font-size: 12px;
+}
+.dx-rgb-conflict {
+  grid-column: 1 / -1;
+  padding: 12px 14px; border-radius: 12px; margin-bottom: 4px;
+  background: rgba(242,159,5,0.1); border: 1px solid rgba(242,159,5,0.35);
+  color: #fbbf24; font-size: 12px; line-height: 1.5;
+}
+.dx-rgb-lcd-badge {
+  font-size: 9px; padding: 2px 6px; border-radius: 999px; margin-left: 6px;
+  background: rgba(34,211,238,0.15); color: #67e8f9;
+}
+.dx-rgb-lcd-status { margin-top: 8px; line-height: 1.5; color: rgba(255,255,255,0.55); }
+.dx-rgb-lcd-status.ok { color: #86efac; }
+.dx-rgb-lcd-status.warn { color: #fbbf24; }
+.dx-rgb-lcd-steps { margin: 6px 0 0 1.1rem; padding: 0; font-size: 11px; }
+.dx-rgb-dash-link { color: #67e8f9; text-decoration: underline; }
 .dx-rgb-lcd {
   margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1);
 }
