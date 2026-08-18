@@ -6,6 +6,19 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [3.4.0] - 2026-08-17
+
+### Added
+- **Pillar E — Open-Book Sensors**: Blackwell GPU Hot Spot via BAR0 THERM MMIO in `PcLabHwMon` (Q8.8 + validity; S1–S6 + Therm Spread)
+- Docs: [OPEN_BOOK_SENSORS.md](docs/OPEN_BOOK_SENSORS.md) — MODS out; register path in; decode rules
+- Sensor Deck **Therm spread** gauge; live note when hotspot is `blackwell_therm_mmio`
+- `BlackwellThermDecode` PHP helper + unit tests mirroring HwMon decode
+
+### Changed
+- Probe prefers open-book Hot Spot; rejects NVAPI lock (255) and RTX 50 core-clone fakes; T.Limit remains last-resort estimate
+- MASTER_PLAN Pillar E marked shipped for 3.4.0
+- Desktop / `APP_VERSION` aligned to 3.4.0
+
 ## [3.3.0] - 2026-08-17
 
 ### Added

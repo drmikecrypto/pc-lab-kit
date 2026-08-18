@@ -65,8 +65,8 @@
     "semantic_hash": ""
   },
   "app/Services/DiagnosticAgentService.php": {
-    "mtime": 1786466922.528018,
-    "ast_hash": "773155bbc54f0fcb6b5482badd0d96f4",
+    "mtime": 1786925087.560691,
+    "ast_hash": "547b06b6d6d27bf43d3369eee74aca87",
     "semantic_hash": ""
   },
   "app/Services/DiagnosticAiService.php": {
@@ -270,8 +270,8 @@
     "semantic_hash": "03bbfe42d7762b80f4a8f2db1824689b"
   },
   "config/app.php": {
-    "mtime": 1786923461.2660303,
-    "ast_hash": "996062ecb56247a6c110fe8de32be68d",
+    "mtime": 1786925040.0533254,
+    "ast_hash": "dfe0fb9913fbf3497f5970f949c01105",
     "semantic_hash": ""
   },
   "config/benchmark_datasets.php": {
@@ -350,8 +350,8 @@
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-live.js": {
-    "mtime": 1786467610.3068006,
-    "ast_hash": "74981c92ae095b533f956bf24e4f2dc5",
+    "mtime": 1786925036.2339745,
+    "ast_hash": "722c471f3ea52ac4e1fb7aea4cb4b829",
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-oc.js": {
@@ -495,8 +495,8 @@
     "semantic_hash": ""
   },
   "CHANGELOG.md": {
-    "mtime": 1786923470.4355657,
-    "ast_hash": "8af9b2d603157eaafcdeed08e5c34ae9",
+    "mtime": 1787080613.1865916,
+    "ast_hash": "deef98d365b8da87c3a57a2032c79cbb",
     "semantic_hash": ""
   },
   "CONTRIBUTING.md": {
@@ -530,8 +530,8 @@
     "semantic_hash": ""
   },
   "docs/MASTER_PLAN.md": {
-    "mtime": 1786923474.4493883,
-    "ast_hash": "ccf992dcbf5acf2473cdfa7070a59fe6",
+    "mtime": 1787080612.9352586,
+    "ast_hash": "7158f38da5546ef11ebcfbccc23b88f1",
     "semantic_hash": ""
   },
   "docs/README.md": {
@@ -555,8 +555,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/PcLabHwMon/Program.cs": {
-    "mtime": 1785400888.979366,
-    "ast_hash": "21ba885b1ac80a6059d8e0e141d1dc00",
+    "mtime": 1786924948.6595306,
+    "ast_hash": "aa041e4142540b3c9af70d8025cc750f",
     "semantic_hash": ""
   },
   "agent/pclab_probe/PcLabProbe.ps1": {
@@ -565,8 +565,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/PcLabProbeServe.ps1": {
-    "mtime": 1786923382.2096817,
-    "ast_hash": "530782d6bb7fc9736140275b63822044",
+    "mtime": 1787080621.4991322,
+    "ast_hash": "e95f678a5549314148964aac15946cf8",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/amd.ps1": {
@@ -615,8 +615,8 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/hwmon.ps1": {
-    "mtime": 1786466647.4399276,
-    "ast_hash": "0c13381fb0092b3580adfed76aebb8c7",
+    "mtime": 1786925001.9391205,
+    "ast_hash": "623bb0b8c50ae1f64d2c06ef38c142d4",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/memory.ps1": {
@@ -655,13 +655,13 @@
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/system.ps1": {
-    "mtime": 1785400889.0400887,
-    "ast_hash": "87169020f67001d565d00c577fa59eef",
+    "mtime": 1786925017.6625988,
+    "ast_hash": "36f4df07405991230ebc48fa7d78c08e",
     "semantic_hash": ""
   },
   "agent/pclab_probe/ProbeLib/thermal.ps1": {
-    "mtime": 1785400889.0447407,
-    "ast_hash": "32e887624f6c17d6aa02291a01c80181",
+    "mtime": 1786925010.238167,
+    "ast_hash": "9961a9c7ce09896c00652dd81215e1a6",
     "semantic_hash": ""
   },
   "app/Services/DiagnosticOrchestratorService.php": {
@@ -740,8 +740,8 @@
     "semantic_hash": ""
   },
   "desktop/package.json": {
-    "mtime": 1786923461.926579,
-    "ast_hash": "347abe9277e5aa196752df72256c5a4a",
+    "mtime": 1786925040.0533254,
+    "ast_hash": "90ea8dc4910071a115a859a8234102e4",
     "semantic_hash": ""
   },
   "desktop/src-tauri/build.rs": {
@@ -770,8 +770,8 @@
     "semantic_hash": ""
   },
   "desktop/src-tauri/tauri.conf.json": {
-    "mtime": 1786923466.4778726,
-    "ast_hash": "db2d637a0796d7c514afd79c0c5483ca",
+    "mtime": 1786925042.4182608,
+    "ast_hash": "cf6031909e0099d2e61dfbc4fe3f8ee0",
     "semantic_hash": ""
   },
   "desktop/src/main.ts": {
@@ -935,8 +935,8 @@
     "semantic_hash": ""
   },
   "app/Services/SensorDeckService.php": {
-    "mtime": 1786917932.1676922,
-    "ast_hash": "d3febb8d386e2fa088a0906a45daec15",
+    "mtime": 1786925033.938415,
+    "ast_hash": "ca6ffe6d15c8573531e276ec795c5169",
     "semantic_hash": ""
   },
   "app/Services/TopologyViewService.php": {
@@ -955,8 +955,8 @@
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-sensor-deck.js": {
-    "mtime": 1786917950.4706397,
-    "ast_hash": "7e19e9b538fe1ad4cc1b28c96f292cc4",
+    "mtime": 1786925036.206771,
+    "ast_hash": "92748397a2ea453c088400fcbda6521d",
     "semantic_hash": ""
   },
   "public/assets/js/diagnostic-suite.js": {
@@ -970,8 +970,8 @@
     "semantic_hash": ""
   },
   "tests/Unit/AmbitiousUpgradeTest.php": {
-    "mtime": 1786923451.5473998,
-    "ast_hash": "9edf3fead35166b674c52228e669ceae",
+    "mtime": 1786925075.5281155,
+    "ast_hash": "03c49325ff6ae255ebadd736425b4408",
     "semantic_hash": ""
   },
   "llms-full.txt": {
@@ -1027,6 +1027,31 @@
   "agent/pclab_probe/tools/PcLabVkBench/README.md": {
     "mtime": 1786923385.1995933,
     "ast_hash": "d651512d7581b32f5f79dd8332c0d701",
+    "semantic_hash": ""
+  },
+  "agent/pclab_probe/PcLabHwMon/BlackwellTherm.cs": {
+    "mtime": 1786924969.252486,
+    "ast_hash": "e2850a2078cd6b1b3b2fa91e187c75c3",
+    "semantic_hash": ""
+  },
+  "agent/pclab_probe/PcLabHwMon/Ring0Bridge.cs": {
+    "mtime": 1786924948.4626186,
+    "ast_hash": "dafd9db26f0576c0e8a8e39a9412c0b8",
+    "semantic_hash": ""
+  },
+  "app/Support/OpenBook/BlackwellThermDecode.php": {
+    "mtime": 1786925030.5825126,
+    "ast_hash": "95239f75f45a279f02f4e73e1a0dfe9a",
+    "semantic_hash": ""
+  },
+  "tests/Unit/BlackwellThermDecodeTest.php": {
+    "mtime": 1786925032.5300062,
+    "ast_hash": "276e4249b5f6ae806035a7effe16c861",
+    "semantic_hash": ""
+  },
+  "docs/OPEN_BOOK_SENSORS.md": {
+    "mtime": 1786924843.8871157,
+    "ast_hash": "29a5a1f23bf7082af58463b21d2e83e0",
     "semantic_hash": ""
   }
 }

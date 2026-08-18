@@ -145,7 +145,7 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
             "/health" {
                 $hwmon = (Test-Path (Join-Path $scriptDir "PcLabHwMon.exe")).ToString().ToLower()
                 $vkbench = (Test-Path (Join-Path $scriptDir "PcLabVkBench.exe")).ToString().ToLower()
-                $body = '{"ok":true,"agent":"pclab-probe","version":5,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true}'
+                $body = '{"ok":true,"agent":"pclab-probe","version":5,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true}'
             }
             "/probe" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $probeScript

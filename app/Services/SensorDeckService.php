@@ -31,6 +31,7 @@ class SensorDeckService
                 ['id' => 'cpu_temp', 'type' => 'gauge', 'source' => 'cpu_temp', 'label' => 'CPU °C', 'min' => 20, 'max' => 100],
                 ['id' => 'gpu_temp', 'type' => 'gauge', 'source' => 'gpu_temp', 'label' => 'GPU °C', 'min' => 20, 'max' => 100],
                 ['id' => 'gpu_hotspot', 'type' => 'gauge', 'source' => 'gpu_hotspot', 'label' => 'Hotspot °C', 'min' => 20, 'max' => 110],
+                ['id' => 'gpu_therm_spread', 'type' => 'gauge', 'source' => 'gpu_therm_spread', 'label' => 'Therm spread °C', 'min' => 0, 'max' => 40],
                 ['id' => 'cpu_load', 'type' => 'gauge', 'source' => 'cpu_load', 'label' => 'CPU %', 'min' => 0, 'max' => 100],
                 ['id' => 'gpu_load', 'type' => 'gauge', 'source' => 'gpu_load', 'label' => 'GPU %', 'min' => 0, 'max' => 100],
                 ['id' => 'vram_used', 'type' => 'gauge', 'source' => 'vram_used_pct', 'label' => 'VRAM %', 'min' => 0, 'max' => 100],

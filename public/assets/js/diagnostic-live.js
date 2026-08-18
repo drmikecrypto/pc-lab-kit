@@ -304,10 +304,12 @@
         if (health.elevated === false || probe.elevated === false) {
           bits.push('Probe is not elevated — restart Start-PcLabProbe.bat as Administrator for CPU die temps.');
         }
-        if (gpuT.hotspot_source && gpuT.hotspot_source !== 'unavailable') {
+        if (gpuT.hotspot_source === 'blackwell_therm_mmio') {
+          bits.push('GPU hot spot via open-book BAR0 THERM (not NVAPI).');
+        } else if (gpuT.hotspot_source && gpuT.hotspot_source !== 'unavailable') {
           bits.push('GPU hot spot via ' + gpuT.hotspot_source);
         } else if (!gpuT.hot_spot_c && !sensors.gpu_hotspot_max) {
-          bits.push('GPU hot spot not readable on this adapter.');
+          bits.push('GPU hot spot not readable — elevate probe for open-book MMIO on Blackwell.');
         }
         const findings = (thermal.findings || []).slice(0, 2);
         findings.forEach((f) => {

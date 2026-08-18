@@ -7,7 +7,7 @@ use App\Support\Env;
 return [
     'name' => Env::get('APP_NAME', 'PC Lab Kit'),
     'name_en' => 'PC Lab Kit',
-    'version' => Env::get('APP_VERSION', '3.3.0'),
+    'version' => Env::get('APP_VERSION', '3.4.0'),
     'tagline' => 'Local PC laboratory — Full Lab, probe, monitor, tune.',
     'url' => rtrim(Env::get('APP_URL', 'http://127.0.0.1:8080'), '/'),
     'debug' => filter_var(Env::get('APP_DEBUG', 'true'), FILTER_VALIDATE_BOOLEAN),

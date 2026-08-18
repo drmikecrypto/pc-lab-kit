@@ -228,6 +228,7 @@ function Get-ProbeThermalSummary {
             hot_spot_c      = $t.hot_spot_c
             hotspot_delta_c = $t.hotspot_delta_c
             hotspot_source  = $t.hotspot_source
+            therm_spread_c  = $t.therm_spread_c
             memory_c        = $t.memory_c
             vr_c            = $t.vr_c
             fan_pct         = $t.fan_pct

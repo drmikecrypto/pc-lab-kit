@@ -34,6 +34,8 @@ function Get-ProbeHwMonTelemetry {
         # Tag every flat sensor with source + confidence for Hardware Reference.
         $flatTagged = @()
         foreach ($s in $flat) {
+            $src = if ($s.source) { [string]$s.source } else { 'libre-hardware-monitor' }
+            $conf = if ($s.confidence) { [string]$s.confidence } elseif ($elevated -or ("$($s.hardware_type)" -ne 'Cpu')) { 'measured' } else { 'heuristic' }
             $row = @{
                 name          = $s.name
                 type          = $s.type
@@ -41,16 +43,19 @@ function Get-ProbeHwMonTelemetry {
                 unit          = $s.unit
                 hardware      = $s.hardware
                 hardware_type = $s.hardware_type
-                source        = 'libre-hardware-monitor'
-                confidence    = if ($elevated -or ("$($s.hardware_type)" -ne 'Cpu')) { 'measured' } else { 'heuristic' }
+                source        = $src
+                confidence    = $conf
                 elevated      = $elevated
                 plausible     = $true
             }
+            if ($s.open_book) { $row.open_book = $true }
+            if ($s.pci_bdf) { $row.pci_bdf = [string]$s.pci_bdf }
+            if ($s.note) { $row.note = [string]$s.note }
             if ("$($s.type)" -eq 'Temperature') {
                 $t = 0.0
                 if ([double]::TryParse("$($s.value)", [ref]$t)) {
                     $row.plausible = ($t -ge 5 -and $t -le 125)
-                    if (-not $row.plausible) { $row.confidence = 'heuristic' }
+                    if (-not $row.plausible -and $src -ne 'blackwell_therm_mmio') { $row.confidence = 'heuristic' }
                 }
             }
             $flatTagged += $row
@@ -77,6 +82,10 @@ function Get-ProbeHwMonTelemetry {
 
         if ($data.environment) { $result.environment = $data.environment }
         if ($data.resolved) { $result.resolved = $data.resolved }
+        if ($data.open_book) { $result.open_book = $data.open_book }
+        if ($data.environment -and $data.environment.open_book_therm) {
+            $result.open_book_therm = [bool]$data.environment.open_book_therm
+        }
 
         if ($cpuSensors.Count -eq 0) {
             $result.note = if ($elevated) {

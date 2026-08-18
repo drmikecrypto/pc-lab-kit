@@ -2,8 +2,8 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars A–D shipped through **v3.3.0** (Native Benchmark Arena: Vulkan/D3D11 GPU compute + stronger CPU/storage). Capability-first doctrine: own the full lab, not an import shell.  
-**Last updated:** 2026-08-17  
+**Status:** Active — Pillars A–E shipped through **v3.4.0** (Open-Book Sensors: Blackwell Hot Spot via BAR0 THERM MMIO). Capability-first doctrine: own the full lab, not an import shell.  
+**Last updated:** 2026-08-18  
 **Repository:** [pc-lab-kit](../README.md)
 
 > Historical sections below still mention Flutter/Qt in places. Prefer this status block and the root README for what ships today.
@@ -26,6 +26,7 @@
 | **Pillar B — Reference stress & benches** | Shipped |
 | **Pillar C — LCD GIF push, blink timing, RGB Lab** | Shipped (3.2.1 / 3.2.2) |
 | **Pillar D — Native Benchmark Arena** (Vulkan GPU + CPU/storage suite) | Shipped (3.3.0) |
+| **Pillar E — Open-Book Sensors** (Blackwell Hot Spot MMIO + blocked-sensor catalog) | Shipped (3.4.0) — see [OPEN_BOOK_SENSORS.md](OPEN_BOOK_SENSORS.md) |
 | Linux probe parity | Parked (R5+) |
 | Full Vulkan compute suite | Shipped compute helper in 3.3.0 (raster/3D suite later) |
 | Windows Service forever-on probe | Parked |
@@ -564,15 +565,15 @@ pc-lab-kit/
 
 ## Immediate next steps
 
-1. **Ship Pillar D (3.3.0)** — native Vulkan GPU compute + CPU ST/MT/cache + DiskSpd CDM profiles in Full Lab
-2. **RGB/LCD depth** — timelines, MP4-to-panel, more cooler fingerprints (SignalRGB/iCUE-class)
-3. **Sensor density** — HWiNFO-class shared memory / every-sensor overlays
-4. **Raster GPU suite** — after compute scores are trusted
+1. **Open-book catalog expansion (3.5)** — per-VRAM temps, NVAPI raw, AMD/Intel blocked channels
+2. **Silicon Dossier (3.6)** — PCI dump, CPUID, raw SPD, EDID hex for assembly proof
+3. **Assembly Certificate + real GPU stress (3.7)**
+4. **Unified Open Book Lab tab (4.0)**
 5. **Linux probe parity** when Windows native arena is solid
 
 ### Recommended focus
 
-Build capability. Imports and launchers are secondary. Vulkan + native benches first, then RGB/LCD and sensor depth.
+Build capability. Imports and launchers are secondary. Open-book sensors + RGB/LCD depth next.
 ---
 
 ## Assumptions

@@ -130,10 +130,8 @@
   "128": "build-pclab-vkbench.ps1",
   "129": "SensorDeckService",
   "130": "diagnostic-launchers.js",
-  "131": "HardwareKnowledgeGraphService",
   "133": "Executive vision",
   "134": "diagnostic-topology.js",
   "135": "How it fits together",
-  "136": "suite-smoke.spec.js",
-  "137": "DiagnosticInventoryService"
+  "136": "suite-smoke.spec.js"
 }

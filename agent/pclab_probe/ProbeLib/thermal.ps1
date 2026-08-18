@@ -318,25 +318,65 @@ function Resolve-ProbeGpuThermal {
         vendor          = $vendor
         hardware        = $HardwareName
         core_c          = Get-ProbeSensorValue -Sensors $sensors -NamePatterns @('^GPU Core$', '^GPU Temperature$', '^Core$')
-        hot_spot_c      = Get-ProbeSensorValue -Sensors $sensors -NamePatterns @('^GPU Hot ?Spot$', 'Hot ?Spot', '^GPU Junction$')
+        hot_spot_c      = $null
         memory_c        = Get-ProbeSensorValue -Sensors $sensors -NamePatterns @('^GPU Memory Junction$', '^GPU Memory$', '^GPU VRAM$', 'Memory Junction')
         vr_c            = Get-ProbeSensorValue -Sensors $sensors -NamePatterns @('^GPU VR (VDDC|SoC|MVDD)$', 'GPU VR') -Max
         liquid_c        = Get-ProbeSensorValue -Sensors $sensors -NamePatterns @('^GPU Liquid$')
+        therm_spread_c  = Get-ProbeSensorValue -Sensors $sensors -NamePatterns @('^GPU Therm Spread$')
         fan_pct         = $null
         limits          = $limits
         hotspot_delta_c = $null
         headroom_c      = $null
         source          = 'libre-hardware-monitor'
-        hotspot_source  = 'libre-hardware-monitor'
+        hotspot_source  = 'unavailable'
         health          = 'unknown'
         findings        = @()
     }
 
-    # nvidia-smi / rocm-smi values fill any gap LHM could not cover.
+    # Prefer open-book BAR0 THERM Hot Spot (Blackwell) over NVAPI / LHM fakes.
+    $obHot = @($sensors | Where-Object {
+        "$($_.name)" -match '^GPU Hot ?Spot$' -and (
+            "$($_.source)" -eq 'blackwell_therm_mmio' -or $_.open_book -eq $true
+        )
+    }) | Select-Object -First 1
+    if ($obHot -and (Test-ProbePlausibleTemp $obHot.value)) {
+        $result.hot_spot_c = [math]::Round([double]$obHot.value, 1)
+        $result.hotspot_source = 'blackwell_therm_mmio'
+        $result.source = 'blackwell_therm_mmio'
+    } else {
+        $picked = Get-ProbeSensorValue -Sensors $sensors -NamePatterns @('^GPU Hot ?Spot$', 'Hot ?Spot', '^GPU Junction$')
+        if (Test-ProbePlausibleTemp $picked) {
+            $result.hot_spot_c = $picked
+            $result.hotspot_source = 'libre-hardware-monitor'
+        }
+    }
+
+    # Reject NVAPI lock (255) and Blackwell core-clone fakes when not open-book.
+    if (Test-ProbePlausibleTemp $result.hot_spot_c) {
+        if ([double]$result.hot_spot_c -ge 250) {
+            $result.hot_spot_c = $null
+            $result.hotspot_source = 'unavailable'
+        } elseif (
+            $result.hotspot_source -ne 'blackwell_therm_mmio' -and
+            $vendor -eq 'nvidia' -and
+            (Test-ProbePlausibleTemp $result.core_c) -and
+            [math]::Abs([double]$result.hot_spot_c - [double]$result.core_c) -lt 0.25 -and
+            ("$HardwareName" -match 'RTX\s*50|GeForce\s*RTX\s*50')
+        ) {
+            $result.hot_spot_c = $null
+            $result.hotspot_source = 'unavailable'
+        }
+    }
+    if (Test-ProbePlausibleTemp $result.memory_c -and [double]$result.memory_c -ge 250) {
+        $result.memory_c = $null
+    }
+
+    # nvidia-smi / rocm-smi values fill any gap LHM / open-book could not cover.
+    # T.Limit-derived hotspot is last resort only.
     if ($Fallback) {
         if (-not (Test-ProbePlausibleTemp $result.core_c) -and (Test-ProbePlausibleTemp $Fallback.core_c)) {
             $result.core_c = [math]::Round([double]$Fallback.core_c, 1)
-            $result.source = "$($Fallback.source)"
+            if ($result.source -eq 'libre-hardware-monitor') { $result.source = "$($Fallback.source)" }
         }
         if (-not (Test-ProbePlausibleTemp $result.memory_c) -and (Test-ProbePlausibleTemp $Fallback.memory_c)) {
             $result.memory_c = [math]::Round([double]$Fallback.memory_c, 1)
@@ -445,7 +485,30 @@ function Get-ProbeGpuThermalFindings {
             severity = 'info'
             code     = 'gpu_hotspot_unavailable'
             title    = "$label hot spot not readable"
-            detail   = 'Run the probe as Administrator and make sure PcLabHwMon.exe is present. Some laptop and mobile GPUs never expose a junction sensor.'
+            detail   = 'Run the probe as Administrator so PcLabHwMon can open Ring0 and try open-book BAR0 THERM (Blackwell). Some laptop GPUs never expose a junction sensor. See docs/OPEN_BOOK_SENSORS.md.'
+        }
+    } elseif ($Gpu.hotspot_source -eq 'blackwell_therm_mmio') {
+        $out += @{
+            severity = 'info'
+            code     = 'gpu_hotspot_open_book'
+            title    = "$label hot spot via open-book registers"
+            detail   = 'Recovered from GPU BAR0 THERM MMIO (not public NVAPI). Treat absolute °C as approximate; watch hotspot−core delta and Therm Spread for cooler/paste issues.'
+        }
+    } elseif ($Gpu.hotspot_source -eq 'nvidia-smi-tlimit-derived') {
+        $out += @{
+            severity = 'info'
+            code     = 'gpu_hotspot_derived'
+            title    = "$label hot spot is estimated"
+            detail   = 'Derived from nvidia-smi T.Limit — not a direct junction reading. Open-book MMIO was unavailable.'
+        }
+    }
+
+    if ($null -ne $Gpu.therm_spread_c -and [double]$Gpu.therm_spread_c -ge 12) {
+        $out += @{
+            severity = if ([double]$Gpu.therm_spread_c -ge 18) { 'warn' } else { 'info' }
+            code     = 'gpu_therm_spread'
+            title    = "$label on-die therm spread is $($Gpu.therm_spread_c)C"
+            detail   = 'S1–S4 spatial spread from open-book THERM. A wide spread under load can indicate uneven cooler contact or paste.'
         }
     }
 

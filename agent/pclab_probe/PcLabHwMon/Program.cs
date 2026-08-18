@@ -2,6 +2,12 @@
 using System.Security.Principal;
 using System.Text.Json;
 using LibreHardwareMonitor.Hardware;
+using PcLabHwMon;
+
+if (args.Any(a => string.Equals(a, "--self-test-therm", StringComparison.OrdinalIgnoreCase)))
+{
+    Environment.Exit(RunThermSelfTest());
+}
 
 var elevated = new WindowsPrincipal(WindowsIdentity.GetCurrent())
     .IsInRole(WindowsBuiltInRole.Administrator);
@@ -32,6 +38,15 @@ try
     }
 
     var flat = FlatSensors(computer);
+    var gpuNames = computer.Hardware
+        .Where(h => h.HardwareType is HardwareType.GpuNvidia or HardwareType.GpuAmd or HardwareType.GpuIntel)
+        .Where(h => h.HardwareType == HardwareType.GpuNvidia)
+        .Select(h => h.Name)
+        .ToList();
+
+    var openBook = BlackwellTherm.TryReadAll(gpuNames);
+    BlackwellTherm.MergeIntoFlat(flat, openBook, out var openBookActive);
+
     var report = new Dictionary<string, object?>
     {
         ["collector"] = "pclab-hwmon",
@@ -43,6 +58,8 @@ try
             // Exposing the flag lets the probe tell the assembler why CPU temps are missing
             // instead of silently falling back to ACPI zones.
             ring0_available = elevated,
+            open_book_therm = openBookActive,
+            open_book_therm_gpus = openBook.Count,
             process_arch = RuntimeInformation.ProcessArchitecture.ToString(),
             os_arch = RuntimeInformation.OSArchitecture.ToString(),
             clr = RuntimeInformation.FrameworkDescription,
@@ -51,6 +68,20 @@ try
         ["sensors_flat"] = flat,
         ["by_type"] = SensorsByType(flat),
         ["resolved"] = ResolveThermals(flat),
+        ["open_book"] = openBook.Select(s => new
+        {
+            hardware = s.HardwareName,
+            pci_bdf = s.PciBdf,
+            hotspot_c = s.HotSpotC,
+            spread_c = s.SpreadC,
+            s1 = s.Channels[0],
+            s2 = s.Channels[1],
+            s3 = s.Channels[2],
+            s4 = s.Channels[3],
+            s5 = s.Channels[4],
+            s6 = s.Channels[5],
+            source = s.Source,
+        }).ToList(),
     };
 
     var opts = new JsonSerializerOptions { WriteIndented = false };
@@ -59,6 +90,42 @@ try
 finally
 {
     computer.Close();
+}
+
+static int RunThermSelfTest()
+{
+    var failures = 0;
+    void Check(string name, bool ok)
+    {
+        Console.WriteLine(ok ? $"PASS {name}" : $"FAIL {name}");
+        if (!ok) failures++;
+    }
+
+    // Valid Q8.8: header 0x4000, 70.5°C => 70.5 * 256 = 18048 = 0x4680
+    var rawOk = 0x40004680u;
+    Check("decode_valid_70_5", Math.Abs((BlackwellTherm.DecodeQ88(rawOk) ?? -1) - 70.5) < 0.01);
+
+    // Lock sentinel (old NVAPI lock signature)
+    Check("reject_lock_ff00", BlackwellTherm.DecodeQ88(0x4000FF00u) is null);
+
+    // Bad header
+    Check("reject_bad_header", BlackwellTherm.DecodeQ88(0x00004680u) is null);
+
+    // Out of range
+    Check("reject_too_hot", BlackwellTherm.DecodeQ88(0x4000FF00u) is null); // also lock
+    var rawHot = 0x4000u | (uint)(140 * 256);
+    Check("reject_over_130", BlackwellTherm.DecodeQ88(rawHot) is null);
+
+    var channels = new double?[] { 72.0, 80.0, 75.0, 90.0, 90.0, 68.0 };
+    var (hot, spread) = BlackwellTherm.SelectHotSpot(channels);
+    Check("hotspot_uses_s5", hot is 90.0);
+    Check("spread_s1_s4", spread is 18.0);
+
+    var channelsNoS5 = new double?[] { 72.0, 80.0, 75.0, 91.0, null, 68.0 };
+    var (hot2, _) = BlackwellTherm.SelectHotSpot(channelsNoS5);
+    Check("hotspot_max_spatial", hot2 is 91.0);
+
+    return failures == 0 ? 0 : 1;
 }
 
 static object HardwareNode(IHardware hw)

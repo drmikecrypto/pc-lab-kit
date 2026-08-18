@@ -47,6 +47,8 @@ class DiagnosticAgentService
                     $sensors['gpu_temp_max'] = $gpuThermal['core_c'] ?? ($sensors['gpu_temp_max'] ?? null);
                     $sensors['gpu_hotspot_max'] = $gpuThermal['hot_spot_c'] ?? ($sensors['gpu_hotspot_max'] ?? null);
                     $sensors['gpu_hotspot_delta'] = $gpuThermal['hotspot_delta_c'] ?? ($sensors['gpu_hotspot_delta'] ?? null);
+                    $sensors['gpu_hotspot_source'] = $gpuThermal['hotspot_source'] ?? ($sensors['gpu_hotspot_source'] ?? null);
+                    $sensors['gpu_therm_spread'] = $gpuThermal['therm_spread_c'] ?? ($sensors['gpu_therm_spread'] ?? null);
                     $sensors['gpu_vram_temp'] = $gpuThermal['memory_c'] ?? ($sensors['gpu_vram_temp'] ?? null);
                 }
             }
