@@ -235,6 +235,10 @@ try {
     # complete "what is in this box and what still needs a driver" picture.
     $devices = Get-ProbeDeviceInventory
     $drivers = Get-ProbeDriverAdvice -DeviceInventory $devices
+    try {
+        . "$PSScriptRoot\ProbeLib\dossier.ps1"
+        $telemetry.dossier = Get-ProbeSiliconDossier -Telemetry $telemetry -Devices $devices
+    } catch {}
 } catch {
     $telemetry = @{ error = $_.Exception.Message }
 }

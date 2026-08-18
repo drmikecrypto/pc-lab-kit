@@ -43,13 +43,31 @@ internal static class Program
     public static int Main(string[] args)
     {
         var seconds = 8;
+        var stress = false;
         for (var i = 0; i < args.Length; i++)
         {
-            if ((args[i] is "--seconds" or "-s") && i + 1 < args.Length
+            if (args[i] is "--stress" or "--stress-seconds")
+            {
+                stress = true;
+                if (i + 1 < args.Length && int.TryParse(args[i + 1], out var st))
+                {
+                    seconds = Math.Clamp(st, 5, 300);
+                    i++;
+                }
+            }
+            else if ((args[i] is "--seconds" or "-s") && i + 1 < args.Length
                 && int.TryParse(args[i + 1], out var s))
             {
-                seconds = Math.Clamp(s, 2, 60);
+                seconds = Math.Clamp(s, 2, 300);
             }
+        }
+        if (stress)
+        {
+            seconds = Math.Clamp(seconds, 5, 300);
+        }
+        else
+        {
+            seconds = Math.Clamp(seconds, 2, 60);
         }
 
         try

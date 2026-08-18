@@ -33,6 +33,26 @@ Public research (Igor Lab / TIMBER-style reporting) documents:
 
 Probe `Resolve-ProbeGpuThermal` prefers that Hot Spot. `nvidia-smi` **T.Limit** derivation remains last-resort estimate only.
 
+## Catalog (v3.5)
+
+| Vendor | What we recover | Source tag |
+|--------|-----------------|------------|
+| NVIDIA Blackwell | Die Hot Spot S1–S6 + Therm Spread | `blackwell_therm_mmio` |
+| NVIDIA Blackwell | Extra THERM-window temps as VRAM junction / per-chip candidates | `blackwell_vram_mmio` |
+| NVIDIA Ada / older | LHM NVAPI thermal sensors (Hot Spot when driver still returns it, not `0xFF00`) | `nvapi_raw` |
+| AMD | LHM ADL junction / Hot Spot / VR / Liquid (same sensors Adrenalin uses) | `adl` |
+| Intel Arc | LHM GpuIntel temperatures | `lhm_intel` |
+
+Hardware Reference **Open Book sensors** table + probe `GET /openbook` list every recovered row with optional `raw_hex` and `pci_bdf`.
+
+## Silicon Dossier (v3.6) and Assembly Certificate (v3.7)
+
+`GET /openbook` also returns `dossier`: CPUID leaves, GPU PCI 256-byte config (NVIDIA Ring0), SMBIOS SPD modules, NVMe SMART, EDID hex, board serial/BIOS.
+
+After Full Lab finalize, **Export Assembly Certificate** prints a one-page client report (fingerprint, stress PASS/FAIL, open-book hotspot/VRAM, sensor count + sources). Shop name is set in Settings.
+
+The **Open Book** tab (v4.0) is the daily assembly layout: dossier | live gauges | certificate.
+
 ## Caveats
 
 - Absolute °C may differ slightly from MODS / other tools; treat **delta vs core** and **S1–S4 spread** as the diagnostic signal for paste/cooler seating.
@@ -41,6 +61,6 @@ Probe `Resolve-ProbeGpuThermal` prefers that Hot Spot. `nvidia-smi` **T.Limit** 
 
 ## Catalog backlog (same pillar)
 
-- Per-VRAM chip temps (Blackwell memory maps)
+- Tighter per-die VRAM maps as community offsets stabilize
 - Upstream LibreHardwareMonitor when it ships correct Blackwell NVAPI handling (MMIO stays primary for blocked channels)
-- AMD / Intel Arc incomplete or blocked channels
+- Deeper Intel Arc PECI / AMD SMU channels beyond ADL

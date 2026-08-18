@@ -181,6 +181,9 @@ class LabSuiteService
         ], $samples);
         $cert['timeline'] = $this->buildTimeline($samples);
         $analysis['stress_certificate'] = $cert;
+        $analysis['silicon_dossier'] = (new SiliconDossierService())->present(
+            $probePayload !== [] ? $probePayload : $normalized
+        );
 
         $graphSvc = new HardwareKnowledgeGraphService();
         $graph = $graphSvc->fromProbe($normalized, $analysis);
@@ -220,6 +223,10 @@ class LabSuiteService
             'token' => $saved['token'] ?? null,
             'mode' => 'suite',
         ]);
+        $assembly = (new AssemblyCertificateService())->build($analysis, [
+            'token' => $saved['token'] ?? null,
+            'shop_name' => (new SettingsService())->shopName(),
+        ]);
 
         $job['status'] = 'completed';
         $job['progress'] = 100;
@@ -233,6 +240,8 @@ class LabSuiteService
                 'document' => $export['document'],
             ],
             'report_html' => $export['html'],
+            'assembly_certificate' => $assembly['document'],
+            'assembly_certificate_html' => $assembly['html'],
         ];
         $this->write($job);
 

@@ -224,6 +224,6 @@ function Get-RamSpdTelemetry {
         cpuz_auto_import = ($cpuzProfiles.Count -gt 0)
         source = if ($cpuzProfiles.Count) { 'smbios+cpuz' } else { 'smbios+heuristic' }
         spd_direct_read = $false
-        note = 'SPD EEPROM is not read directly; SMBIOS Type 17 + optional CPU-Z import.'
+        note = 'SPD EEPROM is not read via SMBus yet; SMBIOS Type 17 + optional CPU-Z import. Hex dump of Type 17 fields is in Silicon Dossier.'
     }
 }

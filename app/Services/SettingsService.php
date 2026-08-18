@@ -58,7 +58,15 @@ class SettingsService
             'llm_model' => $cfg['model'],
             'api_key_hint' => self::maskKey($cfg['api_key']),
             'source' => $cfg['source'],
+            'shop_name' => $this->shopName(),
         ];
+    }
+
+    public function shopName(): string
+    {
+        $name = trim((string) ($this->readFile()['shop_name'] ?? ''));
+
+        return $name !== '' ? substr($name, 0, 80) : 'PC Lab Kit';
     }
 
     /** @param array<string, mixed> $input */
@@ -86,6 +94,15 @@ class SettingsService
         $model = trim((string) ($input['llm_model'] ?? ''));
         if ($model !== '') {
             $file['llm_model'] = substr($model, 0, 80);
+        }
+
+        if (array_key_exists('shop_name', $input)) {
+            $shop = trim((string) $input['shop_name']);
+            if ($shop === '') {
+                unset($file['shop_name']);
+            } else {
+                $file['shop_name'] = substr($shop, 0, 80);
+            }
         }
 
         $this->writeFile($file);

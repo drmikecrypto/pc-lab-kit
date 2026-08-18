@@ -155,6 +155,8 @@ class DiagnosticAgentService
             'tpm' => (array) ($devices['tpm'] ?? $agent['tpm'] ?? []),
             'nvidia_smi' => $nvidia,
             'telemetry' => $telemetry,
+            'open_book' => (array) ($agent['open_book'] ?? $telemetry['open_book'] ?? []),
+            'dossier' => (array) ($agent['dossier'] ?? $telemetry['dossier'] ?? []),
             'collected_at' => $agent['collected_at'] ?? date('c'),
             'probe_version' => (int) ($agent['probe_version'] ?? 2),
             'elevated' => !empty($agent['elevated']),

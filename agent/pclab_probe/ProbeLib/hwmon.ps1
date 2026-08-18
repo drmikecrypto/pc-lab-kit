@@ -83,8 +83,14 @@ function Get-ProbeHwMonTelemetry {
         if ($data.environment) { $result.environment = $data.environment }
         if ($data.resolved) { $result.resolved = $data.resolved }
         if ($data.open_book) { $result.open_book = $data.open_book }
+        if ($data.open_book_therm) { $result.open_book_therm_detail = $data.open_book_therm }
+        if ($data.open_book_vram) { $result.open_book_vram_detail = $data.open_book_vram }
+        if ($data.pci_config) { $result.pci_config = $data.pci_config }
         if ($data.environment -and $data.environment.open_book_therm) {
             $result.open_book_therm = [bool]$data.environment.open_book_therm
+        }
+        if ($data.environment -and $data.environment.open_book_vram) {
+            $result.open_book_vram = [bool]$data.environment.open_book_vram
         }
 
         if ($cpuSensors.Count -eq 0) {

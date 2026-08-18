@@ -457,6 +457,8 @@ function ConvertFrom-ProbeEdidBytes {
         hdr_capable       = $hdrCapable
         chroma_approx     = $chroma
         feature_byte      = $feature
+        raw_hex           = (($Bytes | ForEach-Object { '{0:X2}' -f $_ }) -join '')
+        raw_length        = $Bytes.Length
         confidence        = 'measured'
         source            = 'edid'
     }

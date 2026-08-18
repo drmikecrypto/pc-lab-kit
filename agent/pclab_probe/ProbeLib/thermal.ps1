@@ -344,11 +344,27 @@ function Resolve-ProbeGpuThermal {
         $result.hotspot_source = 'blackwell_therm_mmio'
         $result.source = 'blackwell_therm_mmio'
     } else {
-        $picked = Get-ProbeSensorValue -Sensors $sensors -NamePatterns @('^GPU Hot ?Spot$', 'Hot ?Spot', '^GPU Junction$')
-        if (Test-ProbePlausibleTemp $picked) {
-            $result.hot_spot_c = $picked
-            $result.hotspot_source = 'libre-hardware-monitor'
+        $hotRow = @($sensors | Where-Object { "$($_.name)" -match '^GPU Hot ?Spot$|^GPU Junction$|Hot ?Spot' } | Select-Object -First 1)
+        if ($hotRow -and (Test-ProbePlausibleTemp $hotRow.value) -and [double]$hotRow.value -lt 250) {
+            $result.hot_spot_c = [math]::Round([double]$hotRow.value, 1)
+            $src = "$($hotRow.source)"
+            if ($src -eq 'nvapi_raw' -or $src -eq 'adl' -or $src -eq 'lhm_intel') {
+                $result.hotspot_source = $src
+                $result.source = $src
+            } else {
+                $result.hotspot_source = 'libre-hardware-monitor'
+            }
         }
+    }
+
+    $memOb = @($sensors | Where-Object {
+        "$($_.name)" -match 'Memory Junction|^GPU Memory$' -and (
+            "$($_.source)" -eq 'blackwell_vram_mmio' -or $_.open_book -eq $true
+        )
+    }) | Select-Object -First 1
+    if ($memOb -and (Test-ProbePlausibleTemp $memOb.value) -and [double]$memOb.value -lt 250) {
+        $result.memory_c = [math]::Round([double]$memOb.value, 1)
+        $result.memory_source = 'blackwell_vram_mmio'
     }
 
     # Reject NVAPI lock (255) and Blackwell core-clone fakes when not open-book.

@@ -46,6 +46,11 @@ try
 
     var openBook = BlackwellTherm.TryReadAll(gpuNames);
     BlackwellTherm.MergeIntoFlat(flat, openBook, out var openBookActive);
+    var vramSets = BlackwellVramTherm.TryReadAll(openBook);
+    BlackwellVramTherm.MergeIntoFlat(flat, vramSets);
+    LhmGpuProvenance.TagGpuSensors(flat);
+    var catalog = LhmGpuProvenance.CatalogFromFlat(flat);
+    var pciDumps = PciConfigDump.ReadNvidiaDisplays();
 
     var report = new Dictionary<string, object?>
     {
@@ -60,6 +65,8 @@ try
             ring0_available = elevated,
             open_book_therm = openBookActive,
             open_book_therm_gpus = openBook.Count,
+            open_book_vram = vramSets.Count > 0,
+            open_book_count = catalog.Count,
             process_arch = RuntimeInformation.ProcessArchitecture.ToString(),
             os_arch = RuntimeInformation.OSArchitecture.ToString(),
             clr = RuntimeInformation.FrameworkDescription,
@@ -68,7 +75,8 @@ try
         ["sensors_flat"] = flat,
         ["by_type"] = SensorsByType(flat),
         ["resolved"] = ResolveThermals(flat),
-        ["open_book"] = openBook.Select(s => new
+        ["open_book"] = catalog,
+        ["open_book_therm"] = openBook.Select(s => new
         {
             hardware = s.HardwareName,
             pci_bdf = s.PciBdf,
@@ -81,6 +89,26 @@ try
             s5 = s.Channels[4],
             s6 = s.Channels[5],
             source = s.Source,
+        }).ToList(),
+        ["open_book_vram"] = vramSets.Select(s => new
+        {
+            hardware = s.HardwareName,
+            pci_bdf = s.PciBdf,
+            junction_c = s.JunctionC,
+            chips = s.Chips.Select(c => new { offset = $"0x{c.Offset:X}", c = c.C, raw_hex = $"0x{c.Raw:X8}" }).ToList(),
+            source = s.Source,
+        }).ToList(),
+        ["pci_config"] = pciDumps.Select(d => new
+        {
+            pci_bdf = d.PciBdf,
+            vendor_id = $"10DE",
+            device_id = $"{d.DeviceId:X4}",
+            subsystem_vendor_id = $"{d.SubsystemVendorId:X4}",
+            subsystem_id = $"{d.SubsystemId:X4}",
+            revision = $"{d.Revision:X2}",
+            class_code = $"{d.ClassCode:X6}",
+            config_hex = d.ConfigHex,
+            source = d.Source,
         }).ToList(),
     };
 
@@ -124,6 +152,8 @@ static int RunThermSelfTest()
     var channelsNoS5 = new double?[] { 72.0, 80.0, 75.0, 91.0, null, 68.0 };
     var (hot2, _) = BlackwellTherm.SelectHotSpot(channelsNoS5);
     Check("hotspot_max_spatial", hot2 is 91.0);
+
+    Check("vram_scan_window", BlackwellVramTherm.ScanStart > BlackwellTherm.ThermSensorFieldOffset);
 
     return failures == 0 ? 0 : 1;
 }

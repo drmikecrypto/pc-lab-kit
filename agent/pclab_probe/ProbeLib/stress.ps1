@@ -135,33 +135,65 @@ function Invoke-ProbeMemoryStress {
 
 function Invoke-ProbeGpuStress {
     param([int]$Seconds = 30, [switch]$CollectSamples)
-    $Seconds = [Math]::Max(5, [Math]::Min(180, $Seconds))
+    $Seconds = [Math]::Max(5, [Math]::Min(300, $Seconds))
     $samples = New-Object System.Collections.Generic.List[object]
     $method = 'host_load'
+    $vkScore = $null
+    $vkEngine = $null
     $end = (Get-Date).AddSeconds($Seconds)
 
-    # Prefer keeping GPU busy via repeated nvidia-smi queries + host compute; full Vulkan power virus is native-core.
-    $jobs = @()
-    $jobs += Start-Job -ScriptBlock {
-        param($until)
-        while ((Get-Date) -lt $until) {
-            $x = 0.0
-            for ($i = 0; $i -lt 80000; $i++) { $x += [Math]::Sin($i) * [Math]::Cos($i) }
+    $vk = $null
+    if (Get-Command Find-ProbeVkBench -ErrorAction SilentlyContinue) {
+        $vk = Find-ProbeVkBench
+    } else {
+        $candidates = @(
+            (Join-Path $PSScriptRoot '..\PcLabVkBench.exe'),
+            (Join-Path $PSScriptRoot '..\tools\PcLabVkBench\PcLabVkBench.exe')
+        )
+        foreach ($c in $candidates) {
+            if (Test-Path $c) { $vk = (Resolve-Path $c).Path; break }
         }
-    } -ArgumentList $end
+    }
 
-    if (Get-Command nvidia-smi -ErrorAction SilentlyContinue) {
-        $method = 'nvidia_watch'
+    $jobs = @()
+    if ($vk) {
+        $method = 'vulkan_d3d11_stress'
+        $jobs += Start-Job -ScriptBlock {
+            param($exe, $sec)
+            & $exe --stress-seconds $sec 2>&1 | Out-String
+        } -ArgumentList $vk, $Seconds
+    } else {
+        $jobs += Start-Job -ScriptBlock {
+            param($until)
+            while ((Get-Date) -lt $until) {
+                $x = 0.0
+                for ($i = 0; $i -lt 80000; $i++) { $x += [Math]::Sin($i) * [Math]::Cos($i) }
+            }
+        } -ArgumentList $end
+        if (Get-Command nvidia-smi -ErrorAction SilentlyContinue) {
+            $method = 'nvidia_watch'
+        }
     }
 
     while ((Get-Date) -lt $end) {
         Start-Sleep -Milliseconds 700
         if ($CollectSamples) { $samples.Add((Get-ProbeStressThermalSample)) }
     }
-    $jobs | Stop-Job -ErrorAction SilentlyContinue | Out-Null
+    $out = $jobs | Wait-Job | Receive-Job
     $jobs | Remove-Job -Force -ErrorAction SilentlyContinue
+    if ($vk -and $out) {
+        $line = ("$out" -split "`r?`n" | Where-Object { $_.Trim().StartsWith('{') } | Select-Object -Last 1)
+        if ($line) {
+            try {
+                $j = $line | ConvertFrom-Json
+                $vkScore = $j.score
+                $vkEngine = $j.engine
+            } catch {}
+        }
+    }
     $gpuPeak = ($samples | ForEach-Object { $_.gpu_temp } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
     $cpuPeak = ($samples | ForEach-Object { $_.cpu_temp } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
+    $hsPeak = ($samples | ForEach-Object { $_.gpu_hotspot } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
 
     return @{
         id = 'gpu'
@@ -169,10 +201,13 @@ function Invoke-ProbeGpuStress {
         duration_s = $Seconds
         status = 'completed'
         method = $method
+        engine = $vkEngine
+        score = $vkScore
         cpu_temp_max = $cpuPeak
         gpu_temp_max = $gpuPeak
+        gpu_hotspot_max = $hsPeak
         samples = @($samples)
-        note = 'Thermal soak / watch profile. Vulkan power-virus lands in native core.'
+        note = if ($vk) { 'Native PcLabVkBench compute soak (D3D11 CS).' } else { 'Fallback host/watch — PcLabVkBench.exe missing.' }
         replaces = @('FurMark', 'MSI Kombustor')
     }
 }
@@ -180,22 +215,25 @@ function Invoke-ProbeGpuStress {
 function Invoke-ProbeCombinedStress {
     param([int]$Seconds = 45, [switch]$CollectSamples)
     $Seconds = [Math]::Max(10, [Math]::Min(300, $Seconds))
-    $half = [Math]::Max(5, [int]($Seconds / 2))
-    $cpu = Invoke-ProbeCpuStress -Seconds $half -CollectSamples:$CollectSamples
-    $mem = Invoke-ProbeMemoryStress -Seconds $half -CollectSamples:$CollectSamples
-    $samples = @($cpu.samples) + @($mem.samples)
-    $status = if ($mem.status -eq 'failed') { 'failed' } else { 'completed' }
+    $third = [Math]::Max(5, [int]($Seconds / 3))
+    $cpu = Invoke-ProbeCpuStress -Seconds $third -CollectSamples:$CollectSamples
+    $mem = Invoke-ProbeMemoryStress -Seconds $third -CollectSamples:$CollectSamples
+    $gpu = Invoke-ProbeGpuStress -Seconds $third -CollectSamples:$CollectSamples
+    $samples = @($cpu.samples) + @($mem.samples) + @($gpu.samples)
+    $status = if ($mem.status -eq 'failed' -or $gpu.status -eq 'failed') { 'failed' } else { 'completed' }
     return @{
         id = 'combined'
         label = 'PcLab combined stress'
         duration_s = $Seconds
         status = $status
-        parts = @($cpu, $mem)
-        cpu_temp_max = @($cpu.cpu_temp_max, $mem.cpu_temp_max) | Where-Object { $_ -ne $null } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
-        gpu_temp_max = @($cpu.gpu_temp_max, $mem.gpu_temp_max) | Where-Object { $_ -ne $null } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
+        parts = @($cpu, $mem, $gpu)
+        cpu_temp_max = @($cpu.cpu_temp_max, $mem.cpu_temp_max, $gpu.cpu_temp_max) | Where-Object { $_ -ne $null } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
+        gpu_temp_max = @($cpu.gpu_temp_max, $mem.gpu_temp_max, $gpu.gpu_temp_max) | Where-Object { $_ -ne $null } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
+        gpu_hotspot_max = $gpu.gpu_hotspot_max
         errors_found = [int]$mem.errors_found
         samples = $samples
-        replaces = @('OCCT Power', 'AIDA64 System')
+        note = $gpu.note
+        replaces = @('OCCT Power', 'AIDA64 System', 'FurMark')
     }
 }
 

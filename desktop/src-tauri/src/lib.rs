@@ -1,6 +1,7 @@
 mod lab;
 
 use lab::{resolve_resource_lab, LabRuntime};
+use std::io::{Read, Write};
 use std::sync::Arc;
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::{TrayIconBuilder, TrayIconId};
@@ -12,7 +13,42 @@ struct AppState {
     error: std::sync::Mutex<Option<String>>,
 }
 
+fn fetch_probe_health() -> Option<(bool, i64)> {
+    let addr = "127.0.0.1:18765".parse().ok()?;
+    let mut stream = std::net::TcpStream::connect_timeout(
+        &addr,
+        std::time::Duration::from_millis(400),
+    )
+    .ok()?;
+    stream
+        .set_read_timeout(Some(std::time::Duration::from_millis(400)))
+        .ok()?;
+    stream
+        .set_write_timeout(Some(std::time::Duration::from_millis(400)))
+        .ok()?;
+    stream
+        .write_all(b"GET /health HTTP/1.0\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n")
+        .ok()?;
+    let mut buf = String::new();
+    stream.read_to_string(&mut buf).ok()?;
+    let body = buf.split("\r\n\r\n").nth(1)?;
+    let v: serde_json::Value = serde_json::from_str(body.trim()).ok()?;
+    let elevated = v.get("elevated").and_then(|x| x.as_bool()).unwrap_or(false);
+    let count = v
+        .get("open_book_count")
+        .and_then(|x| x.as_i64())
+        .unwrap_or(0);
+    Some((elevated, count))
+}
+
 fn format_probe_tooltip(status: &str) -> String {
+    if status == "running" {
+        if let Some((elevated, count)) = fetch_probe_health() {
+            let elev = if elevated { "elevated" } else { "not elevated" };
+            return format!("PC Lab Kit · Probe: running · {elev} · {count} open-book");
+        }
+        return "PC Lab Kit · Probe: running".into();
+    }
     format!("PC Lab Kit · Probe: {status}")
 }
 

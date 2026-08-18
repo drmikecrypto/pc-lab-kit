@@ -72,82 +72,41 @@ internal static class BlackwellTherm
 
         var names = gpuHardwareNames.Where(n => !string.IsNullOrWhiteSpace(n)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
         var nameIdx = 0;
-
-        for (int bus = 0; bus < 256; bus++)
+        foreach (var gpu in Ring0Bridge.EnumerateNvidiaDisplayBars())
         {
-            for (byte dev = 0; dev < 32; dev++)
+            if (!Ring0Bridge.ReadMemoryUInt32(gpu.Bar0 + ThermScratchOffset, out var scratch))
+                continue;
+            if (scratch != ThermScratchExpected)
+                continue;
+
+            var channels = new double?[6];
+            var any = false;
+            for (var i = 0; i < 6; i++)
             {
-                for (byte fn = 0; fn < 8; fn++)
-                {
-                    var pci = Ring0Bridge.GetPciAddress((byte)bus, dev, fn);
-                    if (!Ring0Bridge.ReadPciConfig(pci, 0, out var idReg) || idReg == 0xFFFFFFFFu || idReg == 0)
-                        continue;
-                    if ((idReg & 0xFFFF) != NvidiaVendorId)
-                        continue;
-                    if (!Ring0Bridge.ReadPciConfig(pci, 0x08, out var classReg))
-                        continue;
-                    // Base class at bits 24..31 of dword at 0x08
-                    var baseClass = (classReg >> 24) & 0xFF;
-                    if (baseClass != 0x03) // Display controller
-                        continue;
-
-                    if (!TryReadBar0(pci, out var bar0) || bar0 == 0)
-                        continue;
-                    if (!Ring0Bridge.ReadMemoryUInt32(bar0 + ThermScratchOffset, out var scratch))
-                        continue;
-                    if (scratch != ThermScratchExpected)
-                        continue;
-
-                    var channels = new double?[6];
-                    var any = false;
-                    for (var i = 0; i < 6; i++)
-                    {
-                        if (!Ring0Bridge.ReadMemoryUInt32(bar0 + ThermSensorFieldOffset + (ulong)(i * 4), out var raw))
-                            continue;
-                        var decoded = DecodeQ88(raw);
-                        channels[i] = decoded;
-                        if (decoded is not null) any = true;
-                    }
-                    if (!any)
-                        continue;
-
-                    var (hot, spread) = SelectHotSpot(channels);
-                    var hwName = nameIdx < names.Count ? names[nameIdx] : $"NVIDIA GPU {bus:X2}:{dev:X2}.{fn}";
-                    nameIdx++;
-                    results.Add(new ChannelSet
-                    {
-                        HardwareName = hwName,
-                        PciBdf = $"{bus:X2}:{dev:X2}.{fn}",
-                        Bar0 = bar0,
-                        Channels = channels,
-                        HotSpotC = hot,
-                        SpreadC = spread,
-                    });
-                }
+                if (!Ring0Bridge.ReadMemoryUInt32(gpu.Bar0 + ThermSensorFieldOffset + (ulong)(i * 4), out var raw))
+                    continue;
+                var decoded = DecodeQ88(raw);
+                channels[i] = decoded;
+                if (decoded is not null) any = true;
             }
+            if (!any)
+                continue;
+
+            var (hot, spread) = SelectHotSpot(channels);
+            var hwName = nameIdx < names.Count ? names[nameIdx] : $"NVIDIA GPU {gpu.PciBdf}";
+            nameIdx++;
+            results.Add(new ChannelSet
+            {
+                HardwareName = hwName,
+                PciBdf = gpu.PciBdf,
+                Bar0 = gpu.Bar0,
+                Channels = channels,
+                HotSpotC = hot,
+                SpreadC = spread,
+            });
         }
 
         return results;
-    }
-
-    private static bool TryReadBar0(uint pciAddress, out ulong bar0)
-    {
-        bar0 = 0;
-        if (!Ring0Bridge.ReadPciConfig(pciAddress, 0x10, out var barLo))
-            return false;
-        // I/O BAR or unused
-        if ((barLo & 0x1) != 0)
-            return false;
-        var type = (barLo >> 1) & 0x3;
-        ulong addr = barLo & 0xFFFFFFF0u;
-        if (type == 0x2) // 64-bit
-        {
-            if (!Ring0Bridge.ReadPciConfig(pciAddress, 0x14, out var barHi))
-                return false;
-            addr |= ((ulong)barHi) << 32;
-        }
-        bar0 = addr;
-        return bar0 != 0;
     }
 
     /// <summary>

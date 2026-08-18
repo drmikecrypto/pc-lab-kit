@@ -60,7 +60,7 @@ final class AmbitiousUpgradeTest extends TestCase
         $defaults = $svc->defaultLayout();
         $sources = array_column($defaults['widgets'], 'source');
         $this->assertContains('gpu_hotspot', $sources);
-        $this->assertContains('gpu_therm_spread', $sources);
+        $this->assertContains('gpu_vram_temp', $sources);
         $json = $svc->export('json');
         $this->assertSame('json', $json['format']);
         $rain = $svc->export('rainmeter');

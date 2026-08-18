@@ -18,10 +18,12 @@ use App\Services\DiagnosticService;
 use App\Services\DiagnosticTelemetryService;
 use App\Services\DiagnosticToolCatalogService;
 use App\Services\HardwareKnowledgeGraphService;
+use App\Services\AssemblyCertificateService;
 use App\Services\LabReportExportService;
 use App\Services\LabSuiteService;
 use App\Services\SensorDeckService;
 use App\Services\SettingsService;
+use App\Services\SiliconDossierService;
 use App\Services\StressCertificateService;
 use App\Services\TopologyViewService;
 
@@ -392,6 +394,53 @@ class DiagnosticApiController
         $cert = (new StressCertificateService())->issue($run, $samples, $limits);
 
         return json_response(['certificate' => $cert]);
+    }
+
+    /** Merge probe silicon dossier for Hardware Reference / Open Book Lab. */
+    public function diagnosticDossierPresent(): string
+    {
+        $input = decode_json_body_limited(12_582_912);
+        if ($input === null) {
+            return json_response(['error' => 'payload_too_large'], 413);
+        }
+
+        return json_response(['ok' => true, 'dossier' => (new SiliconDossierService())->present($input)]);
+    }
+
+    /** Client-facing Assembly Certificate HTML (print → PDF). */
+    public function diagnosticAssemblyCertificate(): string
+    {
+        $input = decode_json_body_limited(6_291_456);
+        if ($input === null) {
+            return json_response(['error' => 'payload_too_large'], 413);
+        }
+        $analysis = (array) ($input['analysis'] ?? $input);
+        if ($analysis === []) {
+            return json_response(['error' => 'analysis required'], 400);
+        }
+        $shop = trim((string) ($input['shop_name'] ?? ''));
+        if ($shop === '') {
+            $shop = (new SettingsService())->shopName();
+        }
+        $built = (new AssemblyCertificateService())->build($analysis, [
+            'shop_name' => $shop,
+            'token' => $input['token'] ?? null,
+        ]);
+
+        $format = strtolower((string) ($input['format'] ?? $_GET['format'] ?? 'html'));
+        if ($format === 'json') {
+            return json_response([
+                'title' => $built['title'],
+                'document' => $built['document'],
+                'hint' => 'Open the HTML and use Print → Save as PDF.',
+            ]);
+        }
+
+        header('Content-Type: text/html; charset=utf-8');
+        header('Content-Disposition: inline; filename="pclab-assembly-certificate.html"');
+        http_response_code(200);
+
+        return $built['html'];
     }
 
     /** OC safety report HTML (print → PDF). */

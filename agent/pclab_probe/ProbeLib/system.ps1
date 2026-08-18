@@ -129,7 +129,8 @@ function Get-ProbeDeepTelemetry {
     . "$PSScriptRoot\memory.ps1"
     . "$PSScriptRoot\hwmon.ps1"
     . "$PSScriptRoot\amd.ps1"
-    . "$PSScriptRoot\thermal.ps1"
+    . "$PSScriptRoot\openbook.ps1"
+    . "$PSScriptRoot\dossier.ps1"
     . "$PSScriptRoot\presentmon.ps1"
     . "$PSScriptRoot\frametime.ps1"
 
@@ -180,7 +181,7 @@ function Get-ProbeDeepTelemetry {
         }
     }
 
-    return @{
+    $tel = @{
         cpu          = $cpu
         gpu          = $gpu
         ram          = Get-ProbeRamTelemetry
@@ -194,6 +195,8 @@ function Get-ProbeDeepTelemetry {
         presentmon   = $present
         gaming       = $gaming
         thermal      = Get-ProbeThermalSummary -Cpu $cpu -Gpu $gpu -Hwmon $hwmon -Flat $flat
+        open_book    = Get-ProbeOpenBookCatalog -HwMon $hwmon
+        dossier      = $null
         power        = @{
             vcore = $cpu.power.vcore
             cpu_package_w = $cpu.power.package_w
@@ -204,6 +207,10 @@ function Get-ProbeDeepTelemetry {
         elevated     = [bool]$hwmon.elevated
         collected_at = (Get-Date).ToUniversalTime().ToString("o")
     }
+    try {
+        $tel.dossier = Get-ProbeSiliconDossier -Telemetry $tel -Devices $null
+    } catch {}
+    return $tel
 }
 
 <#

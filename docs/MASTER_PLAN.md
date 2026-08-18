@@ -2,7 +2,7 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars A–E shipped through **v3.4.0** (Open-Book Sensors: Blackwell Hot Spot via BAR0 THERM MMIO). Capability-first doctrine: own the full lab, not an import shell.  
+**Status:** Active — Pillars A–E shipped through **v4.0.0** (Open Book Lab: catalog, silicon dossier, assembly certificate). Capability-first doctrine: own the full lab, not an import shell.  
 **Last updated:** 2026-08-18  
 **Repository:** [pc-lab-kit](../README.md)
 
@@ -26,7 +26,7 @@
 | **Pillar B — Reference stress & benches** | Shipped |
 | **Pillar C — LCD GIF push, blink timing, RGB Lab** | Shipped (3.2.1 / 3.2.2) |
 | **Pillar D — Native Benchmark Arena** (Vulkan GPU + CPU/storage suite) | Shipped (3.3.0) |
-| **Pillar E — Open-Book Sensors** (Blackwell Hot Spot MMIO + blocked-sensor catalog) | Shipped (3.4.0) — see [OPEN_BOOK_SENSORS.md](OPEN_BOOK_SENSORS.md) |
+| **Pillar E — Open-Book Sensors** (Blackwell Hot Spot MMIO + catalog, dossier, assembly cert) | Shipped (3.4.0–4.0.0) — see [OPEN_BOOK_SENSORS.md](OPEN_BOOK_SENSORS.md) |
 | Linux probe parity | Parked (R5+) |
 | Full Vulkan compute suite | Shipped compute helper in 3.3.0 (raster/3D suite later) |
 | Windows Service forever-on probe | Parked |
@@ -565,15 +565,13 @@ pc-lab-kit/
 
 ## Immediate next steps
 
-1. **Open-book catalog expansion (3.5)** — per-VRAM temps, NVAPI raw, AMD/Intel blocked channels
-2. **Silicon Dossier (3.6)** — PCI dump, CPUID, raw SPD, EDID hex for assembly proof
-3. **Assembly Certificate + real GPU stress (3.7)**
-4. **Unified Open Book Lab tab (4.0)**
-5. **Linux probe parity** when Windows native arena is solid
+1. Community verify RTX 50 Hot Spot / VRAM MMIO when hardware is available
+2. Tighter per-die VRAM maps as community offsets stabilize
+3. **Linux probe parity** when Windows native arena is solid
 
 ### Recommended focus
 
-Build capability. Imports and launchers are secondary. Open-book sensors + RGB/LCD depth next.
+Daily assembly on the Open Book tab. Imports and launchers remain secondary.
 ---
 
 ## Assumptions

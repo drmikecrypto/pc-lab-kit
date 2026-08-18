@@ -33,6 +33,7 @@ $script:Routes = @(
     @{ method = 'POST'; path = '/drivers/install';    desc = 'one-click install matched package (confirm required)' }
     @{ method = 'GET';  path = '/drivers/install/status'; desc = 'install job status (?job=)' }
     @{ method = 'GET';  path = '/thermal';            desc = 'CPU/GPU hotspot summary' }
+    @{ method = 'GET';  path = '/openbook';           desc = 'open-book recovered sensors (BAR0 / NVAPI raw / ADL)' }
     @{ method = 'GET';  path = '/oc/status';          desc = 'OC baseline state' }
     @{ method = 'POST'; path = '/oc/preflight';       desc = 'idle+load thermal sample before apply' }
     @{ method = 'POST'; path = '/oc/apply';           desc = 'apply OC plan JSON' }
@@ -145,7 +146,15 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
             "/health" {
                 $hwmon = (Test-Path (Join-Path $scriptDir "PcLabHwMon.exe")).ToString().ToLower()
                 $vkbench = (Test-Path (Join-Path $scriptDir "PcLabVkBench.exe")).ToString().ToLower()
-                $body = '{"ok":true,"agent":"pclab-probe","version":5,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true}'
+                $obCount = 0
+                $statusFile = Join-Path $env:TEMP 'pclab_openbook_status.json'
+                if (Test-Path $statusFile) {
+                    try {
+                        $st = Get-Content $statusFile -Raw | ConvertFrom-Json
+                        $obCount = [int]$st.count
+                    } catch {}
+                }
+                $body = '{"ok":true,"agent":"pclab-probe","version":6,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"open_book_count":' + $obCount + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true}'
             }
             "/probe" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $probeScript
@@ -217,7 +226,18 @@ Get-ProbeDriverInstallStatus -JobId '$job' | ConvertTo-Json -Depth 10 -Compress 
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$scriptDir\ProbeLib\system.ps1'
 `$t = Get-ProbeDeepTelemetry
-@{ elevated = `$t.elevated; thermal = `$t.thermal; cpu = `$t.cpu.thermal; gpu = `$t.gpu.thermal; gpus = `$t.gpu.gpus } | ConvertTo-Json -Depth 10 -Compress }
+@{ elevated = `$t.elevated; thermal = `$t.thermal; cpu = `$t.cpu.thermal; gpu = `$t.gpu.thermal; gpus = `$t.gpu.gpus; open_book = `$t.open_book } | ConvertTo-Json -Depth 10 -Compress }
+"@
+            }
+            "/openbook" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\system.ps1'
+. '$scriptDir\ProbeLib\devices.ps1'
+. '$scriptDir\ProbeLib\dossier.ps1'
+`$t = Get-ProbeDeepTelemetry
+`$dev = Get-ProbeDeviceInventory
+`$d = Get-ProbeSiliconDossier -Telemetry `$t -Devices `$dev
+@{ open_book = `$t.open_book; dossier = `$d; thermal = `$t.thermal } | ConvertTo-Json -Depth 12 -Compress }
 "@
             }
             "/oc/status" {

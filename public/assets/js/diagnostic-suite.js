@@ -72,9 +72,11 @@
       </div>
       <div class="dx-suite-result__actions">
         <button type="button" class="dx-btn primary" id="dx-suite-open-report">Open report</button>
+        <button type="button" class="dx-btn ghost" id="dx-suite-open-cert">Assembly Certificate</button>
         <button type="button" class="dx-btn ghost" id="dx-suite-show-topology">Topology</button>
       </div>
       <div id="dx-suite-report-frame" hidden></div>
+      <div id="dx-suite-cert-frame" hidden></div>
       <div id="dx-suite-topology" class="dx-topology" hidden></div>`;
 
     renderCards(analysis.advisor_cards || []);
@@ -85,6 +87,15 @@
       frame.hidden = false;
       frame.innerHTML = job?.result?.report_html || '<p class="muted">Report unavailable.</p>';
     });
+
+    el('dx-suite-open-cert')?.addEventListener('click', () => {
+      const frame = el('dx-suite-cert-frame');
+      if (!frame) return;
+      frame.hidden = false;
+      frame.innerHTML = job?.result?.assembly_certificate_html || '<p class="muted">Certificate unavailable — finalize Full Lab first.</p>';
+    });
+
+    window.dispatchEvent(new CustomEvent('dx:suite-complete', { detail: job }));
 
     el('dx-suite-show-topology')?.addEventListener('click', async () => {
       const box = el('dx-suite-topology');

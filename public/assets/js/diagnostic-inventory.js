@@ -196,6 +196,7 @@
         renderDetail(lastInventory.all_devices[0]);
       }
       await loadTopology({ devices, elevated, probe_version: 2, agent: 'pclab-probe' });
+      await loadOpenBook();
       window.dispatchEvent(new CustomEvent('dx:inventory-updated', { detail: { inventory: lastInventory, devices } }));
     } catch (e) {
       setStatus('Probe offline — start PcLab Probe', false);
@@ -211,6 +212,49 @@
     a.download = 'pc-lab-kit-hardware-reference.json';
     a.click();
     URL.revokeObjectURL(a.href);
+  }
+
+  async function loadOpenBook() {
+    if (window.PcLabOpenBook?.refresh) {
+      await window.PcLabOpenBook.refresh();
+      return;
+    }
+    const box = el('dx-hwref-openbook-table');
+    if (!box) return;
+    try {
+      const r = await fetch(`${AGENT}/openbook`, { cache: 'no-store' });
+      if (!r.ok) throw new Error('openbook ' + r.status);
+      const data = await r.json();
+      window.__dxLastOpenBook = data;
+      const wrap = data.open_book || data;
+      const sensors = wrap.sensors || [];
+      const dossierBox = el('dx-hwref-dossier-body');
+      if (dossierBox && data.dossier) {
+        const cpu = data.dossier.cpu || {};
+        const gpu = data.dossier.gpu || {};
+        dossierBox.innerHTML = `<p class="fs-sm">${esc(cpu.model || '—')} · ${esc(gpu.name || '—')}</p>`;
+      }
+      if (!sensors.length) {
+        box.innerHTML = `<p class="muted fs-sm">${esc(wrap.note || data.note || 'No open-book sensors this sample. Run Probe as Administrator.')}</p>`;
+        return;
+      }
+      let html = `<p class="muted fs-xs">${esc(wrap.count)} recovered · therm ${wrap.open_book_therm ? 'yes' : 'no'} · vram ${wrap.open_book_vram ? 'yes' : 'no'}</p>
+        <table class="dx-hwref__ob-table"><thead><tr><th>Sensor</th><th>°C</th><th>Source</th><th>Raw</th><th>PCI</th></tr></thead><tbody>`;
+      sensors.forEach((s) => {
+        const val = s.value == null ? '—' : Number(s.value).toFixed(1);
+        html += `<tr>
+          <td>${esc(s.name)}${s.hardware ? `<div class="muted fs-xs">${esc(s.hardware)}</div>` : ''}</td>
+          <td>${esc(val)}</td>
+          <td><code>${esc(s.source)}</code></td>
+          <td><code>${esc(s.raw_hex || '—')}</code></td>
+          <td>${esc(s.pci_bdf || '—')}</td>
+        </tr>`;
+      });
+      html += '</tbody></table>';
+      box.innerHTML = html;
+    } catch (e) {
+      box.innerHTML = '<p class="muted fs-sm">Open Book unavailable — start elevated Probe.</p>';
+    }
   }
 
   function bind() {

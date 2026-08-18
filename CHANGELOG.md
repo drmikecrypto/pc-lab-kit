@@ -6,6 +6,20 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.0.0] - 2026-08-18
+
+### Added
+- **Open-Book Catalog (3.5):** Blackwell VRAM junction MMIO, NVAPI raw / ADL / Intel provenance tags, probe `GET /openbook`, Hardware Reference sensor table
+- **Silicon Dossier (3.6):** PCI config dump, CPUID + microcode, SMBIOS SPD, NVMe SMART, EDID hex — `SiliconDossierService` + export `.pclab-dossier.json`
+- **Assembly Certificate (3.7):** client one-page HTML/PDF after Full Lab; native `PcLabVkBench --stress-seconds` GPU soak in combined stress
+- **Open Book Lab tab (4.0):** dossier | live gauges | certificate layout; tray tooltip shows elevated + open-book channel count
+- Shop name in Settings for certificate branding
+
+### Changed
+- Probe `/health` reports `open_book_count`; Full Lab combined stress includes GPU compute soak
+- MASTER_PLAN Pillar E catalog + assembly distinction marked shipped for 4.0.0
+- Desktop / `APP_VERSION` aligned to 4.0.0
+
 ## [3.4.0] - 2026-08-17
 
 ### Added

@@ -9,6 +9,7 @@
   const keyInput = document.getElementById('dx-settings-key');
   const baseInput = document.getElementById('dx-settings-base');
   const modelInput = document.getElementById('dx-settings-model');
+  const shopInput = document.getElementById('dx-settings-shop');
   const presetSelect = document.getElementById('dx-settings-preset');
   const hintEl = document.getElementById('dx-settings-key-hint');
   const statusEl = document.getElementById('dx-settings-status');
@@ -51,6 +52,7 @@
       const data = await res.json();
       if (baseInput) baseInput.value = data.llm_base_url || '';
       if (modelInput) modelInput.value = data.llm_model || '';
+      if (shopInput) shopInput.value = data.shop_name && data.shop_name !== 'PC Lab Kit' ? data.shop_name : (data.shop_name || '');
       if (hintEl) {
         if (data.api_key_hint) {
           hintEl.textContent = 'Saved key: ' + data.api_key_hint + (data.source === 'env' ? ' (from .env — overrides local file)' : '');
@@ -71,6 +73,7 @@
     const body = {
       llm_base_url: baseInput?.value.trim() || '',
       llm_model: modelInput?.value.trim() || '',
+      shop_name: shopInput?.value.trim() || '',
     };
     if (clearKey) {
       body.clear_api_key = true;

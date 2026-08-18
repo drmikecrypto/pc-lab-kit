@@ -76,6 +76,10 @@ $csrf = (string) $_SESSION['pclab_csrf'];
                 <span>Model</span>
                 <input type="text" id="dx-settings-model" name="llm_model" placeholder="gpt-4o-mini">
             </label>
+            <label class="dx-settings-field">
+                <span>Shop name (Assembly Certificate)</span>
+                <input type="text" id="dx-settings-shop" name="shop_name" placeholder="PC Lab Kit" maxlength="80">
+            </label>
             <p id="dx-settings-status" class="dx-settings-status muted fs-xs" role="status"></p>
             <div class="dx-settings-actions">
                 <button type="submit" class="dx-btn primary">Save</button>
@@ -89,7 +93,7 @@ $csrf = (string) $_SESSION['pclab_csrf'];
         </form>
     </div>
 </div>
-<script defer src="/assets/js/diagnostic-settings.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-settings.js?v=1.2.0"></script>
 <script defer src="/assets/js/app-update.js?v=1.1.0"></script>
 <?php endif; ?>
 </body>

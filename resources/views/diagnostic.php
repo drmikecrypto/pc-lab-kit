@@ -16,7 +16,7 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.1.0">
 
 <div class="container dx-shell">
 
@@ -97,6 +97,7 @@ $toolTotal = $toolKit->total();
         <div class="dx-tabs__list" role="tablist">
             <button type="button" class="dx-tab-btn is-active" role="tab" data-dx-tab="quick" aria-selected="true">Quick scan</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="hardware" aria-selected="false">Hardware Reference</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="openbook" aria-selected="false">Open Book</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="full" aria-selected="false">Full scan</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="toolkit" aria-selected="false">Toolkit</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="history" aria-selected="false">History</button>
@@ -146,7 +147,54 @@ $toolTotal = $toolKit->total();
                 <div class="dx-hwref__detail" id="dx-hwref-detail"><p class="muted fs-sm">Select a device for every field.</p></div>
             </div>
             <div class="dx-hwref__topo" id="dx-hwref-topology" aria-label="System topology"></div>
+            <div class="dx-hwref__openbook" id="dx-hwref-openbook" aria-label="Open-book sensors">
+                <h3 class="dx-hwref__openbook-title">Open Book sensors</h3>
+                <p class="muted fs-xs">Recovered registers NVIDIA/AMD/Intel hide from public APIs. Requires elevated Probe. Values tagged with source — not official NVAPI.</p>
+                <div id="dx-hwref-openbook-table"><p class="muted fs-sm">Scan inventory or wait for Probe thermal sample.</p></div>
+            </div>
+            <div class="dx-hwref__dossier" id="dx-hwref-dossier" aria-label="Silicon dossier">
+                <h3 class="dx-hwref__openbook-title">Silicon Dossier</h3>
+                <p class="muted fs-xs">Chip IDs, serials, PCI config, EDID hex. Export for RMA / client records.</p>
+                <div class="dx-hwref__toolbar">
+                    <button type="button" class="dx-btn ghost" id="dx-hwref-dossier-export">Export dossier JSON</button>
+                </div>
+                <div id="dx-hwref-dossier-body"><p class="muted fs-sm">Scan inventory to load identity dumps.</p></div>
+            </div>
             <div class="dx-hwref__drivers" id="dx-hwref-drivers"></div>
+        </section>
+    </div>
+
+    <div class="dx-tab-panel" data-dx-panel="openbook" role="tabpanel" id="dx-openbook-lab" hidden>
+        <section class="dx-openbook-lab glass-effect" aria-label="Open Book Lab">
+            <div class="dx-openbook-lab__head">
+                <div>
+                    <p class="dx-command-center__eyebrow">Open Book Lab</p>
+                    <h2>Dossier · live gauges · certificate</h2>
+                    <p class="muted fs-sm">Assembly workstation: silicon identity, recovered sensors, stress / certificate status. Requires elevated Probe.</p>
+                </div>
+                <div class="dx-hwref__toolbar">
+                    <button type="button" class="dx-btn primary" id="dx-ob-refresh">Refresh</button>
+                    <button type="button" class="dx-btn ghost" id="dx-ob-export-dossier">Export dossier</button>
+                    <span class="dx-hwref__status" id="dx-ob-status">Waiting for Probe…</span>
+                </div>
+            </div>
+            <div class="dx-openbook-lab__grid">
+                <aside class="dx-openbook-lab__col" id="dx-ob-dossier" aria-label="Silicon dossier">
+                    <h3>Silicon Dossier</h3>
+                    <div id="dx-ob-dossier-body"><p class="muted fs-sm">Connect Probe to load CPU / GPU / RAM / board identity.</p></div>
+                </aside>
+                <div class="dx-openbook-lab__col dx-openbook-lab__col--center" aria-label="Live open-book gauges">
+                    <h3>Live open-book</h3>
+                    <div id="dx-ob-gauges" class="dx-openbook-lab__gauges"></div>
+                    <div id="dx-ob-table"></div>
+                </div>
+                <aside class="dx-openbook-lab__col" id="dx-ob-cert" aria-label="Stress and certificate">
+                    <h3>Stress &amp; certificate</h3>
+                    <p class="muted fs-sm" id="dx-ob-cert-status">Run Full Lab from Command Center to issue an Assembly Certificate.</p>
+                    <div id="dx-ob-cert-actions"></div>
+                    <div id="dx-ob-cert-frame" hidden></div>
+                </aside>
+            </div>
         </section>
     </div>
 
@@ -383,8 +431,9 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.1.4"></script>
-<script defer src="/assets/js/diagnostic-suite.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-suite.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-inventory.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-openbook.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-inventory.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-launchers.js?v=1.0.0"></script>

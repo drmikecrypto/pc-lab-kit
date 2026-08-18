@@ -130,6 +130,8 @@
   "128": "build-pclab-vkbench.ps1",
   "129": "SensorDeckService",
   "130": "diagnostic-launchers.js",
+  "131": "diagnostic-openbook.js",
+  "132": "AssemblyCertificateService",
   "133": "Executive vision",
   "134": "diagnostic-topology.js",
   "135": "How it fits together",

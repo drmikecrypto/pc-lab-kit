@@ -167,4 +167,18 @@
 .dx-hwref__topo { margin-top: 1rem; border: 1px solid #30363d; background: #0d1117; min-height: 200px; padding: 0.5rem; }
 .dx-hwref__topo svg { width: 100%; height: auto; }
 .dx-hwref__drivers { margin-top: 1rem; }
+.dx-hwref__openbook { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #30363d; }
+.dx-hwref__openbook-title { margin: 0 0 0.35rem; font-size: 1.05rem; }
+.dx-hwref__ob-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 0.5rem; }
+.dx-hwref__ob-table th, .dx-hwref__ob-table td { border-bottom: 1px solid #30363d; padding: 0.35rem 0.4rem; text-align: left; vertical-align: top; }
+.dx-hwref__ob-table code { font-size: 0.75rem; }
+.dx-hwref__dossier { margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid #30363d; }
+.dx-openbook-lab__head { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.dx-openbook-lab__grid { display: grid; grid-template-columns: minmax(16rem, 1fr) minmax(20rem, 1.4fr) minmax(14rem, 0.9fr); gap: 1rem; }
+@media (max-width: 1100px) { .dx-openbook-lab__grid { grid-template-columns: 1fr; } }
+.dx-openbook-lab__col { border: 1px solid #30363d; background: #0d1117; padding: 0.85rem; min-height: 16rem; }
+.dx-openbook-lab__col h3 { margin: 0 0 0.6rem; font-size: 1rem; }
+.dx-openbook-lab__gauges { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-bottom: 0.75rem; }
+.dx-openbook-lab__gauge { min-width: 5.5rem; padding: 0.5rem 0.65rem; background: #161b22; border: 1px solid #30363d; }
+.dx-openbook-lab__val { font-size: 1.35rem; font-weight: 650; }
 .dx-driver-install { margin-left: 0.5rem; }
