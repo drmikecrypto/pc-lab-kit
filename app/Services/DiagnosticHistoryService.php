@@ -157,7 +157,7 @@ class DiagnosticHistoryService
             'capabilities' => $catalog->capabilitiesSummary(),
             'yours' => $this->userHistoryWithDeltas($fingerprint, $userId, 12),
             'tools_replaced' => $total,
-            'toolkit' => $catalog->summary(),
+            'toolkit' => $catalog->payload(),
             'pulse' => (new DiagnosticIntelligencePulseService())->publicPulse($total),
             'updated_at' => date('c'),
         ];

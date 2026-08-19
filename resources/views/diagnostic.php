@@ -16,7 +16,9 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.1.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.2.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-arena.css?v=1.0.0">
 
 <div class="container dx-shell">
 
@@ -33,6 +35,69 @@ $toolTotal = $toolKit->total();
             </div>
         </div>
     </header>
+
+    <div class="dx-lab-workspace">
+        <nav class="dx-lab-nav" aria-label="Lab modules">
+            <p class="dx-lab-nav__brand">Modules</p>
+            <button type="button" class="dx-lab-nav-btn is-active" data-dx-nav="command" aria-selected="true"><span class="dx-lab-nav-btn__icon"></span>Command Center</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="quick" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Quick scan</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="hardware" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Hardware Reference</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="openbook" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Open Book</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="full" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Full scan</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="arena" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Benchmark Arena</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="toolkit" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Toolkit</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="history" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>History</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="advanced" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Advanced</button>
+        </nav>
+
+        <div class="dx-lab-main">
+            <section class="dx-lab-canvas" aria-label="Live canvas">
+                <div class="dx-lab-canvas__head">
+                    <h2>Live canvas</h2>
+                    <span class="muted fs-xs">Engine ↔ Advisor pulse · 3D digital twin</span>
+                </div>
+                <div class="dx-lab-canvas__grid">
+                    <section class="dx-pulse-visible" id="dx-intelligence-pulse" aria-label="Intelligence Pulse">
+                        <div class="dx-pulse-bridge">
+                            <article class="dx-pulse-node engine">
+                                <div class="dx-pulse-ring" aria-hidden="true"></div>
+                                <span class="dx-pulse-name">Engine</span>
+                                <span class="dx-pulse-role"><?= e($product['engine_label'] ?? 'Depth · telemetry · RGB · safe OC') ?></span>
+                                <div class="dx-pulse-metrics">
+                                    <div class="dx-pulse-metric"><strong id="dx-pulse-v-deep" data-val="0">0</strong><span>Deep scans</span></div>
+                                    <div class="dx-pulse-metric"><strong id="dx-pulse-v-orch" data-val="0">0</strong><span>RGB orchestration</span></div>
+                                    <div class="dx-pulse-metric"><strong id="dx-pulse-v-layers" data-val="11">11</strong><span>Sensor layers</span></div>
+                                    <div class="dx-pulse-metric"><strong id="dx-pulse-v-tools" data-val="0">0</strong><span>Unified tools</span></div>
+                                </div>
+                                <p class="dx-pulse-live" id="dx-pulse-v-live">Syncing…</p>
+                            </article>
+                            <div class="dx-pulse-synapse" aria-hidden="true">
+                                <canvas id="dx-pulse-canvas" class="dx-pulse-canvas"></canvas>
+                                <p class="dx-pulse-tagline" id="dx-pulse-tagline">Tools — not a store</p>
+                                <span class="dx-pulse-sync" id="dx-pulse-sync">● PC Lab Kit local</span>
+                            </div>
+                            <article class="dx-pulse-node advisor">
+                                <div class="dx-pulse-ring" aria-hidden="true"></div>
+                                <span class="dx-pulse-name">Advisor</span>
+                                <span class="dx-pulse-role"><?= e($product['advisor_label'] ?? 'Insight · bottleneck · guidance') ?></span>
+                                <div class="dx-pulse-metrics">
+                                    <div class="dx-pulse-metric"><strong id="dx-pulse-a-insights" data-val="0">0</strong><span>Analyses</span></div>
+                                    <div class="dx-pulse-metric"><strong id="dx-pulse-a-today" data-val="0">0</strong><span>Today</span></div>
+                                    <div class="dx-pulse-metric"><strong id="dx-pulse-a-health">—</strong><span>24h avg health</span></div>
+                                    <div class="dx-pulse-metric"><strong id="dx-pulse-a-bn" data-val="0">0</strong><span>Bottleneck map</span></div>
+                                </div>
+                                <p class="dx-pulse-live" id="dx-pulse-a-live">Syncing…</p>
+                            </article>
+                        </div>
+                        <div class="dx-pulse-whisper"><p id="dx-pulse-whisper-text">Engine adds depth · Advisor adds meaning — all processing stays on your PC.</p></div>
+                        <div class="dx-pulse-feed" id="dx-pulse-feed"></div>
+                    </section>
+                    <div class="dx-lab-twin-preview" id="dx-lab-twin-preview" aria-label="3D digital twin preview">
+                        <span class="dx-lab-twin-preview__label">3D twin</span>
+                        <span class="dx-topology-node-hint">Click nodes → Hardware Reference</span>
+                    </div>
+                </div>
+            </section>
 
     <section class="dx-command-center glass-effect" id="dx-command-center" aria-label="Command Center">
         <p class="dx-command-center__eyebrow">Command Center</p>
@@ -60,55 +125,25 @@ $toolTotal = $toolKit->total();
         <div id="dx-suite-result" class="dx-suite-result" hidden></div>
     </section>
 
-    <section class="dx-pulse-hidden" id="dx-intelligence-pulse" aria-hidden="true">
-        <div class="dx-pulse-bridge">
-            <article class="dx-pulse-node engine">
-                <div class="dx-pulse-ring" aria-hidden="true"></div>
-                <span class="dx-pulse-name">Engine</span>
-                <span class="dx-pulse-role"><?= e($product['engine_label'] ?? 'Depth · telemetry · RGB · safe OC') ?></span>
-                <div class="dx-pulse-metrics">
-                    <div class="dx-pulse-metric"><strong id="dx-pulse-v-deep" data-val="0">0</strong><span>Deep scans</span></div>
-                    <div class="dx-pulse-metric"><strong id="dx-pulse-v-orch" data-val="0">0</strong><span>RGB orchestration</span></div>
-                    <div class="dx-pulse-metric"><strong id="dx-pulse-v-layers" data-val="11">11</strong><span>Sensor layers</span></div>
-                    <div class="dx-pulse-metric"><strong id="dx-pulse-v-tools" data-val="0">0</strong><span>Unified tools</span></div>
-                </div>
-                <p class="dx-pulse-live" id="dx-pulse-v-live">Syncing…</p>
-            </article>
-            <div class="dx-pulse-synapse" aria-hidden="true">
-                <canvas id="dx-pulse-canvas" class="dx-pulse-canvas"></canvas>
-                <p class="dx-pulse-tagline" id="dx-pulse-tagline">Tools — not a store</p>
-                <span class="dx-pulse-sync" id="dx-pulse-sync">● PC Lab Kit local</span>
-            </div>
-            <article class="dx-pulse-node advisor">
-                <div class="dx-pulse-ring" aria-hidden="true"></div>
-                <span class="dx-pulse-name">Advisor</span>
-                <span class="dx-pulse-role"><?= e($product['advisor_label'] ?? 'Insight · bottleneck · guidance') ?></span>
-                <div class="dx-pulse-metrics">
-                    <div class="dx-pulse-metric"><strong id="dx-pulse-a-insights" data-val="0">0</strong><span>Analyses</span></div>
-                    <div class="dx-pulse-metric"><strong id="dx-pulse-a-today" data-val="0">0</strong><span>Today</span></div>
-                    <div class="dx-pulse-metric"><strong id="dx-pulse-a-health">—</strong><span>24h avg health</span></div>
-                    <div class="dx-pulse-metric"><strong id="dx-pulse-a-bn" data-val="0">0</strong><span>Bottleneck map</span></div>
-                </div>
-                <p class="dx-pulse-live" id="dx-pulse-a-live">Syncing…</p>
-            </article>
-        </div>
-        <div class="dx-pulse-whisper"><p id="dx-pulse-whisper-text">Engine adds depth · Advisor adds meaning — all processing stays on your PC.</p></div>
-        <div class="dx-pulse-feed" id="dx-pulse-feed"></div>
-    </section>
-
-    <nav class="dx-tabs" aria-label="Lab sections">
+    <nav class="dx-tabs dx-tabs--legacy-hidden" aria-label="Lab sections">
         <div class="dx-tabs__list" role="tablist">
-            <button type="button" class="dx-tab-btn is-active" role="tab" data-dx-tab="quick" aria-selected="true">Quick scan</button>
+            <button type="button" class="dx-tab-btn is-active" role="tab" data-dx-tab="command" aria-selected="true">Command Center</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="quick" aria-selected="false">Quick scan</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="hardware" aria-selected="false">Hardware Reference</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="openbook" aria-selected="false">Open Book</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="full" aria-selected="false">Full scan</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="arena" aria-selected="false">Benchmark Arena</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="toolkit" aria-selected="false">Toolkit</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="history" aria-selected="false">History</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="advanced" aria-selected="false">Advanced</button>
         </div>
     </nav>
 
-    <div class="dx-tab-panel is-active" data-dx-panel="quick" role="tabpanel" id="dx-wizard-panel">
+    <div class="dx-tab-panel is-active" data-dx-panel="command" role="tabpanel" id="dx-command-panel">
+        <p class="muted fs-sm dx-quick-hint">Use <strong>Run Full Lab</strong> above, or pick a module from the left nav.</p>
+    </div>
+
+    <div class="dx-tab-panel" data-dx-panel="quick" role="tabpanel" id="dx-wizard-panel" hidden>
         <div class="dx-quick-layout">
             <div class="dx-wizard glass-effect" id="dx-wizard">
                 <div class="dx-progress"><div id="dx-progress-bar"></div></div>
@@ -274,6 +309,26 @@ $toolTotal = $toolKit->total();
         </div>
     </div>
 
+    <div class="dx-tab-panel" data-dx-panel="arena" role="tabpanel" id="dx-arena" hidden>
+        <div class="dx-arena">
+            <section class="dx-arena-hero">
+                <p class="dx-command-center__eyebrow">Benchmark Arena</p>
+                <h2>Your rig vs the reference library</h2>
+                <p class="muted fs-sm">Percentile rings from <?= (int) $toolTotal ?>-tool native benches vs PassMark lab + gold crowd datasets — fully local.</p>
+                <div class="dx-arena-stats" id="dx-arena-stats"></div>
+            </section>
+            <div class="dx-arena-grid" id="dx-arena-grid"></div>
+            <section class="dx-arena-radar-wrap">
+                <h3>Component radar (percentile)</h3>
+                <div id="dx-arena-radar"></div>
+            </section>
+            <details class="dx-arena-datasets">
+                <summary>Reference datasets (<?= (int) $toolTotal ?> tool catalog)</summary>
+                <div class="dx-arena-dataset-list" id="dx-arena-datasets-list"></div>
+            </details>
+        </div>
+    </div>
+
     <div class="dx-tab-panel" data-dx-panel="history" role="tabpanel" id="dx-live-lab" hidden>
         <div class="dx-live dx-live--history" id="dx-live-lab-inner">
             <div class="dx-live-grid-bg"></div>
@@ -311,6 +366,8 @@ $toolTotal = $toolKit->total();
                         <div id="dx-driver-actions" class="dx-driver-actions" hidden></div>
                     </div>
                 </div>
+                <div id="dx-silicon-aging"></div>
+                <div id="dx-hw-graph-mount"></div>
                 <details class="dx-collapsible">
                     <summary>Community feed &amp; benchmarks</summary>
                     <div class="dx-collapsible__body">
@@ -412,6 +469,19 @@ $toolTotal = $toolKit->total();
         </div>
     </div>
 
+        </div><!-- /.dx-lab-main -->
+
+        <aside class="dx-lab-rail" aria-label="Advisor rail">
+            <p class="dx-lab-rail__title">Advisor</p>
+            <div id="dx-rail-advisor" class="dx-advisor-cards" hidden></div>
+            <div class="dx-lab-rail-cert">
+                <h3>Certificates</h3>
+                <p class="muted fs-xs">After Full Lab, export assembly or stress certificates from Open Book or Command Center results.</p>
+                <button type="button" class="dx-btn ghost" id="dx-rail-verify" onclick="location.hash='dx-openbook-lab'">Open Book Lab</button>
+            </div>
+        </aside>
+    </div><!-- /.dx-lab-workspace -->
+
 </div>
 
 <?php
@@ -427,10 +497,12 @@ window.PCLAB_DIAGNOSTIC = {
     agentBase: <?= json_encode($pclabAgentBase, JSON_UNESCAPED_UNICODE) ?>
 };
 </script>
-<script defer src="/assets/js/diagnostic-tabs.js?v=1.0.1"></script>
+<script defer src="/assets/js/diagnostic-tabs.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-command-layout.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-toolkit.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-compare.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-pulse.js?v=1.0.2"></script>
+<script defer src="/assets/js/diagnostic-pulse.js?v=1.0.3"></script>
+<script defer src="/assets/js/diagnostic-arena.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-lab.js?v=1.7.2"></script>
 <script defer src="/assets/js/diagnostic-live.js?v=1.7.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
@@ -439,7 +511,10 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-suite.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-topology-3d.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-openbook.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-inventory.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-launchers.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-telemetry-stream.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-silicon-aging.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-hw-graph.js?v=1.0.0"></script>

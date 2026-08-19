@@ -61,9 +61,15 @@ Thumbs.db
 # Logs
 *.log
 
+# Root E2E / Node (dev-only; not shipped in desktop bundle)
+/node_modules/
+/playwright-report/
+/test-results/
+
 # Misc
 temp.md
 /internal/
+storage/test-lab-jobs-*.sqlite
 
 # Tauri staged lab payload (built by scripts/stage-desktop-payload.*)
 desktop/src-tauri/resources/lab/**

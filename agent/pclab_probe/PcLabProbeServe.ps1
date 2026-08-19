@@ -27,7 +27,9 @@ $script:Routes = @(
     @{ method = 'GET';  path = '/health';             desc = 'liveness + capability flags' }
     @{ method = 'GET';  path = '/probe';              desc = 'full scan (hardware + thermals + drivers)' }
     @{ method = 'GET';  path = '/telemetry';          desc = 'fast counters' }
+    @{ method = 'GET';  path = '/telemetry/stream';   desc = 'SSE live sensor stream (~5 Hz)' }
     @{ method = 'GET';  path = '/telemetry/history';  desc = "sparkline buffer ($script:RingMax samples)" }
+    @{ method = 'GET';  path = '/integrations/hwinfo-sm'; desc = 'write HWiNFO-style shared sensor JSON' }
     @{ method = 'GET';  path = '/devices';            desc = 'full PnP / PCI / USB / monitor inventory' }
     @{ method = 'GET';  path = '/drivers';            desc = 'driver advisor + install queue (?wu=1 optional WU scan)' }
     @{ method = 'POST'; path = '/drivers/install';    desc = 'one-click install matched package (confirm required)' }
@@ -107,6 +109,35 @@ try {
         $body = ""
         $code = 200
         $ctype = "application/json; charset=utf-8"
+
+        if ($path -eq "/telemetry/stream" -and $req.HttpMethod -eq 'GET') {
+            $res.StatusCode = 200
+            $res.ContentType = "text/event-stream; charset=utf-8"
+            $res.Headers.Add("Access-Control-Allow-Origin", "*")
+            $res.Headers.Add("Cache-Control", "no-cache")
+            $res.SendChunked = $true
+            $enc = [System.Text.Encoding]::UTF8
+            $stream = $res.OutputStream
+            $ticks = 0
+            . (Join-Path $scriptDir 'ProbeLib\system.ps1')
+            try {
+                while ($ticks -lt 600 -and $listener.IsListening) {
+                    $snap = Get-TelemetrySnapshot
+                    if ($snap) { Add-RingSample $snap }
+                    $payload = ($snap | ConvertTo-Json -Compress)
+                    if (-not $payload) { $payload = '{}' }
+                    $line = "data: $payload`n`n"
+                    $bytes = $enc.GetBytes($line)
+                    $stream.Write($bytes, 0, $bytes.Length)
+                    $stream.Flush()
+                    Start-Sleep -Milliseconds 200
+                    $ticks++
+                }
+            } catch {}
+            try { $stream.Close() } catch {}
+            try { $res.Close() } catch {}
+            continue
+        }
 
         switch ($path) {
             "/" {
@@ -190,6 +221,14 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
                         $body = ($merged | ConvertTo-Json -Compress)
                     }
                 } catch {}
+            }
+            "/integrations/hwinfo-sm" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\system.ps1'
+. '$scriptDir\ProbeLib\hwinfo-sm.ps1'
+`$snap = Get-TelemetrySnapshot
+Write-PcLabHwInfoSharedMemory -Telemetry `$snap | ConvertTo-Json -Compress }
+"@
             }
             "/devices" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"

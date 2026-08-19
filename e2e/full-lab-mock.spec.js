@@ -1,4 +1,4 @@
-# Playwright E2E — Full Lab happy path with mocked probe fixtures.
+// Playwright E2E — Full Lab happy path with mocked probe fixtures.
 
 const { test, expect } = require('@playwright/test');
 const path = require('path');

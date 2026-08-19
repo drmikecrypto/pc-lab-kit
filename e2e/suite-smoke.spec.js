@@ -1,5 +1,5 @@
-# Playwright-style suite smoke (mocked probe). Run when e2e deps are installed.
-# npx playwright test e2e/suite-smoke.spec.js
+// Playwright-style suite smoke (mocked probe). Run when e2e deps are installed.
+// npx playwright test e2e/suite-smoke.spec.js
 
 const { test, expect } = require('@playwright/test');
 

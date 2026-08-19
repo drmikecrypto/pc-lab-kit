@@ -241,6 +241,10 @@
   display: none !important;
 }
 
+.dx-pulse-visible {
+  display: block;
+}
+
 .dx-quick-hint {
   margin-top: 16px;
   text-align: center;

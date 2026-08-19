@@ -1,6 +1,8 @@
 //! PC Lab Kit Rust probe core (R1) — telemetry ring buffer + JSON pipe protocol.
 //! PowerShell probe orchestration calls `pclab_core pipe` for hot paths.
 
+mod mmio;
+
 use serde::{Deserialize, Serialize};
 use std::collections::VecDeque;
 use std::io::{self, BufRead, Write};
@@ -82,6 +84,12 @@ pub fn add(left: u64, right: u64) -> u64 {
 
 pub fn run_cli() {
     let args: Vec<String> = std::env::args().collect();
+    if args.len() > 1 && args[1] == "mmio" {
+        let hotspot = args.get(2).and_then(|s| s.parse::<f64>().ok()).unwrap_or(55.0);
+        let sensors = mmio::mock_blackwell_sensors(hotspot);
+        println!("{}", serde_json::to_string(&sensors).unwrap_or_else(|_| "[]".into()));
+        return;
+    }
     if args.len() > 1 && args[1] == "pipe" {
         if let Err(e) = run_pipe() {
             eprintln!("pclab_core pipe error: {e}");
@@ -90,7 +98,7 @@ pub fn run_cli() {
         return;
     }
     println!(
-        r#"{{"ok":true,"crate":"pclab_core","version":"0.1.0","commands":["pipe"]}}"#
+        r#"{{"ok":true,"crate":"pclab_core","version":"0.2.0","commands":["pipe","mmio"]}}"#
     );
 }
 

@@ -312,6 +312,84 @@ class DiagnosticApiController
         return json_response((new DiagnosticToolCatalogService())->payload());
     }
 
+    public function diagnosticArena(): string
+    {
+        return json_response((new \App\Services\BenchmarkArenaService())->buildPayload());
+    }
+
+    public function diagnosticSiliconAging(): string
+    {
+        $fp = trim((string) ($_GET['fp'] ?? ''));
+        if ($fp === '') {
+            $fp = trim((string) ($_COOKIE['pclab_fp'] ?? ''));
+        }
+
+        return json_response((new \App\Services\SiliconAgingService())->dashboard($fp !== '' ? substr($fp, 0, 64) : null));
+    }
+
+    public function diagnosticHardwareGraph(): string
+    {
+        $body = decode_json_body_limited(512_000);
+        $probe = is_array($body['probe'] ?? null) ? $body['probe'] : [];
+        if ($probe === [] && is_array($body['raw'] ?? null)) {
+            $probe = $body['raw'];
+        }
+        $graphSvc = new HardwareKnowledgeGraphService();
+        $graph = $graphSvc->fromProbe($probe);
+
+        return json_response([
+            'graph' => $graph,
+            'compact' => $graphSvc->compact($graph),
+            'explore' => (new \App\Services\HardwareGraphExploreService())->buildExploreView($graph),
+        ]);
+    }
+
+    public function diagnosticTelemetryStream(): void
+    {
+        $cfg = require dirname(__DIR__, 2) . '/config/diagnostic.php';
+        $wa = $cfg['windows_agent'] ?? [];
+        $host = trim((string) ($wa['local_host'] ?? '127.0.0.1')) ?: '127.0.0.1';
+        $port = max(1, min(65535, (int) ($wa['local_port'] ?? 18765)));
+        $url = "http://{$host}:{$port}/telemetry/stream";
+
+        header('Content-Type: text/event-stream');
+        header('Cache-Control: no-cache');
+        header('Connection: keep-alive');
+        header('X-Accel-Buffering: no');
+
+        $ctx = stream_context_create(['http' => ['timeout' => 120]]);
+        $fp = @fopen($url, 'r', false, $ctx);
+        if ($fp === false) {
+            echo "event: error\ndata: {\"message\":\"probe unavailable\"}\n\n";
+            if (function_exists('flush')) {
+                flush();
+            }
+
+            return;
+        }
+        while (!feof($fp)) {
+            $line = fgets($fp);
+            if ($line === false) {
+                break;
+            }
+            echo $line;
+            if (function_exists('flush')) {
+                flush();
+            }
+        }
+        fclose($fp);
+    }
+
+    public function diagnosticFleetDiscover(): string
+    {
+        return json_response(['probes' => (new \App\Services\ShopFleetService())->discover()]);
+    }
+
+    public function diagnosticFederatedAggregates(): string
+    {
+        return json_response((new \App\Services\FederatedBenchmarkService())->localAggregates());
+    }
+
     public function diagnosticHistory(): string
     {
         $fp = $this->diagnosticFingerprint([]);
@@ -833,7 +911,7 @@ class DiagnosticApiController
 
     public function diagnosticStabilityOracleProfiles(): string
     {
-        return json_response(['ok' => true, 'profiles' => (new StabilityOracleService())->profiles()]);
+        return json_response(['ok' => true, 'profiles' => array_values((new StabilityOracleService())->profiles())]);
     }
 
     public function diagnosticStabilityOracleInterpret(): string

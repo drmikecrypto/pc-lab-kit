@@ -24,7 +24,7 @@ test.describe('Topology 3D API', () => {
 
   test('advanced panel exposes 3D view toggle', async ({ page }) => {
     await page.goto('/diagnostic');
-    await page.locator('[data-dx-tab="advanced"]').click();
+    await page.locator('[data-dx-nav="advanced"]').click();
     await expect(page.locator('#dx-topo-3d-toggle')).toContainText('3D view');
   });
 });

@@ -1,4 +1,4 @@
-# Playwright E2E — OC safety gates (health score minimum).
+// Playwright E2E — OC safety via Full scan tab (no dedicated OC tab).
 
 const { test, expect } = require('@playwright/test');
 
@@ -22,12 +22,10 @@ test.describe('OC safety UI', () => {
     });
   });
 
-  test('OC plan blocked when health under 70', async ({ page }) => {
+  test('Full scan tab exposes OC panel region', async ({ page }) => {
     await page.goto('/diagnostic');
-    const ocTab = page.locator('[data-dx-tab="oc"]');
-    if (await ocTab.count()) {
-      await ocTab.click();
-    }
-    await expect(page.locator('body')).toBeVisible();
+    await page.locator('[data-dx-nav="full"]').click();
+    await expect(page.locator('#dx-full-scan')).toBeVisible();
+    await expect(page.locator('#dx-oc-panel')).toBeAttached();
   });
 });

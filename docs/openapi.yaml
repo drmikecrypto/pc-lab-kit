@@ -1,0 +1,47 @@
+openapi: 3.1.0
+info:
+  title: PC Lab Kit Diagnostic API
+  version: 4.1.0
+  description: Local-first PC laboratory REST API (localhost only).
+servers:
+  - url: http://127.0.0.1:8080
+paths:
+  /api/diagnostic/config:
+    get:
+      summary: Lab config + public settings
+  /api/diagnostic/live:
+    get:
+      summary: Live dashboard payload
+  /api/diagnostic/arena:
+    get:
+      summary: Benchmark Arena percentile rings vs reference DB
+  /api/diagnostic/silicon-aging:
+    get:
+      summary: Silicon Aging Index timeline
+  /api/diagnostic/hardware-graph:
+    post:
+      summary: Hardware knowledge graph + explore view
+  /api/diagnostic/telemetry/stream:
+    get:
+      summary: SSE proxy to probe telemetry stream
+  /api/diagnostic/suite/start:
+    post:
+      summary: Start Full Lab suite job
+  /api/diagnostic/suite/finalize/{id}:
+    post:
+      summary: Finalize suite → advisor cards + history
+  /api/diagnostic/session/export:
+    post:
+      summary: Export signed .pclab session
+  /api/diagnostic/session/verify:
+    get:
+      summary: Verify session hash
+  /verify/{hash}:
+    get:
+      summary: Public certificate verify page
+  /api/diagnostic/fleet/discover:
+    get:
+      summary: Shop mode — discover LAN probes
+  /api/diagnostic/federated/aggregates:
+    get:
+      summary: Opt-in local federated benchmark aggregates

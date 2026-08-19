@@ -9,6 +9,7 @@ function Get-ProbeBenchmarkCatalog {
         @{ id = 'memory'; label = 'Native memory bandwidth'; seconds_default = 5; max_seconds = 20 }
         @{ id = 'storage'; label = 'Native storage (DiskSpd CDM)'; seconds_default = 10; max_seconds = 90 }
         @{ id = 'gpu'; label = 'Native GPU compute'; seconds_default = 8; max_seconds = 40 }
+        @{ id = 'gpu_raster'; label = 'Vulkan raster MVP (1080p)'; seconds_default = 10; max_seconds = 60 }
     )
 }
 
@@ -426,6 +427,40 @@ function Invoke-ProbeGpuBenchmark {
     return Invoke-ProbeGpuBenchmarkFallback -Seconds $Seconds
 }
 
+function Invoke-ProbeGpuRasterBenchmark {
+    param([int]$Seconds = 10)
+    $Seconds = [Math]::Max(5, [Math]::Min(60, $Seconds))
+    $exe = Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'PcLabVkBench.exe'
+    if (-not (Test-Path $exe)) {
+        $exe = Join-Path (Split-Path $PSScriptRoot -Parent) 'PcLabVkBench.exe'
+    }
+    if (Test-Path $exe) {
+        try {
+            $out = & $exe --raster-seconds $Seconds 2>$null
+            if ($out) {
+                $j = $out | ConvertFrom-Json
+                if ($j.score) {
+                    return @{
+                        id = 'gpu_raster'
+                        score = [double]$j.score
+                        engine = 'vulkan_raster_mvp'
+                        fps_avg = [double](if ($null -ne $j.fps_avg) { $j.fps_avg } else { 0 })
+                        primary = $true
+                    }
+                }
+            }
+        } catch {}
+    }
+    $compute = Invoke-ProbeGpuBenchmark -Seconds $Seconds
+    return @{
+        id = 'gpu_raster'
+        score = [math]::Round([double]$compute.score * 0.72)
+        engine = 'vulkan_raster_proxy'
+        note = 'Full raster path building — compute proxy score'
+        primary = $false
+    }
+}
+
 function Invoke-ProbeBenchmark {
     param([string]$Id = 'cpu', [hashtable]$Options = @{})
     $seconds = 5
@@ -439,6 +474,7 @@ function Invoke-ProbeBenchmark {
         'memory' { return Invoke-ProbeMemoryBenchmark -Seconds $seconds }
         'storage' { return Invoke-ProbeStorageBenchmark -Drive $drive }
         'gpu' { return Invoke-ProbeGpuBenchmark -Seconds $seconds }
+        'gpu_raster' { return Invoke-ProbeGpuRasterBenchmark -Seconds $seconds }
         default { throw "Unknown benchmark: $Id" }
     }
 }

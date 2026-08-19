@@ -59,6 +59,7 @@ class SettingsService
             'api_key_hint' => self::maskKey($cfg['api_key']),
             'source' => $cfg['source'],
             'shop_name' => $this->shopName(),
+            'federated_benchmarks_opt_in' => !empty($this->readFile()['federated_benchmarks_opt_in']),
         ];
     }
 
@@ -103,6 +104,10 @@ class SettingsService
             } else {
                 $file['shop_name'] = substr($shop, 0, 80);
             }
+        }
+
+        if (array_key_exists('federated_benchmarks_opt_in', $input)) {
+            $file['federated_benchmarks_opt_in'] = !empty($input['federated_benchmarks_opt_in']);
         }
 
         $this->writeFile($file);

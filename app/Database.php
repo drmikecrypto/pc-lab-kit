@@ -43,6 +43,11 @@ class Database
         return self::$pdo;
     }
 
+    public static function pdo(): PDO
+    {
+        return self::connection();
+    }
+
     public static function migrate(): void
     {
         $pdo = self::connection();
@@ -71,8 +76,8 @@ class Database
             $sql = str_replace('AUTO_INCREMENT', '', $sql);
             $sql = preg_replace('/\bINSERT\s+IGNORE\b/i', 'INSERT OR IGNORE', $sql) ?? $sql;
 
-            foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
-                if ($stmt === '' || str_starts_with($stmt, '--')) {
+            foreach (self::splitSqlStatements($sql) as $stmt) {
+                if ($stmt === '') {
                     continue;
                 }
                 try {
@@ -86,6 +91,30 @@ class Database
 
             $pdo->prepare('INSERT INTO migrations (migration) VALUES (?)')->execute([$name]);
         }
+    }
+
+    /** @return list<string> */
+    private static function splitSqlStatements(string $sql): array
+    {
+        $out = [];
+        foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
+            $stmt = self::stripLeadingSqlComments($stmt);
+            if ($stmt !== '') {
+                $out[] = $stmt;
+            }
+        }
+
+        return $out;
+    }
+
+    private static function stripLeadingSqlComments(string $sql): string
+    {
+        $lines = preg_split('/\R/', $sql) ?: [];
+        while ($lines !== [] && preg_match('/^\s*--/', $lines[0])) {
+            array_shift($lines);
+        }
+
+        return trim(implode("\n", $lines));
     }
 
     private static function isIgnorable(PDOException $e): bool

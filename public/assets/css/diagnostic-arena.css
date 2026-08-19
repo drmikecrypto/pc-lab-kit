@@ -1,0 +1,197 @@
+/* Benchmark Arena — percentile rings vs reference DB */
+
+.dx-arena {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.dx-arena-hero {
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(145deg, rgba(22, 27, 34, 0.9), rgba(10, 14, 23, 0.85));
+}
+
+.dx-arena-hero h2 {
+  margin: 0 0 6px;
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+}
+
+.dx-arena-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.dx-arena-stat {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dx-arena-stat strong {
+  display: block;
+  font-size: 1.35rem;
+  color: #22d3ee;
+  font-variant-numeric: tabular-nums;
+}
+
+.dx-arena-stat span {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dx-arena-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.dx-arena-card {
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(22, 27, 34, 0.6);
+  text-align: center;
+}
+
+.dx-arena-card h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dx-arena-card .muted {
+  margin: 0 0 12px;
+  font-size: 12px;
+}
+
+.dx-arena-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 12px;
+}
+
+.dx-arena-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.dx-arena-ring-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 8;
+}
+
+.dx-arena-ring-fill {
+  fill: none;
+  stroke: url(#arenaGrad);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease;
+}
+
+.dx-arena-ring-pct {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.dx-arena-ring-pct small {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+
+.dx-arena-score {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.dx-arena-score strong {
+  color: #e6edf3;
+  font-variant-numeric: tabular-nums;
+}
+
+.dx-arena-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dx-arena-badge--verified {
+  background: rgba(63, 185, 80, 0.15);
+  color: #3fb950;
+  border: 1px solid rgba(63, 185, 80, 0.35);
+}
+
+.dx-arena-badge--pending {
+  background: rgba(210, 153, 34, 0.12);
+  color: #d29922;
+  border: 1px solid rgba(210, 153, 34, 0.3);
+}
+
+.dx-arena-radar-wrap {
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(22, 27, 34, 0.5);
+}
+
+.dx-arena-radar-wrap h3 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+}
+
+.dx-arena-radar {
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.dx-arena-datasets {
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.dx-arena-datasets summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.dx-arena-dataset-list {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  font-size: 12px;
+}
+
+.dx-arena-dataset-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}

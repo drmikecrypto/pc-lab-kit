@@ -6,6 +6,28 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.0.2] - 2026-08-20
+
+### Added — Command Center 2.0 & platform expansion
+- **Command Center 2.0:** left nav, live topology canvas twin, advisor rail mirror, Benchmark Arena tab
+- **Intelligence Pulse** visible by default; **Benchmark Arena** percentile UI + `GET /api/diagnostic/arena`
+- **SSE telemetry stream** (probe → PHP proxy → browser); **Silicon Aging** dashboard
+- **Interactive hardware graph** explorer; **certificate verify** page at `/verify/{hash}`
+- **OpenAPI** spec (`docs/openapi.yaml`); root **Playwright** config + 13 E2E scenarios (all passing)
+- **SQLite job queue** (`lab_jobs`); **Driver Outcome Learner**; **Federated Benchmark** opt-in
+- **Shop fleet** discovery; **batch CLI** (`scripts/pclab-batch.ps1`); **Linux probe MVP**
+- **HWiNFO shared-memory writer**; **Windows Service** probe installer; **Vulkan raster** bench MVP
+- **Rust R2 MMIO** stub in `pclab_core`; **Three.js** bundled locally for 3D topology
+
+### Fixed
+- Database migration skipped `CREATE TABLE` when SQL files started with `--` comments (fixes `lab_jobs` on fresh install)
+- Restored missing `SettingsApiController` import in routes; live API `toolkit` payload uses catalog `payload()`
+- Stability Oracle profiles API returns a JSON array; E2E specs updated for Command Center nav + probe mocks
+
+### Changed
+- `APP_VERSION`, desktop package, and Tauri/Cargo aligned to **v4.0.2**
+- Thin orchestration layer (`Container`, `LabOrchestration`) started for API controllers
+
 ## [4.0.1] - 2026-08-20
 
 ### Added — Hardware Reality Engine (Truth Protocol)
