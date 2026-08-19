@@ -1,36 +1,66 @@
 /vendor/
 /storage/database/*.sqlite
 /storage/cache/
-/storage/settings/local.json
-/storage/settings/sensor_deck.json
 /storage/suite/
-.env
-public/downloads/*.zip
-public/downloads/*.tar.gz
-public/downloads/*.exe
-public/downloads/*.run
-public/downloads/*.AppImage
-public/downloads/*.msi
 !public/downloads/.gitkeep
 build-cache/
+
+# Desktop build artifacts
 desktop/node_modules/
 desktop/dist/
 desktop/src-tauri/target/
 desktop/src-tauri/gen/
+
+# Native probe build artifacts
 agent/pclab_probe/PcLabHwMon/bin/
 agent/pclab_probe/PcLabHwMon/obj/
 agent/pclab_probe/PcLabHwMon.exe
 agent/pclab_probe/PcLabVkBench/bin/
 agent/pclab_probe/PcLabVkBench/obj/
 agent/pclab_probe/PcLabVkBench.exe
+
+# Downloaded binaries
+public/downloads/*.zip
+public/downloads/*.tar.gz
+public/downloads/*.exe
+public/downloads/*.run
+public/downloads/*.AppImage
+public/downloads/*.msi
+
+# Knowledge graph (regenerable via `graphify update .`)
+graphify-out/
+
+# Secrets, credentials, API keys — never commit
+.env
+.env.local
+.env.production
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+credentials.json
+service-account*.json
+**/secrets/
+**/.secrets/
+storage/settings/local.json
+storage/settings/sensor_deck.json
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Misc
 temp.md
 /internal/
-aqtinstall.log
-**/aqtinstall.log
-graphify-out/cost.json
-graphify-out/.graphify_python
-graphify-out/.graphify_root
-graphify-out/cache/
 
 # Tauri staged lab payload (built by scripts/stage-desktop-payload.*)
 desktop/src-tauri/resources/lab/**
