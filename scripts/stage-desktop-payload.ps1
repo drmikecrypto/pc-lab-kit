@@ -115,6 +115,13 @@ if (Test-Path (Join-Path $probeSrc 'PcLabHwMon.exe')) {
 if (Test-Path (Join-Path $probeSrc 'PcLabVkBench.exe')) {
     Copy-Item (Join-Path $probeSrc 'PcLabVkBench.exe') $probeDest -Force
 }
+$coreExe = Join-Path $probeSrc 'pclab_core.exe'
+$coreBuilt = Join-Path $root 'agent\pclab_core\target\release\pclab_core.exe'
+if (Test-Path $coreExe) {
+    Copy-Item $coreExe $probeDest -Force
+} elseif (Test-Path $coreBuilt) {
+    Copy-Item $coreBuilt (Join-Path $probeDest 'pclab_core.exe') -Force
+}
 if (Test-Path (Join-Path $probeSrc 'tools')) {
     Copy-Item (Join-Path $probeSrc 'tools') (Join-Path $probeDest 'tools') -Recurse -Force
 }

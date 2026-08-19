@@ -19,6 +19,9 @@ agent/pclab_probe/PcLabVkBench/bin/
 agent/pclab_probe/PcLabVkBench/obj/
 agent/pclab_probe/PcLabVkBench.exe
 
+# Rust probe core build artifacts
+agent/pclab_core/target/
+
 # Downloaded binaries
 public/downloads/*.zip
 public/downloads/*.tar.gz

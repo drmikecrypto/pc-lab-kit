@@ -69,6 +69,7 @@ class DiagnosticHistoryCompareService
 
         $improvedCount = count(array_filter($metricRows, static fn (array $r): bool => ($r['improved'] ?? null) === true));
         $worseCount = count(array_filter($metricRows, static fn (array $r): bool => ($r['improved'] ?? null) === false));
+        $openBookDelta = $this->openBookDelta($currentAnalysis, $previousSnapshot);
 
         return [
             'has_previous' => true,
@@ -94,8 +95,83 @@ class DiagnosticHistoryCompareService
                 ],
             ],
             'metrics' => $metricRows,
-            'summary' => $this->buildSummary($scoreDelta, $metricRows, $prevGrade, $curGrade, $prevBnType, $curBnType),
+            'summary' => $this->buildSummary($scoreDelta, $metricRows, $prevGrade, $curGrade, $prevBnType, $curBnType, $openBookDelta),
+            'open_book_delta' => $openBookDelta,
             'overall' => $scoreDelta > 0 ? 'improved' : ($scoreDelta < 0 ? 'worse' : ($improvedCount > $worseCount ? 'improved' : ($worseCount > $improvedCount ? 'worse' : 'stable'))),
+        ];
+    }
+
+    /** @param array<string, mixed> $current @param array<string, mixed> $previous */
+    private function openBookDelta(array $current, array $previous): array
+    {
+        $prevOb = $this->openBookSlice($previous);
+        $curOb = $this->openBookSlice($current);
+        $prevCount = (int) ($prevOb['count'] ?? 0);
+        $curCount = (int) ($curOb['count'] ?? 0);
+        $prevSpread = $this->numericOrNull($prevOb['gpu_therm_spread'] ?? ($previous['metrics']['gpu_therm_spread'] ?? null));
+        $curSpread = $this->numericOrNull($curOb['gpu_therm_spread'] ?? ($current['metrics']['gpu_therm_spread'] ?? null));
+        $spreadDelta = ($prevSpread !== null && $curSpread !== null) ? round($curSpread - $prevSpread, 2) : null;
+
+        $prevSources = array_values(array_unique(array_filter(array_map('strval', (array) ($prevOb['sources'] ?? [])))));
+        $curSources = array_values(array_unique(array_filter(array_map('strval', (array) ($curOb['sources'] ?? [])))));
+        sort($prevSources);
+        sort($curSources);
+
+        return [
+            'sensor_count' => [
+                'previous' => $prevCount,
+                'current' => $curCount,
+                'delta' => $curCount - $prevCount,
+            ],
+            'therm_spread' => [
+                'previous' => $prevSpread,
+                'current' => $curSpread,
+                'delta' => $spreadDelta,
+            ],
+            'sources_added' => array_values(array_diff($curSources, $prevSources)),
+            'sources_removed' => array_values(array_diff($prevSources, $curSources)),
+            'changed' => $prevCount !== $curCount
+                || ($spreadDelta !== null && abs($spreadDelta) >= 0.5)
+                || $prevSources !== $curSources,
+        ];
+    }
+
+    /** @param array<string, mixed> $row */
+    private function openBookSlice(array $row): array
+    {
+        if (isset($row['openbook_snapshot']) && is_array($row['openbook_snapshot'])) {
+            $sensors = (array) $row['openbook_snapshot'];
+            $sources = [];
+            foreach ($sensors as $s) {
+                if (is_array($s) && !empty($s['source'])) {
+                    $sources[] = (string) $s['source'];
+                }
+            }
+
+            return [
+                'count' => count($sensors),
+                'sources' => $sources,
+                'gpu_therm_spread' => $row['dossier']['gpu']['gpu_therm_spread'] ?? null,
+            ];
+        }
+
+        $dossier = is_array($row['silicon_dossier'] ?? null) ? $row['silicon_dossier'] : [];
+        $open = is_array($dossier['open_book'] ?? null) ? $dossier['open_book'] : [];
+        $sensors = (array) ($open['sensors'] ?? []);
+        $sources = [];
+        foreach ($sensors as $s) {
+            if (is_array($s) && !empty($s['source'])) {
+                $sources[] = (string) $s['source'];
+            }
+        }
+        if ($sources === [] && !empty($open['sources']) && is_array($open['sources'])) {
+            $sources = array_values(array_filter(array_map('strval', $open['sources'])));
+        }
+
+        return [
+            'count' => (int) ($open['count'] ?? count($sensors)),
+            'sources' => $sources,
+            'gpu_therm_spread' => $dossier['gpu']['gpu_therm_spread'] ?? ($row['metrics']['gpu_therm_spread'] ?? null),
         ];
     }
 
@@ -107,6 +183,7 @@ class DiagnosticHistoryCompareService
         string $curGrade,
         string $prevBn,
         string $curBn,
+        array $openBookDelta = [],
     ): string {
         $parts = [];
         if ($scoreDelta > 0) {
@@ -119,6 +196,18 @@ class DiagnosticHistoryCompareService
 
         if ($prevBn !== '' && $curBn !== '' && strcasecmp($prevBn, $curBn) !== 0) {
             $parts[] = 'Bottleneck shifted from ' . $this->humanBottleneck($prevBn) . ' to ' . $this->humanBottleneck($curBn) . '.';
+        }
+
+        if (!empty($openBookDelta['changed'])) {
+            $obCount = $openBookDelta['sensor_count'] ?? [];
+            $obDelta = (int) ($obCount['delta'] ?? 0);
+            if ($obDelta !== 0) {
+                $parts[] = 'Open-book sensor count ' . ($obDelta > 0 ? 'up' : 'down') . ' ' . abs($obDelta) . '.';
+            }
+            $spread = $openBookDelta['therm_spread']['delta'] ?? null;
+            if ($spread !== null && abs((float) $spread) >= 0.5) {
+                $parts[] = 'GPU therm spread ' . ($spread > 0 ? 'widened' : 'narrowed') . ' ' . abs((float) $spread) . '°C.';
+            }
         }
 
         foreach (array_slice($metricRows, 0, 3) as $row) {

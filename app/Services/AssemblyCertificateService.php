@@ -24,6 +24,10 @@ class AssemblyCertificateService
         $shop = trim((string) ($meta['shop_name'] ?? $analysis['shop_name'] ?? 'PC Lab Kit'));
         $passed = (bool) ($cert['passed'] ?? false);
         $verdict = (string) ($cert['verdict'] ?? ($passed ? 'PASS' : 'INCOMPLETE'));
+        $sessionHash = (string) ($meta['session_hash'] ?? $analysis['session_hash'] ?? '');
+        $wheaCount = (int) (($cert['peaks']['whea_errors'] ?? null) ?? ($cert['whea_timeline']['count'] ?? 0));
+        $pcieWarnings = is_array($cert['pcie_warnings'] ?? null) ? $cert['pcie_warnings'] : [];
+        $stabilityMargin = $cert['stability_margin_pct'] ?? null;
 
         $doc = [
             'product' => 'PC Lab Kit Assembly Certificate',
@@ -44,6 +48,11 @@ class AssemblyCertificateService
                 static fn ($s) => is_array($s) ? (string) ($s['source'] ?? '') : '',
                 (array) ($open['sensors'] ?? [])
             )))),
+            'whea_errors' => $wheaCount > 0 ? $wheaCount : null,
+            'pcie_warnings' => $pcieWarnings,
+            'stability_margin_pct' => $stabilityMargin,
+            'session_hash' => $sessionHash !== '' ? $sessionHash : null,
+            'verification_qr' => $sessionHash !== '' ? ('pclab://verify/' . $sessionHash) : null,
             'stress_certificate' => $cert,
             'token' => $meta['token'] ?? null,
         ];
@@ -63,6 +72,10 @@ class AssemblyCertificateService
         $esc = static fn ($v) => htmlspecialchars((string) ($v ?? '—'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         $sources = implode(', ', array_map($esc, (array) $d['open_book_sources']));
         $verdictClass = !empty($d['passed']) ? 'pass' : 'fail';
+        $pcie = implode('; ', array_map($esc, (array) ($d['pcie_warnings'] ?? [])));
+        $whea = $d['whea_errors'] ?? null;
+        $margin = $d['stability_margin_pct'] ?? null;
+        $qr = $d['verification_qr'] ?? null;
 
         return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>'
             . $esc($d['product']) . '</title><style>
@@ -76,6 +89,7 @@ class AssemblyCertificateService
             th,td{text-align:left;padding:.4rem .5rem;border-bottom:1px solid #30363d;font-size:.9rem}
             th{color:#8b98a5;font-weight:500}
             .meta{font-size:.8rem;color:#8b98a5}
+            .qr{font-family:ui-monospace,monospace;font-size:.75rem;word-break:break-all}
             @media print{body{background:#fff;color:#111}}
             </style></head><body>
             <p class="shop">' . $esc($d['shop_name']) . '</p>
@@ -90,8 +104,12 @@ class AssemblyCertificateService
             <tr><th>Therm spread</th><td>' . $esc($d['gpu_therm_spread']) . ' °C</td></tr>
             <tr><th>VRAM junction</th><td>' . $esc($d['gpu_vram_c']) . ' °C</td></tr>
             <tr><th>Open-book sensors</th><td>' . $esc($d['open_book_count']) . ' (' . $sources . ')</td></tr>
-            </table>
-            <p class="meta">Generated ' . $esc($d['generated_at']) . ' · token ' . $esc($d['token']) . ' · Print → Save as PDF</p>
+            <tr><th>WHEA errors</th><td>' . $esc($whea ?? '0') . '</td></tr>
+            <tr><th>Stability margin</th><td>' . ($margin !== null ? $esc($margin) . ' %' : '—') . '</td></tr>
+            <tr><th>PCIe warnings</th><td>' . ($pcie !== '' ? $pcie : '—') . '</td></tr>
+            </table>'
+            . ($qr ? '<p class="meta qr">Verify offline: ' . $esc($qr) . '</p>' : '')
+            . '<p class="meta">Generated ' . $esc($d['generated_at']) . ' · token ' . $esc($d['token']) . ' · Print → Save as PDF</p>
             </body></html>';
     }
 }

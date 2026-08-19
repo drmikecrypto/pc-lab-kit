@@ -20,10 +20,12 @@ use App\Services\DiagnosticToolCatalogService;
 use App\Services\HardwareKnowledgeGraphService;
 use App\Services\AssemblyCertificateService;
 use App\Services\LabReportExportService;
+use App\Services\LabSessionService;
 use App\Services\LabSuiteService;
 use App\Services\SensorDeckService;
 use App\Services\SettingsService;
 use App\Services\SiliconDossierService;
+use App\Services\StabilityOracleService;
 use App\Services\StressCertificateService;
 use App\Services\TopologyViewService;
 
@@ -766,7 +768,88 @@ class DiagnosticApiController
         return json_response([
             'ok' => true,
             'topology' => (new TopologyViewService())->fromGraph($graph),
+            'topology_3d' => (new TopologyViewService())->fromGraph3d($graph),
             'graph' => $graph,
+        ]);
+    }
+
+    public function diagnosticSessionExport(): string
+    {
+        $input = decode_json_body_limited(12_582_912) ?? [];
+        $analysis = is_array($input['analysis'] ?? null) ? $input['analysis'] : $input;
+        if ($analysis === []) {
+            return json_response(['ok' => false, 'error' => 'analysis required'], 400);
+        }
+        $fp = $this->diagnosticFingerprint($input);
+        $exported = (new LabSessionService())->export($analysis, [
+            'fingerprint' => $fp,
+            'profile' => (string) ($input['profile'] ?? 'standard'),
+        ]);
+
+        return json_response(['ok' => true, 'export' => $exported]);
+    }
+
+    public function diagnosticSessionImport(): string
+    {
+        $input = decode_json_body_limited(12_582_912) ?? [];
+        $json = (string) ($input['json'] ?? $input['session'] ?? '');
+        if ($json === '' && isset($input['format'])) {
+            $json = json_encode($input, JSON_THROW_ON_ERROR);
+        }
+        if ($json === '') {
+            return json_response(['ok' => false, 'error' => 'session json required'], 400);
+        }
+        try {
+            $session = (new LabSessionService())->import($json);
+        } catch (\InvalidArgumentException $e) {
+            return json_response(['ok' => false, 'error' => $e->getMessage()], 400);
+        }
+        $drift = null;
+        if (!empty($input['current_analysis']) && is_array($input['current_analysis'])) {
+            $drift = (new LabSessionService())->driftScore($session, $input['current_analysis']);
+        }
+
+        return json_response(['ok' => true, 'session' => $session, 'drift' => $drift]);
+    }
+
+    public function diagnosticSessionVerify(): string
+    {
+        $hash = trim((string) ($_GET['hash'] ?? ''));
+        if ($hash === '') {
+            $input = decode_json_body_limited(65536) ?? [];
+            $hash = trim((string) ($input['hash'] ?? ''));
+        }
+        if ($hash === '') {
+            return json_response(['ok' => false, 'error' => 'hash required'], 400);
+        }
+        $hash = preg_replace('/^pclab:\/\/verify\//', '', $hash) ?? $hash;
+
+        return json_response([
+            'ok' => true,
+            'verified' => (new LabSessionService())->verifyHash($hash),
+            'hash' => $hash,
+        ]);
+    }
+
+    public function diagnosticStabilityOracleProfiles(): string
+    {
+        return json_response(['ok' => true, 'profiles' => (new StabilityOracleService())->profiles()]);
+    }
+
+    public function diagnosticStabilityOracleInterpret(): string
+    {
+        $input = decode_json_body_limited(4_194_304) ?? [];
+        $run = is_array($input['run'] ?? null) ? $input['run'] : $input;
+        if ($run === []) {
+            return json_response(['ok' => false, 'error' => 'run required'], 400);
+        }
+        $svc = new StabilityOracleService();
+        $cert = (new StressCertificateService())->issue($run, is_array($input['samples'] ?? null) ? $input['samples'] : []);
+
+        return json_response([
+            'ok' => true,
+            'interpretation' => $svc->interpret($run),
+            'certificate' => $svc->enrichCertificate($cert, $run),
         ]);
     }
 

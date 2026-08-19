@@ -56,7 +56,7 @@ function Get-ProbeSuiteProfiles {
             id = 'deep'
             label = 'Deep Lab'
             benches = @('cpu', 'cpu_mt', 'cpu_cache', 'memory', 'storage', 'gpu')
-            stress_id = 'combined'
+            stress_id = 'oracle'
             stress_seconds = 300
         }
     }
@@ -190,6 +190,9 @@ function Start-ProbeSuiteJob {
         try {
             $stressResult = Invoke-ProbeStress -Id $StressId -Options @{ seconds = $StressSec }
             $state.stress = $stressResult
+            if ($StressId -eq 'oracle') {
+                $state.stress_mode = 'stability_oracle'
+            }
             if ($stressResult.samples) {
                 foreach ($s in @($stressResult.samples)) { $samples.Add($s) }
             } else {

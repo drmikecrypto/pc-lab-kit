@@ -40,13 +40,30 @@ internal static class Program
         }
         """;
 
+    private const string HlslRaster = """
+        struct VSOut { float4 pos : SV_POSITION; float4 col : COLOR; };
+        VSOut vs(uint id : SV_VertexID) {
+            float2 tri[3] = { float2(-0.8, -0.8), float2(0.8, -0.8), float2(0, 0.8) };
+            VSOut o;
+            o.pos = float4(tri[id % 3], 0, 1);
+            o.col = float4(0.2, 0.5, 1.0, 1);
+            return o;
+        }
+        float4 ps(VSOut i) : SV_TARGET { return i.col; }
+        """;
+
     public static int Main(string[] args)
     {
         var seconds = 8;
         var stress = false;
+        var rasterOnly = false;
         for (var i = 0; i < args.Length; i++)
         {
-            if (args[i] is "--stress" or "--stress-seconds")
+            if (args[i] is "--raster")
+            {
+                rasterOnly = true;
+            }
+            else if (args[i] is "--stress" or "--stress-seconds")
             {
                 stress = true;
                 if (i + 1 < args.Length && int.TryParse(args[i + 1], out var st))
@@ -72,7 +89,7 @@ internal static class Program
 
         try
         {
-            var result = Run(seconds);
+            var result = Run(seconds, rasterOnly);
             Console.WriteLine(JsonSerializer.Serialize(result));
             return result.TryGetValue("ok", out var ok) && ok is true ? 0 : 2;
         }
@@ -89,7 +106,7 @@ internal static class Program
         }
     }
 
-    private static Dictionary<string, object?> Run(int seconds)
+    private static Dictionary<string, object?> Run(int seconds, bool rasterOnly = false)
     {
         var vulkanAvailable = NativeLibrary.TryLoad("vulkan-1.dll", out var vkLib);
         if (vkLib != 0)
@@ -118,7 +135,23 @@ internal static class Program
                 using (device)
                 using (context)
                 {
-                    return Bench(device, context, adapterName, vulkanAvailable, seconds);
+                    if (rasterOnly)
+                    {
+                        return BenchRaster(device, context, adapterName, vulkanAvailable, seconds);
+                    }
+
+                    var compute = Bench(device, context, adapterName, vulkanAvailable, seconds);
+                    var raster = BenchRaster(device, context, adapterName, vulkanAvailable, Math.Max(2, seconds / 3));
+                    var computeScore = compute.TryGetValue("score", out var cs) && cs is double cds ? cds : 0.0;
+                    var rasterScore = raster.TryGetValue("raster_score", out var rs) && rs is double rds ? rds : 0.0;
+                    compute["raster"] = raster;
+                    compute["raster_score"] = rasterScore;
+                    compute["score"] = Math.Round(computeScore * 0.65 + rasterScore * 0.35, 1);
+                    compute["engine"] = vulkanAvailable ? "vulkan_unified_gpu" : "d3d11_unified_gpu";
+                    compute["api"] = vulkanAvailable ? "vulkan+d3d11" : "d3d11";
+                    compute["note"] = "Unified native GPU score: 65% compute + 35% raster fill/triangle throughput.";
+
+                    return compute;
                 }
             }
         }
@@ -241,5 +274,70 @@ internal static class Program
         };
         }
         }
+    }
+
+    private static Dictionary<string, object?> BenchRaster(
+        ID3D11Device device,
+        ID3D11DeviceContext context,
+        string adapterName,
+        bool vulkanAvailable,
+        int seconds)
+    {
+        var vsBytecode = Compiler.Compile(HlslRaster, "vs", "PcLabVkBench.vs.hlsl", "vs_5_0", ShaderFlags.OptimizationLevel3);
+        var psBytecode = Compiler.Compile(HlslRaster, "ps", "PcLabVkBench.ps.hlsl", "ps_5_0", ShaderFlags.OptimizationLevel3);
+        using var vs = device.CreateVertexShader(vsBytecode.Span);
+        using var ps = device.CreatePixelShader(psBytecode.Span);
+
+        var texDesc = new Texture2DDescription
+        {
+            Width = 1280,
+            Height = 720,
+            MipLevels = 1,
+            ArraySize = 1,
+            Format = Format.R8G8B8A8_UNorm,
+            SampleDescription = new SampleDescription(1, 0),
+            Usage = ResourceUsage.Default,
+            BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource,
+            CPUAccessFlags = CpuAccessFlags.None,
+        };
+        using var tex = device.CreateTexture2D(texDesc);
+        using var rtv = device.CreateRenderTargetView(tex);
+
+        context.OMSetRenderTargets(rtv, null);
+        context.VSSetShader(vs);
+        context.PSSetShader(ps);
+
+        var sw = Stopwatch.StartNew();
+        var end = sw.Elapsed + TimeSpan.FromSeconds(seconds);
+        long draws = 0;
+        while (sw.Elapsed < end)
+        {
+            context.ClearRenderTargetView(rtv, new Vortice.Mathematics.Color4(0.05f, 0.08f, 0.12f, 1f));
+            context.Draw(3, 0);
+            draws++;
+            if ((draws & 0x3F) == 0)
+            {
+                context.Flush();
+            }
+        }
+        context.Flush();
+        sw.Stop();
+
+        var sec = Math.Max(sw.Elapsed.TotalSeconds, 1e-6);
+        var triangles = draws * 1.0;
+        var fillMpixels = (1280.0 * 720.0 * draws) / sec / 1e6;
+        var rasterScore = Math.Round(Math.Min(99999, (triangles / sec / 1000.0) + fillMpixels * 0.5), 1);
+
+        return new Dictionary<string, object?>
+        {
+            ["ok"] = true,
+            ["engine"] = vulkanAvailable ? "vulkan_d3d11_raster" : "d3d11_raster",
+            ["device"] = adapterName,
+            ["duration_s"] = Math.Round(sec, 3),
+            ["draws"] = draws,
+            ["triangles_per_sec"] = Math.Round(triangles / sec, 0),
+            ["fill_mpixels_per_sec"] = Math.Round(fillMpixels, 2),
+            ["raster_score"] = rasterScore,
+        };
     }
 }

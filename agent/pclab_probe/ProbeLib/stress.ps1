@@ -13,6 +13,36 @@ function Get-ProbeStressCatalog {
     )
 }
 
+function Get-ProbeWheaTimeline {
+    param(
+        [datetime]$Since = (Get-Date).AddHours(-1),
+        [int]$MaxEvents = 50
+    )
+    $events = @()
+    try {
+        $whea = Get-WinEvent -FilterHashtable @{
+            LogName = 'System'
+            ProviderName = 'Microsoft-Windows-WHEA-Logger'
+            StartTime = $Since
+        } -MaxEvents $MaxEvents -ErrorAction SilentlyContinue
+        foreach ($e in @($whea)) {
+            $msg = ("$($e.Message)" -replace '\s+', ' ')
+            if ($msg.Length -gt 240) { $msg = $msg.Substring(0, 240) }
+            $events += @{
+                at = $e.TimeCreated.ToUniversalTime().ToString('o')
+                id = [int]$e.Id
+                level = [string]$e.LevelDisplayName
+                message = $msg
+            }
+        }
+    } catch {}
+    return @{
+        since = $Since.ToUniversalTime().ToString('o')
+        count = @($events).Count
+        events = @($events)
+    }
+}
+
 function Get-ProbeStressThermalSample {
     $sample = @{
         at = (Get-Date).ToUniversalTime().ToString('o')
@@ -53,7 +83,8 @@ function Invoke-ProbeCpuStress {
     $Seconds = [Math]::Max(5, [Math]::Min(300, $Seconds))
     $threads = [Environment]::ProcessorCount
     $jobs = @()
-    $end = (Get-Date).AddSeconds($Seconds)
+    $stressStart = Get-Date
+    $end = $stressStart.AddSeconds($Seconds)
     $samples = New-Object System.Collections.Generic.List[object]
     for ($t = 0; $t -lt $threads; $t++) {
         $jobs += Start-Job -ScriptBlock {
@@ -72,6 +103,10 @@ function Invoke-ProbeCpuStress {
     $jobs | Remove-Job -Force -ErrorAction SilentlyContinue
     $cpuPeak = ($samples | ForEach-Object { $_.cpu_temp } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
     $gpuPeak = ($samples | ForEach-Object { $_.gpu_temp } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
+    $wheaTimeline = Get-ProbeWheaTimeline -Since $stressStart
+    $wheaTotal = ($samples | ForEach-Object { [int]$_.whea_errors } | Measure-Object -Sum).Sum
+    if ($wheaTimeline.count -gt $wheaTotal) { $wheaTotal = $wheaTimeline.count }
+
     return @{
         id = 'cpu'
         label = 'PcLab CPU stress'
@@ -80,6 +115,8 @@ function Invoke-ProbeCpuStress {
         status = 'completed'
         cpu_temp_max = $cpuPeak
         gpu_temp_max = $gpuPeak
+        whea_errors = $wheaTotal
+        whea_timeline = $wheaTimeline
         samples = @($samples)
         replaces = @('Prime95', 'OCCT', 'AIDA64')
     }
@@ -89,6 +126,7 @@ function Invoke-ProbeMemoryStress {
     param([int]$Seconds = 30, [int]$Percent = 40, [switch]$CollectSamples)
     $Seconds = [Math]::Max(5, [Math]::Min(300, $Seconds))
     $Percent = [Math]::Max(10, [Math]::Min(70, $Percent))
+    $stressStart = Get-Date
     $targetBytes = [long]([Math]::Min(
         ([GC]::GetTotalMemory($false) * 4),
         ((Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory * 1KB) * ($Percent / 100.0)
@@ -121,6 +159,10 @@ function Invoke-ProbeMemoryStress {
         $blocks = $null
         [GC]::Collect()
     }
+    $wheaTimeline = Get-ProbeWheaTimeline -Since $stressStart
+    $wheaTotal = ($samples | ForEach-Object { [int]$_.whea_errors } | Measure-Object -Sum).Sum
+    if ($wheaTimeline.count -gt $wheaTotal) { $wheaTotal = $wheaTimeline.count }
+
     return @{
         id = 'memory'
         label = 'PcLab memory stress'
@@ -128,6 +170,8 @@ function Invoke-ProbeMemoryStress {
         allocated_mb = [math]::Round($allocated / 1MB, 1)
         status = if ($errors -gt 0) { 'failed' } else { 'completed' }
         errors_found = $errors
+        whea_errors = $wheaTotal
+        whea_timeline = $wheaTimeline
         samples = @($samples)
         replaces = @('TestMem5', 'HCI MemTest', 'MemTest64')
     }
@@ -136,6 +180,7 @@ function Invoke-ProbeMemoryStress {
 function Invoke-ProbeGpuStress {
     param([int]$Seconds = 30, [switch]$CollectSamples)
     $Seconds = [Math]::Max(5, [Math]::Min(300, $Seconds))
+    $stressStart = Get-Date
     $samples = New-Object System.Collections.Generic.List[object]
     $method = 'host_load'
     $vkScore = $null
@@ -195,6 +240,10 @@ function Invoke-ProbeGpuStress {
     $cpuPeak = ($samples | ForEach-Object { $_.cpu_temp } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
     $hsPeak = ($samples | ForEach-Object { $_.gpu_hotspot } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
 
+    $wheaTimeline = Get-ProbeWheaTimeline -Since $stressStart
+    $wheaTotal = ($samples | ForEach-Object { [int]$_.whea_errors } | Measure-Object -Sum).Sum
+    if ($wheaTimeline.count -gt $wheaTotal) { $wheaTotal = $wheaTimeline.count }
+
     return @{
         id = 'gpu'
         label = 'PcLab GPU stress'
@@ -206,6 +255,8 @@ function Invoke-ProbeGpuStress {
         cpu_temp_max = $cpuPeak
         gpu_temp_max = $gpuPeak
         gpu_hotspot_max = $hsPeak
+        whea_errors = $wheaTotal
+        whea_timeline = $wheaTimeline
         samples = @($samples)
         note = if ($vk) { 'Native PcLabVkBench compute soak (D3D11 CS).' } else { 'Fallback host/watch — PcLabVkBench.exe missing.' }
         replaces = @('FurMark', 'MSI Kombustor')
@@ -221,6 +272,24 @@ function Invoke-ProbeCombinedStress {
     $gpu = Invoke-ProbeGpuStress -Seconds $third -CollectSamples:$CollectSamples
     $samples = @($cpu.samples) + @($mem.samples) + @($gpu.samples)
     $status = if ($mem.status -eq 'failed' -or $gpu.status -eq 'failed') { 'failed' } else { 'completed' }
+    $wheaTotal = [int]$cpu.whea_errors + [int]$mem.whea_errors + [int]$gpu.whea_errors
+    $wheaEvents = @()
+    foreach ($part in @($cpu, $mem, $gpu)) {
+        if ($part.whea_timeline -and $part.whea_timeline.events) {
+            $wheaEvents += @($part.whea_timeline.events)
+        }
+    }
+    $wheaTimeline = @{
+        count = [Math]::Max($wheaTotal, @($wheaEvents).Count)
+        events = @($wheaEvents | Select-Object -First 50)
+    }
+    if (Get-Command Get-ProbePcieLinkTruth -ErrorAction SilentlyContinue) {
+        . "$PSScriptRoot\openbook.ps1"
+    }
+    $pcie = $null
+    if (Get-Command Get-ProbePcieLinkTruth -ErrorAction SilentlyContinue) {
+        $pcie = Get-ProbePcieLinkTruth
+    }
     return @{
         id = 'combined'
         label = 'PcLab combined stress'
@@ -231,6 +300,9 @@ function Invoke-ProbeCombinedStress {
         gpu_temp_max = @($cpu.gpu_temp_max, $mem.gpu_temp_max, $gpu.gpu_temp_max) | Where-Object { $_ -ne $null } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
         gpu_hotspot_max = $gpu.gpu_hotspot_max
         errors_found = [int]$mem.errors_found
+        whea_errors = $wheaTotal
+        whea_timeline = $wheaTimeline
+        pcie_warnings = if ($pcie) { @($pcie.warnings) } else { @() }
         samples = $samples
         note = $gpu.note
         replaces = @('OCCT Power', 'AIDA64 System', 'FurMark')
@@ -251,6 +323,124 @@ function Invoke-ProbeStress {
         'gpu' { return Invoke-ProbeGpuStress -Seconds $seconds -CollectSamples:$collect }
         'combined' { return Invoke-ProbeCombinedStress -Seconds $seconds -CollectSamples:$collect }
         'quick' { return Invoke-ProbeCombinedStress -Seconds 60 -CollectSamples:$collect }
+        'oracle' { return Invoke-ProbeStabilityOracle -Options $Options }
         default { throw "Unknown stress test: $Id" }
+    }
+}
+
+<#
+ Adaptive stability oracle — ramp CPU → GPU → combined until thermal/WHEA limits.
+#>
+function Invoke-ProbeStabilityOracle {
+    param([hashtable]$Options = @{})
+
+    $cpuLimit = if ($Options.cpu_temp_max) { [double]$Options.cpu_temp_max } else { 82.0 }
+    $gpuLimit = if ($Options.gpu_temp_max) { [double]$Options.gpu_temp_max } else { 83.0 }
+    $hotspotLimit = if ($Options.gpu_hotspot_max) { [double]$Options.gpu_hotspot_max } else { 92.0 }
+    $stepSeconds = if ($Options.step_seconds) { [int]$Options.step_seconds } else { 20 }
+    $stepSeconds = [Math]::Max(10, [Math]::Min(60, $stepSeconds))
+
+    $oracleStart = Get-Date
+    $steps = @()
+    $allSamples = New-Object System.Collections.Generic.List[object]
+    $breached = $false
+    $breachReason = $null
+    $marginPct = 100.0
+
+    $baselineSeconds = if ($Options.baseline_seconds) { [int]$Options.baseline_seconds } else { 30 }
+    $baselineSeconds = [Math]::Max(5, [Math]::Min(120, $baselineSeconds))
+    $baselineSamples = New-Object System.Collections.Generic.List[object]
+    $baselineEnd = (Get-Date).AddSeconds($baselineSeconds)
+    while ((Get-Date) -lt $baselineEnd) {
+        Start-Sleep -Milliseconds 900
+        $baselineSamples.Add((Get-ProbeStressThermalSample))
+    }
+    $baseline = @{
+        duration_s = $baselineSeconds
+        cpu_temp_avg = ($baselineSamples | ForEach-Object { $_.cpu_temp } | Where-Object { $_ -ne $null } | Measure-Object -Average).Average
+        gpu_temp_avg = ($baselineSamples | ForEach-Object { $_.gpu_temp } | Where-Object { $_ -ne $null } | Measure-Object -Average).Average
+        gpu_hotspot_avg = ($baselineSamples | ForEach-Object { $_.gpu_hotspot } | Where-Object { $_ -ne $null } | Measure-Object -Average).Average
+        sample_count = $baselineSamples.Count
+    }
+    foreach ($s in @($baselineSamples)) { $allSamples.Add($s) }
+
+    $phases = @(
+        @{ id = 'cpu'; label = 'CPU ramp'; fn = { Invoke-ProbeCpuStress -Seconds $stepSeconds -CollectSamples } }
+        @{ id = 'gpu'; label = 'GPU ramp'; fn = { Invoke-ProbeGpuStress -Seconds $stepSeconds -CollectSamples } }
+        @{ id = 'combined'; label = 'Combined ramp'; fn = { Invoke-ProbeCombinedStress -Seconds ($stepSeconds * 2) -CollectSamples } }
+    )
+
+    foreach ($phase in $phases) {
+        if ($breached) { break }
+        $run = & $phase.fn
+        $cpuPeak = [double]($run.cpu_temp_max)
+        $gpuPeak = [double]($run.gpu_temp_max)
+        $hsPeak = [double]($run.gpu_hotspot_max)
+        $whea = [int]($run.whea_errors)
+        foreach ($s in @($run.samples)) { $allSamples.Add($s) }
+
+        $headroomCpu = if ($cpuPeak) { [Math]::Max(0, $cpuLimit - $cpuPeak) } else { $cpuLimit }
+        $headroomGpu = if ($gpuPeak) { [Math]::Max(0, $gpuLimit - $gpuPeak) } else { $gpuLimit }
+        $headroomHs = if ($hsPeak) { [Math]::Max(0, $hotspotLimit - $hsPeak) } else { $hotspotLimit }
+        $stepMargin = [Math]::Round(([Math]::Min($headroomCpu, [Math]::Min($headroomGpu, $headroomHs)) / [Math]::Max(1.0, $cpuLimit)) * 100, 1)
+        $marginPct = [Math]::Min($marginPct, $stepMargin)
+
+        $stepRec = @{
+            id = $phase.id
+            label = $phase.label
+            duration_s = $run.duration_s
+            cpu_temp_max = $run.cpu_temp_max
+            gpu_temp_max = $run.gpu_temp_max
+            gpu_hotspot_max = $run.gpu_hotspot_max
+            whea_errors = $whea
+            stability_margin_pct = $stepMargin
+            status = 'ok'
+        }
+
+        if ($whea -gt 0) {
+            $breached = $true
+            $breachReason = "WHEA events during $($phase.id)"
+            $stepRec.status = 'breach'
+        }
+        if ($cpuPeak -ge $cpuLimit) {
+            $breached = $true
+            $breachReason = "CPU temp $cpuPeak >= limit $cpuLimit"
+            $stepRec.status = 'breach'
+        }
+        if ($gpuPeak -ge $gpuLimit) {
+            $breached = $true
+            $breachReason = "GPU temp $gpuPeak >= limit $gpuLimit"
+            $stepRec.status = 'breach'
+        }
+        if ($hsPeak -ge $hotspotLimit) {
+            $breached = $true
+            $breachReason = "Hotspot $hsPeak >= limit $hotspotLimit"
+            $stepRec.status = 'breach'
+        }
+        $steps += $stepRec
+    }
+
+    $wheaTimeline = Get-ProbeWheaTimeline -Since $oracleStart
+    $wheaTotal = ($allSamples | ForEach-Object { [int]$_.whea_errors } | Measure-Object -Sum).Sum
+    if ($wheaTimeline.count -gt $wheaTotal) { $wheaTotal = $wheaTimeline.count }
+
+    return @{
+        id = 'oracle'
+        label = 'PcLab Stability Oracle'
+        duration_s = [int]((Get-Date) - $oracleStart).TotalSeconds
+        status = if ($breached) { 'limited' } else { 'completed' }
+        breached = $breached
+        breach_reason = $breachReason
+        stability_margin_pct = [Math]::Round($marginPct, 1)
+        oracle_steps = @($steps)
+        baseline = $baseline
+        cpu_temp_max = ($steps | ForEach-Object { $_.cpu_temp_max } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
+        gpu_temp_max = ($steps | ForEach-Object { $_.gpu_temp_max } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
+        gpu_hotspot_max = ($steps | ForEach-Object { $_.gpu_hotspot_max } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
+        whea_errors = $wheaTotal
+        whea_timeline = $wheaTimeline
+        samples = @($allSamples)
+        limits = @{ cpu_temp_max = $cpuLimit; gpu_temp_max = $gpuLimit; gpu_hotspot_max = $hotspotLimit }
+        replaces = @('OCCT', 'Prime95', 'FurMark')
     }
 }

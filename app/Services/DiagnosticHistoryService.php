@@ -99,6 +99,8 @@ class DiagnosticHistoryService
                 : ['type' => $row['bottleneck_type'] ?? '', 'message' => $row['bottleneck_fa'] ?? ''],
             'metrics' => \App\json_decode_assoc((string) ($row['metrics_json'] ?? '{}'), '{}'),
             'summary' => \App\json_decode_assoc((string) ($row['summary_json'] ?? '{}'), '{}'),
+            'silicon_dossier' => is_array($analysis['silicon_dossier'] ?? null) ? $analysis['silicon_dossier'] : [],
+            'stress_certificate' => is_array($analysis['stress_certificate'] ?? null) ? $analysis['stress_certificate'] : [],
             'created_at' => (string) ($row['created_at'] ?? ''),
             'ago' => $this->timeAgo((string) ($row['created_at'] ?? '')),
         ];
@@ -723,7 +725,7 @@ class DiagnosticHistoryService
             'mode', 'health_score', 'health_grade', 'metrics', 'bottleneck', 'risks',
             'issues', 'upgrade_suggestions', 'game_settings', 'report_summary',
             'ai_narrative', 'ai_narrative_fa', 'ai', 'hardware_graph', 'devices', 'elevated',
-            'drivers',
+            'drivers', 'silicon_dossier', 'stress_certificate',
         ]));
     }
 

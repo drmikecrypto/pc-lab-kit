@@ -297,7 +297,7 @@ function Get-ProbeThermalSummary {
 
 function Get-TelemetrySnapshot {
     $t = Get-ProbeDeepTelemetry
-    return @{
+    $snap = @{
         ts = $t.collected_at
         cpu_temp = $t.cpu.thermal.package_c
         cpu_hotspot = $t.cpu.thermal.hotspot_c
@@ -309,4 +309,69 @@ function Get-TelemetrySnapshot {
         vcore = $t.power.vcore
         fps = $t.gaming.fps_avg
     }
+    Push-PcLabCoreSample -Sample $snap | Out-Null
+    return $snap
+}
+
+$script:PcLabCoreProc = $null
+$script:PcLabCoreStdIn = $null
+$script:PcLabCoreHistory = @()
+
+function Get-PcLabCoreExePath {
+    $probeDir = Split-Path $PSScriptRoot -Parent
+    foreach ($p in @(
+        (Join-Path $probeDir 'pclab_core.exe'),
+        (Join-Path $probeDir '..\pclab_core\target\release\pclab_core.exe')
+    )) {
+        if ($p -and (Test-Path $p)) { return (Resolve-Path $p).Path }
+    }
+    return $null
+}
+
+function Initialize-PcLabCorePipe {
+    if ($script:PcLabCoreProc -and -not $script:PcLabCoreProc.HasExited) { return $true }
+    $exe = Get-PcLabCoreExePath
+    if (-not $exe) { return $false }
+    try {
+        $psi = New-Object System.Diagnostics.ProcessStartInfo
+        $psi.FileName = $exe
+        $psi.Arguments = 'pipe'
+        $psi.UseShellExecute = $false
+        $psi.RedirectStandardInput = $true
+        $psi.RedirectStandardOutput = $true
+        $psi.CreateNoWindow = $true
+        $script:PcLabCoreProc = [System.Diagnostics.Process]::Start($psi)
+        $script:PcLabCoreStdIn = $script:PcLabCoreProc.StandardInput
+        return $true
+    } catch {
+        $script:PcLabCoreProc = $null
+        $script:PcLabCoreStdIn = $null
+        return $false
+    }
+}
+
+function Push-PcLabCoreSample {
+    param([hashtable]$Sample)
+    if (-not (Initialize-PcLabCorePipe)) { return $null }
+    try {
+        $line = ($Sample | ConvertTo-Json -Compress)
+        $script:PcLabCoreStdIn.WriteLine($line)
+        $script:PcLabCoreStdIn.Flush()
+        $out = $script:PcLabCoreProc.StandardOutput.ReadLine()
+        if (-not $out) { return $null }
+        $parsed = $out | ConvertFrom-Json
+        if ($parsed.history) {
+            $script:PcLabCoreHistory = @($parsed.history)
+        }
+        return $parsed
+    } catch {
+        return $null
+    }
+}
+
+function Get-PcLabCoreHistory {
+    if ($script:PcLabCoreHistory -and $script:PcLabCoreHistory.Count -gt 0) {
+        return @($script:PcLabCoreHistory)
+    }
+    return @()
 }

@@ -47,7 +47,10 @@ $toolTotal = $toolKit->total();
             </select>
             <button type="button" class="dx-btn primary" id="dx-suite-run">Run Full Lab</button>
             <button type="button" class="dx-btn ghost" id="dx-suite-cancel" hidden>Cancel</button>
+            <label class="dx-btn ghost dx-suite-import-label" for="dx-suite-import-file">Import .pclab</label>
+            <input type="file" id="dx-suite-import-file" accept=".json,.pclab,.pclab.json,application/json" hidden>
         </div>
+        <div id="dx-suite-import-result" class="dx-suite-import-result" hidden></div>
         <div class="dx-suite-progress" aria-hidden="true"><span id="dx-suite-progress-bar"></span></div>
         <div class="dx-suite-meta">
             <span id="dx-suite-step">Idle</span>
@@ -397,8 +400,10 @@ $toolTotal = $toolKit->total();
                         <p>Always-on graph from Probe inventory — chipset, DIMMs, cooler, PCI</p>
                     </div>
                     <button type="button" class="dx-btn ghost" id="dx-topo-refresh">Refresh topology</button>
+                    <button type="button" class="dx-btn ghost" id="dx-topo-3d-toggle" aria-pressed="false">3D view</button>
                 </div>
                 <div id="dx-advanced-topo-svg" class="dx-hwref__topo"></div>
+                <div id="dx-advanced-topo-3d" class="dx-hwref__topo dx-topology-3d" hidden style="min-height:320px"></div>
             </section>
 
             <section class="dx-panel-card" id="dx-launchers">
@@ -431,9 +436,10 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.1.4"></script>
-<script defer src="/assets/js/diagnostic-suite.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-suite.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-topology.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-openbook.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-topology-3d.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-openbook.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-inventory.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-launchers.js?v=1.0.0"></script>

@@ -338,6 +338,17 @@
     }
   }
 
+  function driverConfBadge(row) {
+    const parts = [];
+    const pct = row.match_confidence_pct;
+    if (pct != null && pct !== '') parts.push(`${pct}%`);
+    else if (row.match_confidence) parts.push(String(row.match_confidence));
+    if (row.success_rate != null && row.success_rate !== '') {
+      parts.push(`${Math.round(Number(row.success_rate))}% local success`);
+    }
+    return parts.length ? `<span class="dx-driver-conf">${esc(parts.join(' · '))}</span>` : '';
+  }
+
   function renderDriverActions(drivers, devices) {
     const box = el('dx-driver-actions');
     if (!box) return;
@@ -364,7 +375,7 @@
       const links = (a.links || []).slice(0, 2).map((l) =>
         `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || 'Download')}</a>`
       ).join(' · ');
-      const conf = a.match_confidence ? `<span class="dx-driver-conf">${esc(a.match_confidence)}</span>` : '';
+      const conf = driverConfBadge(a);
       const ids = hwId(a);
       const primaryBtn = primary
         ? `<a href="${esc(primary.url)}" class="dx-btn primary dx-driver-primary" target="_blank" rel="noopener">${esc(primary.label || 'Open package')}</a>`
@@ -380,7 +391,7 @@
 
     const missingHtml = driverless.map((d) => {
       const ids = hwId(d);
-      const conf = d.match_confidence ? `<span class="dx-driver-conf">${esc(d.match_confidence)}</span>` : '';
+      const conf = driverConfBadge(d);
       const primary = d.primary_link && d.primary_link.url ? d.primary_link : null;
       const links = (d.links || []).slice(0, 2).map((l) =>
         `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || 'Download')}</a>`
@@ -402,7 +413,7 @@
       ${queue.map((s) => {
         const pl = s.primary_link && s.primary_link.url ? s.primary_link : ((s.links || [])[0] || null);
         const link = pl ? `<a href="${esc(pl.url)}" target="_blank" rel="noopener">${esc(pl.label || 'Open')}</a>` : '';
-        const conf = s.match_confidence ? ` · ${esc(s.match_confidence)}` : '';
+        const conf = driverConfBadge(s);
         const ver = s.package_version ? ` · pkg ${esc(s.package_version)}` : '';
         const installBtn = `<button type="button" class="dx-btn ghost dx-driver-install" data-instance="" data-category="${esc(s.id || '')}" data-queue="${esc(s.id || '')}">Install</button>`;
         return `<div class="dx-driver-queue-row">

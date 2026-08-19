@@ -1,0 +1,21 @@
+name: Graphify update
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'graphify-out/**'
+      - '**.md'
+
+jobs:
+  graphify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install graphify
+        run: pip install graphifyy
+      - name: Incremental graph update
+        run: graphify update .

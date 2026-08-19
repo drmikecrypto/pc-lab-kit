@@ -204,8 +204,20 @@ class DriverPackageMatcherService
             $links = [$primary];
         }
 
+        $confidencePct = match ($confidence) {
+            'exact' => 92,
+            'vendor' => 82,
+            'board' => 78,
+            'oem' => 75,
+            default => 68,
+        };
+        if ($primary !== null && isset($primary['success_rate']) && is_numeric($primary['success_rate'])) {
+            $confidencePct = (int) min(99, max(55, (float) $primary['success_rate']));
+        }
+
         return [
             'match_confidence' => $confidence,
+            'match_confidence_pct' => $confidencePct,
             'primary_link' => $primary,
             'links' => $links,
             'vendor_id' => $ven,
@@ -373,6 +385,8 @@ class DriverPackageMatcherService
             'install_method' => $method,
             'silent_args' => isset($row['silent_args']) ? (string) $row['silent_args'] : null,
             'sha256' => isset($row['sha256']) ? (string) $row['sha256'] : null,
+            'success_rate' => isset($row['success_rate']) && is_numeric($row['success_rate']) ? (float) $row['success_rate'] : null,
+            'last_verified' => isset($row['last_verified']) ? (string) $row['last_verified'] : null,
             'installable' => in_array($method, ['inf_zip', 'msi', 'exe_silent', 'exe_ui', 'updater_app'], true),
         ];
     }

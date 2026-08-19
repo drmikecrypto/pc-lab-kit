@@ -69,7 +69,7 @@ final class AmbitiousUpgradeTest extends TestCase
 
     public function testTopologyFromGraph(): void
     {
-        $topo = (new TopologyViewService())->fromGraph([
+        $graph = [
             'nodes' => [
                 ['id' => 'cpu', 'type' => 'cpu', 'label' => 'Ryzen'],
                 ['id' => 'gpu', 'type' => 'gpu', 'label' => 'RTX'],
@@ -78,10 +78,16 @@ final class AmbitiousUpgradeTest extends TestCase
                 ['source' => 'cpu', 'target' => 'gpu', 'relation' => 'pcie'],
             ],
             'summary' => ['ok' => true],
-        ]);
+        ];
+        $topo = (new TopologyViewService())->fromGraph($graph);
         $this->assertCount(2, $topo['nodes']);
         $this->assertCount(1, $topo['links']);
         $this->assertArrayHasKey('x', $topo['nodes'][0]);
+
+        $topo3d = (new TopologyViewService())->fromGraph3d($graph);
+        $this->assertSame('3d', $topo3d['mode']);
+        $this->assertCount(2, $topo3d['nodes']);
+        $this->assertArrayHasKey('position', $topo3d['nodes'][0]);
     }
 
     public function testImportCinebenchGeekbench3dmark(): void

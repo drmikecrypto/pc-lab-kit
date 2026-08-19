@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "agent": "pclab-probe-mock",
+  "version": 6,
+  "hwmon": true,
+  "vkbench": true,
+  "open_book": true,
+  "open_book_count": 3,
+  "elevated": true,
+  "oc": true,
+  "rgb": true,
+  "devices": true,
+  "drivers": true,
+  "suite": true,
+  "launchers": true
+}

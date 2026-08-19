@@ -6,7 +6,22 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
-## [4.0.0] - 2026-08-18
+## [4.0.1] - 2026-08-20
+
+### Added — Hardware Reality Engine (Truth Protocol)
+- **Stability Oracle:** 30s idle baseline, adaptive CPU/GPU/combined ramp, margin grade on Deep Lab certificate and advisor cards
+- **`.pclab` sessions:** signed export/import in Command Center with silicon aging index and drift notes
+- **Open Book 2.0:** register catalog runtime on `/openbook` with ≥12 provenance tags; WHEA + PCIe truth on assembly certificate
+- **3D digital twin:** WebGL topology fed by `/telemetry/history` ring buffer; Blackwell Therm S1–S6 overlay dots; Hardware Reference 3D toggle
+- **Driver Oracle v2 UI:** `match_confidence_pct` and local `success_rate` on live driver cards
+- **Rust sidecar R1:** optional `pclab_core.exe` pipe merges into telemetry history when bundled
+- **E2E:** 10+ Playwright scenarios with mock probe fixtures (session, oracle, openbook, topology, drivers)
+
+### Changed
+- History compare includes `open_book_delta` (sensor count + therm spread drift)
+- `APP_VERSION`, desktop package, and probe banner aligned to v4.0.1
+- MASTER_PLAN status row for v4.0.1 shipped
+
 
 ### Added
 - **Open-Book Catalog (3.5):** Blackwell VRAM junction MMIO, NVAPI raw / ADL / Intel provenance tags, probe `GET /openbook`, Hardware Reference sensor table

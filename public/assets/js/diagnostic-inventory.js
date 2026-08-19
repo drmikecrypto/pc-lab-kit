@@ -141,6 +141,7 @@
   async function loadTopology(probeBundle) {
     const topoRoot = el('dx-hwref-topology');
     const adv = el('dx-advanced-topo-svg');
+    const adv3d = el('dx-advanced-topo-3d');
     try {
       const res = await fetch('/api/diagnostic/topology', {
         method: 'POST',
@@ -152,7 +153,42 @@
         if (topoRoot) window.PcLabTopology.render(topoRoot, data.topology);
         if (adv) window.PcLabTopology.render(adv, data.topology);
       }
+      if (data.ok && adv3d && window.PcLabTopology3d?.render && data.topology_3d && !adv3d.hidden) {
+        window.PcLabTopology3d.render(adv3d, data);
+      }
     } catch (_) {}
+  }
+
+  function bindTopo3dToggle() {
+    const btn = el('dx-topo-3d-toggle');
+    const svg = el('dx-advanced-topo-svg');
+    const box = el('dx-advanced-topo-3d');
+    if (!btn || !svg || !box) return;
+    btn.addEventListener('click', async () => {
+      const on = box.hidden;
+      box.hidden = !on;
+      svg.hidden = on;
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (on && window.PcLabTopology3d?.render) {
+        box.innerHTML = '<p class="muted">Building 3D topology…</p>';
+        try {
+          const res = await fetch('/api/diagnostic/topology', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ probe: { devices: lastDevicesRaw, probe_version: 2, agent: 'pclab-probe' } }),
+          });
+          const data = await res.json();
+          if (data.topology_3d) {
+            box.innerHTML = '';
+            window.PcLabTopology3d.render(box, data);
+          } else {
+            box.innerHTML = '<p class="muted fs-sm">3D topology unavailable.</p>';
+          }
+        } catch (e) {
+          box.innerHTML = `<p class="muted">3D failed: ${esc(e.message || e)}</p>`;
+        }
+      }
+    });
   }
 
   async function refreshInventory() {
@@ -264,6 +300,7 @@
       if (lastDevicesRaw) loadTopology({ devices: lastDevicesRaw, probe_version: 2, agent: 'pclab-probe' });
       else refreshInventory();
     });
+    bindTopo3dToggle();
     el('dx-hwref-search')?.addEventListener('input', () => renderTree());
     document.querySelectorAll('#dx-hwref-filters [data-hw-filter]').forEach((cb) => {
       cb.addEventListener('change', () => renderTree());

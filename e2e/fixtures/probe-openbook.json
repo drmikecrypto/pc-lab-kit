@@ -1,0 +1,63 @@
+{
+  "open_book": {
+    "available": true,
+    "count": 3,
+    "open_book_therm": true,
+    "open_book_vram": true,
+    "elevated": true,
+    "sensors": [
+      {
+        "name": "GPU Hot Spot",
+        "value": 82.5,
+        "unit": "°C",
+        "source": "blackwell_therm_mmio",
+        "raw_hex": "40005280",
+        "confidence": "register_raw"
+      },
+      {
+        "name": "GPU Memory Junction",
+        "value": 76.0,
+        "unit": "°C",
+        "source": "blackwell_vram_mmio",
+        "confidence": "community_tier2"
+      },
+      {
+        "name": "GPU Therm S1",
+        "value": 71.0,
+        "unit": "°C",
+        "source": "blackwell_therm_mmio",
+        "confidence": "register_raw"
+      }
+    ]
+  },
+  "register_catalog": {
+    "version": 1,
+    "register_count": 6,
+    "provenance_tags": ["blackwell_therm_mmio", "blackwell_vram_mmio", "nvapi_raw", "adl", "lhm_intel", "intel_peci"]
+  },
+  "pcie": {
+    "count": 1,
+    "warnings": ["GPU running x8 / max x16"],
+    "links": [
+      {
+        "device": "NVIDIA GeForce RTX 5090",
+        "role": "gpu",
+        "gen_current": 5,
+        "gen_max": 5,
+        "width_current": 16,
+        "width_max": 16,
+        "source": "nvidia-smi",
+        "confidence": "measured"
+      }
+    ]
+  },
+  "dossier": {
+    "cpu": { "model": "Ryzen 7 5800X" },
+    "gpu": { "name": "RTX 5090", "hotspot_source": "blackwell_therm_mmio" }
+  },
+  "thermal": {
+    "gpu": { "core_c": 68, "hot_spot_c": 82.5 },
+    "cpu": { "package_c": 55 }
+  },
+  "provenance_total": 8
+}

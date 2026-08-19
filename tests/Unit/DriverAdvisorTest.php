@@ -34,6 +34,8 @@ test('driver advisor presents identity confidence and install queue', function (
                     'device_id' => '43e8',
                     'bus' => 'pci',
                     'match_confidence' => 'exact',
+                    'match_confidence_pct' => 82,
+                    'success_rate' => 91.5,
                     'primary_link' => [
                         'label' => 'Intel Chipset INF Utility',
                         'url' => 'https://www.intel.com/content/www/us/en/download/19347/chipset-inf-utility.html',
@@ -123,6 +125,8 @@ test('driver advisor presents identity confidence and install queue', function (
     expect($presented['score'])->toBe(55)
         ->and($presented['grade'])->toBe('D')
         ->and($presented['actions'][0]['match_confidence'])->toBe('exact')
+        ->and($presented['actions'][0]['match_confidence_pct'])->toBe(82)
+        ->and($presented['actions'][0]['success_rate'])->toBe(91.5)
         ->and($presented['actions'][0]['vendor_id'])->toBe('8086')
         ->and($presented['actions'][0]['primary_link']['url'])->toContain('intel.com')
         ->and($presented['install_queue'][0]['match_confidence'])->toBe('board')
@@ -193,7 +197,8 @@ test('driver catalog json has required keys', function () {
     expect(is_file($path))->toBeTrue();
     $json = json_decode((string) file_get_contents($path), true);
     expect($json)->toBeArray()
-        ->and($json['version'] ?? null)->toBe(2)
+        ->and($json['version'] ?? null)->toBe(3)
+        ->and($json['schema'] ?? null)->toBe('driver-catalog-v2')
         ->and($json['pci'])->toBeArray()->not->toBeEmpty()
         ->and($json['usb'])->toBeArray()->not->toBeEmpty()
         ->and($json['board_patterns'])->toBeArray()->not->toBeEmpty();

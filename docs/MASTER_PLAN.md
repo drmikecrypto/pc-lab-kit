@@ -2,8 +2,8 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars A–E shipped through **v4.0.0** (Open Book Lab: catalog, silicon dossier, assembly certificate). Capability-first doctrine: own the full lab, not an import shell.  
-**Last updated:** 2026-08-18  
+**Status:** Active — Pillars A–E shipped through **v4.0.1** (Hardware Reality Engine: Stability Oracle, `.pclab` sessions, 3D twin, driver confidence, Open Book provenance). Capability-first doctrine: own the full lab, not an import shell.  
+**Last updated:** 2026-08-20  
 **Repository:** [pc-lab-kit](../README.md)
 
 > Historical sections below still mention Flutter/Qt in places. Prefer this status block and the root README for what ships today.
@@ -27,6 +27,7 @@
 | **Pillar C — LCD GIF push, blink timing, RGB Lab** | Shipped (3.2.1 / 3.2.2) |
 | **Pillar D — Native Benchmark Arena** (Vulkan GPU + CPU/storage suite) | Shipped (3.3.0) |
 | **Pillar E — Open-Book Sensors** (Blackwell Hot Spot MMIO + catalog, dossier, assembly cert) | Shipped (3.4.0–4.0.0) — see [OPEN_BOOK_SENSORS.md](OPEN_BOOK_SENSORS.md) |
+| **v4.0.1 HRE** (Stability Oracle, `.pclab`, 3D topology, driver confidence, Rust R1 hook) | Shipped (4.0.1) |
 | Linux probe parity | Parked (R5+) |
 | Full Vulkan compute suite | Shipped compute helper in 3.3.0 (raster/3D suite later) |
 | Windows Service forever-on probe | Parked |

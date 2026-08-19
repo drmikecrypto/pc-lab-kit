@@ -45,7 +45,7 @@ class LabSuiteService
                 'label' => 'Deep Lab',
                 'duration_hint_min' => 22,
                 'benches' => ['cpu', 'cpu_mt', 'cpu_cache', 'memory', 'storage', 'gpu'],
-                'stress_id' => 'combined',
+                'stress_id' => 'oracle',
                 'stress_seconds' => 300,
             ],
         ];
@@ -179,6 +179,9 @@ class LabSuiteService
             'label' => 'Full Lab stress',
             'status' => ($suiteRun['status'] ?? 'ok') === 'failed' ? 'failed' : 'ok',
         ], $samples);
+        if (($stress['id'] ?? '') === 'oracle' || !empty($stress['oracle_steps'])) {
+            $cert = (new StabilityOracleService())->enrichCertificate($cert, $stress);
+        }
         $cert['timeline'] = $this->buildTimeline($samples);
         $analysis['stress_certificate'] = $cert;
         $analysis['silicon_dossier'] = (new SiliconDossierService())->present(
@@ -223,9 +226,16 @@ class LabSuiteService
             'token' => $saved['token'] ?? null,
             'mode' => 'suite',
         ]);
+        $sessionExport = (new LabSessionService())->export($analysis, [
+            'fingerprint' => $fp,
+            'profile' => $job['profile'] ?? 'standard',
+            'probe_version' => '6',
+        ]);
+        $analysis['session_hash'] = $sessionExport['session']['session_hash'];
         $assembly = (new AssemblyCertificateService())->build($analysis, [
             'token' => $saved['token'] ?? null,
             'shop_name' => (new SettingsService())->shopName(),
+            'session_hash' => $sessionExport['session']['session_hash'],
         ]);
 
         $job['status'] = 'completed';
@@ -242,6 +252,8 @@ class LabSuiteService
             'report_html' => $export['html'],
             'assembly_certificate' => $assembly['document'],
             'assembly_certificate_html' => $assembly['html'],
+            'pclab_session' => $sessionExport['session'],
+            'pclab_session_file' => $sessionExport['filename'],
         ];
         $this->write($job);
 

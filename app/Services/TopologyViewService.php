@@ -107,4 +107,68 @@ class TopologyViewService
             'summary' => $graph['summary'] ?? [],
         ];
     }
+
+    /**
+     * Three.js-friendly 3D board layout (normalized -1..1 plane + elevation by type).
+     *
+     * @param array{nodes?: list<array<string, mixed>>, edges?: list<array<string, mixed>>, summary?: array<string, mixed>} $graph
+     * @return array<string, mixed>
+     */
+    public function fromGraph3d(array $graph): array
+    {
+        $flat = $this->fromGraph($graph);
+        $slots3d = [
+            'cpu' => ['x' => -0.35, 'y' => 0.08, 'z' => 0.05],
+            'gpu' => ['x' => 0.35, 'y' => 0.08, 'z' => 0.12],
+            'ram' => ['x' => -0.55, 'y' => -0.05, 'z' => 0.02],
+            'storage' => ['x' => 0.0, 'y' => -0.25, 'z' => 0.0],
+            'psu' => ['x' => 0.55, 'y' => -0.35, 'z' => 0.0],
+            'motherboard' => ['x' => 0.0, 'y' => 0.0, 'z' => 0.0],
+            'chipset' => ['x' => 0.05, 'y' => 0.02, 'z' => 0.03],
+            'network' => ['x' => 0.65, 'y' => -0.1, 'z' => 0.0],
+            'cooler' => ['x' => -0.35, 'y' => 0.22, 'z' => 0.15],
+            'system' => ['x' => 0.0, 'y' => 0.35, 'z' => 0.0],
+        ];
+        $nodes3d = [];
+        foreach ((array) ($flat['nodes'] ?? []) as $n) {
+            if (!is_array($n)) {
+                continue;
+            }
+            $id = (string) ($n['id'] ?? '');
+            $type = (string) ($n['type'] ?? 'component');
+            $pos = $slots3d[$id] ?? $slots3d[$type] ?? [
+                'x' => (($n['x'] ?? 400) / 800) - 0.5,
+                'y' => 0.15 - (($n['y'] ?? 240) / 480) * 0.5,
+                'z' => 0.02,
+            ];
+            $nodes3d[] = [
+                'id' => $id,
+                'type' => $type,
+                'label' => (string) ($n['label'] ?? $id),
+                'position' => $pos,
+                'size' => $this->nodeSize3d($type),
+                'attrs' => (array) ($n['attrs'] ?? []),
+            ];
+        }
+
+        return [
+            'mode' => '3d',
+            'nodes' => $nodes3d,
+            'links' => $flat['links'] ?? [],
+            'summary' => $flat['summary'] ?? [],
+            'board' => ['width' => 1.4, 'depth' => 1.0, 'thickness' => 0.02],
+        ];
+    }
+
+    private function nodeSize3d(string $type): array
+    {
+        return match ($type) {
+            'cpu' => ['w' => 0.18, 'h' => 0.04, 'd' => 0.18],
+            'gpu' => ['w' => 0.28, 'h' => 0.06, 'd' => 0.12],
+            'ram', 'dimm' => ['w' => 0.08, 'h' => 0.03, 'd' => 0.22],
+            'storage' => ['w' => 0.14, 'h' => 0.02, 'd' => 0.06],
+            'psu' => ['w' => 0.2, 'h' => 0.08, 'd' => 0.14],
+            default => ['w' => 0.1, 'h' => 0.03, 'd' => 0.1],
+        };
+    }
 }

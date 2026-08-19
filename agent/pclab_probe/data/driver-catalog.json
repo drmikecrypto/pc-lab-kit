@@ -1,6 +1,7 @@
 {
-  "version": 2,
-  "note": "Curated package entry points with one-click install metadata. Not a live scrape. Latest = catalog version vs installed.",
+  "version": 3,
+  "schema": "driver-catalog-v2",
+  "note": "Curated package entry points with one-click install metadata. v3 adds sha256, success_rate, hwid_patterns.",
   "pci": [
     {
       "ven": "10de",
@@ -13,7 +14,12 @@
       "install_method": "updater_app",
       "updater_names": ["NVIDIA App", "NVIDIA GeForce Experience", "NVIDIA Container"],
       "package_url": null,
-      "silent_args": null
+      "silent_args": null,
+      "sha256": null,
+      "last_verified": "2026-08-20",
+      "success_rate": null,
+      "hwid_patterns": ["PCI\\VEN_10DE&DEV_*"],
+      "inf_name": null
     },
     {
       "ven": "1002",

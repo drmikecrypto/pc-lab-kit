@@ -49,6 +49,14 @@ class StressCertificateService
         $gpuPeak = $this->num($run['gpu_temp_max'] ?? null) ?? $gpuPeak;
         $hotspotPeak = $this->num($run['gpu_hotspot_max'] ?? null) ?? $hotspotPeak;
         $whea += (int) ($run['whea_errors'] ?? 0);
+        $wheaTimeline = is_array($run['whea_timeline'] ?? null) ? $run['whea_timeline'] : null;
+        if ($wheaTimeline !== null && isset($wheaTimeline['count'])) {
+            $whea = max($whea, (int) $wheaTimeline['count']);
+        }
+
+        $pcieWarnings = is_array($run['pcie_warnings'] ?? null) ? $run['pcie_warnings'] : [];
+        $oracleSteps = is_array($run['oracle_steps'] ?? null) ? $run['oracle_steps'] : [];
+        $stabilityMargin = isset($run['stability_margin_pct']) ? (float) $run['stability_margin_pct'] : null;
 
         $failures = [];
         if ($cpuPeak !== null && $cpuPeak >= $cpuLimit) {
@@ -87,6 +95,10 @@ class StressCertificateService
                 'gpu_hotspot_max' => $hotspotPeak,
                 'whea_errors' => $whea > 0 ? $whea : null,
             ], static fn ($v) => $v !== null),
+            'whea_timeline' => $wheaTimeline,
+            'pcie_warnings' => $pcieWarnings !== [] ? array_values($pcieWarnings) : null,
+            'stability_margin_pct' => $stabilityMargin,
+            'oracle_steps' => $oracleSteps !== [] ? $oracleSteps : null,
             'limits' => [
                 'cpu_temp_max' => $cpuLimit,
                 'gpu_temp_max' => $gpuLimit,

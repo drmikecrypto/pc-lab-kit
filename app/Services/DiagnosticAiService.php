@@ -287,6 +287,18 @@ PROMPT;
                     !empty($cert['passed']) ? 'ok' : 'warn',
                     'rules'
                 );
+                $margin = $cert['stability_margin_pct'] ?? null;
+                $grade = (string) ($cert['oracle_grade'] ?? '');
+                if ($margin !== null || $grade !== '') {
+                    $body = $grade !== ''
+                        ? "Oracle grade {$grade} · stability margin {$margin}% before thermal/WHEA limits."
+                        : "Stability margin {$margin}% headroom before thermal or WHEA limits.";
+                    if (!empty($cert['oracle_breach'])) {
+                        $body .= ' Limit: ' . (string) $cert['oracle_breach'];
+                    }
+                    $sev = ($margin !== null && (float) $margin >= 35 && empty($cert['oracle_breach'])) ? 'ok' : 'warn';
+                    $cards[] = $this->card('oracle', 'Stability Oracle', $body, $sev, 'oracle');
+                }
             }
 
             foreach (array_slice((array) ($analysis['risks'] ?? []), 0, 2) as $i => $risk) {

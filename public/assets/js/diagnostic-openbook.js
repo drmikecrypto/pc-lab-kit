@@ -29,6 +29,8 @@
       note: wrap?.note || data?.note || '',
       dossier: data?.dossier || null,
       thermal: data?.thermal || null,
+      pcie: data?.pcie || null,
+      provenance_total: data?.provenance_total ?? 0,
     };
   }
 
@@ -114,7 +116,10 @@
       lastPayload = data;
       window.__dxLastOpenBook = data;
       const ob = unwrapOpenBook(data);
-      const table = renderSensorTable(ob.sensors, ob.count, ob.open_book_therm, ob.open_book_vram, ob.note);
+      const pcieWarn = ob.pcie?.warnings?.length
+        ? `<p class="muted fs-xs warn">PCIe: ${esc(ob.pcie.warnings.join('; '))}</p>`
+        : '';
+      const table = pcieWarn + renderSensorTable(ob.sensors, ob.count, ob.open_book_therm, ob.open_book_vram, ob.note);
       const dossierHtml = renderDossierHtml(ob.dossier);
       const hwTable = el('dx-hwref-openbook-table');
       if (hwTable) hwTable.innerHTML = table;
@@ -126,7 +131,7 @@
       if (obDossier) obDossier.innerHTML = dossierHtml;
       const gauges = el('dx-ob-gauges');
       if (gauges) gauges.innerHTML = renderGauges(ob.sensors, ob.thermal);
-      if (status) status.textContent = `${ob.count} open-book · ${ob.dossier?.cpu?.model || 'Probe ok'}`;
+      if (status) status.textContent = `${ob.count} open-book · ${ob.provenance_total || 0} tags · ${ob.dossier?.cpu?.model || 'Probe ok'}`;
       window.dispatchEvent(new CustomEvent('dx:openbook-updated', { detail: data }));
     } catch (e) {
       if (status) status.textContent = 'Probe offline';

@@ -68,6 +68,51 @@ test('assembly certificate html includes verdict and open-book count', function 
         ->and($built['document']['passed'])->toBeTrue();
 });
 
+test('assembly certificate html includes whea pcie margin and verification qr', function () {
+    $hash = hash('sha256', 'pclab-session-test');
+    $built = (new AssemblyCertificateService())->build([
+        'report_summary' => ['cpu' => 'Ryzen 7 5800X', 'gpu' => 'RTX 5090', 'ram_gb' => 32],
+        'metrics' => [
+            'gpu_temp_max' => 71,
+            'gpu_hotspot_max' => 84,
+            'gpu_therm_spread' => 8,
+        ],
+        'stress_certificate' => [
+            'passed' => true,
+            'verdict' => 'PASS',
+            'whea_timeline' => ['count' => 2, 'events' => []],
+            'pcie_warnings' => ['GPU running x8 / max x16'],
+            'stability_margin_pct' => 41.5,
+        ],
+        'silicon_dossier' => [
+            'open_book' => [
+                'count' => 3,
+                'sensors' => [
+                    ['source' => 'blackwell_therm_mmio'],
+                    ['source' => 'pcie_measured'],
+                    ['source' => 'whea_correlated'],
+                ],
+            ],
+        ],
+        'session_hash' => $hash,
+    ], ['shop_name' => 'Truth Lab', 'token' => 'abc']);
+
+    expect($built['html'])->toContain('WHEA errors')
+        ->and($built['html'])->toContain('PCIe warnings')
+        ->and($built['html'])->toContain('x8 / max x16')
+        ->and($built['html'])->toContain('Stability margin')
+        ->and($built['html'])->toContain('41.5')
+        ->and($built['html'])->toContain('pclab://verify/' . $hash);
+});
+
+test('register catalog exposes at least twelve provenance tags', function () {
+    $path = dirname(__DIR__, 2) . '/agent/pclab_probe/data/register-catalog.json';
+    $json = json_decode((string) file_get_contents($path), true);
+    expect($json)->toBeArray()
+        ->and($json['provenance_tags'])->toBeArray()
+        ->and(count($json['provenance_tags']))->toBeGreaterThanOrEqual(12);
+});
+
 test('sensor deck defaults include vram and therm s1', function () {
     $sources = array_column((new SensorDeckService(sys_get_temp_dir() . '/pclab_deck_ob'))->defaultLayout()['widgets'], 'source');
     expect($sources)->toContain('gpu_vram_temp', 'gpu_therm_s1', 'gpu_therm_spread');

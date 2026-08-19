@@ -48,7 +48,8 @@ $script:Routes = @(
     @{ method = 'GET';  path = '/bench/catalog';      desc = 'runnable benchmarks' }
     @{ method = 'POST'; path = '/bench/run';          desc = 'CPU / CPU-MT / memory / storage / GPU bench' }
     @{ method = 'GET';  path = '/stress/catalog';     desc = 'runnable stress tests' }
-    @{ method = 'POST'; path = '/stress/run';         desc = 'CPU / memory / GPU / combined / quick stress' }
+    @{ method = 'POST'; path = '/stress/run';         desc = 'CPU / memory / GPU / combined / quick / oracle stress' }
+    @{ method = 'POST'; path = '/stress/oracle/start'; desc = 'adaptive stability oracle ramp' }
     @{ method = 'POST'; path = '/suite/start';       desc = 'start Full Lab suite (async)' }
     @{ method = 'GET';  path = '/suite/status';      desc = 'suite progress / result' }
     @{ method = 'POST'; path = '/suite/cancel';      desc = 'cancel running suite' }
@@ -176,6 +177,19 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
             "/telemetry/history" {
                 $body = ($script:Ring | ConvertTo-Json -Compress)
                 if (-not $body) { $body = "[]" }
+                try {
+                    . (Join-Path $scriptDir 'ProbeLib\system.ps1')
+                    $rust = Get-PcLabCoreHistory
+                    if ($rust -and $rust.Count -gt 0) {
+                        $ps = $body | ConvertFrom-Json
+                        if (-not $ps) { $ps = @() }
+                        $merged = @($ps) + @($rust)
+                        if ($merged.Count -gt $script:RingMax) {
+                            $merged = $merged[($merged.Count - $script:RingMax)..($merged.Count - 1)]
+                        }
+                        $body = ($merged | ConvertTo-Json -Compress)
+                    }
+                } catch {}
             }
             "/devices" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
@@ -232,12 +246,8 @@ Get-ProbeDriverInstallStatus -JobId '$job' | ConvertTo-Json -Depth 10 -Compress 
             "/openbook" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$scriptDir\ProbeLib\system.ps1'
-. '$scriptDir\ProbeLib\devices.ps1'
-. '$scriptDir\ProbeLib\dossier.ps1'
-`$t = Get-ProbeDeepTelemetry
-`$dev = Get-ProbeDeviceInventory
-`$d = Get-ProbeSiliconDossier -Telemetry `$t -Devices `$dev
-@{ open_book = `$t.open_book; dossier = `$d; thermal = `$t.thermal } | ConvertTo-Json -Depth 12 -Compress }
+. '$scriptDir\ProbeLib\openbook.ps1'
+Get-ProbeOpenBookPayload | ConvertTo-Json -Depth 12 -Compress }
 "@
             }
             "/oc/status" {
@@ -435,6 +445,25 @@ Invoke-ProbeBenchmark -Id `$id -Options `$opts | ConvertTo-Json -Depth 8 -Compre
 if (`$j.seconds) { `$opts.seconds = [int]`$j.seconds }
 if (`$j.percent) { `$opts.percent = [int]`$j.percent }
 Invoke-ProbeStress -Id `$id -Options `$opts | ConvertTo-Json -Depth 8 -Compress }
+"@
+                } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+            }
+            "/stress/oracle/start" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $tmp = Join-Path $env:TEMP ("pclab_oracle_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    if (-not $raw) { $raw = '{}' }
+                    [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$stressScript'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+`$opts = @{}
+if (`$j.step_seconds) { `$opts.step_seconds = [int]`$j.step_seconds }
+if (`$j.cpu_temp_max) { `$opts.cpu_temp_max = [double]`$j.cpu_temp_max }
+if (`$j.gpu_temp_max) { `$opts.gpu_temp_max = [double]`$j.gpu_temp_max }
+if (`$j.gpu_hotspot_max) { `$opts.gpu_hotspot_max = [double]`$j.gpu_hotspot_max }
+Invoke-ProbeStabilityOracle -Options `$opts | ConvertTo-Json -Depth 10 -Compress }
 "@
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }

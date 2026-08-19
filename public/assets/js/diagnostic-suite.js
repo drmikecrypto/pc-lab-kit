@@ -63,21 +63,26 @@
     const cert = analysis.stress_certificate || {};
     const score = analysis.health_score ?? '—';
     const grade = analysis.health_grade ?? '—';
+    const oracleLine =
+      cert.stability_margin_pct != null || cert.oracle_grade
+        ? ` · oracle <strong>${esc(String(cert.oracle_grade || '—'))}</strong> · margin <strong>${esc(String(cert.stability_margin_pct ?? '—'))}%</strong>`
+        : '';
     panel.hidden = false;
     panel.innerHTML = `
       <div class="dx-suite-result__head">
         <h3>Full Lab complete</h3>
         <p>Health <strong>${esc(String(grade))}</strong> · score <strong>${esc(String(score))}</strong>
-          · stress <strong>${esc(cert.verdict || '—')}</strong></p>
+          · stress <strong>${esc(cert.verdict || '—')}</strong>${oracleLine}</p>
       </div>
       <div class="dx-suite-result__actions">
         <button type="button" class="dx-btn primary" id="dx-suite-open-report">Open report</button>
         <button type="button" class="dx-btn ghost" id="dx-suite-open-cert">Assembly Certificate</button>
-        <button type="button" class="dx-btn ghost" id="dx-suite-show-topology">Topology</button>
+        <button type="button" class="dx-btn ghost" id="dx-suite-show-topology">Topology 3D</button>
+        <button type="button" class="dx-btn ghost" id="dx-suite-export-session">Export .pclab</button>
       </div>
       <div id="dx-suite-report-frame" hidden></div>
       <div id="dx-suite-cert-frame" hidden></div>
-      <div id="dx-suite-topology" class="dx-topology" hidden></div>`;
+      <div id="dx-suite-topology" class="dx-topology dx-topology-3d" hidden style="min-height:360px"></div>`;
 
     renderCards(analysis.advisor_cards || []);
 
@@ -101,7 +106,8 @@
       const box = el('dx-suite-topology');
       if (!box) return;
       box.hidden = false;
-      box.innerHTML = '<p class="muted">Building topology…</p>';
+      box.innerHTML = '<p class="muted">Building 3D topology…</p>';
+      window.dispatchEvent(new CustomEvent('dx:suite-stress-start'));
       try {
         const res = await fetch('/api/diagnostic/topology', {
           method: 'POST',
@@ -109,7 +115,10 @@
           body: JSON.stringify({ hardware_graph: analysis.hardware_graph || null }),
         });
         const data = await res.json();
-        if (window.PcLabTopology?.render) {
+        if (window.PcLabTopology3d?.render && data.topology_3d) {
+          box.innerHTML = '';
+          window.PcLabTopology3d.render(box, data);
+        } else if (window.PcLabTopology?.render) {
           window.PcLabTopology.render(box, data.topology);
         } else {
           box.innerHTML = `<pre class="dx-topology-fallback">${esc(JSON.stringify(data.topology?.summary || {}, null, 2))}</pre>`;
@@ -117,6 +126,17 @@
       } catch (e) {
         box.innerHTML = `<p class="muted">Topology failed: ${esc(e.message || e)}</p>`;
       }
+    });
+
+    el('dx-suite-export-session')?.addEventListener('click', () => {
+      const session = job?.result?.pclab_session;
+      if (!session) return;
+      const blob = new Blob([JSON.stringify(session, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = job?.result?.pclab_session_file || 'session.pclab.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
     });
   }
 
@@ -249,6 +269,43 @@
   function boot() {
     el('dx-suite-run')?.addEventListener('click', runSuite);
     el('dx-suite-cancel')?.addEventListener('click', cancelSuite);
+    el('dx-suite-import-file')?.addEventListener('change', importSession);
+  }
+
+  async function importSession(ev) {
+    const file = ev.target?.files?.[0];
+    const panel = el('dx-suite-import-result');
+    if (!file || !panel) return;
+    panel.hidden = false;
+    panel.innerHTML = '<p class="muted">Importing session…</p>';
+    try {
+      const json = await file.text();
+      const res = await fetch('/api/diagnostic/session/import', {
+        method: 'POST',
+        headers: csrfHeaders(),
+        body: JSON.stringify({ json }),
+      });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || 'import failed');
+      const drift = data.drift;
+      const verified = data.session?.verified ? 'verified' : 'unverified signature';
+      const aging = drift ? `${drift.silicon_aging_index}/100 (${drift.label})` : '—';
+      const notes = (drift?.notes || []).map((n) => `<li>${esc(n)}</li>`).join('');
+      panel.innerHTML = `
+        <div class="dx-suite-import-card">
+          <h3>Imported .pclab session</h3>
+          <p class="muted fs-sm">${esc(verified)} · signed ${esc(data.session?.signed_at || '—')}</p>
+          <p>Silicon aging index: <strong>${esc(String(aging))}</strong></p>
+          ${notes ? `<ul class="fs-sm">${notes}</ul>` : ''}
+          <p class="muted fs-xs">Run Full Lab on this machine to compute drift vs current hardware.</p>
+        </div>`;
+      window.__dxImportedSession = data.session;
+      window.dispatchEvent(new CustomEvent('dx:session-imported', { detail: data }));
+    } catch (e) {
+      panel.innerHTML = `<p class="muted">Import failed: ${esc(e.message || e)}</p>`;
+    } finally {
+      ev.target.value = '';
+    }
   }
 
   if (document.readyState === 'loading') {

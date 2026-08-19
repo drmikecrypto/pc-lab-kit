@@ -40,6 +40,13 @@ if (Test-Path (Join-Path $agentDir "PcLabHwMon.exe")) {
 if (Test-Path (Join-Path $agentDir "PcLabVkBench.exe")) {
     Copy-Item (Join-Path $agentDir "PcLabVkBench.exe") $stage
 }
+$coreExe = Join-Path $agentDir "pclab_core.exe"
+$coreBuilt = Join-Path $root "agent\pclab_core\target\release\pclab_core.exe"
+if (Test-Path $coreExe) {
+    Copy-Item $coreExe $stage
+} elseif (Test-Path $coreBuilt) {
+    Copy-Item $coreBuilt (Join-Path $stage "pclab_core.exe")
+}
 $tools = Join-Path $agentDir "tools"
 if (Test-Path $tools) {
     Copy-Item $tools (Join-Path $stage "tools") -Recurse

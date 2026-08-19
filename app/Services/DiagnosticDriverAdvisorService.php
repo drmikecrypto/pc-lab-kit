@@ -53,6 +53,10 @@ class DiagnosticDriverAdvisorService
                 'is_generic' => !empty($a['is_generic']),
                 'is_stale' => !empty($a['is_stale']),
                 'match_confidence' => (string) ($a['match_confidence'] ?? ''),
+                'match_confidence_pct' => isset($a['match_confidence_pct']) && is_numeric($a['match_confidence_pct'])
+                    ? (int) $a['match_confidence_pct'] : null,
+                'success_rate' => isset($a['success_rate']) && is_numeric($a['success_rate'])
+                    ? (float) $a['success_rate'] : null,
                 'primary_link' => $this->linkOne((array) ($a['primary_link'] ?? [])),
                 'links' => $this->links((array) ($a['links'] ?? [])),
                 'install_method' => (string) ($a['install_method'] ?? ($a['primary_link']['install_method'] ?? '')),
@@ -79,6 +83,8 @@ class DiagnosticDriverAdvisorService
                 'status' => (string) ($step['status'] ?? 'ok'),
                 'action_count' => count((array) ($step['actions'] ?? [])),
                 'match_confidence' => (string) ($step['match_confidence'] ?? ''),
+                'match_confidence_pct' => $this->confidencePct($step),
+                'success_rate' => $this->successRate($step),
                 'primary_link' => $this->linkOne((array) ($step['primary_link'] ?? [])),
                 'links' => $this->links((array) ($step['links'] ?? [])),
                 'install_method' => (string) ($step['install_method'] ?? ($step['primary_link']['install_method'] ?? 'open_url')),
@@ -108,6 +114,8 @@ class DiagnosticDriverAdvisorService
                 'vendor_id' => (string) ($g['vendor_id'] ?? ''),
                 'device_id' => (string) ($g['device_id'] ?? ''),
                 'match_confidence' => (string) ($g['match_confidence'] ?? ''),
+                'match_confidence_pct' => $this->confidencePct($g),
+                'success_rate' => $this->successRate($g),
                 'primary_link' => $this->linkOne((array) ($g['primary_link'] ?? [])),
                 'links' => $this->links((array) ($g['links'] ?? [])),
             ];
@@ -129,6 +137,8 @@ class DiagnosticDriverAdvisorService
                 'device_id' => (string) ($d['device_id'] ?? ''),
                 'bus' => (string) ($d['bus'] ?? ''),
                 'match_confidence' => (string) ($d['match_confidence'] ?? ''),
+                'match_confidence_pct' => $this->confidencePct($d),
+                'success_rate' => $this->successRate($d),
                 'primary_link' => $this->linkOne((array) ($d['primary_link'] ?? [])),
                 'links' => $this->links((array) ($d['links'] ?? [])),
                 'install_method' => (string) ($d['install_method'] ?? ($d['primary_link']['install_method'] ?? '')),
@@ -254,6 +264,26 @@ class DiagnosticDriverAdvisorService
         }
 
         return $out;
+    }
+
+    /** @param array<string, mixed> $row */
+    private function confidencePct(array $row): ?int
+    {
+        if (!isset($row['match_confidence_pct']) || !is_numeric($row['match_confidence_pct'])) {
+            return null;
+        }
+
+        return (int) $row['match_confidence_pct'];
+    }
+
+    /** @param array<string, mixed> $row */
+    private function successRate(array $row): ?float
+    {
+        if (!isset($row['success_rate']) || !is_numeric($row['success_rate'])) {
+            return null;
+        }
+
+        return (float) $row['success_rate'];
     }
 
     /**

@@ -1,0 +1,5 @@
+[
+  { "ts": "2026-08-20T00:00:01Z", "cpu_temp": 42, "gpu_temp": 48, "gpu_hotspot": 52 },
+  { "ts": "2026-08-20T00:00:03Z", "cpu_temp": 55, "gpu_temp": 61, "gpu_hotspot": 68 },
+  { "ts": "2026-08-20T00:00:05Z", "cpu_temp": 68, "gpu_temp": 72, "gpu_hotspot": 79 }
+]

@@ -69,6 +69,75 @@ function Get-ProbeDriverCatalog {
     return $script:ProbeDriverCatalog
 }
 
+function Get-ProbeDriverOutcomesPath {
+    $dir = Join-Path $env:LOCALAPPDATA 'PcLabKit\Probe'
+    if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+    return (Join-Path $dir 'driver-outcomes.json')
+}
+
+function Get-ProbeDriverOutcomes {
+    $path = Get-ProbeDriverOutcomesPath
+    if (-not (Test-Path $path)) { return @{ version = 1; records = @() } }
+    try {
+        return (Get-Content $path -Raw -Encoding UTF8 | ConvertFrom-Json)
+    } catch {
+        return @{ version = 1; records = @() }
+    }
+}
+
+function Record-ProbeDriverOutcome {
+    param(
+        [string]$InstanceId,
+        [string]$Category,
+        [string]$VendorId,
+        [string]$DeviceId,
+        [hashtable]$Before,
+        [hashtable]$After,
+        [bool]$Ok,
+        [string]$InstallMethod = ''
+    )
+    $fixed = $false
+    if ($Before -and $After) {
+        $bp = [int]($Before.problem)
+        $ap = [int]($After.problem)
+        $fixed = ($bp -gt 0 -and $ap -eq 0) -or ($Before.status -ne 'OK' -and $After.status -eq 'OK')
+    }
+    $rec = @{
+        at = (Get-Date).ToUniversalTime().ToString('o')
+        instance_id = $InstanceId
+        category = $Category
+        vendor_id = $VendorId
+        device_id = $DeviceId
+        ok = $Ok
+        fixed = $fixed
+        install_method = $InstallMethod
+        before_problem = if ($Before) { $Before.problem } else { $null }
+        after_problem = if ($After) { $After.problem } else { $null }
+    }
+    $store = Get-ProbeDriverOutcomes
+    $list = @($store.records)
+    $list += $rec
+    if ($list.Count -gt 500) { $list = @($list | Select-Object -Last 500) }
+    @{ version = 1; records = $list } | ConvertTo-Json -Depth 6 -Compress | Set-Content -Path (Get-ProbeDriverOutcomesPath) -Encoding UTF8
+    return $rec
+}
+
+function Get-ProbeDriverCatalogConfidence {
+    param([string]$VendorId, [string]$DeviceId, [string]$Category = '')
+    $outcomes = Get-ProbeDriverOutcomes
+    $matches = @($outcomes.records | Where-Object {
+        ($VendorId -and "$($_.vendor_id)" -eq $VendorId) -or ($Category -and "$($_.category)" -eq $Category)
+    })
+    if ($matches.Count -eq 0) { return @{ confidence_pct = 72; success_rate = $null; sample_count = 0 } }
+    $success = @($matches | Where-Object { $_.fixed -eq $true -or $_.ok -eq $true }).Count
+    $rate = [math]::Round(100.0 * $success / [Math]::Max(1, $matches.Count), 1)
+    return @{
+        confidence_pct = [int][Math]::Min(99, [Math]::Max(55, [int]$rate))
+        success_rate = $rate
+        sample_count = $matches.Count
+    }
+}
+
 function Infer-ProbeDriverCategory {
     param(
         [string]$Category = "",
@@ -1209,6 +1278,11 @@ function Start-ProbeDriverInstall {
     $job.finished_at = (Get-Date).ToUniversalTime().ToString('o')
     Save-ProbeDriverInstallJob $job
 
+    $outcome = Record-ProbeDriverOutcome -InstanceId $InstanceId -Category $Category `
+        -VendorId $vendorId -DeviceId $deviceId -Before $before -After $after `
+        -Ok ([bool]$job.ok) -InstallMethod $method
+    $confidence = Get-ProbeDriverCatalogConfidence -VendorId $vendorId -DeviceId $deviceId -Category $Category
+
     return @{
         ok = [bool]$job.ok
         job = $jobId
@@ -1221,6 +1295,9 @@ function Start-ProbeDriverInstall {
         elevated = $elevated
         error = $job.error
         primary_link = $resolved.primary_link
+        outcome = $outcome
+        match_confidence_pct = $confidence.confidence_pct
+        success_rate = $confidence.success_rate
     }
 }
 
