@@ -2,12 +2,19 @@
 
 declare(strict_types=1);
 
+use App\Database;
 use App\Services\BenchmarkArenaService;
 use App\Services\BenchmarkDatasetService;
 use PHPUnit\Framework\TestCase;
 
 final class BenchmarkArenaTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        Database::resetConnection();
+        Database::migrate();
+    }
+
     public function testArenaPayloadHasComponentsAndGlobalStats(): void
     {
         $root = dirname(__DIR__, 2);
