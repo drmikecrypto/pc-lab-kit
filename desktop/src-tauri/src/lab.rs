@@ -147,7 +147,7 @@ fn prepare_work_dir(resource_lab: &Path) -> Result<PathBuf, String> {
     Ok(data_dir)
 }
 
-pub fn resolve_resource_lab(resolver: &tauri::path::PathResolver) -> Result<PathBuf, String> {
+pub fn resolve_resource_lab<R: tauri::Runtime>(resolver: &tauri::path::PathResolver<R>) -> Result<PathBuf, String> {
     for rel in ["lab", "resources/lab"] {
         if let Ok(path) = resolver.resolve(rel, tauri::path::BaseDirectory::Resource) {
             if path.join("public").is_dir() {
