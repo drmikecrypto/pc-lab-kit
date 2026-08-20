@@ -25,14 +25,19 @@
   function mirrorAdvisorCards() {
     const src = document.getElementById('dx-advisor-cards');
     const rail = document.getElementById('dx-rail-advisor');
+    const empty = document.getElementById('dx-rail-empty');
     if (!src || !rail) return;
-    const obs = new MutationObserver(() => {
+
+    function sync() {
+      const hasCards = !src.hidden && src.innerHTML.trim() !== '';
       rail.innerHTML = src.innerHTML;
-      rail.hidden = src.hidden;
-    });
-    obs.observe(src, { childList: true, attributes: true, attributeFilter: ['hidden'] });
-    rail.innerHTML = src.innerHTML;
-    rail.hidden = src.hidden;
+      rail.hidden = !hasCards;
+      if (empty) empty.hidden = hasCards;
+    }
+
+    const obs = new MutationObserver(sync);
+    obs.observe(src, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });
+    sync();
   }
 
   async function initTwinPreview() {

@@ -316,6 +316,7 @@
   }
 
   document.getElementById('dx-fetch-probe')?.addEventListener('click', fetchLocalProbe);
+  document.getElementById('dx-fetch-probe-web')?.addEventListener('click', fetchLocalProbe);
   document.getElementById('dx-run-full')?.addEventListener('click', runFullScan);
 
   btnPrev.addEventListener('click', () => { if (stepIdx > 0) { stepIdx--; renderStep(); } });

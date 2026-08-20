@@ -6,10 +6,49 @@
 
 .dx-pulse-bridge {
   display: grid;
-  grid-template-columns: 1fr minmax(140px, 220px) 1fr;
+  grid-template-columns: 1fr minmax(100px, 160px) 1fr;
   gap: 0;
   align-items: stretch;
-  min-height: 280px;
+  min-height: 0;
+}
+
+.dx-lab-canvas .dx-pulse-node {
+  padding: 14px 14px 12px;
+  border-radius: 14px;
+}
+
+.dx-lab-canvas .dx-pulse-name {
+  font-size: 1.05rem;
+}
+
+.dx-lab-canvas .dx-pulse-role {
+  margin-bottom: 10px;
+}
+
+.dx-lab-canvas .dx-pulse-metric {
+  padding: 8px 10px;
+  border-radius: 10px;
+}
+
+.dx-lab-canvas .dx-pulse-metric strong {
+  font-size: 1.05rem;
+}
+
+.dx-lab-canvas .dx-pulse-live {
+  margin-top: 8px;
+  padding-top: 8px;
+  min-height: 0;
+}
+
+.dx-lab-canvas .dx-pulse-whisper {
+  margin-top: 10px;
+  padding: 8px 12px;
+  min-height: 0;
+}
+
+.dx-lab-canvas .dx-pulse-ring {
+  width: 36px;
+  height: 36px;
 }
 
 @media (max-width: 960px) {

@@ -6,6 +6,17 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.0.5] - 2026-08-20
+
+### Changed
+- **Command Center:** denser lab shell — compact status bar, Run Full Lab first, module marks on left nav, brand tokens (orange/cyan)
+
+### Fixed
+- Sticky left nav no longer covered by Advisor notes when scrolling (rail stays in the main column; nav has an opaque layer)
+- Desktop splash uses brand colors, a short human error, and Retry instead of a raw HTTP dump
+- Desktop app hides “Download Probe” and leads Full scan with Connect Probe
+- Advisor rail empty state, suite score, history copy, and certificate verify page
+
 ## [4.0.4] - 2026-08-20
 
 ### Fixed

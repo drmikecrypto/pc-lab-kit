@@ -1,9 +1,10 @@
 /* Command Center + advisor cards + sensor deck + topology */
 .dx-command-center {
-  margin: 0 0 1.5rem;
-  padding: 1.25rem 1.35rem 1.4rem;
+  margin: 0 0 1rem;
+  padding: 1.1rem 1.2rem 1.2rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: linear-gradient(145deg, rgba(18, 28, 42, 0.95), rgba(10, 14, 23, 0.9));
+  border-radius: var(--pclab-radius, 16px);
 }
 .dx-command-center__eyebrow {
   margin: 0 0 0.35rem;
@@ -46,7 +47,7 @@
   display: block;
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, #3d8bfd, #56d364);
+  background: linear-gradient(90deg, #f29f05, #22d3ee);
   transition: width 0.35s ease;
 }
 .dx-suite-meta {
@@ -79,18 +80,51 @@
   font-size: 0.88rem;
   color: #c9d1d9;
 }
-.dx-advisor-card--warn { border-color: rgba(210, 153, 34, 0.45); }
-.dx-advisor-card--ok { border-color: rgba(63, 185, 80, 0.45); }
-.dx-advisor-card--action { border-color: rgba(88, 166, 255, 0.4); }
+.dx-advisor-card--warn { border-color: rgba(210, 153, 34, 0.55); background: rgba(210, 153, 34, 0.08); }
+.dx-advisor-card--ok { border-color: rgba(63, 185, 80, 0.5); background: rgba(63, 185, 80, 0.07); }
+.dx-advisor-card--action { border-color: rgba(34, 211, 238, 0.45); background: rgba(34, 211, 238, 0.07); }
+.dx-advisor-card--info { border-color: rgba(255, 255, 255, 0.12); }
 .dx-advisor-src {
   font-size: 0.7rem;
   color: #6e7b8b;
   text-transform: uppercase;
 }
+.dx-advisor-card header strong {
+  font-size: 0.92rem;
+}
 .dx-suite-result {
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.dx-suite-result__score {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 16px;
+  margin: 0 0 0.75rem;
+}
+.dx-suite-result__score-num {
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--pclab-cyan, #22d3ee);
+  line-height: 1;
+}
+.dx-suite-result__score-grade {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+}
+.dx-suite-result__meta {
+  margin: 0 0 0.85rem;
+  color: #9aa7b5;
+  font-size: 0.9rem;
+}
+.dx-suite-result__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 .dx-sensor-deck {
   margin-top: 1.25rem;

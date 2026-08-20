@@ -71,20 +71,34 @@
     panel.innerHTML = `
       <div class="dx-suite-result__head">
         <h3>Full Lab complete</h3>
-        <p>Health <strong>${esc(String(grade))}</strong> · score <strong>${esc(String(score))}</strong>
-          · stress <strong>${esc(cert.verdict || '—')}</strong>${oracleLine}</p>
+        <div class="dx-suite-result__score">
+          <span class="dx-suite-result__score-num">${esc(String(score))}</span>
+          <span class="dx-suite-result__score-grade">${esc(String(grade))}</span>
+        </div>
+        <p class="dx-suite-result__meta">Stress <strong>${esc(cert.verdict || '—')}</strong>${oracleLine}</p>
       </div>
       <div class="dx-suite-result__actions">
         <button type="button" class="dx-btn primary" id="dx-suite-open-report">Open report</button>
         <button type="button" class="dx-btn ghost" id="dx-suite-open-cert">Assembly Certificate</button>
         <button type="button" class="dx-btn ghost" id="dx-suite-show-topology">Topology 3D</button>
         <button type="button" class="dx-btn ghost" id="dx-suite-export-session">Export .pclab</button>
+        <button type="button" class="dx-btn ghost" data-dx-goto="history">History</button>
+        <button type="button" class="dx-btn ghost" data-dx-goto="openbook">Open Book</button>
       </div>
       <div id="dx-suite-report-frame" hidden></div>
       <div id="dx-suite-cert-frame" hidden></div>
       <div id="dx-suite-topology" class="dx-topology dx-topology-3d" hidden style="min-height:360px"></div>`;
 
     renderCards(analysis.advisor_cards || []);
+
+    panel.querySelectorAll('[data-dx-goto]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-dx-goto');
+        const legacy = document.querySelector(`[data-dx-tab="${tab}"]`);
+        if (legacy) legacy.click();
+        else if (window.dxActivateTab) window.dxActivateTab(tab);
+      });
+    });
 
     el('dx-suite-open-report')?.addEventListener('click', () => {
       const frame = el('dx-suite-report-frame');

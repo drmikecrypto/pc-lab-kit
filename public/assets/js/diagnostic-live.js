@@ -205,7 +205,7 @@
     const list = el('dx-history-list');
     if (!list) return;
     if (!items.length) {
-      list.innerHTML = `<div class="dx-history-empty">No saved tests yet.<br>Run a quick or full scan — your history stays here.</div>`;
+      list.innerHTML = `<div class="dx-history-empty">No saved tests yet.<br>Run <strong>Full Lab</strong> from Command Center — results stay on this PC.</div>`;
       return;
     }
     list.innerHTML = items.map((h) => {

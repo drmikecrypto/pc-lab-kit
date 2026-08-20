@@ -9,15 +9,15 @@ $product = $cfg['product'] ?? [];
 $toolKit = new \App\Services\DiagnosticToolCatalogService();
 $toolTotal = $toolKit->total();
 ?>
-<link rel="stylesheet" href="/assets/css/diagnostic-shell.css?v=1.0.1">
+<link rel="stylesheet" href="/assets/css/diagnostic-shell.css?v=1.1.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-toolkit.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-pulse.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-pulse.css?v=1.1.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-lab.css?v=1.6.6">
-<link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.5.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.6.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.2.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.3.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.1.1">
 <link rel="stylesheet" href="/assets/css/diagnostic-arena.css?v=1.0.0">
 
 <div class="container dx-shell">
@@ -25,7 +25,7 @@ $toolTotal = $toolKit->total();
     <header class="dx-shell-hero">
         <div class="dx-shell-hero__inner">
             <p class="dx-shell-eyebrow">PC Lab Kit</p>
-            <h1 class="dx-shell-title">PC Lab Kit</h1>
+            <h1 class="dx-shell-title sr-only">PC Lab Kit</h1>
             <p class="dx-shell-lead"><?= e($product['full_tagline'] ?? 'One local lab — Full Lab suite, live sensors, drivers, stress, RGB, optional BYOK AI.') ?></p>
             <div class="dx-shell-meta">
                 <span class="dx-shell-pill dx-shell-pill--live">Local only</span>
@@ -39,18 +39,44 @@ $toolTotal = $toolKit->total();
     <div class="dx-lab-workspace">
         <nav class="dx-lab-nav" aria-label="Lab modules">
             <p class="dx-lab-nav__brand">Modules</p>
-            <button type="button" class="dx-lab-nav-btn is-active" data-dx-nav="command" aria-selected="true"><span class="dx-lab-nav-btn__icon"></span>Command Center</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="quick" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Quick scan</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="hardware" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Hardware Reference</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="openbook" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Open Book</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="full" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Full scan</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="arena" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Benchmark Arena</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="toolkit" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Toolkit</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="history" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>History</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="advanced" aria-selected="false"><span class="dx-lab-nav-btn__icon"></span>Advanced</button>
+            <button type="button" class="dx-lab-nav-btn is-active" data-dx-nav="command" aria-selected="true"><span class="dx-lab-nav-btn__icon" data-mark="CC"></span>Command Center</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="quick" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="Q"></span>Quick scan</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="hardware" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="HW"></span>Hardware Reference</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="openbook" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="OB"></span>Open Book</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="full" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="FS"></span>Full scan</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="arena" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="BA"></span>Benchmark Arena</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="toolkit" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="TK"></span>Toolkit</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="history" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="H"></span>History</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="advanced" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="+"></span>Advanced</button>
         </nav>
 
         <div class="dx-lab-main">
+    <section class="dx-command-center glass-effect" id="dx-command-center" aria-label="Command Center">
+        <p class="dx-command-center__eyebrow">Command Center</p>
+        <h2 class="dx-command-center__title">Run Full Lab</h2>
+        <p class="dx-command-center__lead">One action: probe → benches → stress → scored report with advisor cards. Keep advanced tabs for power users.</p>
+        <div class="dx-command-center__row">
+            <label class="sr-only" for="dx-suite-profile">Suite profile</label>
+            <select id="dx-suite-profile" aria-label="Suite profile">
+                <option value="quick">Quick Lab (~5 min)</option>
+                <option value="standard" selected>Full Lab (~12 min)</option>
+                <option value="deep">Deep Lab (~20 min)</option>
+            </select>
+            <button type="button" class="dx-btn primary" id="dx-suite-run">Run Full Lab</button>
+            <button type="button" class="dx-btn ghost" id="dx-suite-cancel" hidden>Cancel</button>
+            <label class="dx-btn ghost dx-suite-import-label" for="dx-suite-import-file">Import .pclab</label>
+            <input type="file" id="dx-suite-import-file" accept=".json,.pclab,.pclab.json,application/json" hidden>
+        </div>
+        <div id="dx-suite-import-result" class="dx-suite-import-result" hidden></div>
+        <div class="dx-suite-progress" aria-hidden="true"><span id="dx-suite-progress-bar"></span></div>
+        <div class="dx-suite-meta">
+            <span id="dx-suite-step">Idle</span>
+            <span id="dx-suite-status">Ready when Probe is running</span>
+        </div>
+        <div id="dx-advisor-cards" class="dx-advisor-cards" hidden></div>
+        <div id="dx-suite-result" class="dx-suite-result" hidden></div>
+    </section>
+
             <section class="dx-lab-canvas" aria-label="Live canvas">
                 <div class="dx-lab-canvas__head">
                     <h2>Live canvas</h2>
@@ -99,32 +125,6 @@ $toolTotal = $toolKit->total();
                 </div>
             </section>
 
-    <section class="dx-command-center glass-effect" id="dx-command-center" aria-label="Command Center">
-        <p class="dx-command-center__eyebrow">Command Center</p>
-        <h2 class="dx-command-center__title">Run Full Lab</h2>
-        <p class="dx-command-center__lead">One action: probe → benches → stress → scored report with advisor cards. Keep advanced tabs for power users.</p>
-        <div class="dx-command-center__row">
-            <label class="sr-only" for="dx-suite-profile">Suite profile</label>
-            <select id="dx-suite-profile" aria-label="Suite profile">
-                <option value="quick">Quick Lab (~5 min)</option>
-                <option value="standard" selected>Full Lab (~12 min)</option>
-                <option value="deep">Deep Lab (~20 min)</option>
-            </select>
-            <button type="button" class="dx-btn primary" id="dx-suite-run">Run Full Lab</button>
-            <button type="button" class="dx-btn ghost" id="dx-suite-cancel" hidden>Cancel</button>
-            <label class="dx-btn ghost dx-suite-import-label" for="dx-suite-import-file">Import .pclab</label>
-            <input type="file" id="dx-suite-import-file" accept=".json,.pclab,.pclab.json,application/json" hidden>
-        </div>
-        <div id="dx-suite-import-result" class="dx-suite-import-result" hidden></div>
-        <div class="dx-suite-progress" aria-hidden="true"><span id="dx-suite-progress-bar"></span></div>
-        <div class="dx-suite-meta">
-            <span id="dx-suite-step">Idle</span>
-            <span id="dx-suite-status">Ready when Probe is running</span>
-        </div>
-        <div id="dx-advisor-cards" class="dx-advisor-cards" hidden></div>
-        <div id="dx-suite-result" class="dx-suite-result" hidden></div>
-    </section>
-
     <nav class="dx-tabs dx-tabs--legacy-hidden" aria-label="Lab sections">
         <div class="dx-tabs__list" role="tablist">
             <button type="button" class="dx-tab-btn is-active" role="tab" data-dx-tab="command" aria-selected="true">Command Center</button>
@@ -140,7 +140,11 @@ $toolTotal = $toolKit->total();
     </nav>
 
     <div class="dx-tab-panel is-active" data-dx-panel="command" role="tabpanel" id="dx-command-panel">
-        <p class="muted fs-sm dx-quick-hint">Use <strong>Run Full Lab</strong> above, or pick a module from the left nav.</p>
+        <div class="dx-command-next">
+            <p class="dx-command-next__item"><strong>1. Pick a profile</strong>Quick Lab (~5 min), Full Lab (~12 min), or Deep Lab (~20 min).</p>
+            <p class="dx-command-next__item"><strong>2. Run Full Lab</strong>Probe, benches, and stress stay on this PC. Watch progress above.</p>
+            <p class="dx-command-next__item"><strong>3. Or import</strong>Load a <code>.pclab</code> session if you already have a report.</p>
+        </div>
     </div>
 
     <div class="dx-tab-panel" data-dx-panel="quick" role="tabpanel" id="dx-wizard-panel" hidden>
@@ -181,8 +185,8 @@ $toolTotal = $toolKit->total();
                 <input type="search" id="dx-hwref-search" placeholder="Search name, VEN, DEV, instance…" class="dx-hwref__search">
             </div>
             <div class="dx-hwref__layout">
-                <div class="dx-hwref__tree" id="dx-hwref-tree"><p class="muted fs-sm">Connect Probe and scan to load the device tree.</p></div>
-                <div class="dx-hwref__detail" id="dx-hwref-detail"><p class="muted fs-sm">Select a device for every field.</p></div>
+                <div class="dx-hwref__tree" id="dx-hwref-tree"><p class="muted fs-sm dx-empty-hint">No inventory yet. Click <strong>Scan inventory</strong> — Probe must be running (it starts with the desktop app).</p></div>
+                <div class="dx-hwref__detail" id="dx-hwref-detail"><p class="muted fs-sm dx-empty-hint">Select a device in the tree to see every measured field and confidence tag.</p></div>
             </div>
             <div class="dx-hwref__topo" id="dx-hwref-topology" aria-label="System topology"></div>
             <div class="dx-hwref__openbook" id="dx-hwref-openbook" aria-label="Open-book sensors">
@@ -219,7 +223,7 @@ $toolTotal = $toolKit->total();
             <div class="dx-openbook-lab__grid">
                 <aside class="dx-openbook-lab__col" id="dx-ob-dossier" aria-label="Silicon dossier">
                     <h3>Silicon Dossier</h3>
-                    <div id="dx-ob-dossier-body"><p class="muted fs-sm">Connect Probe to load CPU / GPU / RAM / board identity.</p></div>
+                    <div id="dx-ob-dossier-body"><p class="muted fs-sm dx-empty-hint">Click <strong>Refresh</strong> with Probe running to load CPU, GPU, RAM, and board identity.</p></div>
                 </aside>
                 <div class="dx-openbook-lab__col dx-openbook-lab__col--center" aria-label="Live open-book gauges">
                     <h3>Live open-book</h3>
@@ -244,10 +248,15 @@ $toolTotal = $toolKit->total();
                     <h2>Full scan with <span class="dx-gradient">PcLab Probe</span></h2>
                     <p class="dx-full-lead">Real sensors, bottlenecks, game performance, and stability — everything runs on your machine.</p>
                 </div>
-                <div class="dx-full-primary">
+                <div class="dx-full-primary dx-web-only">
                     <a href="<?= e($probeDl) ?>" class="dx-btn primary dx-full-dl-main" download>Download PcLab Probe</a>
                     <p class="muted fs-sm dx-full-note">Install and run locally — no cloud required.</p>
                 </div>
+                <div class="dx-full-primary dx-desktop-only">
+                    <button type="button" class="dx-btn primary" id="dx-fetch-probe">Connect Probe</button>
+                    <p class="muted fs-sm dx-full-note">Probe starts with this app. Connect for a live snapshot, or use <strong>Run Full Lab</strong> in Command Center.</p>
+                </div>
+                <p id="dx-probe-status" class="muted fs-xs dx-probe-status" role="status"></p>
                 <details class="dx-full-advanced">
                     <summary>Connect Probe or import a report</summary>
                     <div class="dx-full-advanced-body">
@@ -255,9 +264,8 @@ $toolTotal = $toolKit->total();
                             <div class="dx-full-card">
                                 <h3>1. Local Probe</h3>
                                 <p class="muted fs-sm">Run PcLab Probe, then click Connect.</p>
-                                <a href="<?= e($probeDl) ?>" class="dx-btn primary dx-full-dl" download>Download Probe</a>
-                                <button type="button" class="dx-btn ghost dx-full-dl" id="dx-fetch-probe">Connect</button>
-                                <span id="dx-probe-status" class="muted fs-xs"></span>
+                                <a href="<?= e($probeDl) ?>" class="dx-btn primary dx-full-dl dx-web-only" download>Download Probe</a>
+                                <button type="button" class="dx-btn ghost dx-full-dl dx-web-only" id="dx-fetch-probe-web">Connect</button>
                             </div>
                             <div class="dx-full-card">
                                 <h3>2. Load report JSON</h3>
@@ -473,6 +481,10 @@ $toolTotal = $toolKit->total();
 
         <aside class="dx-lab-rail" aria-label="Advisor rail">
             <p class="dx-lab-rail__title">Advisor</p>
+            <div id="dx-rail-empty" class="dx-rail-empty">
+                <strong>Run Full Lab to fill this rail</strong>
+                Advisor cards (thermal, stability, upgrades) appear here after a suite finishes. Probe must be running — it starts with the desktop app.
+            </div>
             <div id="dx-rail-advisor" class="dx-advisor-cards" hidden></div>
             <div class="dx-lab-rail-cert">
                 <h3>Certificates</h3>
@@ -498,17 +510,17 @@ window.PCLAB_DIAGNOSTIC = {
 };
 </script>
 <script defer src="/assets/js/diagnostic-tabs.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-command-layout.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-command-layout.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-toolkit.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-compare.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-pulse.js?v=1.0.3"></script>
 <script defer src="/assets/js/diagnostic-arena.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-lab.js?v=1.7.2"></script>
-<script defer src="/assets/js/diagnostic-live.js?v=1.7.0"></script>
+<script defer src="/assets/js/diagnostic-lab.js?v=1.7.3"></script>
+<script defer src="/assets/js/diagnostic-live.js?v=1.7.1"></script>
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.1.4"></script>
-<script defer src="/assets/js/diagnostic-suite.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-suite.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>

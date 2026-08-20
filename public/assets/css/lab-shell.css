@@ -1,25 +1,68 @@
+:root {
+  --pclab-bg: #0a0e17;
+  --pclab-fg: #e8eaed;
+  --pclab-muted: rgba(255, 255, 255, 0.55);
+  --pclab-cyan: #22d3ee;
+  --pclab-orange: #f29f05;
+  --pclab-surface: #161b22;
+  --pclab-radius: 16px;
+  --pclab-border: rgba(255, 255, 255, 0.08);
+}
+
 .pclab-body {
   margin: 0;
   min-height: 100vh;
-  background: #0a0e17;
-  color: #e8eaed;
+  background: var(--pclab-bg);
+  color: var(--pclab-fg);
   font-family: "Segoe UI", Tahoma, system-ui, sans-serif;
 }
 
 .pclab-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(10, 14, 23, 0.92);
+  padding: 10px 24px;
+  border-bottom: 1px solid var(--pclab-border);
+  background: rgba(10, 14, 23, 0.96);
   backdrop-filter: blur(8px);
+}
+
+html.pclab-desktop .pclab-probe-nav,
+html.pclab-desktop .dx-web-only {
+  display: none !important;
+}
+
+html:not(.pclab-desktop) .dx-desktop-only {
+  display: none !important;
+}
+
+.dx-btn:focus-visible,
+.pclab-nav a:focus-visible,
+.pclab-nav-btn:focus-visible,
+.dx-lab-nav-btn:focus-visible,
+.dx-tab-btn:focus-visible,
+.dx-shell-pill--btn:focus-visible {
+  outline: 2px solid var(--pclab-cyan);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .pclab-brand {
   font-weight: 900;
   letter-spacing: 0.04em;
-  color: #f29f05;
+  color: var(--pclab-orange);
   text-decoration: none;
 }
 
@@ -208,7 +251,17 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-.muted { color: rgba(255, 255, 255, 0.55); }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .fs-sm { font-size: 13px; }
 .fs-xs { font-size: 12px; }
 
@@ -231,6 +284,65 @@
 
 .pclab-error a {
   color: #22d3ee;
+}
+
+.pclab-verify {
+  max-width: 640px;
+  padding: 48px 16px 80px;
+}
+
+.pclab-verify__eyebrow {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pclab-cyan);
+}
+
+.pclab-verify__title {
+  margin: 0 0 8px;
+  font-size: 1.75rem;
+}
+
+.pclab-verify__card {
+  margin: 24px 0;
+  padding: 20px 22px;
+  border-radius: var(--pclab-radius);
+  border: 1px solid var(--pclab-border);
+  background: var(--pclab-surface);
+}
+
+.pclab-verify__card--ok {
+  border-color: rgba(63, 185, 80, 0.45);
+}
+
+.pclab-verify__card--bad {
+  border-color: rgba(248, 81, 73, 0.45);
+}
+
+.pclab-verify__status {
+  margin: 0 0 14px;
+  font-weight: 700;
+}
+
+.pclab-verify__card--ok .pclab-verify__status { color: #3fb950; }
+.pclab-verify__card--bad .pclab-verify__status { color: #f85149; }
+
+.pclab-verify__back a {
+  color: var(--pclab-cyan);
+}
+
+.pclab-verify .dx-hwref__dl {
+  display: grid;
+  grid-template-columns: 8rem 1fr;
+  gap: 0.35rem 0.75rem;
+  font-size: 0.9rem;
+  margin: 0 0 12px;
+}
+
+.pclab-verify .dx-hwref__dl dt {
+  color: var(--pclab-muted);
 }
 
 .container {

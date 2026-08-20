@@ -8,16 +8,17 @@
       :root {
         color-scheme: dark;
         --bg: #0a0e17;
-        --fg: #e8eef8;
+        --fg: #e8eaed;
         --muted: #8b9bb4;
-        --accent: #3d8bfd;
+        --cyan: #22d3ee;
+        --orange: #f29f05;
       }
       * { box-sizing: border-box; }
       html, body {
         margin: 0;
         height: 100%;
         font-family: "Segoe UI", system-ui, sans-serif;
-        background: radial-gradient(1200px 600px at 20% -10%, #152238 0%, var(--bg) 55%);
+        background: radial-gradient(1200px 600px at 18% -12%, #1a2838 0%, var(--bg) 55%);
         color: var(--fg);
       }
       main {
@@ -25,39 +26,80 @@
         display: grid;
         place-items: center;
         padding: 2rem;
+      }
+      .card {
+        width: min(28rem, 100%);
         text-align: center;
       }
       h1 {
-        margin: 0 0 0.5rem;
-        font-size: 1.75rem;
-        font-weight: 650;
+        margin: 0 0 0.4rem;
+        font-size: 1.65rem;
+        font-weight: 750;
         letter-spacing: 0.02em;
+        color: var(--orange);
       }
-      p { margin: 0; color: var(--muted); max-width: 28rem; line-height: 1.45; }
+      p { margin: 0; color: var(--muted); line-height: 1.5; }
       .spinner {
         width: 2rem;
         height: 2rem;
         margin: 0 auto 1.25rem;
-        border: 3px solid rgba(61, 139, 253, 0.25);
-        border-top-color: var(--accent);
+        border: 3px solid rgba(34, 211, 238, 0.22);
+        border-top-color: var(--cyan);
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
       }
       @keyframes spin { to { transform: rotate(360deg); } }
-      .error {
-        color: #ff8e8e;
+      .error-card {
+        margin-top: 1.25rem;
+        padding: 1rem 1.1rem;
+        text-align: left;
+        border-radius: 14px;
+        border: 1px solid rgba(248, 113, 113, 0.35);
+        background: rgba(248, 113, 113, 0.08);
+      }
+      .error-card h2 {
+        margin: 0 0 0.4rem;
+        font-size: 0.95rem;
+        color: #ffb4b4;
+      }
+      .error-card p { font-size: 0.88rem; }
+      .retry {
+        margin-top: 0.9rem;
+        appearance: none;
+        border: 0;
+        border-radius: 10px;
+        padding: 0.55rem 1rem;
+        font-weight: 700;
+        font-family: inherit;
+        cursor: pointer;
+        background: linear-gradient(135deg, #f29f05, #e88a00);
+        color: #0a0e17;
+      }
+      .detail {
+        margin-top: 0.65rem;
+        font-size: 0.75rem;
+        color: #6e7b8b;
         white-space: pre-wrap;
-        margin-top: 1rem;
+        word-break: break-word;
+      }
+      [hidden] { display: none !important; }
+      @media (prefers-reduced-motion: reduce) {
+        .spinner { animation: none; border-top-color: var(--cyan); }
       }
     </style>
   </head>
   <body>
     <main>
-      <div>
+      <div class="card">
         <div class="spinner" id="spinner" aria-hidden="true"></div>
         <h1>PC Lab Kit</h1>
-        <p id="status">Starting local laboratory…</p>
-        <p class="error" id="error" hidden></p>
+        <p id="status">Starting lab…</p>
+        <div class="error-card" id="error-card" hidden>
+          <h2 id="error-title">Could not start PC Lab Kit</h2>
+          <p id="error-summary"></p>
+          <button type="button" class="retry" id="retry">Retry</button>
+          <p class="detail" id="error"></p>
+        </div>
       </div>
     </main>
     <script type="module" src="/src/main.ts"></script>

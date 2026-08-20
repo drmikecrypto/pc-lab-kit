@@ -5,44 +5,28 @@
 }
 
 .dx-shell-hero {
-  padding: 32px 0 24px;
+  padding: 10px 0 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .dx-shell-hero__inner {
-  max-width: 720px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
 }
 
-.dx-shell-eyebrow {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(34, 211, 238, 0.85);
-  margin: 0 0 8px;
-}
-
-.dx-shell-title {
-  margin: 0 0 10px;
-  font-size: clamp(1.75rem, 4vw, 2.25rem);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  line-height: 1.15;
-}
-
+.dx-shell-eyebrow,
 .dx-shell-lead {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.58);
-  font-size: 15px;
-  line-height: 1.65;
-  max-width: 540px;
+  display: none;
 }
 
 .dx-shell-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 18px;
+  gap: 8px;
+  margin-top: 0;
 }
 
 .dx-shell-pill {
@@ -127,8 +111,38 @@
 
 .dx-tab-panel {
   display: none;
-  padding-top: 28px;
+  padding-top: 16px;
   animation: dxTabIn 0.25s ease;
+}
+
+.dx-command-next {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.dx-command-next__item {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--pclab-border, rgba(255, 255, 255, 0.08));
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.dx-command-next__item strong {
+  display: block;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 720px) {
+  .dx-command-next {
+    grid-template-columns: 1fr;
+  }
 }
 
 .dx-tab-panel.is-active {

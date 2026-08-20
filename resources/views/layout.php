@@ -23,7 +23,14 @@ $csrf = (string) $_SESSION['pclab_csrf'];
     <meta name="description" content="<?= e($meta_description ?? 'PC Lab Kit — local PC laboratory. Probe, test, monitor, tune.') ?>">
     <meta name="theme-color" content="#0a0e17">
     <meta name="csrf-token" content="<?= e($csrf) ?>">
-    <link rel="stylesheet" href="/assets/css/lab-shell.css?v=1.2.1">
+    <script>
+    (function () {
+      if (window.__TAURI_INTERNALS__ || window.__TAURI__) {
+        document.documentElement.classList.add('pclab-desktop');
+      }
+    })();
+    </script>
+    <link rel="stylesheet" href="/assets/css/lab-shell.css?v=1.3.1">
 </head>
 <body class="pclab-body">
 <?php if (empty($footer_minimal)): ?>
@@ -32,7 +39,7 @@ $csrf = (string) $_SESSION['pclab_csrf'];
     <a href="/diagnostic" class="pclab-brand">PC Lab Kit</a>
     <nav class="pclab-nav">
         <a href="/diagnostic">Lab</a>
-        <a href="/download/probe-windows">Download Probe</a>
+        <a href="/download/probe-windows" class="pclab-probe-nav">Download Probe</a>
         <button type="button" class="pclab-nav-btn pclab-update-nav-btn" id="pclab-update-btn" hidden aria-label="Update available">Update</button>
         <button type="button" class="pclab-nav-btn" id="dx-settings-open" aria-haspopup="dialog">Settings</button>
     </nav>
