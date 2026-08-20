@@ -11,6 +11,12 @@ echo "=== Stage lab payload ==="
 chmod +x "$ROOT/scripts/"*.sh
 bash "$ROOT/scripts/stage-desktop-payload.sh"
 
+STAGED_PUBLIC="$ROOT/desktop/src-tauri/resources/lab/public/index.php"
+if [[ ! -f "$STAGED_PUBLIC" ]]; then
+  echo "Lab payload incomplete after staging (missing $STAGED_PUBLIC)" >&2
+  exit 1
+fi
+
 echo "=== npm install (desktop) ==="
 cd "$DESKTOP"
 if [[ ! -d node_modules ]]; then

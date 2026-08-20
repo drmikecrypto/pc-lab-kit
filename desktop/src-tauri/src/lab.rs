@@ -147,14 +147,20 @@ fn prepare_work_dir(resource_lab: &Path) -> Result<PathBuf, String> {
     Ok(data_dir)
 }
 
-pub fn resolve_resource_lab(resource_dir: Option<PathBuf>) -> Result<PathBuf, String> {
-    if let Some(dir) = resource_dir {
-        let nested = dir.join("lab");
-        if nested.join("public").is_dir() {
-            return Ok(nested);
+pub fn resolve_resource_lab(resolver: &tauri::path::PathResolver) -> Result<PathBuf, String> {
+    for rel in ["lab", "resources/lab"] {
+        if let Ok(path) = resolver.resolve(rel, tauri::path::BaseDirectory::Resource) {
+            if path.join("public").is_dir() {
+                return Ok(path);
+            }
         }
-        if dir.join("public").is_dir() {
-            return Ok(dir);
+    }
+
+    if let Ok(dir) = resolver.resource_dir() {
+        for candidate in [dir.join("lab"), dir.join("resources").join("lab")] {
+            if candidate.join("public").is_dir() {
+                return Ok(candidate);
+            }
         }
     }
 

@@ -6,6 +6,12 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.0.3] - 2026-08-20
+
+### Fixed
+- **Windows/Linux desktop:** bundled lab payload was placed at `$RESOURCE/resources/lab/` but the app looked for `$RESOURCE/lab/` — installer now maps payload to `lab/` and resolves both paths
+- Build scripts fail fast if staging did not produce `resources/lab/public/index.php`
+
 ## [4.0.2] - 2026-08-20
 
 ### Added — Command Center 2.0 & platform expansion

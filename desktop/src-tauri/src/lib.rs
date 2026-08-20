@@ -6,7 +6,6 @@ use std::sync::Arc;
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::{TrayIconBuilder, TrayIconId};
 use tauri::Manager;
-use tauri::path::BaseDirectory;
 
 struct AppState {
     runtime: std::sync::Mutex<Option<Arc<LabRuntime>>>,
@@ -133,13 +132,7 @@ pub fn run() {
             restart_probe
         ])
         .setup(|app| {
-            let resource_dir = app
-                .path()
-                .resolve("", BaseDirectory::Resource)
-                .ok()
-                .map(|p| p);
-
-            let lab_dir = match resolve_resource_lab(resource_dir) {
+            let lab_dir = match resolve_resource_lab(app.path()) {
                 Ok(p) => p,
                 Err(err) => {
                     if let Some(state) = app.try_state::<AppState>() {

@@ -15,6 +15,11 @@ $outExe = Join-Path $outDir 'PcLabKit-Setup-Windows-x64.exe'
 Write-Host '=== Stage lab payload ===' -ForegroundColor Cyan
 & $stageScript
 
+$stagedPublic = Join-Path $root 'desktop\src-tauri\resources\lab\public\index.php'
+if (-not (Test-Path $stagedPublic)) {
+    throw "Lab payload incomplete after staging (missing $stagedPublic). Check stage-desktop-payload.ps1 output."
+}
+
 Write-Host '=== npm install (desktop) ===' -ForegroundColor Cyan
 Push-Location $desktop
 try {
