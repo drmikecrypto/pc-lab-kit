@@ -51,6 +51,7 @@ class AppUpdateService
         $payload = [
             'ok' => true,
             'fetched_at' => date('c'),
+            'current_version_at_fetch' => $current,
             'latest_version' => $release['version'],
             'release_name' => $release['name'],
             'release_url' => $release['url'],
@@ -207,6 +208,15 @@ class AppUpdateService
         $fetched = strtotime((string) ($json['fetched_at'] ?? ''));
         $ttl = (int) Env::get('UPDATE_CHECK_TTL_SECONDS', '21600');
         if ($fetched === false || (time() - $fetched) > max(300, $ttl)) {
+            return null;
+        }
+
+        // After a desktop payload upgrade, APP_VERSION changes while this cache may still
+        // point at an older GitHub "latest" — force a fresh fetch.
+        $cfg = require dirname(__DIR__, 2) . '/config/app.php';
+        $current = (string) ($cfg['version'] ?? '');
+        $cachedFor = (string) ($json['current_version_at_fetch'] ?? '');
+        if ($current !== '' && $cachedFor !== '' && $cachedFor !== $current) {
             return null;
         }
 

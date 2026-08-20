@@ -51,7 +51,8 @@ test('app update check uses injectable release fetcher', function () {
     expect($out['ok'])->toBeTrue()
         ->and($out['latest_version'])->toBe('99.0.0')
         ->and($out['update_available'])->toBeTrue()
-        ->and($out['download_windows'])->toBe('https://example.test/win.exe');
+        ->and($out['download_windows'])->toBe('https://example.test/win.exe')
+        ->and($out['current_version_at_fetch'] ?? null)->not->toBeNull();
 });
 
 test('app update check reports failure when fetcher returns null', function () {

@@ -141,8 +141,13 @@ fn prepare_work_dir(resource_lab: &Path) -> Result<PathBuf, String> {
                 fs::copy(&from, data_dir.join(file)).map_err(|e| format!("Copy {file}: {e}"))?;
             }
         }
+        // Drop stale GitHub release cache so the banner does not advertise an older "latest".
+        let _ = fs::remove_file(data_dir.join("storage").join("cache").join("github-release.json"));
         fs::write(&marker, want_version).map_err(|e| format!("Write payload marker: {e}"))?;
     }
+
+    // Always align APP_VERSION — upgrades must not keep a stale .env from an older install.
+    sync_app_version_env(&data_dir, want_version)?;
 
     Ok(data_dir)
 }
@@ -249,6 +254,7 @@ fn ensure_lab_ready(work_dir: &Path, php_bin: &Path) -> Result<(), String> {
     if !env_path.exists() && example.exists() {
         fs::copy(&example, &env_path).map_err(|e| format!("Copy .env: {e}"))?;
     }
+    sync_app_version_env(work_dir, env!("CARGO_PKG_VERSION"))?;
 
     for sub in [
         "storage/database",
@@ -281,6 +287,53 @@ fn ensure_lab_ready(work_dir: &Path, php_bin: &Path) -> Result<(), String> {
     }
 
     Ok(())
+}
+
+/// Keep `.env` APP_VERSION in sync with the desktop package. User upgrades copy new code
+/// into `%LOCALAPPDATA%/PC Lab Kit` but intentionally preserve `.env` / storage — without
+/// this, a stale `APP_VERSION=3.1.0` makes the UI report an ancient build and a false update.
+fn sync_app_version_env(work_dir: &Path, version: &str) -> Result<(), String> {
+    let env_path = work_dir.join(".env");
+    if !env_path.exists() {
+        let example = work_dir.join(".env.example");
+        if example.exists() {
+            fs::copy(&example, &env_path).map_err(|e| format!("Copy .env: {e}"))?;
+        } else {
+            fs::write(&env_path, format!("APP_VERSION={version}\n"))
+                .map_err(|e| format!("Write .env: {e}"))?;
+            return Ok(());
+        }
+    }
+
+    let raw = fs::read_to_string(&env_path).map_err(|e| format!("Read .env: {e}"))?;
+    let mut found = false;
+    let mut out = String::with_capacity(raw.len() + 32);
+    for line in raw.lines() {
+        let trimmed = line.trim_start();
+        if trimmed.starts_with("APP_VERSION=") || trimmed.starts_with("APP_VERSION =") {
+            out.push_str(&format!("APP_VERSION={version}\n"));
+            found = true;
+        } else {
+            out.push_str(line);
+            out.push('\n');
+        }
+    }
+    if !found {
+        if !out.ends_with('\n') && !out.is_empty() {
+            out.push('\n');
+        }
+        out.push_str(&format!("APP_VERSION={version}\n"));
+    }
+    // Avoid rewriting when unchanged (preserves mtime / noisy antivirus rescans).
+    let current = fs::read_to_string(&env_path).unwrap_or_default();
+    if normalize_env_newlines(&current) != normalize_env_newlines(&out) {
+        fs::write(&env_path, out).map_err(|e| format!("Write .env APP_VERSION: {e}"))?;
+    }
+    Ok(())
+}
+
+fn normalize_env_newlines(s: &str) -> String {
+    s.replace("\r\n", "\n").trim_end().to_string()
 }
 
 fn pick_free_port() -> Result<u16, String> {

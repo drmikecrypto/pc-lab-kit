@@ -100,7 +100,7 @@ $csrf = (string) $_SESSION['pclab_csrf'];
     </div>
 </div>
 <script defer src="/assets/js/diagnostic-settings.js?v=1.2.0"></script>
-<script defer src="/assets/js/app-update.js?v=1.1.0"></script>
+<script defer src="/assets/js/app-update.js?v=1.2.0"></script>
 <?php endif; ?>
 </body>
 </html>

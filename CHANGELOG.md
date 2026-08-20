@@ -6,6 +6,13 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.1.1] - 2026-08-20
+
+### Fixed
+- Desktop upgrades kept a stale `%LOCALAPPDATA%/PC Lab Kit/.env` `APP_VERSION` (e.g. 3.1.0) so the UI lied about the installed build and showed a false update to an older release
+- Stale GitHub release cache after upgrades; update check now refreshes when the app version changes
+- **Update** button / Download links did nothing inside the Tauri webview — open the installer in the system browser via the opener plugin
+
 ## [4.1.0] - 2026-08-20
 
 ### Added
