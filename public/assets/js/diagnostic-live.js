@@ -350,6 +350,10 @@
   }
 
   function renderDriverActions(drivers, devices) {
+    if (window.PcLabDrivers?.render) {
+      window.PcLabDrivers.render(drivers, devices);
+      return;
+    }
     const box = el('dx-driver-actions');
     if (!box) return;
     const actions = (drivers.actions || []).filter((a) => a && (a.severity === 'critical' || a.severity === 'warn')).slice(0, 8);

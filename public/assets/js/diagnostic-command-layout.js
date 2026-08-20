@@ -7,6 +7,8 @@
     quick: 'quick',
     hardware: 'hardware',
     openbook: 'openbook',
+    drivers: 'drivers',
+    stress: 'stress',
     full: 'full',
     arena: 'arena',
     toolkit: 'toolkit',

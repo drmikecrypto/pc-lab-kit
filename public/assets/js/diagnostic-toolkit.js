@@ -24,8 +24,8 @@
     const st = el('dx-toolkit-run-status');
     if (st) {
       st.textContent = probeOk
-        ? 'Probe connected — pick a one-click profile, benchmark, or stress test.'
-        : 'Start PcLab Probe to run native benchmarks and stress tests (Windows).';
+        ? 'Probe connected — run a benchmark here, or open the Stress tab for soaks.'
+        : 'Start PcLab Probe (bundled in the desktop app) for native benchmarks.';
     }
     document.querySelectorAll('.dx-toolkit-run-btn').forEach((btn) => {
       btn.disabled = !probeOk || btn.dataset.busy === '1';
@@ -101,16 +101,16 @@
     (runnable.bench || []).forEach((b) => {
       items.push({ kind: 'bench', id: b.id, label: b.label, desc: b.desc, seconds: 8 });
     });
-    (runnable.stress || []).forEach((s) => {
-      const seconds = s.id === 'quick' ? 60 : 30;
-      items.push({ kind: 'stress', id: s.id, label: s.label, desc: s.desc, seconds });
-    });
+    const stressHint = (runnable.stress || []).length
+      ? `<p class="muted fs-sm mt-2">Stress profiles (CPU/GPU/memory/combined/oracle) and custom duration live in the
+          <button type="button" class="dx-btn ghost" data-dx-goto="stress">Stress</button> tab.</p>`
+      : '';
     wrap.innerHTML = items.map((item) =>
       `<button type="button" class="dx-toolkit-run-btn" data-kind="${esc(item.kind)}" data-id="${esc(item.id)}" data-seconds="${item.seconds || 15}" disabled>
         <strong>${esc(item.label)}</strong>
         <span>${esc(item.desc)}</span>
       </button>`
-    ).join('') + `<div id="dx-toolkit-overlay" class="dx-toolkit-overlay muted fs-sm mt-2" hidden></div>
+    ).join('') + stressHint + `<div id="dx-toolkit-overlay" class="dx-toolkit-overlay muted fs-sm mt-2" hidden></div>
       <div id="dx-toolkit-cert" class="dx-toolkit-cert mt-2" hidden></div>`;
     wrap.querySelectorAll('.dx-toolkit-run-btn').forEach((btn) => {
       btn.addEventListener('click', () => runTest(btn));

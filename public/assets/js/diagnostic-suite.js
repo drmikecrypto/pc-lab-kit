@@ -23,9 +23,101 @@
 
   function setProgress(pct, step) {
     const bar = el('dx-suite-progress-bar');
+    const progress = bar?.parentElement;
     const label = el('dx-suite-step');
     if (bar) bar.style.width = Math.max(0, Math.min(100, pct)) + '%';
     if (label) label.textContent = step || '';
+    if (progress) {
+      progress.classList.toggle('is-error', String(step || '').toLowerCase().includes('error') || String(step || '').toLowerCase().includes('offline'));
+      progress.setAttribute('aria-hidden', pct <= 0 && !progress.classList.contains('is-error') ? 'true' : 'false');
+    }
+  }
+
+  function showSuiteError(message, detail) {
+    const banner = el('dx-suite-error');
+    const status = el('dx-suite-status');
+    const text = String(message || 'Suite failed');
+    console.error('[PcLabSuite]', text, detail || '');
+    if (status) {
+      status.textContent = text;
+      status.classList.add('is-error');
+    }
+    if (banner) {
+      banner.hidden = false;
+      banner.innerHTML = `<strong>Full Lab could not start</strong><p>${esc(text)}</p>${
+        detail ? `<p class="fs-xs muted">${esc(String(detail).slice(0, 280))}</p>` : ''
+      }<div class="dx-suite-error__actions">
+        <button type="button" class="dx-btn primary" id="dx-suite-retry">Retry</button>
+        <button type="button" class="dx-btn ghost" id="dx-suite-restart-probe">Restart Probe</button>
+      </div>`;
+      banner.querySelector('#dx-suite-retry')?.addEventListener('click', () => {
+        banner.hidden = true;
+        runSuite();
+      });
+      banner.querySelector('#dx-suite-restart-probe')?.addEventListener('click', async () => {
+        const ok = await tryRestartProbe();
+        if (ok) {
+          banner.hidden = true;
+          runSuite();
+        } else {
+          showSuiteError(
+            'Could not restart Probe from this window. Use the PC Lab Kit desktop app, then Retry.',
+            'restart_probe unavailable'
+          );
+        }
+      });
+    }
+    setProgress(0, 'error');
+  }
+
+  function clearSuiteError() {
+    const banner = el('dx-suite-error');
+    const status = el('dx-suite-status');
+    if (banner) {
+      banner.hidden = true;
+      banner.innerHTML = '';
+    }
+    if (status) status.classList.remove('is-error');
+  }
+
+  async function cancelPhpJob(phpJobId) {
+    if (!phpJobId) return;
+    await fetch(`/api/diagnostic/suite/cancel/${phpJobId}`, {
+      method: 'POST',
+      headers: csrfHeaders(),
+      body: JSON.stringify({ id: phpJobId }),
+    }).catch(() => {});
+  }
+
+  async function probeHealth() {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 4000);
+    try {
+      const res = await fetch(AGENT() + '/health', { mode: 'cors', signal: ctrl.signal });
+      if (!res.ok) {
+        return { ok: false, detail: `HTTP ${res.status}` };
+      }
+      const data = await res.json().catch(() => ({}));
+      return { ok: true, data };
+    } catch (e) {
+      return { ok: false, detail: e.message || String(e) };
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  async function tryRestartProbe() {
+    try {
+      const invoke =
+        window.__TAURI__?.core?.invoke ||
+        window.__TAURI_INTERNALS__?.invoke ||
+        null;
+      if (typeof invoke === 'function') {
+        await invoke('restart_probe');
+        return true;
+      }
+    } catch (_) {}
+    return false;
   }
 
   function renderCards(cards) {
@@ -83,6 +175,8 @@
         <button type="button" class="dx-btn ghost" id="dx-suite-show-topology">Topology 3D</button>
         <button type="button" class="dx-btn ghost" id="dx-suite-export-session">Export .pclab</button>
         <button type="button" class="dx-btn ghost" data-dx-goto="history">History</button>
+        <button type="button" class="dx-btn ghost" data-dx-goto="drivers">Drivers</button>
+        <button type="button" class="dx-btn ghost" data-dx-goto="stress">Stress</button>
         <button type="button" class="dx-btn ghost" data-dx-goto="openbook">Open Book</button>
       </div>
       <div id="dx-suite-report-frame" hidden></div>
@@ -94,9 +188,7 @@
     panel.querySelectorAll('[data-dx-goto]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const tab = btn.getAttribute('data-dx-goto');
-        const legacy = document.querySelector(`[data-dx-tab="${tab}"]`);
-        if (legacy) legacy.click();
-        else if (window.dxActivateTab) window.dxActivateTab(tab);
+        if (window.dxActivateTab) window.dxActivateTab(tab);
       });
     });
 
@@ -155,7 +247,8 @@
   }
 
   async function pollProbeSuite() {
-    const res = await fetch(AGENT() + '/suite/status');
+    const res = await fetch(AGENT() + '/suite/status', { mode: 'cors' });
+    if (!res.ok) throw new Error(`suite status HTTP ${res.status}`);
     return res.json();
   }
 
@@ -166,36 +259,59 @@
     const cancelBtn = el('dx-suite-cancel');
     if (runBtn) runBtn.disabled = true;
     if (cancelBtn) cancelBtn.hidden = false;
-    if (status) status.textContent = 'Starting Full Lab…';
+    clearSuiteError();
+    if (status) status.textContent = 'Checking Probe…';
     setProgress(2, 'Starting');
 
     let phpJobId = null;
     try {
+      let health = await probeHealth();
+      if (!health.ok) {
+        await tryRestartProbe();
+        await new Promise((r) => setTimeout(r, 800));
+        health = await probeHealth();
+      }
+      if (!health.ok) {
+        showSuiteError(
+          'Probe is not reachable. Open PC Lab Kit desktop so the bundled probe starts, then retry.',
+          health.detail
+        );
+        return;
+      }
+
+      if (status) status.textContent = 'Starting Full Lab…';
       const startRes = await fetch('/api/diagnostic/suite/start', {
         method: 'POST',
         headers: csrfHeaders(),
         body: JSON.stringify({ profile, fp: fp() }),
       });
-      const startData = await startRes.json();
+      const startData = await startRes.json().catch(() => ({}));
+      if (!startRes.ok) {
+        throw new Error(startData?.error || startData?.message || `suite start HTTP ${startRes.status}`);
+      }
       phpJobId = startData?.job?.id;
       if (!phpJobId) throw new Error(startData?.error || 'suite start failed');
 
-      let probeOk = false;
+      let pStart;
+      let pData = {};
       try {
-        const pStart = await fetch(AGENT() + '/suite/start', {
+        pStart = await fetch(AGENT() + '/suite/start', {
           method: 'POST',
+          mode: 'cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ profile }),
         });
-        const pData = await pStart.json();
-        probeOk = !!(pData?.ok || pData?.job);
-      } catch (_) {
-        probeOk = false;
+        pData = await pStart.json().catch(() => ({}));
+      } catch (e) {
+        await cancelPhpJob(phpJobId);
+        showSuiteError('Probe suite start failed — is Probe running?', e.message || e);
+        return;
       }
 
-      if (!probeOk) {
-        if (status) status.textContent = 'Probe not reachable — start PcLab Probe, then retry.';
-        setProgress(0, 'Probe offline');
+      if (!pStart.ok || pData?.ok === false || !(pData?.ok || pData?.job)) {
+        await cancelPhpJob(phpJobId);
+        const why = pData?.error || pData?.message || (pData?.already_running ? 'A suite is already running' : `HTTP ${pStart.status}`);
+        showSuiteError('Probe refused to start the suite.', why);
         return;
       }
 
@@ -231,11 +347,13 @@
 
       if (String(probeJob?.status) === 'cancelled') {
         if (status) status.textContent = 'Suite cancelled.';
-        await fetch(`/api/diagnostic/suite/cancel/${phpJobId}`, {
-          method: 'POST',
-          headers: csrfHeaders(),
-          body: JSON.stringify({ id: phpJobId }),
-        }).catch(() => {});
+        await cancelPhpJob(phpJobId);
+        return;
+      }
+
+      if (String(probeJob?.status) === 'failed') {
+        showSuiteError('Probe suite failed.', probeJob?.error || probeJob?.step || 'failed');
+        await cancelPhpJob(phpJobId);
         return;
       }
 
@@ -258,14 +376,14 @@
           },
         }),
       });
-      const finData = await fin.json();
-      if (!finData?.ok) throw new Error(finData?.message || finData?.error || 'finalize failed');
+      const finData = await fin.json().catch(() => ({}));
+      if (!fin.ok || !finData?.ok) throw new Error(finData?.message || finData?.error || 'finalize failed');
       setProgress(100, 'done');
       if (status) status.textContent = 'Full Lab complete.';
       renderResult(finData.job);
     } catch (e) {
-      if (status) status.textContent = 'Suite error: ' + (e.message || e);
-      setProgress(0, 'error');
+      await cancelPhpJob(phpJobId);
+      showSuiteError('Suite error: ' + (e.message || e));
     } finally {
       if (runBtn) runBtn.disabled = false;
       if (cancelBtn) cancelBtn.hidden = true;
@@ -274,15 +392,28 @@
 
   async function cancelSuite() {
     try {
-      await fetch(AGENT() + '/suite/cancel', { method: 'POST' });
+      await fetch(AGENT() + '/suite/cancel', { method: 'POST', mode: 'cors' });
     } catch (_) {}
     const status = el('dx-suite-status');
     if (status) status.textContent = 'Cancel requested…';
   }
 
   function boot() {
-    el('dx-suite-run')?.addEventListener('click', runSuite);
-    el('dx-suite-cancel')?.addEventListener('click', cancelSuite);
+    if (!el('dx-suite-run')) {
+      console.warn('[PcLabSuite] #dx-suite-run missing — suite UI failed to initialize');
+      return;
+    }
+    document.addEventListener('click', (ev) => {
+      const t = ev.target;
+      if (!(t instanceof Element)) return;
+      if (t.closest('#dx-suite-run')) {
+        ev.preventDefault();
+        runSuite();
+      } else if (t.closest('#dx-suite-cancel')) {
+        ev.preventDefault();
+        cancelSuite();
+      }
+    });
     el('dx-suite-import-file')?.addEventListener('change', importSession);
   }
 
@@ -328,5 +459,5 @@
     boot();
   }
 
-  window.PcLabSuite = { run: runSuite, cancel: cancelSuite, renderCards };
+  window.PcLabSuite = { run: runSuite, cancel: cancelSuite, renderCards, probeHealth };
 })();

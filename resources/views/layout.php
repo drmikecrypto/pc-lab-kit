@@ -39,7 +39,6 @@ $csrf = (string) $_SESSION['pclab_csrf'];
     <a href="/diagnostic" class="pclab-brand">PC Lab Kit</a>
     <nav class="pclab-nav">
         <a href="/diagnostic">Lab</a>
-        <a href="/download/probe-windows" class="pclab-probe-nav">Download Probe</a>
         <button type="button" class="pclab-nav-btn pclab-update-nav-btn" id="pclab-update-btn" hidden aria-label="Update available">Update</button>
         <button type="button" class="pclab-nav-btn" id="dx-settings-open" aria-haspopup="dialog">Settings</button>
     </nav>

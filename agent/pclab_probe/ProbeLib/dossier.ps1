@@ -64,6 +64,36 @@ function Get-ProbeSiliconDossier {
     if ($hwmon -and $hwmon.pci_config) { $pci = @($hwmon.pci_config) }
 
     $storage = Get-ProbeNvmeSmart
+    foreach ($d in @($storage)) {
+        if (-not $d.firmware) {
+            try {
+                $pd = Get-PhysicalDisk -SerialNumber $d.serial -ErrorAction SilentlyContinue | Select-Object -First 1
+                if ($pd -and $pd.FirmwareVersion) { $d.firmware = "$($pd.FirmwareVersion)".Trim() }
+            } catch {}
+        }
+    }
+
+    $acpiTables = @()
+    try {
+        Get-ChildItem 'HKLM:\HARDWARE\ACPI' -ErrorAction SilentlyContinue | ForEach-Object {
+            $acpiTables += $_.PSChildName
+        }
+    } catch {}
+
+    $vbiosRaw = if ($g0 -and $g0.vbios) { [string]$g0.vbios } else { '' }
+    $vbiosHash = $null
+    if ($vbiosRaw) {
+        try {
+            $sha = [System.Security.Cryptography.SHA256]::Create()
+            $bytes = [System.Text.Encoding]::UTF8.GetBytes($vbiosRaw)
+            $vbiosHash = -join ($sha.ComputeHash($bytes) | ForEach-Object { $_.ToString('x2') })
+            $sha.Dispose()
+        } catch {}
+    }
+
+    $biosVendor = if ($fw.bios -and $fw.bios.vendor) { $fw.bios.vendor } elseif ($fw.bios_vendor) { $fw.bios_vendor } else { $null }
+    $biosVersion = if ($fw.bios -and $fw.bios.version) { $fw.bios.version } elseif ($fw.bios_version) { $fw.bios_version } else { $null }
+    $biosDate = if ($fw.bios -and $fw.bios.date) { $fw.bios.date } elseif ($fw.bios_date) { $fw.bios_date } else { $null }
 
     return @{
         collected_at = (Get-Date).ToUniversalTime().ToString('o')
@@ -84,7 +114,8 @@ function Get-ProbeSiliconDossier {
         gpu = @{
             name               = if ($g0) { $g0.name } else { $null }
             vendor             = if ($g0) { $g0.vendor } else { $null }
-            vbios              = if ($g0) { $g0.vbios } else { $null }
+            vbios              = if ($vbiosRaw) { $vbiosRaw } else { $null }
+            vbios_sha256       = $vbiosHash
             pci_config         = $pci
             hotspot_source     = if ($g0 -and $g0.thermal) { $g0.thermal.hotspot_source } else { $null }
         }
@@ -99,10 +130,30 @@ function Get-ProbeSiliconDossier {
             }
         })
         board = @{
-            manufacturer = if ($fw.manufacturer) { $fw.manufacturer } elseif ($Telemetry.motherboard) { $Telemetry.motherboard.manufacturer } else { $null }
-            product      = if ($fw.product) { $fw.product } elseif ($Telemetry.motherboard) { $Telemetry.motherboard.product } else { $null }
-            serial       = if ($fw.serial) { $fw.serial } elseif ($Telemetry.motherboard) { $Telemetry.motherboard.serial } else { $null }
-            bios         = if ($fw.bios_version) { $fw.bios_version } else { $null }
+            manufacturer = if ($fw.board -and $fw.board.manufacturer) { $fw.board.manufacturer } elseif ($fw.manufacturer) { $fw.manufacturer } elseif ($Telemetry.motherboard) { $Telemetry.motherboard.manufacturer } else { $null }
+            product      = if ($fw.board -and $fw.board.product) { $fw.board.product } elseif ($fw.product) { $fw.product } elseif ($Telemetry.motherboard) { $Telemetry.motherboard.product } else { $null }
+            serial       = if ($fw.board -and $fw.board.serial) { $fw.board.serial } elseif ($fw.serial) { $fw.serial } elseif ($Telemetry.motherboard) { $Telemetry.motherboard.serial } else { $null }
+            bios         = $biosVersion
+            bios_vendor  = $biosVendor
+            bios_date    = $biosDate
+            smbios_major = if ($fw.bios) { $fw.bios.smbios_major } else { $null }
+            smbios_minor = if ($fw.bios) { $fw.bios.smbios_minor } else { $null }
+        }
+        firmware_inventory = @{
+            bios_vendor   = $biosVendor
+            bios_version  = $biosVersion
+            bios_date     = $biosDate
+            tpm           = if ($fw.tpm) { $fw.tpm } else { @{ present = $false } }
+            secure_boot   = if ($null -ne $fw.secure_boot) { $fw.secure_boot } else { $null }
+            acpi_tables   = $acpiTables
+            cpu_microcode = $microcode
+            gpu_vbios     = if ($vbiosRaw) { $vbiosRaw } else { $null }
+            gpu_vbios_sha256 = $vbiosHash
+            storage_firmware = @($storage | ForEach-Object {
+                @{ name = $_.friendly_name; serial = $_.serial; firmware = $_.firmware }
+            })
+            provenance    = 'wmi+registry+smbios+storage_reliability'
+            note          = 'Identity and register reads only — no BIOS/VBIOS flash, no vendor MODS binaries'
         }
         open_book_count = if ($Telemetry.open_book) { [int]$Telemetry.open_book.count } else { 0 }
     }

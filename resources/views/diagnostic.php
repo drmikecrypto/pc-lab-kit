@@ -9,16 +9,17 @@ $product = $cfg['product'] ?? [];
 $toolKit = new \App\Services\DiagnosticToolCatalogService();
 $toolTotal = $toolKit->total();
 ?>
-<link rel="stylesheet" href="/assets/css/diagnostic-shell.css?v=1.1.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-shell.css?v=1.2.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-toolkit.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-pulse.css?v=1.1.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-lab.css?v=1.6.6">
-<link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.6.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.7.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.3.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.1.1">
+<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.4.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.3.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-arena.css?v=1.0.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.0.1">
 
 <div class="container dx-shell">
 
@@ -43,6 +44,8 @@ $toolTotal = $toolKit->total();
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="quick" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="Q"></span>Quick scan</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="hardware" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="HW"></span>Hardware Reference</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="openbook" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="OB"></span>Open Book</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="drivers" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="DR"></span>Drivers</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="stress" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="ST"></span>Stress</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="full" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="FS"></span>Full scan</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="arena" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="BA"></span>Benchmark Arena</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="toolkit" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="TK"></span>Toolkit</button>
@@ -73,6 +76,7 @@ $toolTotal = $toolKit->total();
             <span id="dx-suite-step">Idle</span>
             <span id="dx-suite-status">Ready when Probe is running</span>
         </div>
+        <div id="dx-suite-error" class="dx-suite-error" hidden role="alert"></div>
         <div id="dx-advisor-cards" class="dx-advisor-cards" hidden></div>
         <div id="dx-suite-result" class="dx-suite-result" hidden></div>
     </section>
@@ -131,6 +135,8 @@ $toolTotal = $toolKit->total();
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="quick" aria-selected="false">Quick scan</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="hardware" aria-selected="false">Hardware Reference</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="openbook" aria-selected="false">Open Book</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="drivers" aria-selected="false">Drivers</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="stress" aria-selected="false">Stress</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="full" aria-selected="false">Full scan</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="arena" aria-selected="false">Benchmark Arena</button>
             <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="toolkit" aria-selected="false">Toolkit</button>
@@ -202,7 +208,9 @@ $toolTotal = $toolKit->total();
                 </div>
                 <div id="dx-hwref-dossier-body"><p class="muted fs-sm">Scan inventory to load identity dumps.</p></div>
             </div>
-            <div class="dx-hwref__drivers" id="dx-hwref-drivers"></div>
+            <div class="dx-hwref__drivers" id="dx-hwref-drivers">
+                <p class="muted fs-sm">Driver install/update lives in the <button type="button" class="dx-btn ghost" data-dx-goto="drivers">Drivers</button> tab — Install appears on each problem device.</p>
+            </div>
         </section>
     </div>
 
@@ -211,16 +219,18 @@ $toolTotal = $toolKit->total();
             <div class="dx-openbook-lab__head">
                 <div>
                     <p class="dx-command-center__eyebrow">Open Book Lab</p>
-                    <h2>Dossier · live gauges · certificate</h2>
-                    <p class="muted fs-sm">Assembly workstation: silicon identity, recovered sensors, stress / certificate status. Requires elevated Probe.</p>
+                    <h2>Silicon truth · firmware · recovered sensors</h2>
+                    <p class="muted fs-sm">BIOS/UEFI, VBIOS, microcode, PCI config, SPD, EDID, and register-level thermals the vendor APIs hide. Requires elevated Probe. Stress runs live in the <strong>Stress</strong> tab.</p>
                 </div>
                 <div class="dx-hwref__toolbar">
                     <button type="button" class="dx-btn primary" id="dx-ob-refresh">Refresh</button>
                     <button type="button" class="dx-btn ghost" id="dx-ob-export-dossier">Export dossier</button>
+                    <button type="button" class="dx-btn ghost" data-dx-goto="stress">Open Stress</button>
                     <span class="dx-hwref__status" id="dx-ob-status">Waiting for Probe…</span>
                 </div>
             </div>
-            <div class="dx-openbook-lab__grid">
+            <div class="dx-truth-cards" id="dx-ob-truth-cards" aria-label="Firmware identity cards"></div>
+            <div class="dx-openbook-lab__grid dx-openbook-lab__grid--two">
                 <aside class="dx-openbook-lab__col" id="dx-ob-dossier" aria-label="Silicon dossier">
                     <h3>Silicon Dossier</h3>
                     <div id="dx-ob-dossier-body"><p class="muted fs-sm dx-empty-hint">Click <strong>Refresh</strong> with Probe running to load CPU, GPU, RAM, and board identity.</p></div>
@@ -228,14 +238,73 @@ $toolTotal = $toolKit->total();
                 <div class="dx-openbook-lab__col dx-openbook-lab__col--center" aria-label="Live open-book gauges">
                     <h3>Live open-book</h3>
                     <div id="dx-ob-gauges" class="dx-openbook-lab__gauges"></div>
-                    <div id="dx-ob-table"></div>
+                    <div id="dx-ob-table" class="dx-scroll-panel"></div>
                 </div>
-                <aside class="dx-openbook-lab__col" id="dx-ob-cert" aria-label="Stress and certificate">
-                    <h3>Stress &amp; certificate</h3>
-                    <p class="muted fs-sm" id="dx-ob-cert-status">Run Full Lab from Command Center to issue an Assembly Certificate.</p>
-                    <div id="dx-ob-cert-actions"></div>
-                    <div id="dx-ob-cert-frame" hidden></div>
-                </aside>
+            </div>
+            <p class="muted fs-xs dx-truth-caveat">We read registers and firmware identity on your PC. We do not flash BIOS/VBIOS or ship proprietary vendor MODS binaries. Absolute °C may differ slightly from manufacturer tools — deltas and provenance tags matter more.</p>
+        </section>
+    </div>
+
+    <div class="dx-tab-panel" data-dx-panel="drivers" role="tabpanel" id="dx-drivers-lab" hidden>
+        <section class="dx-drivers-lab glass-effect" aria-label="Drivers">
+            <div class="dx-drivers-lab__head">
+                <div>
+                    <p class="dx-command-center__eyebrow">Drivers</p>
+                    <h2>Hardware that needs install or update</h2>
+                    <p class="muted fs-sm">Every problem, driverless, or outdated device with Install/Update on that exact row. Probe must be running (bundled in the desktop app).</p>
+                </div>
+                <div class="dx-hwref__toolbar">
+                    <button type="button" class="dx-btn primary" id="dx-drivers-rescan">Rescan drivers</button>
+                    <button type="button" class="dx-btn ghost" id="dx-drivers-wu">Windows Update scan</button>
+                    <span class="dx-hwref__status" id="dx-drivers-status">Idle</span>
+                </div>
+            </div>
+            <p class="muted fs-xs" id="dx-drivers-note" role="status"></p>
+            <div id="dx-driver-actions" class="dx-driver-actions dx-scroll-panel"></div>
+            <p class="muted fs-sm">Need PnP identity? <button type="button" class="dx-btn ghost" data-dx-goto="hardware">Hardware Reference</button></p>
+        </section>
+    </div>
+
+    <div class="dx-tab-panel" data-dx-panel="stress" role="tabpanel" id="dx-stress-lab" hidden>
+        <section class="dx-stress-lab glass-effect" aria-label="Stress">
+            <div class="dx-stress-lab__head">
+                <div>
+                    <p class="dx-command-center__eyebrow">Stress</p>
+                    <h2>Custom soak · certificate</h2>
+                    <p class="muted fs-sm">CPU, GPU, memory, combined, or stability oracle. Set minutes or hours for enterprise soaks (up to 24h). Results stay on this PC.</p>
+                </div>
+                <span class="dx-hwref__status" id="dx-stress-status">Idle</span>
+            </div>
+            <div class="dx-stress-controls">
+                <label class="dx-stress-field">
+                    <span>Profile</span>
+                    <select id="dx-stress-profile" aria-label="Stress profile">
+                        <option value="combined" selected>Combined CPU+GPU+RAM</option>
+                        <option value="cpu">CPU only</option>
+                        <option value="gpu">GPU only</option>
+                        <option value="memory">Memory only</option>
+                        <option value="quick">Quick (~60s)</option>
+                        <option value="oracle">Stability oracle</option>
+                    </select>
+                </label>
+                <label class="dx-stress-field">
+                    <span>Hours</span>
+                    <input type="number" id="dx-stress-hours" min="0" max="24" step="1" value="0" aria-label="Stress hours">
+                </label>
+                <label class="dx-stress-field">
+                    <span>Minutes</span>
+                    <input type="number" id="dx-stress-minutes" min="0" max="1440" step="1" value="5" aria-label="Stress minutes">
+                </label>
+                <button type="button" class="dx-btn primary" id="dx-stress-run">Start stress</button>
+                <button type="button" class="dx-btn ghost" id="dx-stress-stop" hidden>Stop</button>
+            </div>
+            <div class="dx-suite-progress" id="dx-stress-progress" aria-hidden="true"><span id="dx-stress-progress-bar"></span></div>
+            <div class="dx-stress-live" id="dx-stress-live" aria-live="polite"></div>
+            <div class="dx-stress-cert" id="dx-stress-cert">
+                <h3>Certificate</h3>
+                <p class="muted fs-sm" id="dx-ob-cert-status">Run stress here or Full Lab to issue an Assembly Certificate.</p>
+                <div id="dx-ob-cert-actions"></div>
+                <div id="dx-ob-cert-frame" class="dx-scroll-panel" hidden></div>
             </div>
         </section>
     </div>
@@ -371,7 +440,7 @@ $toolTotal = $toolKit->total();
                             <div class="dx-sensor-cell"><div class="dx-sensor-val" id="dx-s-bat">—</div><div class="dx-sensor-lbl">Battery</div></div>
                         </div>
                         <p class="muted fs-xs" id="dx-sensor-note" hidden></p>
-                        <div id="dx-driver-actions" class="dx-driver-actions" hidden></div>
+                        <p class="muted fs-sm"><button type="button" class="dx-btn ghost" data-dx-goto="drivers">Open Drivers tab</button> for install/update per device.</p>
                     </div>
                 </div>
                 <div id="dx-silicon-aging"></div>
@@ -509,22 +578,24 @@ window.PCLAB_DIAGNOSTIC = {
     agentBase: <?= json_encode($pclabAgentBase, JSON_UNESCAPED_UNICODE) ?>
 };
 </script>
-<script defer src="/assets/js/diagnostic-tabs.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-command-layout.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-toolkit.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-tabs.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-command-layout.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-toolkit.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-compare.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-pulse.js?v=1.0.3"></script>
 <script defer src="/assets/js/diagnostic-arena.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-lab.js?v=1.7.3"></script>
-<script defer src="/assets/js/diagnostic-live.js?v=1.7.1"></script>
+<script defer src="/assets/js/diagnostic-live.js?v=1.8.0"></script>
+<script defer src="/assets/js/diagnostic-drivers.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-stress.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.1.4"></script>
-<script defer src="/assets/js/diagnostic-suite.js?v=1.3.0"></script>
+<script defer src="/assets/js/diagnostic-suite.js?v=1.4.1"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-openbook.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-openbook.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-inventory.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-launchers.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry-stream.js?v=1.0.0"></script>

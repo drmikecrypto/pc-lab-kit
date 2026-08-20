@@ -6,6 +6,22 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.1.0] - 2026-08-20
+
+### Added
+- **Drivers** tab — per-device Install/Update for problem/driverless/outdated hardware
+- **Stress** tab — profiles plus custom hours/minutes (enterprise soaks up to 24h)
+- Open Book **firmware truth cards** (UEFI/BIOS, microcode, VBIOS hash, TPM/Secure Boot, ACPI, storage firmware)
+
+### Changed
+- GitHub Releases ship **Windows EXE + Linux AppImage only** (probe bundled inside Windows app; no standalone probe zip)
+- Command Center Full Lab shows a loud error banner when Probe is offline
+- Probe stress duration clamp raised from 5 minutes to **24 hours**
+
+### Fixed
+- Full Lab “click does nothing” when Probe was unreachable (silent muted status)
+- Advisor notes overlapping sticky left nav; denser readable scroll panels
+
 ## [4.0.5] - 2026-08-20
 
 ### Changed

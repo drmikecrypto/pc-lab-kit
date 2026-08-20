@@ -5,11 +5,12 @@ if (Test-Path (Join-Path $PSScriptRoot 'thermal.ps1')) {
 
 function Get-ProbeStressCatalog {
     return @(
-        @{ id = 'cpu'; label = 'CPU stress'; seconds_default = 30; max_seconds = 300; profile = $true }
-        @{ id = 'memory'; label = 'Memory stress'; seconds_default = 30; max_seconds = 300; profile = $true }
-        @{ id = 'gpu'; label = 'GPU stress'; seconds_default = 30; max_seconds = 180; profile = $true }
-        @{ id = 'combined'; label = 'Combined CPU+RAM'; seconds_default = 45; max_seconds = 300; profile = $true }
+        @{ id = 'cpu'; label = 'CPU stress'; seconds_default = 30; max_seconds = 86400; profile = $true }
+        @{ id = 'memory'; label = 'Memory stress'; seconds_default = 30; max_seconds = 86400; profile = $true }
+        @{ id = 'gpu'; label = 'GPU stress'; seconds_default = 30; max_seconds = 86400; profile = $true }
+        @{ id = 'combined'; label = 'Combined CPU+GPU+RAM'; seconds_default = 45; max_seconds = 86400; profile = $true }
         @{ id = 'quick'; label = 'Quick 60s profile'; seconds_default = 60; max_seconds = 60; profile = $true }
+        @{ id = 'oracle'; label = 'Stability oracle'; seconds_default = 120; max_seconds = 86400; profile = $true }
     )
 }
 
@@ -80,7 +81,7 @@ function Get-ProbeStressThermalSample {
 
 function Invoke-ProbeCpuStress {
     param([int]$Seconds = 30, [switch]$CollectSamples)
-    $Seconds = [Math]::Max(5, [Math]::Min(300, $Seconds))
+    $Seconds = [Math]::Max(5, [Math]::Min(86400, $Seconds))
     $threads = [Environment]::ProcessorCount
     $jobs = @()
     $stressStart = Get-Date
@@ -124,7 +125,7 @@ function Invoke-ProbeCpuStress {
 
 function Invoke-ProbeMemoryStress {
     param([int]$Seconds = 30, [int]$Percent = 40, [switch]$CollectSamples)
-    $Seconds = [Math]::Max(5, [Math]::Min(300, $Seconds))
+    $Seconds = [Math]::Max(5, [Math]::Min(86400, $Seconds))
     $Percent = [Math]::Max(10, [Math]::Min(70, $Percent))
     $stressStart = Get-Date
     $targetBytes = [long]([Math]::Min(
@@ -179,7 +180,7 @@ function Invoke-ProbeMemoryStress {
 
 function Invoke-ProbeGpuStress {
     param([int]$Seconds = 30, [switch]$CollectSamples)
-    $Seconds = [Math]::Max(5, [Math]::Min(300, $Seconds))
+    $Seconds = [Math]::Max(5, [Math]::Min(86400, $Seconds))
     $stressStart = Get-Date
     $samples = New-Object System.Collections.Generic.List[object]
     $method = 'host_load'
@@ -265,7 +266,7 @@ function Invoke-ProbeGpuStress {
 
 function Invoke-ProbeCombinedStress {
     param([int]$Seconds = 45, [switch]$CollectSamples)
-    $Seconds = [Math]::Max(10, [Math]::Min(300, $Seconds))
+    $Seconds = [Math]::Max(10, [Math]::Min(86400, $Seconds))
     $third = [Math]::Max(5, [int]($Seconds / 3))
     $cpu = Invoke-ProbeCpuStress -Seconds $third -CollectSamples:$CollectSamples
     $mem = Invoke-ProbeMemoryStress -Seconds $third -CollectSamples:$CollectSamples

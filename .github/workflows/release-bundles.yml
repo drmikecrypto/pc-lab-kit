@@ -56,16 +56,11 @@ jobs:
         shell: pwsh
         run: ./scripts/build-desktop-windows.ps1
 
-      - name: Build Windows probe ZIP
-        shell: pwsh
-        run: ./scripts/build-agent-bundle.ps1
-
       - uses: actions/upload-artifact@v4
         with:
           name: windows-bundles
           path: |
             public/downloads/PcLabKit-Setup-Windows-x64.exe
-            public/downloads/pc-lab-kit-probe-windows.zip
 
   linux-app:
     runs-on: ubuntu-22.04
@@ -127,7 +122,7 @@ jobs:
       - name: Collect release assets
         run: |
           mkdir -p release-assets
-          find dist -type f \( -name '*.exe' -o -name '*.AppImage' -o -name '*.zip' \) -exec cp -v {} release-assets/ \;
+          find dist -type f \( -name '*.exe' -o -name '*.AppImage' \) -exec cp -v {} release-assets/ \;
           ls -lh release-assets
 
       - name: Publish GitHub Release
@@ -138,19 +133,18 @@ jobs:
           body: |
             ## PC Lab Kit ${{ github.ref_name }}
 
-            Installable desktop apps — download, install, open **PC Lab Kit**. No browser required.
+            Installable desktop apps — download, install, open **PC Lab Kit**. No browser required. Probe is bundled inside the Windows app.
 
             ### Downloads
             | Asset | Platform | What it is |
             |-------|----------|------------|
-            | `PcLabKit-Setup-Windows-x64.exe` | Windows x64 | Installer — Start Menu app window |
+            | `PcLabKit-Setup-Windows-x64.exe` | Windows x64 | Installer — Start Menu app window (probe included) |
             | `PcLabKit-Linux-x64.AppImage` | Linux x64 | AppImage — chmod +x and run |
-            | `pc-lab-kit-probe-windows.zip` | Windows | Optional standalone probe (also bundled in the Windows app) |
 
             ### Quick start
             1. Download the installer for your OS.
             2. Windows: run the setup EXE. Linux: `chmod +x PcLabKit-Linux-x64.AppImage && ./PcLabKit-Linux-x64.AppImage`.
             3. Open **PC Lab Kit** from the Start Menu (Windows) or the AppImage (Linux).
-            4. The lab opens inside the app window. On Windows the probe starts with the app for sensors/benchmarks.
+            4. On Windows the probe starts with the app for sensors, drivers, and stress.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

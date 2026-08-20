@@ -16,21 +16,18 @@ Run `Start-PcLabProbe.bat` — it elevates so the LibreHardwareMonitor helper (`
 
 GitHub Releases: https://github.com/drmikecrypto/pc-lab-kit/releases/latest  
 
-- Windows: `PcLabKit-Setup-Windows-x64.exe` — install, then open **PC Lab Kit**
+- Windows: `PcLabKit-Setup-Windows-x64.exe` — install, then open **PC Lab Kit** (probe bundled)
 - Linux: `PcLabKit-Linux-x64.AppImage` — `chmod +x` and run
-- Optional probe ZIP: `pc-lab-kit-probe-windows.zip` (also bundled/started by the Windows app)
 
-Local mirrors while the lab is running: `/download/windows`, `/download/linux`, `/download/probe-windows`.
+Local mirrors while the lab is running: `/download/windows`, `/download/linux`.
 
 ## Does the lab open in my browser?
 
 No. The installable apps open a **PC Lab Kit** window. Developers can still use `scripts/start.ps1` for a browser-based workflow.
 
-## Where is the probe download?
+## Where is the probe?
 
-With the lab running: **http://127.0.0.1:8080/download/probe-windows**  
-Or the [latest GitHub release](https://github.com/drmikecrypto/pc-lab-kit/releases/latest).  
-Or build: `.\scripts\build-agent-bundle.ps1`
+Inside the **Windows desktop app** — it starts with PC Lab Kit. Developers can still build a standalone bundle with `.\scripts\build-agent-bundle.ps1` for local testing; it is not published as a GitHub Release asset.
 
 ## What is this product?
 

@@ -28,6 +28,8 @@
       advanced: 'dx-telemetry',
       hardware: 'dx-hardware-ref',
       openbook: 'dx-openbook-lab',
+      drivers: 'dx-drivers-lab',
+      stress: 'dx-stress-lab',
     };
     if (history.replaceState && hashByTab[tab]) {
       history.replaceState(null, '', '#' + hashByTab[tab]);
@@ -45,6 +47,16 @@
     btn.addEventListener('click', () => activate(btn.getAttribute('data-dx-nav')));
   });
 
+  document.addEventListener('click', (ev) => {
+    const t = ev.target;
+    if (!(t instanceof Element)) return;
+    const goto = t.closest('[data-dx-goto]');
+    if (goto) {
+      const tab = goto.getAttribute('data-dx-goto');
+      if (tab) activate(tab);
+    }
+  });
+
   const hash = (location.hash || '').replace('#', '');
   const map = {
     'dx-command-center': 'command',
@@ -59,6 +71,8 @@
     'dx-rgb-lab': 'advanced',
     'dx-hardware-ref': 'hardware',
     'dx-openbook-lab': 'openbook',
+    'dx-drivers-lab': 'drivers',
+    'dx-stress-lab': 'stress',
   };
   activate(map[hash] || 'command');
 

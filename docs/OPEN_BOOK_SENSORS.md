@@ -49,9 +49,11 @@ Hardware Reference **Open Book sensors** table + probe `GET /openbook` list ever
 
 `GET /openbook` also returns `dossier`: CPUID leaves, GPU PCI 256-byte config (NVIDIA Ring0), SMBIOS SPD modules, NVMe SMART, EDID hex, board serial/BIOS.
 
+**v4.1 firmware inventory** adds first-class fields: BIOS vendor/version/date, CPU microcode revision, GPU VBIOS string + SHA-256, TPM/Secure Boot, ACPI table signatures, storage firmware revisions — all tagged with provenance. UI truth cards surface these on the Open Book tab.
+
 After Full Lab finalize, **Export Assembly Certificate** prints a one-page client report (fingerprint, stress PASS/FAIL, open-book hotspot/VRAM, sensor count + sources). Shop name is set in Settings.
 
-The **Open Book** tab (v4.0) is the daily assembly layout: dossier | live gauges | certificate.
+The **Open Book** tab is dossier + live open-book gauges. **Stress** and **Drivers** are separate tabs.
 
 ## Caveats
 

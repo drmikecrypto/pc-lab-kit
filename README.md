@@ -12,11 +12,10 @@ Get the latest release: **https://github.com/drmikecrypto/pc-lab-kit/releases/la
 
 | File | Platform | How to run |
 |------|----------|------------|
-| `PcLabKit-Setup-Windows-x64.exe` | Windows x64 | Run the installer, then open **PC Lab Kit** from the Start Menu |
+| `PcLabKit-Setup-Windows-x64.exe` | Windows x64 | Run the installer, then open **PC Lab Kit** from the Start Menu (probe included) |
 | `PcLabKit-Linux-x64.AppImage` | Linux x64 | `chmod +x PcLabKit-Linux-x64.AppImage && ./PcLabKit-Linux-x64.AppImage` |
-| `pc-lab-kit-probe-windows.zip` | Windows | Optional standalone probe (also started by the Windows app) |
 
-The lab runs **inside the app** (not in your system browser). On Windows the hardware probe starts with the app for sensors, benchmarks, and OC.
+The lab runs **inside the app** (not in your system browser). On Windows the hardware probe starts with the app for sensors, drivers, benchmarks, and stress.
 
 ## How it fits together
 
@@ -119,8 +118,7 @@ npm run tauri -- dev
 ## Build desktop installers
 
 ```powershell
-.\scripts\build-desktop-windows.ps1   # → public/downloads/PcLabKit-Setup-Windows-x64.exe
-.\scripts\build-agent-bundle.ps1      # → public/downloads/pc-lab-kit-probe-windows.zip
+.\scripts\build-desktop-windows.ps1   # → public/downloads/PcLabKit-Setup-Windows-x64.exe (probe bundled)
 ```
 
 ```bash
@@ -128,7 +126,7 @@ chmod +x scripts/*.sh
 ./scripts/build-desktop-linux.sh      # → public/downloads/PcLabKit-Linux-x64.AppImage
 ```
 
-Tag `v*` pushes trigger GitHub Actions to publish the installers:
+Tag `v*` pushes trigger GitHub Actions to publish the Windows and Linux installers only:
 
 ```mermaid
 flowchart LR

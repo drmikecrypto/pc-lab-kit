@@ -120,6 +120,11 @@ class SettingsService
         return false;
     }
 
+    public function diagnosticGamesRefreshDays(): int
+    {
+        return 30;
+    }
+
     public function clearCache(): void
     {
     }
