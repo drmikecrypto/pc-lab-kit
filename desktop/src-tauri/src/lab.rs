@@ -183,6 +183,40 @@ pub fn resolve_resource_lab<R: tauri::Runtime>(resolver: &tauri::path::PathResol
     Err("Lab payload missing. Run scripts/stage-desktop-payload.ps1 (or .sh) before building.".into())
 }
 
+/// Prevent host PHP (Scoop, Chocolatey, etc.) from merging php.ini / extension_dir
+/// into the bundled portable runtime — without this, pdo_sqlite/mbstring fail and /diagnostic 500s.
+fn configure_isolated_php_env(cmd: &mut Command, php_bin: &Path, work_dir: &Path) {
+    let config_dir = php_config_dir(php_bin, work_dir);
+    cmd.env("PHPRC", &config_dir);
+    cmd.env("PHP_INI_SCAN_DIR", "");
+    cmd.arg("-c").arg(&config_dir);
+}
+
+fn php_config_dir(php_bin: &Path, work_dir: &Path) -> PathBuf {
+    #[cfg(windows)]
+    {
+        return php_bin
+            .parent()
+            .map(Path::to_path_buf)
+            .unwrap_or_else(|| work_dir.join("runtime").join("php"));
+    }
+    #[cfg(not(windows))]
+    {
+        for candidate in [
+            work_dir.join("runtime").join("php"),
+            work_dir.join("runtime").join("php").join("etc"),
+        ] {
+            if candidate.join("php.ini").is_file() {
+                return candidate;
+            }
+        }
+        php_bin
+            .parent()
+            .map(Path::to_path_buf)
+            .unwrap_or_else(|| work_dir.join("runtime").join("php"))
+    }
+}
+
 fn resolve_php_bin(work_dir: &Path) -> Result<PathBuf, String> {
     #[cfg(windows)]
     {
@@ -232,7 +266,9 @@ fn ensure_lab_ready(work_dir: &Path, php_bin: &Path) -> Result<(), String> {
 
     let migrate = work_dir.join("bin").join("migrate.php");
     if migrate.is_file() {
-        let status = Command::new(php_bin)
+        let mut migrate_cmd = Command::new(php_bin);
+        configure_isolated_php_env(&mut migrate_cmd, php_bin, work_dir);
+        let status = migrate_cmd
             .arg(&migrate)
             .current_dir(work_dir)
             .stdout(Stdio::null())
@@ -259,6 +295,7 @@ fn pick_free_port() -> Result<u16, String> {
 
 fn spawn_php(php_bin: &Path, work_dir: &Path, port: u16) -> Result<Child, String> {
     let mut cmd = Command::new(php_bin);
+    configure_isolated_php_env(&mut cmd, php_bin, work_dir);
     cmd.args(["-S", &format!("127.0.0.1:{port}"), "-t", "public"])
         .current_dir(work_dir)
         .stdin(Stdio::null())

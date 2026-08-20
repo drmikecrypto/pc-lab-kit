@@ -6,6 +6,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.0.4] - 2026-08-20
+
+### Fixed
+- **Windows/Linux desktop:** bundled PHP no longer inherits host PHP config (Scoop, Chocolatey, etc.) — fixes `Lab did not become ready … HTTP 500` when `pdo_sqlite` / `mbstring` failed to load
+
 ## [4.0.3] - 2026-08-20
 
 ### Fixed
