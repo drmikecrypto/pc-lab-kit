@@ -18,14 +18,21 @@ return [
     ],
     'app_download' => [
         'windows' => '/download/probe-windows',
-        'linux' => '/download/probe-windows',
+        'linux' => '/download/probe-linux',
         'hub' => '/download/probe-windows',
         'fallback' => '/download/probe-windows',
     ],
     'downloads' => [
         'hub' => '/download/probe-windows',
         'windows' => '/download/probe-windows',
-        'linux' => '/download/probe-windows',
+        'linux' => '/download/probe-linux',
+    ],
+    /** Shared localhost probe endpoint (Windows PowerShell or Linux Python). */
+    'probe_agent' => [
+        'local_host' => '127.0.0.1',
+        'local_port' => 18765,
+        'health_path' => '/health',
+        'probe_path' => '/probe',
     ],
     'windows_agent' => [
         'name' => 'PcLab Probe',
@@ -34,6 +41,15 @@ return [
         'local_port' => 18765,
         'health_path' => '/health',
         'probe_path' => '/probe',
+    ],
+    'linux_agent' => [
+        'name' => 'PcLab Probe Linux',
+        'download_url' => '/download/probe-linux',
+        'local_host' => '127.0.0.1',
+        'local_port' => 18765,
+        'health_path' => '/health',
+        'probe_path' => '/probe',
+        'start_hint' => 'chmod +x agent/pclab_probe_linux/pclab-probe-linux.sh && ./agent/pclab_probe_linux/pclab-probe-linux.sh',
     ],
     'games_catalog' => [
         'target_count' => 300,

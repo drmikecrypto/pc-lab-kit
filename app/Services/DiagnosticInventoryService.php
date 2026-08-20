@@ -102,6 +102,8 @@ class DiagnosticInventoryService
                 'usb_devices' => (int) ($summary['usb_devices'] ?? 0),
                 'monitors' => (int) ($summary['monitors'] ?? count($monitors)),
                 'categories' => (array) ($summary['categories'] ?? []),
+                'coverage_score' => isset($summary['coverage_score']) ? (int) $summary['coverage_score'] : null,
+                'form_factor' => (string) ($summary['form_factor'] ?? ''),
             ],
             'filters' => $filters,
             'tree' => $tree,
@@ -114,6 +116,8 @@ class DiagnosticInventoryService
             'monitors' => $monitors,
             'modes' => $modes,
             'firmware' => (array) ($devices['firmware'] ?? []),
+            'platform' => (array) ($devices['platform'] ?? []),
+            'fingerprint' => (array) ($devices['fingerprint'] ?? []),
             'motherboard' => (array) ($devices['motherboard'] ?? []),
             'bios' => (array) ($devices['bios'] ?? []),
             'tpm' => (array) ($devices['tpm'] ?? []),
@@ -124,7 +128,7 @@ class DiagnosticInventoryService
             'audio' => array_values(array_filter((array) ($devices['audio'] ?? []), 'is_array')),
             'bluetooth' => array_values(array_filter((array) ($devices['bluetooth'] ?? []), 'is_array')),
             'findings' => array_values(array_filter((array) ($devices['findings'] ?? []), 'is_array')),
-            'schema' => (array) ($devices['schema'] ?? ['version' => 2]),
+            'schema' => (array) ($devices['schema'] ?? ['version' => 3]),
         ];
     }
 

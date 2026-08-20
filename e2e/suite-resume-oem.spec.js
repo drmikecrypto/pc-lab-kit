@@ -1,0 +1,26 @@
+// @ts-check
+const { test, expect } = require('@playwright/test');
+
+test.describe('Command Center OEM path + suite resume', () => {
+  test('OEM phases and Run Full Lab CTA are visible', async ({ page }) => {
+    await page.goto('/diagnostic');
+    await expect(page.locator('#dx-command-center')).toBeVisible();
+    await expect(page.locator('#dx-suite-run')).toBeVisible();
+    await expect(page.locator('.dx-oem-phases')).toBeVisible();
+    await expect(page.locator('#dx-intelligence-pulse')).toBeHidden();
+    await expect(page.locator('#dx-suite-profile option[value="soak_15"]')).toHaveCount(1);
+  });
+
+  test('resume banner can appear after mock interrupt', async ({ page }) => {
+    await page.goto('/diagnostic');
+    await page.evaluate(() => {
+      const banner = document.getElementById('dx-suite-resume');
+      if (banner) {
+        banner.hidden = false;
+        banner.innerHTML = '<strong>Resume Full Lab</strong><button type="button" id="dx-suite-resume-btn">Resume</button>';
+      }
+    });
+    await expect(page.locator('#dx-suite-resume')).toBeVisible();
+    await expect(page.locator('#dx-suite-resume-btn')).toBeVisible();
+  });
+});

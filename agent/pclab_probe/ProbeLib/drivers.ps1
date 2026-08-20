@@ -1041,12 +1041,123 @@ function Get-ProbeDriverAdvice {
         install_order    = @($script:ProbeDriverInstallOrder)
         install_queue    = @($queue)
         actions          = @($actions)
+        action_plan      = (Get-ProbeDriverActionPlan -Actions $actions -DeviceInventory $DeviceInventory)
         gpus             = @($gpuStatus)
         stale_or_generic = @($staleEnriched)
         driverless       = @($enrichedDriverless)
         driver_store     = @($installedStore | Select-Object -First 80)
         windows_update   = $wu
         collected_at     = (Get-Date).ToUniversalTime().ToString('o')
+    }
+}
+
+<#
+ Ordered per-device driver checklist: chipset → ME/PSP → LAN/Wi-Fi → GPU → audio → rest.
+#>
+function Get-ProbeDriverActionPlan {
+    param(
+        $Actions = @(),
+        $DeviceInventory = $null
+    )
+
+    $priorityMap = @{}
+    $i = 0
+    foreach ($step in @($script:ProbeDriverInstallOrder)) {
+        $cid = if ($step.id) { [string]$step.id } else { [string]$step }
+        $priorityMap[$cid] = $i
+        $i++
+    }
+    # Map firmware/ME into chipset bucket (first)
+    if (-not $priorityMap.ContainsKey('firmware')) { $priorityMap['firmware'] = 0 }
+    if (-not $priorityMap.ContainsKey('me_psp')) { $priorityMap['me_psp'] = 0 }
+    # Prefer network before GPU when both need work? Keep catalog order; chipset first is enough.
+    # Remap: network should come before gpu for connectivity — swap weights lightly
+    if ($priorityMap.ContainsKey('network') -and $priorityMap.ContainsKey('gpu')) {
+        # Chipset(0) → network(1-ish) → gpu: bump network ahead of gpu if currently after
+        if ($priorityMap['network'] -gt $priorityMap['gpu']) {
+            $g = $priorityMap['gpu']
+            $priorityMap['network'] = $g
+            $priorityMap['gpu'] = $g + 1
+        }
+    }
+
+    $items = [System.Collections.Generic.List[object]]::new()
+    foreach ($a in @($Actions)) {
+        if (-not $a) { continue }
+        $cat = [string]$a.category
+        if ($cat -match 'mei|psp|management engine|firmware') { $cat = 'firmware' }
+        $action = 'update'
+        if ($a.code -match 'missing') { $action = 'install' }
+        elseif ($a.install_method -eq 'updater_app') { $action = 'vendor_updater' }
+        elseif ($a.install_method -eq 'open_url' -or -not $a.installable) { $action = 'manual_url' }
+        elseif ($a.code -match 'inbox|skip') { $action = 'skip_inbox' }
+
+        $depOrder = if ($priorityMap.ContainsKey($cat)) { [int]$priorityMap[$cat] } else { 50 }
+        $items.Add(@{
+            id               = if ($a.instance_id) { $a.instance_id } else { [guid]::NewGuid().ToString('n').Substring(0, 12) }
+            device           = $a.device
+            instance_id      = $a.instance_id
+            category         = $cat
+            action           = $action
+            severity         = $a.severity
+            title            = $a.title
+            detail           = $a.detail
+            match_confidence = $a.match_confidence
+            match_confidence_pct = if ($null -ne $a.match_confidence) {
+                switch -Regex ([string]$a.match_confidence) {
+                    'exact|high' { 95 }
+                    'medium|catalog' { 75 }
+                    'low|heuristic' { 45 }
+                    default { 60 }
+                }
+            } else { $null }
+            install_method   = $a.install_method
+            package_url      = $a.package_url
+            primary_link     = $a.primary_link
+            installable      = [bool]$a.installable
+            vendor_id        = $a.vendor_id
+            device_id        = $a.device_id
+            dependency_order = $depOrder
+            sha256           = $a.sha256
+        })
+    }
+
+    # Ensure driverless devices appear even if advice missed them
+    if ($DeviceInventory) {
+        $seen = @{}
+        foreach ($it in $items) { if ($it.instance_id) { $seen[$it.instance_id] = $true } }
+        foreach ($d in @($DeviceInventory.driverless)) {
+            if ($d.instance_id -and $seen.ContainsKey($d.instance_id)) { continue }
+            $cat = Infer-ProbeDriverCategory -Category $d.category -DeviceName $d.name -VendorId $d.vendor_id
+            $depOrder = if ($priorityMap.ContainsKey($cat)) { [int]$priorityMap[$cat] } else { 50 }
+            $items.Add(@{
+                id = $d.instance_id
+                device = $d.name
+                instance_id = $d.instance_id
+                category = $cat
+                action = 'install'
+                severity = 'critical'
+                title = "No driver: $($d.name)"
+                detail = $d.problem_message
+                match_confidence = $d.match_confidence
+                installable = [bool]$d.installable
+                vendor_id = $d.vendor_id
+                device_id = $d.device_id
+                dependency_order = $depOrder
+                primary_link = $d.primary_link
+            })
+        }
+    }
+
+    $ordered = @($items | Sort-Object { $_.dependency_order }, { switch ($_.severity) { 'critical' { 0 } 'warn' { 1 } default { 2 } } }, { $_.device })
+
+    return @{
+        schema_version   = 1
+        order            = @($script:ProbeDriverInstallOrder)
+        items            = @($ordered)
+        count            = @($ordered).Count
+        installable_count = @($ordered | Where-Object { $_.installable -and $_.action -ne 'skip_inbox' }).Count
+        note             = 'Dependency order: chipset → ME/PSP → network → GPU → audio → rest'
     }
 }
 

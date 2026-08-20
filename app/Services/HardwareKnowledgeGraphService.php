@@ -290,6 +290,38 @@ class HardwareKnowledgeGraphService
 
         $this->addDriverDeviceNodes($report, $addNode, $addEdge, $nodes);
 
+        $platform = (array) ($report['platform'] ?? $devices['platform'] ?? []);
+        $fingerprint = (array) ($report['fingerprint'] ?? $devices['fingerprint'] ?? []);
+        if ($fingerprint !== [] || $platform !== []) {
+            $cov = $fingerprint['coverage_score'] ?? $devices['summary']['coverage_score'] ?? null;
+            $addNode('platform', 'platform', 'Platform Intelligence', [
+                'coverage_score' => $cov,
+                'form_factor' => $fingerprint['form_factor'] ?? null,
+                'elevated' => $fingerprint['elevated'] ?? $platform['elevated'] ?? null,
+                'hash' => isset($fingerprint['id']) ? (string) $fingerprint['id'] : null,
+            ]);
+            $addEdge('platform', 'system', 'profiles');
+            if (!empty($platform['tpm']['present'])) {
+                $addNode('tpm_detail', 'security', 'TPM ' . (string) ($platform['tpm']['spec_version'] ?? ''), [
+                    'manufacturer' => $platform['tpm']['manufacturer_id'] ?? null,
+                    'firmware' => $platform['tpm']['manufacturer_version'] ?? null,
+                ]);
+                $addEdge('tpm_detail', 'platform', 'attests');
+            }
+            if (!empty($platform['me_psp']['present'])) {
+                $addNode('me_psp', 'firmware', strtoupper((string) ($platform['me_psp']['vendor'] ?? 'me/psp')), [
+                    'generic_driver' => $platform['me_psp']['generic_driver'] ?? null,
+                ]);
+                $addEdge('me_psp', 'platform', 'management_engine');
+            }
+            if (!empty($platform['uefi']['firmware_type'])) {
+                $addNode('uefi', 'firmware', strtoupper((string) $platform['uefi']['firmware_type']), [
+                    'secure_boot' => $platform['uefi']['secure_boot'] ?? null,
+                ]);
+                $addEdge('uefi', 'platform', 'firmware_of');
+            }
+        }
+
         $bn = (array) ($analysis['bottleneck'] ?? []);
         $bnType = (string) ($bn['type'] ?? $bn['component'] ?? '');
         if ($bnType !== '' && $bnType !== 'balanced') {
@@ -341,6 +373,8 @@ class HardwareKnowledgeGraphService
                 'driver_device_nodes' => $driverNodes,
                 'hidden_devices' => (int) ($devices['summary']['hidden_devices'] ?? 0),
                 'total_devices' => (int) ($devices['summary']['total_devices'] ?? 0),
+                'coverage_score' => $fingerprint['coverage_score'] ?? $devices['summary']['coverage_score'] ?? null,
+                'platform_fingerprint' => $fingerprint['id'] ?? null,
             ],
         ];
     }

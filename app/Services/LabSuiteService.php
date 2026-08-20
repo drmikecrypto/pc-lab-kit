@@ -24,6 +24,15 @@ class LabSuiteService
     public function profiles(): array
     {
         return [
+            'adaptive' => [
+                'id' => 'adaptive',
+                'label' => 'Adaptive Lab',
+                'duration_hint_min' => 12,
+                'benches' => [],
+                'stress_id' => 'combined',
+                'stress_seconds' => 180,
+                'adaptive' => true,
+            ],
             'quick' => [
                 'id' => 'quick',
                 'label' => 'Quick Lab',
@@ -48,33 +57,264 @@ class LabSuiteService
                 'stress_id' => 'oracle',
                 'stress_seconds' => 300,
             ],
+            'soak_15' => [
+                'id' => 'soak_15',
+                'label' => 'Soak 15 min',
+                'duration_hint_min' => 18,
+                'benches' => ['cpu', 'memory', 'storage', 'gpu'],
+                'stress_id' => 'combined',
+                'stress_seconds' => 900,
+            ],
+            'soak_30' => [
+                'id' => 'soak_30',
+                'label' => 'Soak 30 min',
+                'duration_hint_min' => 35,
+                'benches' => ['cpu', 'memory', 'storage', 'gpu'],
+                'stress_id' => 'combined',
+                'stress_seconds' => 1800,
+            ],
+            'soak_60' => [
+                'id' => 'soak_60',
+                'label' => 'Soak 60 min',
+                'duration_hint_min' => 65,
+                'benches' => ['cpu', 'memory', 'storage', 'gpu'],
+                'stress_id' => 'oracle',
+                'stress_seconds' => 3600,
+            ],
+        ];
+    }
+
+    /**
+     * Preview an adaptive (or static) lab plan before start.
+     *
+     * @param array<string, mixed> $input probe devices/fingerprint/platform optional
+     * @return array<string, mixed>
+     */
+    public function planPreview(array $input = []): array
+    {
+        $profileId = strtolower(trim((string) ($input['profile'] ?? 'adaptive')));
+        $profiles = $this->profiles();
+        if (!isset($profiles[$profileId])) {
+            $profileId = 'adaptive';
+        }
+        $profile = $profiles[$profileId];
+
+        if (!empty($profile['adaptive']) || $profileId === 'adaptive') {
+            $devices = (array) ($input['devices'] ?? []);
+            $fingerprint = (array) ($input['fingerprint'] ?? $devices['fingerprint'] ?? []);
+            $platform = (array) ($input['platform'] ?? $devices['platform'] ?? []);
+            $steps = $this->compileAdaptiveSteps($fingerprint, $devices, $platform);
+
+            return [
+                'ok' => true,
+                'profile' => 'adaptive',
+                'label' => 'Adaptive Lab',
+                'adaptive' => true,
+                'steps' => $steps['steps'],
+                'benches' => $steps['benches'],
+                'stress_id' => $steps['stress_id'],
+                'stress_seconds' => $steps['stress_seconds'],
+                'gated' => $steps['gated'],
+                'gate_reason' => $steps['gate_reason'],
+                'findings' => $steps['findings'],
+                'duration_hint_min' => $steps['duration_hint_min'],
+                'fingerprint_id' => $fingerprint['id'] ?? null,
+                'coverage_score' => $fingerprint['coverage_score'] ?? null,
+                'form_factor' => $fingerprint['form_factor'] ?? null,
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'profile' => $profileId,
+            'label' => $profile['label'],
+            'adaptive' => false,
+            'steps' => $this->stepList($profile),
+            'benches' => $profile['benches'],
+            'stress_id' => $profile['stress_id'],
+            'stress_seconds' => $profile['stress_seconds'],
+            'gated' => false,
+            'gate_reason' => null,
+            'findings' => [],
+            'duration_hint_min' => $profile['duration_hint_min'] ?? null,
+        ];
+    }
+
+    /**
+     * @param array<string, mixed> $fingerprint
+     * @param array<string, mixed> $devices
+     * @param array<string, mixed> $platform
+     * @return array<string, mixed>
+     */
+    private function compileAdaptiveSteps(array $fingerprint, array $devices, array $platform): array
+    {
+        $steps = [];
+        $findings = [];
+        $benches = [];
+        $gated = false;
+        $gateReason = null;
+
+        $driverless = (int) ($devices['summary']['driverless'] ?? count((array) ($devices['driverless'] ?? [])));
+        $chipsetMissing = false;
+        foreach ((array) ($devices['driverless'] ?? []) as $d) {
+            if (!is_array($d)) {
+                continue;
+            }
+            $n = (string) ($d['name'] ?? '') . (string) ($d['category'] ?? '');
+            if (preg_match('/chipset|SMBus|LPC|Host Bridge|PCI Express Root/i', $n)) {
+                $chipsetMissing = true;
+            }
+        }
+        if ($chipsetMissing || $driverless >= 5) {
+            $gated = true;
+            $gateReason = $chipsetMissing
+                ? 'Chipset / platform driver missing — run Drivers action plan before Full Lab soak'
+                : "$driverless driverless devices — prefer inventory + driver fix before long stress";
+            $findings[] = ['severity' => 'warn', 'code' => 'adaptive_gate_drivers', 'detail' => $gateReason];
+        }
+
+        $steps[] = [
+            'id' => 'inventory',
+            'kind' => 'inventory',
+            'label' => 'Platform inventory',
+            'reason' => 'Capture PnP, SMBIOS, UEFI/TPM, and coverage before benches',
+            'hardware_refs' => ['platform', 'pnp'],
+        ];
+
+        if ($gated) {
+            $steps[] = [
+                'id' => 'drivers_gate',
+                'kind' => 'sensor',
+                'label' => 'Driver gate (review)',
+                'reason' => $gateReason,
+                'hardware_refs' => ['drivers'],
+                'gate' => true,
+            ];
+
+            return [
+                'steps' => $steps,
+                'benches' => [],
+                'stress_id' => null,
+                'stress_seconds' => 0,
+                'gated' => true,
+                'gate_reason' => $gateReason,
+                'findings' => $findings,
+                'duration_hint_min' => 3,
+            ];
+        }
+
+        $hasGpu = !empty($fingerprint['has_discrete_gpu']);
+        $nvme = (int) ($fingerprint['nvme_count'] ?? 0);
+        $isLaptop = (($fingerprint['form_factor'] ?? '') === 'laptop');
+
+        $benches[] = 'cpu';
+        $steps[] = ['id' => 'bench:cpu', 'kind' => 'bench', 'label' => 'CPU single-thread', 'reason' => 'Baseline single-thread throughput', 'hardware_refs' => ['cpu']];
+        $benches[] = 'cpu_mt';
+        $steps[] = ['id' => 'bench:cpu_mt', 'kind' => 'bench', 'label' => 'CPU multi-thread', 'reason' => 'Multi-thread scaling', 'hardware_refs' => ['cpu']];
+        $benches[] = 'cpu_cache';
+        $steps[] = ['id' => 'bench:cpu_cache', 'kind' => 'bench', 'label' => 'CPU cache', 'reason' => 'Cache hierarchy', 'hardware_refs' => ['cpu']];
+        $benches[] = 'memory';
+        $steps[] = ['id' => 'bench:memory', 'kind' => 'bench', 'label' => 'Memory bandwidth', 'reason' => 'RAM vs SMBIOS modules', 'hardware_refs' => ['ram']];
+
+        if ((int) ($fingerprint['disk_count'] ?? 1) > 0) {
+            $benches[] = 'storage';
+            $reason = $nvme >= 2 ? "$nvme NVMe drives — multi-disk storage" : ($nvme === 1 ? 'Single NVMe sequential' : 'Storage sequential');
+            $steps[] = ['id' => 'bench:storage', 'kind' => 'bench', 'label' => 'Storage', 'reason' => $reason, 'hardware_refs' => ['storage']];
+        }
+
+        if ($hasGpu) {
+            $benches[] = 'gpu';
+            $steps[] = ['id' => 'bench:gpu', 'kind' => 'bench', 'label' => 'GPU compute', 'reason' => 'Discrete GPU detected', 'hardware_refs' => ['gpu']];
+            $stressId = 'combined';
+            $stressSec = 180;
+            $stressReason = 'Discrete GPU — combined soak';
+        } elseif ($isLaptop) {
+            $stressId = 'quick';
+            $stressSec = 90;
+            $stressReason = 'Laptop — shorter thermal soak';
+            $findings[] = ['severity' => 'info', 'code' => 'adaptive_skip_gpu', 'detail' => 'No discrete GPU — GPU bench skipped'];
+        } else {
+            $stressId = 'combined';
+            $stressSec = 120;
+            $stressReason = 'Desktop without discrete GPU — moderate CPU stress';
+            $findings[] = ['severity' => 'info', 'code' => 'adaptive_skip_gpu', 'detail' => 'No discrete GPU — GPU bench skipped'];
+        }
+
+        if ($isLaptop && count((array) ($devices['battery'] ?? [])) > 0) {
+            $steps[] = ['id' => 'sensor:battery', 'kind' => 'sensor', 'label' => 'Battery / AC path', 'reason' => 'Laptop battery present', 'hardware_refs' => ['battery']];
+        }
+
+        $steps[] = [
+            'id' => 'stress',
+            'kind' => 'stress',
+            'label' => 'Stress: ' . $stressId,
+            'reason' => $stressReason,
+            'hardware_refs' => $hasGpu ? ['cpu', 'gpu'] : ['cpu'],
+            'params' => ['id' => $stressId, 'seconds' => $stressSec],
+        ];
+
+        return [
+            'steps' => $steps,
+            'benches' => $benches,
+            'stress_id' => $stressId,
+            'stress_seconds' => $stressSec,
+            'gated' => false,
+            'gate_reason' => null,
+            'findings' => $findings,
+            'duration_hint_min' => (int) round(2 + count($benches) * 1.5 + $stressSec / 60),
         ];
     }
 
     /** @param array<string, mixed> $input @return array<string, mixed> */
     public function start(array $input): array
     {
-        $profileId = strtolower(trim((string) ($input['profile'] ?? 'standard')));
+        $profileId = strtolower(trim((string) ($input['profile'] ?? 'adaptive')));
         $profiles = $this->profiles();
         if (!isset($profiles[$profileId])) {
-            $profileId = 'standard';
+            $profileId = 'adaptive';
         }
         $profile = $profiles[$profileId];
+        $plan = null;
+        $steps = $this->stepList($profile);
+        if (!empty($profile['adaptive']) || $profileId === 'adaptive') {
+            $plan = $this->planPreview($input);
+            $steps = [];
+            foreach ((array) ($plan['steps'] ?? []) as $s) {
+                if (!is_array($s)) {
+                    continue;
+                }
+                $steps[] = [
+                    'id' => (string) ($s['id'] ?? ''),
+                    'label' => (string) ($s['label'] ?? $s['id'] ?? ''),
+                    'reason' => (string) ($s['reason'] ?? ''),
+                    'kind' => (string) ($s['kind'] ?? ''),
+                ];
+            }
+            if ($steps === []) {
+                $steps = $this->stepList($profiles['standard']);
+                $profileId = 'standard';
+                $profile = $profiles['standard'];
+            }
+        }
         $id = bin2hex(random_bytes(8));
         $job = [
             'id' => $id,
             'profile' => $profileId,
-            'label' => $profile['label'],
+            'label' => $plan['label'] ?? $profile['label'],
             'status' => 'pending',
             'progress' => 0,
             'step' => 'awaiting_probe',
-            'steps' => $this->stepList($profile),
+            'steps' => $steps,
+            'plan' => $plan,
             'created_at' => gmdate('c'),
             'updated_at' => gmdate('c'),
             'cancel_requested' => false,
             'fp' => substr(trim((string) ($input['fp'] ?? $input['fingerprint'] ?? '')), 0, 64),
             'result' => null,
             'error' => null,
+            'resumable' => true,
+            'probe_job' => null,
+            'probe_payload' => null,
         ];
         $this->write($job);
 
@@ -98,12 +338,80 @@ class LabSuiteService
             return $job;
         }
         $job['cancel_requested'] = true;
-        $job['status'] = 'cancelled';
-        $job['step'] = 'cancelled';
+        // Soft-cancel: keep probe payload so finalize / resume can still run.
+        $hasProbeWork = !empty($job['probe_job']) || !empty($job['probe_payload']);
+        $job['status'] = $hasProbeWork ? 'awaiting_finalize' : 'cancelled';
+        $job['step'] = $hasProbeWork ? 'awaiting_finalize' : 'cancelled';
+        $job['resumable'] = $hasProbeWork;
         $job['updated_at'] = gmdate('c');
         $this->write($job);
 
         return $job;
+    }
+
+    /**
+     * Discard a resumable job (user explicit discard only).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function discard(string $id): ?array
+    {
+        $job = $this->read($id);
+        if ($job === null) {
+            return null;
+        }
+        $job['status'] = 'discarded';
+        $job['step'] = 'discarded';
+        $job['resumable'] = false;
+        $job['cancel_requested'] = true;
+        $job['updated_at'] = gmdate('c');
+        $this->write($job);
+
+        return $job;
+    }
+
+    /**
+     * List jobs that can be resumed or finalized after a UI crash.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function listResumable(int $limit = 10): array
+    {
+        $out = [];
+        if (!is_dir($this->dir)) {
+            return $out;
+        }
+        $files = glob($this->dir . '/*.json') ?: [];
+        usort($files, static fn ($a, $b) => filemtime($b) <=> filemtime($a));
+        foreach ($files as $file) {
+            if (count($out) >= $limit) {
+                break;
+            }
+            $data = json_decode((string) file_get_contents($file), true);
+            if (!is_array($data)) {
+                continue;
+            }
+            $status = (string) ($data['status'] ?? '');
+            $resumable = !empty($data['resumable'])
+                || in_array($status, ['pending', 'running', 'awaiting_finalize'], true)
+                || ($status === 'failed' && !empty($data['probe_job']));
+            if (!$resumable || $status === 'completed' || $status === 'discarded') {
+                continue;
+            }
+            $out[] = [
+                'id' => $data['id'] ?? basename($file, '.json'),
+                'profile' => $data['profile'] ?? null,
+                'label' => $data['label'] ?? null,
+                'status' => $status,
+                'progress' => $data['progress'] ?? 0,
+                'step' => $data['step'] ?? null,
+                'updated_at' => $data['updated_at'] ?? null,
+                'resumable' => true,
+                'probe_job' => $data['probe_job'] ?? null,
+            ];
+        }
+
+        return $out;
     }
 
     /**
@@ -125,6 +433,19 @@ class LabSuiteService
         }
         if (isset($patch['probe_job']) && is_array($patch['probe_job'])) {
             $job['probe_job'] = $patch['probe_job'];
+            $probeStatus = (string) ($patch['probe_job']['status'] ?? '');
+            if ($probeStatus === 'completed') {
+                $job['status'] = 'awaiting_finalize';
+                $job['step'] = 'awaiting_finalize';
+                $job['resumable'] = true;
+            } elseif (in_array($probeStatus, ['running', 'interrupted'], true)) {
+                $job['status'] = 'running';
+                $job['resumable'] = true;
+            }
+        }
+        if (isset($patch['probe_payload']) && is_array($patch['probe_payload'])) {
+            $job['probe_payload'] = $patch['probe_payload'];
+            $job['resumable'] = true;
         }
         $job['updated_at'] = gmdate('c');
         $this->write($job);
@@ -134,6 +455,7 @@ class LabSuiteService
 
     /**
      * Finalize with probe suite payload: analysis, certificate, graph, advisor cards.
+     * Accepts completed probe work even if the PHP job was soft-cancelled or marked failed.
      *
      * @param array<string, mixed> $input
      * @return array<string, mixed>
@@ -144,12 +466,36 @@ class LabSuiteService
         if ($job === null) {
             throw new \InvalidArgumentException('Suite job not found');
         }
-        if (($job['status'] ?? '') === 'cancelled') {
+
+        $probePayload = (array) ($input['probe'] ?? $input['agent'] ?? $job['probe_payload'] ?? []);
+        $suiteRun = (array) ($input['suite'] ?? $input['probe_suite'] ?? []);
+        if ($suiteRun === [] && is_array($job['probe_job'] ?? null)) {
+            $pj = $job['probe_job'];
+            $suiteRun = [
+                'status' => $pj['status'] ?? null,
+                'benches' => $pj['benches'] ?? [],
+                'stress' => $pj['stress'] ?? [],
+                'samples' => $pj['samples'] ?? [],
+                'duration_s' => $pj['duration_s'] ?? null,
+                'plan' => $pj['plan'] ?? null,
+            ];
+            if ($probePayload === [] && is_array($pj['probe'] ?? null)) {
+                $probePayload = $pj['probe'];
+            }
+        }
+
+        $hasWork = $probePayload !== [] || !empty($suiteRun['benches']) || !empty($suiteRun['stress']);
+        // Only hard-block pure cancel with zero probe work.
+        if (($job['status'] ?? '') === 'cancelled' && !$hasWork) {
+            return $job;
+        }
+        if (($job['status'] ?? '') === 'discarded') {
+            throw new \InvalidArgumentException('Suite job was discarded');
+        }
+        if (($job['status'] ?? '') === 'completed' && is_array($job['result'] ?? null)) {
             return $job;
         }
 
-        $probePayload = (array) ($input['probe'] ?? $input['agent'] ?? []);
-        $suiteRun = (array) ($input['suite'] ?? $input['probe_suite'] ?? []);
         $samples = is_array($input['samples'] ?? null) ? $input['samples'] : (array) ($suiteRun['samples'] ?? []);
         $benches = is_array($suiteRun['benches'] ?? null) ? $suiteRun['benches'] : [];
         $stress = is_array($suiteRun['stress'] ?? null) ? $suiteRun['stress'] : [];
@@ -168,11 +514,26 @@ class LabSuiteService
         $analysis['mode'] = 'suite';
         $analysis['suite'] = [
             'job_id' => $id,
-            'profile' => $job['profile'] ?? 'standard',
+            'profile' => $job['profile'] ?? 'adaptive',
             'benches' => $benches,
             'stress' => $stress,
             'duration_s' => $suiteRun['duration_s'] ?? null,
+            'plan' => $job['plan'] ?? $suiteRun['plan'] ?? null,
         ];
+        if (!empty($input['fingerprint']) && is_array($input['fingerprint'])) {
+            $analysis['fingerprint'] = $input['fingerprint'];
+        }
+        if (!empty($input['platform']) && is_array($input['platform'])) {
+            $analysis['platform'] = $input['platform'];
+        }
+        if (is_array($analysis['silicon_dossier'] ?? null)) {
+            if (empty($analysis['silicon_dossier']['fingerprint']) && !empty($analysis['fingerprint'])) {
+                $analysis['silicon_dossier']['fingerprint'] = $analysis['fingerprint'];
+            }
+            if (empty($analysis['silicon_dossier']['platform']) && !empty($analysis['platform'])) {
+                $analysis['silicon_dossier']['platform'] = $analysis['platform'];
+            }
+        }
 
         $cert = (new StressCertificateService())->issue($stress !== [] ? $stress : [
             'id' => 'suite',
@@ -208,6 +569,20 @@ class LabSuiteService
             'suite' => true,
         ]);
         $analysis['advisor_cards'] = (new DiagnosticAiService())->advisorCards($analysis);
+        // Stability Oracle first-class on verdict cards
+        if (!empty($cert['oracle_grade']) || isset($cert['stability_margin_pct'])) {
+            array_unshift($analysis['advisor_cards'], [
+                'title' => 'Stability Oracle',
+                'body' => sprintf(
+                    'Grade %s · margin %s%% · verdict %s',
+                    (string) ($cert['oracle_grade'] ?? '—'),
+                    (string) ($cert['stability_margin_pct'] ?? '—'),
+                    (string) ($cert['verdict'] ?? '—')
+                ),
+                'severity' => (($cert['verdict'] ?? '') === 'fail' || ($cert['verdict'] ?? '') === 'failed') ? 'critical' : 'info',
+                'source' => 'stability_oracle',
+            ]);
+        }
         $analysis['consultant'] = (new DiagnosticConsultantService())->plan($analysis);
         if ($comparison !== null) {
             $analysis['comparison'] = $comparison;
@@ -241,6 +616,7 @@ class LabSuiteService
         $job['status'] = 'completed';
         $job['progress'] = 100;
         $job['step'] = 'done';
+        $job['resumable'] = false;
         $job['updated_at'] = gmdate('c');
         $job['result'] = [
             'analysis' => $analysis,

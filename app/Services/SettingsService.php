@@ -24,7 +24,11 @@ class SettingsService
         $app = require dirname(__DIR__, 2) . '/config/app.php';
         $file = $this->readFile();
         $envKey = trim((string) ($app['llm']['api_key'] ?? ''));
-        $fileKey = trim((string) ($file['llm_api_key'] ?? ''));
+        $fileKeyRaw = trim((string) ($file['llm_api_key'] ?? ''));
+        $fileKey = $fileKeyRaw !== '' ? $this->unwrapSecret($fileKeyRaw) : '';
+        if ($fileKey === '' && $fileKeyRaw !== '' && !str_starts_with($fileKeyRaw, 'v1:') && !str_starts_with($fileKeyRaw, 'plain:')) {
+            $fileKey = $fileKeyRaw;
+        }
 
         $apiKey = $envKey !== '' ? $envKey : $fileKey;
         $source = $envKey !== '' ? 'env' : ($fileKey !== '' ? 'local' : 'none');
@@ -59,6 +63,7 @@ class SettingsService
             'api_key_hint' => self::maskKey($cfg['api_key']),
             'source' => $cfg['source'],
             'shop_name' => $this->shopName(),
+            'shop_key_configured' => $this->shopKeyConfigured(),
             'federated_benchmarks_opt_in' => !empty($this->readFile()['federated_benchmarks_opt_in']),
         ];
     }
@@ -68,6 +73,79 @@ class SettingsService
         $name = trim((string) ($this->readFile()['shop_name'] ?? ''));
 
         return $name !== '' ? substr($name, 0, 80) : 'PC Lab Kit';
+    }
+
+    /**
+     * HMAC shop signing key for .pclab / cert integrity.
+     * Persisted locally; on Windows optionally wrapped via machine-scoped key file.
+     */
+    public function shopSigningKey(): string
+    {
+        $file = $this->readFile();
+        $key = trim((string) ($file['shop_signing_key'] ?? ''));
+        if ($key !== '') {
+            return $this->unwrapSecret($key);
+        }
+        $key = bin2hex(random_bytes(32));
+        $file['shop_signing_key'] = $this->wrapSecret($key);
+        $this->writeFile($file);
+
+        return $key;
+    }
+
+    public function shopKeyConfigured(): bool
+    {
+        return trim((string) ($this->readFile()['shop_signing_key'] ?? '')) !== '';
+    }
+
+    /** Protect secrets at rest with AES-256-GCM + machine-local key material. */
+    private function wrapSecret(string $plain): string
+    {
+        $material = $this->machineKeyMaterial();
+        $iv = random_bytes(12);
+        $tag = '';
+        $cipher = openssl_encrypt($plain, 'aes-256-gcm', $material, OPENSSL_RAW_DATA, $iv, $tag);
+        if ($cipher === false) {
+            return 'plain:' . $plain;
+        }
+
+        return 'v1:' . base64_encode($iv . $tag . $cipher);
+    }
+
+    private function unwrapSecret(string $stored): string
+    {
+        if (str_starts_with($stored, 'plain:')) {
+            return substr($stored, 6);
+        }
+        if (!str_starts_with($stored, 'v1:')) {
+            return $stored;
+        }
+        $raw = base64_decode(substr($stored, 3), true);
+        if ($raw === false || strlen($raw) < 28) {
+            return '';
+        }
+        $iv = substr($raw, 0, 12);
+        $tag = substr($raw, 12, 16);
+        $cipher = substr($raw, 28);
+        $plain = openssl_decrypt($cipher, 'aes-256-gcm', $this->machineKeyMaterial(), OPENSSL_RAW_DATA, $iv, $tag);
+
+        return is_string($plain) ? $plain : '';
+    }
+
+    private function machineKeyMaterial(): string
+    {
+        $seed = php_uname('n') . '|' . (getenv('COMPUTERNAME') ?: '') . '|pclab-shop-v1';
+        $path = dirname($this->path) . '/machine.key';
+        if (!is_file($path)) {
+            $dir = dirname($path);
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            file_put_contents($path, bin2hex(random_bytes(32)));
+        }
+        $fileKey = trim((string) file_get_contents($path));
+
+        return hash('sha256', $seed . '|' . $fileKey, true);
     }
 
     /** @param array<string, mixed> $input */
@@ -80,8 +158,12 @@ class SettingsService
         } else {
             $key = trim((string) ($input['llm_api_key'] ?? ''));
             if ($key !== '') {
-                $file['llm_api_key'] = $key;
+                $file['llm_api_key'] = $this->wrapSecret($key);
             }
+        }
+
+        if (!empty($input['rotate_shop_key'])) {
+            $file['shop_signing_key'] = $this->wrapSecret(bin2hex(random_bytes(32)));
         }
 
         $base = trim((string) ($input['llm_base_url'] ?? ''));

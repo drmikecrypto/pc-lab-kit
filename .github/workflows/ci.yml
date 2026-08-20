@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  phpunit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_sqlite, openssl
+          coverage: none
+      - name: Install Composer deps
+        run: composer install --no-interaction --prefer-dist
+      - name: Migrate SQLite
+        run: php bin/migrate.php || true
+      - name: PHPUnit
+        run: vendor/bin/pest --colors=always
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: phpunit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: pdo_sqlite, openssl
+      - name: Install
+        run: |
+          composer install --no-interaction --prefer-dist
+          npm ci || npm install
+          npx playwright install --with-deps chromium
+      - name: Start PHP lab + mock probe
+        run: |
+          php -S 127.0.0.1:8080 -t public >/tmp/php.log 2>&1 &
+          node e2e/mock-probe-server.js 18765 >/tmp/mock-probe.log 2>&1 &
+          sleep 2
+      - name: Playwright
+        run: npx playwright test e2e/suite-resume-oem.spec.js e2e/suite-smoke.spec.js --project=chromium
+        env:
+          BASE_URL: http://127.0.0.1:8080

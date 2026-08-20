@@ -12,11 +12,12 @@ class LabSessionService
     public const FORMAT = 'pclab-session-v1';
 
     private string $dir;
+    private string $root;
 
     public function __construct(?string $projectRoot = null)
     {
-        $root = $projectRoot ?? dirname(__DIR__, 2);
-        $this->dir = $root . '/storage/sessions';
+        $this->root = $projectRoot ?? dirname(__DIR__, 2);
+        $this->dir = $this->root . '/storage/sessions';
         if (!is_dir($this->dir)) {
             mkdir($this->dir, 0755, true);
         }
@@ -83,6 +84,7 @@ class LabSessionService
         $expected = $this->sign($data);
         $valid = hash_equals($expected, (string) ($data['session_hash'] ?? ''));
         $data['verified'] = $valid;
+        $data['sig_alg'] = (new SettingsService($this->root))->shopKeyConfigured() ? 'hmac-sha256' : 'sha256';
         $data['drift'] = null;
 
         return $data;
@@ -155,10 +157,29 @@ class LabSessionService
     private function sign(array $body): string
     {
         $copy = $body;
-        unset($copy['session_hash'], $copy['verification_qr']);
-        $canonical = json_encode($copy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        unset($copy['session_hash'], $copy['verification_qr'], $copy['signature'], $copy['sig_alg'], $copy['verified'], $copy['drift']);
+        $canonical = json_encode($copy, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '';
+        $key = (new SettingsService($this->root))->shopSigningKey();
+        if ($key !== '') {
+            return hash_hmac('sha256', 'pclab-session-v1|' . $canonical, $key);
+        }
 
-        return hash('sha256', 'pclab-session-v1|' . ($canonical ?: ''));
+        return hash('sha256', 'pclab-session-v1|' . $canonical);
+    }
+
+    /**
+     * Verify an imported session payload without requiring a prior local file.
+     *
+     * @param array<string, mixed> $data
+     */
+    public function verifyPayload(array $data): bool
+    {
+        if (($data['format'] ?? '') !== self::FORMAT) {
+            return false;
+        }
+        $expected = $this->sign($data);
+
+        return hash_equals($expected, (string) ($data['session_hash'] ?? ''));
     }
 
     private function verificationQrPayload(string $hash): string

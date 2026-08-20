@@ -60,6 +60,31 @@
       "sha256": null
     },
     {
+      "ven": "8086",
+      "dev": "*",
+      "category": "chipset",
+      "name_match": "Management Engine|MEI|HECI|Interface",
+      "label": "Intel Management Engine (MEI/HECI)",
+      "url": "https://www.intel.com/content/www/us/en/download/19392/intel-management-engine-driver-for-windows-10-and-windows-11.html",
+      "version": "latest",
+      "install_method": "open_url",
+      "package_url": null,
+      "note": "Prefer OEM board package when available; generic MEI hurts firmware services.",
+      "hwid_patterns": ["PCI\\VEN_8086&DEV_*&CC_0780", "*MEI*", "*HECI*"]
+    },
+    {
+      "ven": "1022",
+      "dev": "*",
+      "category": "chipset",
+      "name_match": "PSP|Platform Security|AMD.*Chipset|SMBus",
+      "label": "AMD Chipset + PSP",
+      "url": "https://www.amd.com/en/support/download/drivers.html",
+      "version": "latest",
+      "install_method": "open_url",
+      "package_url": null,
+      "note": "Install full AMD chipset package for PSP and USB4 / power management."
+    },
+    {
       "ven": "1022",
       "dev": "*",
       "category": "chipset",

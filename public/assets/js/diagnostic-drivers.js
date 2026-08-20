@@ -67,19 +67,45 @@
   function renderDriverActions(drivers, devices) {
     const box = el('dx-driver-actions');
     if (!box) return;
+    const plan = drivers.action_plan || {};
+    const planItems = Array.isArray(plan.items) ? plan.items : [];
     const actions = (drivers.actions || []).filter((a) => a && (a.severity === 'critical' || a.severity === 'warn' || a.severity === 'info'));
     const driverless = devices.driverless || devices.problem || [];
     const problems = (devices.problem_devices || devices.problems || []).filter(Boolean);
     const queue = (drivers.install_queue || []).filter((s) => s && s.status !== 'ok');
 
     const missing = ([]).concat(driverless, problems);
-    if (!actions.length && !missing.length && !queue.length) {
+    if (!planItems.length && !actions.length && !missing.length && !queue.length) {
       box.innerHTML = `<div class="dx-empty-hint">No driver installs needed right now. Score ${esc(String(drivers.score ?? '—'))} / ${esc(drivers.grade || '—')}. Rescan after plugging new hardware.</div>`;
       setNote('All clear — no critical driver actions.', false);
       return;
     }
 
-    const actionHtml = actions.map((a) => rowHtml(
+    let planHtml = '';
+    if (planItems.length) {
+      planHtml = `<div class="dx-driver-action-plan">
+        <h3 class="dx-driver-queue-title">Action plan <span class="muted fs-xs">${esc(plan.count ?? planItems.length)} · ${esc(plan.installable_count ?? 0)} installable</span></h3>
+        <p class="muted fs-xs">${esc(plan.note || 'Install chipset / ME before GPU.')}</p>
+        <ol class="dx-driver-checklist">
+          ${planItems.map((it, idx) => {
+            const conf = it.match_confidence_pct != null ? `${it.match_confidence_pct}%` : (it.match_confidence || '');
+            return `<li class="dx-driver-check ${esc(it.severity || '')}">
+              <span class="dx-driver-check__ord">${idx + 1}</span>
+              <div>
+                <strong>${esc((it.action || 'update').toUpperCase())}</strong> ${esc(it.device || it.title || '')}
+                <div class="muted fs-xs">${esc(it.category || '')}${conf ? ' · ' + esc(conf) + ' match' : ''} · ${esc(it.detail || '')}</div>
+              </div>
+              <button type="button" class="dx-btn primary dx-driver-install"
+                data-instance="${esc(it.instance_id || '')}"
+                data-category="${esc(it.category || '')}"
+                data-queue="">Install / Update</button>
+            </li>`;
+          }).join('')}
+        </ol>
+      </div>`;
+    }
+
+    const actionHtml = planItems.length ? '' : actions.map((a) => rowHtml(
       a.title || a.name || 'Driver action',
       a.detail || a.why || '',
       a.severity || 'warn',
@@ -87,7 +113,7 @@
       `data-instance="${esc(a.instance_id || '')}" data-category="${esc(a.category || '')}" data-queue=""`
     )).join('');
 
-    const missingHtml = missing.map((d) => rowHtml(
+    const missingHtml = planItems.length ? '' : missing.map((d) => rowHtml(
       `Needs driver: ${d.name || d.title || 'Unknown device'}`,
       d.problem_message || d.category || d.status || '',
       'critical',
@@ -100,19 +126,24 @@
       ${queue.map((s) => rowHtml(
         s.label || s.id || 'Queued package',
         s.why || s.status || '',
-        s.status === 'critical' ? 'critical' : 'warn',
+        s.status === 'critical' || s.status === 'action_required' ? 'critical' : 'warn',
         s,
         `data-instance="" data-category="${esc(s.id || '')}" data-queue="${esc(s.id || '')}"`
       )).join('')}
     </div>` : '';
 
     box.innerHTML = `<div class="dx-driver-summary muted fs-sm">Score <strong>${esc(String(drivers.score ?? '—'))}</strong> / ${esc(drivers.grade || '—')} — Install runs on that hardware row via bundled Probe.</div>
-      ${queueHtml}${missingHtml}${actionHtml}`;
+      ${planHtml}${queueHtml}${missingHtml}${actionHtml}`;
 
     box.querySelectorAll('.dx-driver-install').forEach((btn) => {
       btn.addEventListener('click', () => installDriver(btn));
     });
-    setNote(`${actions.length + missing.length} device action(s) · ${queue.length} queued`, false);
+    setNote(
+      planItems.length
+        ? `Ordered action plan: ${planItems.length} device(s). Chipset/ME before GPU.`
+        : `${actions.length + missing.length} device action(s) · ${queue.length} queued`,
+      false
+    );
   }
 
   async function installDriver(btn) {
@@ -162,6 +193,8 @@
       const report = await res.json();
       const drivers = report.drivers || report;
       const devices = report.devices || {};
+      window.__dxLastDrivers = drivers;
+      window.__dxLastDevices = devices;
       if (window.__dxLastProbe) {
         window.__dxLastProbe.drivers = drivers;
         window.__dxLastProbe.devices = devices;

@@ -216,3 +216,79 @@
 .dx-openbook-lab__gauge { min-width: 5.5rem; padding: 0.5rem 0.65rem; background: #161b22; border: 1px solid #30363d; }
 .dx-openbook-lab__val { font-size: 1.35rem; font-weight: 650; }
 .dx-driver-install { margin-left: 0.5rem; }
+
+/* OEM Command Center */
+.dx-oem-phases {
+  display: flex;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+  flex-wrap: wrap;
+}
+.dx-oem-phases li {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: #8b98a5;
+}
+.dx-oem-phases li.is-active {
+  color: #e6edf3;
+  border-color: #2dd4bf;
+  background: rgba(45, 212, 191, 0.12);
+}
+.dx-probe-sla {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  background: rgba(8, 12, 18, 0.85);
+  color: #9aa7b5;
+}
+.dx-probe-sla__dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #6e7b8b;
+}
+.dx-probe-sla__dot.is-alive { background: #3fb950; }
+.dx-probe-sla__dot.is-down { background: #f85149; }
+.dx-suite-resume {
+  margin: 0.75rem 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(210, 153, 34, 0.45);
+  background: rgba(210, 153, 34, 0.08);
+  border-radius: 10px;
+}
+.dx-lab-nav__section {
+  margin: 0.85rem 0 0.35rem;
+  padding: 0 0.5rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6e7b8b;
+}
+.dx-lab-nav__more {
+  margin-top: 0.5rem;
+  padding: 0 0.35rem;
+}
+.dx-lab-nav__more summary {
+  cursor: pointer;
+  color: #8b98a5;
+  font-size: 0.85rem;
+  padding: 0.35rem 0.4rem;
+}
+.dx-cdm-matrix { margin: 1rem 0; }
+.dx-cdm-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.dx-cdm-table th, .dx-cdm-table td {
+  border-bottom: 1px solid #30363d;
+  padding: 0.35rem 0.45rem;
+  text-align: left;
+}
+.dx-pulse-demoted { display: none !important; }
+

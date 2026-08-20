@@ -209,6 +209,43 @@ function Get-DiskSpdTotalMbps {
     return $null
 }
 
+function Get-DiskSpdIops {
+    param([string]$Output)
+    # total:  IO | MiB/s | IOPS | AvgLat
+    if ($Output -match 'total:\s+\d+\s+\|\s+[\d\.]+\s+\|\s+([\d\.]+)') {
+        return [double]$Matches[1]
+    }
+    return $null
+}
+
+function Get-DiskSpdLatencyUs {
+    param([string]$Output)
+    # AvgLat is often in ms in DiskSpd summary — convert to µs when plausible
+    if ($Output -match 'total:\s+\d+\s+\|\s+[\d\.]+\s+\|\s+[\d\.]+\s+\|\s+([\d\.]+)') {
+        $lat = [double]$Matches[1]
+        # DiskSpd AvgLat is milliseconds
+        return [math]::Round($lat * 1000.0, 1)
+    }
+    return $null
+}
+
+function New-DiskSpdProfileResult {
+    param([string]$ReadOut, [string]$WriteOut)
+    $rm = Get-DiskSpdTotalMbps $ReadOut
+    $wm = Get-DiskSpdTotalMbps $WriteOut
+    $ri = Get-DiskSpdIops $ReadOut
+    $wi = Get-DiskSpdIops $WriteOut
+    # Prefer IOPS line when present; else derive from MB/s for 4K
+    return @{
+        read_mbps = $rm
+        write_mbps = $wm
+        read_iops = $ri
+        write_iops = $wi
+        read_latency_us = (Get-DiskSpdLatencyUs $ReadOut)
+        write_latency_us = (Get-DiskSpdLatencyUs $WriteOut)
+    }
+}
+
 function Invoke-ProbeStorageBenchmark {
     param([string]$Drive = '')
     if (-not $Drive) { $Drive = $env:SystemDrive.TrimEnd(':') }
@@ -219,8 +256,12 @@ function Invoke-ProbeStorageBenchmark {
     $rand4kWrite = $null
     $profiles = $null
     $method = 'file_copy'
+    $diskspd_missing = $false
 
     $diskspd = Find-ProbeDiskSpd
+    if (-not $diskspd) {
+        $diskspd_missing = $true
+    }
     if ($diskspd) {
         $tmp = Join-Path $env:TEMP ("pclab_diskspd_" + [guid]::NewGuid().ToString('n') + ".dat")
         try {
@@ -238,22 +279,10 @@ function Invoke-ProbeStorageBenchmark {
             $rnd4kQ1W = & $diskspd -d5 -w100 -b4K -o1 -t1 -r "-f$tmp" 2>&1 | Out-String
 
             $profiles = @{
-                'SEQ1M_Q8T1' = @{
-                    read_mbps = (Get-DiskSpdTotalMbps $seq1mQ8R)
-                    write_mbps = (Get-DiskSpdTotalMbps $seq1mQ8W)
-                }
-                'SEQ1M_Q1T1' = @{
-                    read_mbps = (Get-DiskSpdTotalMbps $seq1mQ1R)
-                    write_mbps = (Get-DiskSpdTotalMbps $seq1mQ1W)
-                }
-                'RND4K_Q32T1' = @{
-                    read_mbps = (Get-DiskSpdTotalMbps $rnd4kQ32R)
-                    write_mbps = (Get-DiskSpdTotalMbps $rnd4kQ32W)
-                }
-                'RND4K_Q1T1' = @{
-                    read_mbps = (Get-DiskSpdTotalMbps $rnd4kQ1R)
-                    write_mbps = (Get-DiskSpdTotalMbps $rnd4kQ1W)
-                }
+                'SEQ1M_Q8T1' = (New-DiskSpdProfileResult $seq1mQ8R $seq1mQ8W)
+                'SEQ1M_Q1T1' = (New-DiskSpdProfileResult $seq1mQ1R $seq1mQ1W)
+                'RND4K_Q32T1' = (New-DiskSpdProfileResult $rnd4kQ32R $rnd4kQ32W)
+                'RND4K_Q1T1' = (New-DiskSpdProfileResult $rnd4kQ1R $rnd4kQ1W)
             }
             $seqRead = $profiles['SEQ1M_Q8T1'].read_mbps
             $seqWrite = $profiles['SEQ1M_Q8T1'].write_mbps
@@ -275,6 +304,21 @@ function Invoke-ProbeStorageBenchmark {
         } catch {}
     }
     if (-not $seqRead -and -not $seqWrite) {
+        if ($diskspd_missing) {
+            return @{
+                id = 'storage'
+                label = 'PcLab native storage (CDM-like)'
+                drive = $Drive
+                method = 'unavailable'
+                engine = 'diskspd_missing'
+                diskspd_available = $false
+                status = 'failed'
+                error = 'diskspd_missing'
+                score = 0
+                note = 'Place Microsoft DiskSpd at agent/pclab_probe/tools/DiskSpd/diskspd.exe — refusing silent micro-fallback for CDM claims.'
+                replaces = @('CrystalDiskMark', 'DiskSpd', 'AS SSD Benchmark')
+            }
+        }
         $tmp = Join-Path $env:TEMP ("pclab_bench_" + [guid]::NewGuid().ToString('n') + ".bin")
         try {
             $chunk = 4MB
@@ -318,7 +362,7 @@ function Invoke-ProbeStorageBenchmark {
         rand_4k_write_mbps = $rand4kWrite
         profiles = $profiles
         unit = 'MB/s'
-        note = 'Place Microsoft DiskSpd at agent/pclab_probe/tools/DiskSpd/diskspd.exe for CDM-like SEQ1M/RND4K presets.'
+        note = if ($method -eq 'diskspd_cdm') { 'CDM-like SEQ1M/RND4K with IOPS + latency.' } else { 'Place Microsoft DiskSpd at agent/pclab_probe/tools/DiskSpd/diskspd.exe for CDM-like SEQ1M/RND4K presets.' }
         replaces = @('CrystalDiskMark', 'DiskSpd', 'AS SSD Benchmark')
     }
 }

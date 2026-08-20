@@ -41,6 +41,10 @@ impl LabRuntime {
     }
 
     pub fn probe_status(&self) -> String {
+        // Prefer healthy external Windows Service / already-running probe.
+        if let Some(mode) = probe_http_mode() {
+            return mode;
+        }
         if let Ok(mut guard) = self.probe.lock() {
             if let Some(child) = guard.as_mut() {
                 match child.try_wait() {
@@ -57,8 +61,12 @@ impl LabRuntime {
     }
 
     pub fn ensure_probe(&self) -> Result<String, String> {
+        if let Some(mode) = probe_http_mode() {
+            // Service or foreign process already healthy — do not spawn a second probe.
+            return Ok(mode);
+        }
         let status = self.probe_status();
-        if status == "running" {
+        if status == "running" || status.starts_with("service:") || status.starts_with("external:") {
             return Ok(status);
         }
         let child = spawn_probe(&self.work_dir)?.ok_or_else(|| "Probe not available on this platform".to_string())?;
@@ -423,6 +431,11 @@ fn spawn_probe(work_dir: &Path) -> Result<Option<Child>, String> {
 
     #[cfg(windows)]
     {
+        // If a service/external probe is already healthy, skip sidecar spawn.
+        if probe_http_mode().is_some() {
+            return Ok(None);
+        }
+
         let probe_dir = work_dir.join("agent").join("pclab_probe");
         let serve = probe_dir.join("PcLabProbeServe.ps1");
         if !serve.is_file() {
@@ -453,6 +466,32 @@ fn spawn_probe(work_dir: &Path) -> Result<Option<Child>, String> {
                 Ok(None)
             }
         }
+    }
+}
+
+/// Probe /health — returns Some("service:running") or Some("external:running") when OK.
+fn probe_http_mode() -> Option<String> {
+    let addr = "127.0.0.1:18765".parse().ok()?;
+    let mut stream = TcpStream::connect_timeout(&addr, Duration::from_millis(350)).ok()?;
+    stream
+        .set_read_timeout(Some(Duration::from_millis(400)))
+        .ok()?;
+    stream
+        .set_write_timeout(Some(Duration::from_millis(400)))
+        .ok()?;
+    stream
+        .write_all(b"GET /health HTTP/1.0\r\nHost: 127.0.0.1\r\nConnection: close\r\n\r\n")
+        .ok()?;
+    let mut buf = String::new();
+    stream.read_to_string(&mut buf).ok()?;
+    let body = buf.split("\r\n\r\n").nth(1)?;
+    if !body.contains("\"ok\":true") && !body.contains("\"ok\": true") {
+        return None;
+    }
+    if body.contains("\"service_mode\":true") || body.contains("\"service_mode\": true") {
+        Some("service:running".into())
+    } else {
+        Some("external:running".into())
     }
 }
 

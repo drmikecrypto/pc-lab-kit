@@ -95,6 +95,44 @@ class SensorDeckService
     public function export(string $format = 'json'): array
     {
         $layout = $this->get();
+        if ($format === 'csv' || $format === 'timeline') {
+            $historyUrl = 'http://127.0.0.1:18765/telemetry/history';
+            $raw = @file_get_contents($historyUrl, false, stream_context_create([
+                'http' => ['timeout' => 3],
+            ]));
+            $rows = is_string($raw) ? json_decode($raw, true) : null;
+            if (!is_array($rows)) {
+                $rows = [];
+            }
+            $csv = "ts,cpu_temp,gpu_temp,gpu_hotspot,cpu_power,gpu_power,fan_rpm\n";
+            foreach ($rows as $r) {
+                if (!is_array($r)) {
+                    continue;
+                }
+                $csv .= sprintf(
+                    "%s,%s,%s,%s,%s,%s,%s\n",
+                    $r['ts'] ?? $r['t'] ?? '',
+                    $r['cpu_temp'] ?? $r['cpu_temp_max'] ?? '',
+                    $r['gpu_temp'] ?? $r['gpu_temp_max'] ?? '',
+                    $r['gpu_hotspot'] ?? '',
+                    $r['cpu_power'] ?? '',
+                    $r['gpu_power'] ?? '',
+                    $r['fan_rpm'] ?? ''
+                );
+            }
+
+            return [
+                'format' => 'csv',
+                'filename' => 'PCLabKit-SensorTimeline.csv',
+                'content' => $csv,
+                'alert_thresholds' => [
+                    'cpu_temp_c' => 90,
+                    'gpu_temp_c' => 85,
+                    'gpu_hotspot_c' => 95,
+                ],
+            ];
+        }
+
         if ($format === 'rainmeter') {
             $ini = "; PC Lab Kit Sensor Deck export — map these measures to your Probe telemetry JSON/HTTP source.\r\n";
             $ini .= "; Honest export: placeholders only; wire to http://127.0.0.1:18765/telemetry\r\n\r\n";

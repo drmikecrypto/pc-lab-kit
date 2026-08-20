@@ -20,6 +20,21 @@ $driversScript = Join-Path $scriptDir "ProbeLib\drivers.ps1"
 . $suiteScript
 $script:RingMax = 120
 $script:Ring = New-Object System.Collections.Generic.List[object]
+$script:ProbeStartedAt = Get-Date
+$script:ProbeLastError = $null
+$script:ServiceMode = [bool]($env:PCLAB_PROBE_SERVICE -eq '1' -or $env:PCLAB_PROBE_SERVICE -eq 'true')
+$script:ProbeAuthToken = $env:PCLAB_PROBE_TOKEN
+if (-not $script:ProbeAuthToken) {
+    $tokDir = Join-Path $env:LOCALAPPDATA 'PcLabKit\Probe'
+    if (-not (Test-Path $tokDir)) { New-Item -ItemType Directory -Path $tokDir -Force | Out-Null }
+    $tokFile = Join-Path $tokDir 'auth.token'
+    if (Test-Path $tokFile) {
+        $script:ProbeAuthToken = (Get-Content $tokFile -Raw).Trim()
+    } else {
+        $script:ProbeAuthToken = [guid]::NewGuid().ToString('n')
+        Set-Content -Path $tokFile -Value $script:ProbeAuthToken -Encoding ASCII
+    }
+}
 
 # Single source of truth: drives the startup banner, the "/" status page and the 404 hint,
 # so the three can never drift out of sync again.
@@ -52,9 +67,12 @@ $script:Routes = @(
     @{ method = 'GET';  path = '/stress/catalog';     desc = 'runnable stress tests' }
     @{ method = 'POST'; path = '/stress/run';         desc = 'CPU / memory / GPU / combined / quick / oracle stress' }
     @{ method = 'POST'; path = '/stress/oracle/start'; desc = 'adaptive stability oracle ramp' }
-    @{ method = 'POST'; path = '/suite/start';       desc = 'start Full Lab suite (async)' }
-    @{ method = 'GET';  path = '/suite/status';      desc = 'suite progress / result' }
-    @{ method = 'POST'; path = '/suite/cancel';      desc = 'cancel running suite' }
+    @{ method = 'POST'; path = '/suite/start';       desc = 'start Full Lab suite (async; default profile=adaptive; resume=1 to resume)' }
+    @{ method = 'GET';  path = '/suite/plan';        desc = 'preview adaptive lab plan for this machine' }
+    @{ method = 'GET';  path = '/suite/status';      desc = 'suite progress / result + resume_token' }
+    @{ method = 'POST'; path = '/suite/cancel';      desc = 'cancel / interrupt running suite (preserves checkpoints)' }
+    @{ method = 'POST'; path = '/suite/discard';     desc = 'discard suite checkpoint' }
+    @{ method = 'GET';  path = '/audit';              desc = 'platform audit JSON (fingerprint + plan + drivers)' }
     @{ method = 'GET';  path = '/launchers';          desc = 'detect installed third-party stress tools' }
     @{ method = 'POST'; path = '/launchers/run';     desc = 'launch external stress tool with telemetry overlay' }
 )
@@ -109,6 +127,27 @@ try {
         $body = ""
         $code = 200
         $ctype = "application/json; charset=utf-8"
+
+        # Mutating routes require the per-install probe token (header or query).
+        $mutating = $req.HttpMethod -eq 'POST' -and $path -match '^/(suite|stress|oc|rgb|bench|drivers/install|orchestrate|launchers)/'
+        if ($mutating -and $script:ProbeAuthToken) {
+            $tok = $req.Headers['X-PcLab-Token']
+            if (-not $tok) { $tok = $req.Headers['Authorization'] -replace '^Bearer\s+', '' }
+            if (-not $tok) { $tok = $req.QueryString['token'] }
+            if (-not $tok -or $tok -ne $script:ProbeAuthToken) {
+                $code = 401
+                $body = '{"ok":false,"error":"unauthorized","message":"X-PcLab-Token required for mutating routes"}'
+                $res.StatusCode = $code
+                $res.ContentType = $ctype
+                $res.Headers.Add("Access-Control-Allow-Origin", "http://127.0.0.1")
+                $res.Headers.Add("Access-Control-Allow-Headers", "Content-Type, X-PcLab-Token, Authorization")
+                $buf = [System.Text.Encoding]::UTF8.GetBytes($body)
+                $res.ContentLength64 = $buf.Length
+                $res.OutputStream.Write($buf, 0, $buf.Length)
+                $res.Close()
+                continue
+            }
+        }
 
         if ($path -eq "/telemetry/stream" -and $req.HttpMethod -eq 'GET') {
             $res.StatusCode = 200
@@ -186,7 +225,12 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
                         $obCount = [int]$st.count
                     } catch {}
                 }
-                $body = '{"ok":true,"agent":"pclab-probe","version":6,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"open_book_count":' + $obCount + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true}'
+                $uptime = [math]::Round(((Get-Date) - $script:ProbeStartedAt).TotalSeconds, 1)
+                $lastErr = if ($script:ProbeLastError) { ($script:ProbeLastError -replace '"','\"') } else { '' }
+                $svc = $script:ServiceMode.ToString().ToLower()
+                $authRequired = ([bool]$script:ProbeAuthToken).ToString().ToLower()
+                $tokJson = if ($script:ProbeAuthToken) { '"' + $script:ProbeAuthToken + '"' } else { 'null' }
+                $body = '{"ok":true,"agent":"pclab-probe","version":6,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"open_book_count":' + $obCount + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true,"uptime_s":' + $uptime + ',"pid":' + $PID + ',"service_mode":' + $svc + ',"last_error":' + $(if ($lastErr) { '"' + $lastErr + '"' } else { 'null' }) + ',"auth_required":' + $authRequired + ',"auth_token":' + $tokJson + ',"ring0":' + $elevated.ToString().ToLower() + '}'
             }
             "/probe" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $probeScript
@@ -509,14 +553,62 @@ Invoke-ProbeStabilityOracle -Options `$opts | ConvertTo-Json -Depth 10 -Compress
             "/suite/start" {
                 if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
                 $raw = Read-RequestBody $req
-                $profile = 'standard'
+                $profile = 'adaptive'
+                $doResume = $false
+                $resumeToken = ''
                 try {
                     if ($raw) {
                         $j = $raw | ConvertFrom-Json
                         if ($j.profile) { $profile = [string]$j.profile }
+                        if ($j.resume -eq $true -or $j.resume -eq 1 -or [string]$j.resume -eq '1') { $doResume = $true }
+                        if ($j.resume_token) { $resumeToken = [string]$j.resume_token; $doResume = $true }
                     }
                 } catch {}
-                $body = (Start-ProbeSuiteJob -Profile $profile -ScriptDir $scriptDir | ConvertTo-Json -Depth 10 -Compress)
+                if ($doResume) {
+                    $body = (Resume-ProbeSuiteJob -ScriptDir $scriptDir -ResumeToken $resumeToken | ConvertTo-Json -Depth 10 -Compress)
+                } else {
+                    $body = (Start-ProbeSuiteJob -Profile $profile -ScriptDir $scriptDir | ConvertTo-Json -Depth 10 -Compress)
+                }
+            }
+            "/suite/discard" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $jid = ''
+                try {
+                    if ($raw) {
+                        $j = $raw | ConvertFrom-Json
+                        if ($j.id) { $jid = [string]$j.id }
+                        elseif ($j.resume_token) { $jid = [string]$j.resume_token }
+                    }
+                } catch {}
+                $body = (Clear-ProbeSuiteCheckpoint -JobId $jid | ConvertTo-Json -Depth 6 -Compress)
+            }
+            "/suite/plan" {
+                . (Join-Path $scriptDir 'ProbeLib\devices.ps1')
+                . (Join-Path $scriptDir 'ProbeLib\adaptive-plan.ps1')
+                $inv = Get-ProbeDeviceInventory
+                $plan = Get-ProbeAdaptiveLabPlan -Fingerprint $inv.fingerprint -Devices $inv -Platform $inv.platform
+                $body = (@{ ok = $true; plan = $plan; fingerprint = $inv.fingerprint } | ConvertTo-Json -Depth 12 -Compress)
+            }
+            "/audit" {
+                . (Join-Path $scriptDir 'ProbeLib\devices.ps1')
+                . (Join-Path $scriptDir 'ProbeLib\drivers.ps1')
+                . (Join-Path $scriptDir 'ProbeLib\adaptive-plan.ps1')
+                $inv = Get-ProbeDeviceInventory
+                $drv = Get-ProbeDriverAdvice -DeviceInventory $inv
+                $plan = Get-ProbeAdaptiveLabPlan -Fingerprint $inv.fingerprint -Devices $inv -Platform $inv.platform
+                $audit = @{
+                    schema = 'pclab-platform-audit-v1'
+                    generated_at = (Get-Date).ToUniversalTime().ToString('o')
+                    fingerprint = $inv.fingerprint
+                    platform = $inv.platform
+                    gaps = $inv.fingerprint.gaps
+                    adaptive_plan = $plan
+                    driver_actions = $drv.action_plan
+                    inventory_summary = $inv.summary
+                    note = 'Read-only platform audit — no firmware flash'
+                }
+                $body = ($audit | ConvertTo-Json -Depth 14 -Compress)
             }
             "/suite/status" {
                 $body = (Get-ProbeSuiteStatus | ConvertTo-Json -Depth 12 -Compress)
@@ -560,9 +652,15 @@ Invoke-ProbeExternalLauncher -Request `$j | ConvertTo-Json -Depth 10 -Compress }
 
         $res.StatusCode = $code
         $res.ContentType = $ctype
-        $res.Headers.Add("Access-Control-Allow-Origin", "*")
+        $origin = $req.Headers['Origin']
+        if ($origin -match '^https?://(127\.0\.0\.1|localhost)(:\d+)?$') {
+            $res.Headers.Add("Access-Control-Allow-Origin", $origin)
+            $res.Headers.Add("Access-Control-Allow-Credentials", "true")
+        } else {
+            $res.Headers.Add("Access-Control-Allow-Origin", "http://127.0.0.1")
+        }
         $res.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        $res.Headers.Add("Access-Control-Allow-Headers", "Content-Type")
+        $res.Headers.Add("Access-Control-Allow-Headers", "Content-Type, X-PcLab-Token, Authorization")
         if ($req.HttpMethod -eq 'OPTIONS') {
             $res.StatusCode = 204
             $buf = @()

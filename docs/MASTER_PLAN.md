@@ -29,7 +29,7 @@
 | **Pillar E — Open-Book Sensors** (Blackwell Hot Spot MMIO + catalog, dossier, assembly cert) | Shipped (3.4.0–4.0.0) — see [OPEN_BOOK_SENSORS.md](OPEN_BOOK_SENSORS.md) |
 | **v4.0.1 HRE** (Stability Oracle, `.pclab`, 3D topology, driver confidence, Rust R1 hook) | Shipped (4.0.1) |
 | **v4.0.2 Command Center** (layout 2.0, Arena, SSE stream, job queue, verify, Linux probe, E2E) | Shipped (4.0.2) |
-| Linux probe parity | Parked (R5+) |
+| Linux probe parity | Active — Platform Intelligence routes on `pclab_probe_linux` |
 | Full Vulkan compute suite | Shipped compute helper in 3.3.0 (raster/3D suite later) |
 | Windows Service forever-on probe | Parked |
 | MP4 / video push to LCD panels | Backlog |
@@ -90,7 +90,7 @@
 
 ### Critical gap (historical — resolved)
 
-Phases 0–5 and Pillars A–C ship today as the Tauri + PHP + probe stack. Remaining product gaps are intentional backlog: native Vulkan compute, Windows Service forever-on probe, Linux probe parity, MP4-to-LCD.
+Phases 0–5 and Pillars A–C ship today as the Tauri + PHP + probe stack. Remaining product gaps are intentional backlog: native Vulkan compute, Windows Service forever-on probe, Linux OC/RGB/Ring0 depth, MP4-to-LCD.
 
 ---
 
@@ -543,11 +543,22 @@ pc-lab-kit/
 
 ---
 
-### Phase 6 — Enterprise mode (optional) — backlog
+### Phase 6 — Enterprise mode — **Active (Masterpiece wedge)**
 
-- [ ] Burn-in 24h profile
-- [ ] Batch reporting CLI for OEM/reviewers
+- [x] Platform Intelligence (SMBIOS/UEFI/TPM/ME-PSP/ACPI/NVMe tagging + fingerprint coverage)
+- [x] Hardware-adaptive lab plans (`profile=adaptive`)
+- [x] Per-device ordered driver action plan
+- [x] Platform Audit export + `scripts/pclab-batch.ps1` audit JSON/HTML
+- [x] Forever-on probe Windows Service install + recovery + Tauri dual-mode health
+- [x] Full Lab checkpoint / resume / soft-cancel finalize safety
+- [x] Local job queue worker (`bin/job-worker.php`) with lease/timeout
+- [x] Command Center OEM path (Run → Progress → Verdict → Cert)
+- [x] CDM-class DiskSpd IOPS/latency matrix + soak stress profiles
+- [x] HMAC shop signing + probe auth token on mutating routes
+- [x] Burn-in queue + batch CLI one-host path
 - [ ] MLPerf / NCCL log import
+
+Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 
 ---
 
@@ -567,13 +578,14 @@ pc-lab-kit/
 
 ## Immediate next steps
 
-1. Community verify RTX 50 Hot Spot / VRAM MMIO when hardware is available
-2. Tighter per-die VRAM maps as community offsets stabilize
-3. **Linux probe parity** when Windows native arena is solid
+1. Daily assembly on **Open Book** Platform Console (coverage meter + firmware planes)
+2. Community verify RTX 50 Hot Spot / VRAM MMIO when hardware is available
+3. Tighter per-die VRAM maps as community offsets stabilize
+4. **Linux probe parity** — Platform Intelligence / Adaptive Lab / Drivers / Audit / Open Book (sysfs) shipped in `agent/pclab_probe_linux`; OC/RGB/Ring0 remain Windows-only
 
 ### Recommended focus
 
-Daily assembly on the Open Book tab. Imports and launchers remain secondary.
+Windows Platform Intelligence + Adaptive Lab + Driver action plan. Linux probe catches Platform Intelligence / Adaptive / Drivers / Audit / Open Book (sysfs); OC/RGB/Ring0 stay Windows-only.
 ---
 
 ## Assumptions

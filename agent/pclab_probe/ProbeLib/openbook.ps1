@@ -87,7 +87,8 @@ function Get-ProbeOpenBookPayload {
     }
     if (-not $Devices -and (Get-Command Get-ProbeDeviceInventory -ErrorAction SilentlyContinue)) {
         . "$PSScriptRoot\devices.ps1"
-        $Devices = Get-ProbeDeviceInventory
+        $hw = if ($Telemetry) { $Telemetry.hwmon } else { $null }
+        $Devices = Get-ProbeDeviceInventory -HwMon $hw -Telemetry $Telemetry
     }
 
     $catalog = Get-ProbeOpenBookCatalog -HwMon $Telemetry
@@ -99,6 +100,9 @@ function Get-ProbeOpenBookPayload {
         $dossier = Get-ProbeSiliconDossier -Telemetry $Telemetry -Devices $Devices
     }
 
+    $platform = if ($Devices -and $Devices.platform) { $Devices.platform } elseif ($dossier -and $dossier.platform) { $dossier.platform } else { $null }
+    $fingerprint = if ($Devices -and $Devices.fingerprint) { $Devices.fingerprint } elseif ($dossier -and $dossier.fingerprint) { $dossier.fingerprint } else { $null }
+
     $provenance = @{}
     foreach ($s in @($catalog.sensors)) {
         $tag = [string]$s.source
@@ -106,6 +110,11 @@ function Get-ProbeOpenBookPayload {
     }
     foreach ($tag in @($regCat.provenance_tags)) {
         if (-not $provenance.ContainsKey([string]$tag)) { $provenance[[string]$tag] = 0 }
+    }
+    if ($platform) {
+        foreach ($plane in @('smbios', 'uefi', 'tpm', 'me_psp', 'acpi', 'storage', 'pci_config', 'ec_board')) {
+            $provenance["platform_$plane"] = 1
+        }
     }
 
     return @{
@@ -117,6 +126,8 @@ function Get-ProbeOpenBookPayload {
         }
         pcie              = $pcie
         dossier           = $dossier
+        platform          = $platform
+        fingerprint       = $fingerprint
         thermal           = if ($Telemetry) { $Telemetry.thermal } else { $null }
         provenance_counts = $provenance
         provenance_total  = @($provenance.Keys).Count

@@ -1,4 +1,5 @@
 . "$PSScriptRoot\common.ps1"
+. "$PSScriptRoot\platform.ps1"
 
 # ---------------------------------------------------------------------------
 # Vendor ID tables (PCI / USB). Kept short and focused on what a PC assembler
@@ -710,58 +711,56 @@ function Get-ProbeFirmwareInfo {
     $bb = Get-CimSafe "Win32_BaseBoard" | Select-Object -First 1
     $cs = Get-CimSafe "Win32_ComputerSystem" | Select-Object -First 1
     $enc = Get-CimSafe "Win32_SystemEnclosure" | Select-Object -First 1
-    $tpm = $null
-    try {
-        $t = Get-CimInstance -Namespace 'root\cimv2\Security\MicrosoftTpm' -ClassName Win32_Tpm -ErrorAction SilentlyContinue
-        if ($t) {
-            $tpm = @{
-                present           = $true
-                enabled           = [bool]$t.IsEnabled_InitialValue
-                activated         = [bool]$t.IsActivated_InitialValue
-                owned             = [bool]$t.IsOwned_InitialValue
-                spec_version      = "$($t.SpecVersion)"
-                manufacturer_id   = "$($t.ManufacturerIdTxt)"
-                manufacturer_version = "$($t.ManufacturerVersion)"
-            }
-        }
-    } catch {}
 
-    $secureBoot = $null
-    try {
-        $secureBoot = [bool](Confirm-SecureBootUEFI -ErrorAction SilentlyContinue)
-    } catch {
-        try {
-            $v = Get-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\SecureBoot\State' -ErrorAction SilentlyContinue
-            if ($null -ne $v.UEFISecureBootEnabled) { $secureBoot = [bool]$v.UEFISecureBootEnabled }
-        } catch {}
-    }
+    $tpmDetail = Get-ProbeTpmDetail
+    $uefi = Get-ProbeUefiInfo
+    $smbios = Get-ProbeSmbiosDecoded
+
+    # Prefer raw SMBIOS Type 0/2 when present; keep WMI as fallback.
+    $biosVendor = if ($smbios.types.bios.vendor) { $smbios.types.bios.vendor } else { "$($bios.Manufacturer)" }
+    $biosVersion = if ($smbios.types.bios.version) { $smbios.types.bios.version } else { "$($bios.SMBIOSBIOSVersion)" }
+    $biosDate = if ($smbios.types.bios.release_date) { $smbios.types.bios.release_date } else { "$($bios.ReleaseDate)" }
+    $boardMfr = if ($smbios.types.baseboard.manufacturer) { $smbios.types.baseboard.manufacturer } else { "$($bb.Manufacturer)" }
+    $boardProduct = if ($smbios.types.baseboard.product) { $smbios.types.baseboard.product } else { "$($bb.Product)" }
+    $boardSerial = if ($smbios.types.baseboard.serial) { $smbios.types.baseboard.serial } else { "$($bb.SerialNumber)" }
 
     return @{
         bios = @{
-            vendor  = "$($bios.Manufacturer)"
-            version = "$($bios.SMBIOSBIOSVersion)"
-            date    = "$($bios.ReleaseDate)"
+            vendor  = $biosVendor
+            version = $biosVersion
+            date    = $biosDate
             serial  = "$($bios.SerialNumber)"
-            smbios_major = $bios.SMBIOSMajorVersion
-            smbios_minor = $bios.SMBIOSMinorVersion
+            smbios_major = if ($null -ne $smbios.smbios_major) { $smbios.smbios_major } else { $bios.SMBIOSMajorVersion }
+            smbios_minor = if ($null -ne $smbios.smbios_minor) { $smbios.smbios_minor } else { $bios.SMBIOSMinorVersion }
+            source  = if ($smbios.types.bios) { 'smbios_type0' } else { 'wmi' }
+            confidence = if ($smbios.types.bios) { 'measured' } else { 'wmi' }
         }
         board = @{
-            manufacturer = "$($bb.Manufacturer)"
-            product      = "$($bb.Product)"
-            version      = "$($bb.Version)"
-            serial       = "$($bb.SerialNumber)"
-            tag          = "$($bb.Tag)"
+            manufacturer = $boardMfr
+            product      = $boardProduct
+            version      = if ($smbios.types.baseboard.version) { $smbios.types.baseboard.version } else { "$($bb.Version)" }
+            serial       = $boardSerial
+            tag          = if ($smbios.types.baseboard.asset_tag) { $smbios.types.baseboard.asset_tag } else { "$($bb.Tag)" }
+            source       = if ($smbios.types.baseboard) { 'smbios_type2' } else { 'wmi' }
         }
         system = @{
-            manufacturer = "$($cs.Manufacturer)"
-            model        = "$($cs.Model)"
-            sku          = "$($cs.SystemSKUNumber)"
-            family       = "$($cs.SystemFamily)"
+            manufacturer = if ($smbios.types.system.manufacturer) { $smbios.types.system.manufacturer } else { "$($cs.Manufacturer)" }
+            model        = if ($smbios.types.system.product) { $smbios.types.system.product } else { "$($cs.Model)" }
+            sku          = if ($smbios.types.system.sku) { $smbios.types.system.sku } else { "$($cs.SystemSKUNumber)" }
+            family       = if ($smbios.types.system.family) { $smbios.types.system.family } else { "$($cs.SystemFamily)" }
             domain       = "$($cs.Domain)"
             chassis_types = @($enc.ChassisTypes)
+            uuid         = if ($smbios.types.system.uuid) { $smbios.types.system.uuid } else { $null }
         }
-        tpm = if ($tpm) { $tpm } else { @{ present = $false } }
-        secure_boot = $secureBoot
+        tpm = $tpmDetail
+        secure_boot = $uefi.secure_boot
+        uefi = $uefi
+        smbios_summary = @{
+            available = [bool]$smbios.available
+            major = $smbios.smbios_major
+            minor = $smbios.smbios_minor
+            type_counts = $smbios.type_counts
+        }
     }
 }
 
@@ -770,6 +769,8 @@ function Get-ProbeFirmwareInfo {
  organised the way an assembler walks a build.
 #>
 function Get-ProbeDeviceInventory {
+    param($HwMon = $null, $Telemetry = $null)
+
     $pnp = Get-ProbePnpInventory
     $firmware = Get-ProbeFirmwareInfo
     $monitors = Get-ProbeMonitors
@@ -780,6 +781,14 @@ function Get-ProbeDeviceInventory {
     $ports = Get-ProbePorts
     $battery = Get-ProbeBatteryDetail
     $pci = Get-ProbePciDevices
+
+    $partial = @{
+        firmware = $firmware
+        battery  = @($battery)
+        pci      = @($pci)
+    }
+    $platform = Get-ProbePlatformIntelligence -Devices $partial -HwMon $HwMon -Telemetry $Telemetry
+    $fingerprint = Get-ProbeMachineFingerprint -Platform $platform -Devices $partial -Telemetry $Telemetry
 
     $findings = @()
     if ($pnp.driverless_count -gt 0) {
@@ -808,6 +817,30 @@ function Get-ProbeDeviceInventory {
             detail   = 'Windows 11 needs TPM 2.0. Enable fTPM (AMD) or PTT (Intel) in BIOS if the silicon supports it.'
         }
     }
+    if ($firmware.tpm.present -and $null -ne $firmware.secure_boot -and -not $firmware.secure_boot) {
+        $findings += @{
+            severity = 'info'
+            code     = 'secure_boot_off'
+            title    = 'TPM present but Secure Boot is off'
+            detail   = 'Not a stress failure — enable Secure Boot in UEFI if your shop policy requires it.'
+        }
+    }
+    if ($platform.me_psp.present -and $platform.me_psp.generic_driver) {
+        $findings += @{
+            severity = 'warn'
+            code     = 'mei_psp_generic_driver'
+            title    = 'MEI / PSP using a generic Microsoft driver'
+            detail   = 'Install the OEM Intel ME or AMD chipset package from the Drivers tab for full firmware management services.'
+        }
+    }
+    if ($fingerprint.coverage_score -lt 50) {
+        $findings += @{
+            severity = 'info'
+            code     = 'platform_coverage_low'
+            title    = "Platform coverage $($fingerprint.coverage_score)%"
+            detail   = 'Run Probe as Administrator to unlock PCI config, board/EC sensors, and richer Open Book planes.'
+        }
+    }
 
     return @{
         summary = @{
@@ -823,8 +856,12 @@ function Get-ProbeDeviceInventory {
             bluetooth        = $bt.Count
             system_slots     = $slots.Count
             categories       = $pnp.counts
+            coverage_score   = $fingerprint.coverage_score
+            form_factor      = $fingerprint.form_factor
         }
         firmware     = $firmware
+        platform     = $platform
+        fingerprint  = $fingerprint
         motherboard  = $firmware.board
         bios         = $firmware.bios
         tpm          = $firmware.tpm
@@ -844,6 +881,6 @@ function Get-ProbeDeviceInventory {
         findings     = @($findings)
         # Full dump is large; keep it available for the geek tab / export.
         all_devices  = @($pnp.devices)
-        schema       = @{ version = 2; confidence_rule = 'measured|vendor_table|heuristic|unavailable' }
+        schema       = @{ version = 3; confidence_rule = 'measured|wmi|registry|ring0|heuristic|unavailable' }
     }
 }

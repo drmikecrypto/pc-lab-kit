@@ -21,6 +21,10 @@ class AssemblyCertificateService
         $cert = is_array($analysis['stress_certificate'] ?? null) ? $analysis['stress_certificate'] : [];
         $dossier = is_array($analysis['silicon_dossier'] ?? null) ? $analysis['silicon_dossier'] : [];
         $open = (array) ($dossier['open_book'] ?? []);
+        $suite = (array) ($analysis['suite'] ?? []);
+        $plan = is_array($suite['plan'] ?? null) ? $suite['plan'] : (is_array($analysis['adaptive_plan'] ?? null) ? $analysis['adaptive_plan'] : []);
+        $fingerprint = (array) ($dossier['fingerprint'] ?? $analysis['fingerprint'] ?? []);
+        $platform = (array) ($dossier['platform'] ?? $analysis['platform'] ?? []);
         $shop = trim((string) ($meta['shop_name'] ?? $analysis['shop_name'] ?? 'PC Lab Kit'));
         $passed = (bool) ($cert['passed'] ?? false);
         $verdict = (string) ($cert['verdict'] ?? ($passed ? 'PASS' : 'INCOMPLETE'));
@@ -28,6 +32,18 @@ class AssemblyCertificateService
         $wheaCount = (int) (($cert['peaks']['whea_errors'] ?? null) ?? ($cert['whea_timeline']['count'] ?? 0));
         $pcieWarnings = is_array($cert['pcie_warnings'] ?? null) ? $cert['pcie_warnings'] : [];
         $stabilityMargin = $cert['stability_margin_pct'] ?? null;
+
+        $planSteps = [];
+        foreach (array_slice((array) ($plan['steps'] ?? []), 0, 16) as $s) {
+            if (!is_array($s)) {
+                continue;
+            }
+            $planSteps[] = [
+                'id' => (string) ($s['id'] ?? ''),
+                'label' => (string) ($s['label'] ?? $s['id'] ?? ''),
+                'reason' => (string) ($s['reason'] ?? ''),
+            ];
+        }
 
         $doc = [
             'product' => 'PC Lab Kit Assembly Certificate',
@@ -48,6 +64,17 @@ class AssemblyCertificateService
                 static fn ($s) => is_array($s) ? (string) ($s['source'] ?? '') : '',
                 (array) ($open['sensors'] ?? [])
             )))),
+            'coverage_score' => $fingerprint['coverage_score'] ?? ($dossier['firmware_inventory']['coverage_score'] ?? null),
+            'fingerprint_id' => $fingerprint['id'] ?? null,
+            'form_factor' => $fingerprint['form_factor'] ?? null,
+            'secure_boot' => $platform['uefi']['secure_boot'] ?? ($dossier['firmware_inventory']['secure_boot'] ?? null),
+            'tpm_present' => !empty($platform['tpm']['present'] ?? $dossier['firmware_inventory']['tpm']['present'] ?? false),
+            'adaptive_plan' => [
+                'label' => $plan['label'] ?? ($suite['profile'] ?? null),
+                'gated' => !empty($plan['gated']),
+                'steps' => $planSteps,
+                'benches' => array_values((array) ($plan['benches'] ?? $suite['benches'] ?? [])),
+            ],
             'whea_errors' => $wheaCount > 0 ? $wheaCount : null,
             'pcie_warnings' => $pcieWarnings,
             'stability_margin_pct' => $stabilityMargin,
@@ -76,6 +103,16 @@ class AssemblyCertificateService
         $whea = $d['whea_errors'] ?? null;
         $margin = $d['stability_margin_pct'] ?? null;
         $qr = $d['verification_qr'] ?? null;
+        $plan = (array) ($d['adaptive_plan'] ?? []);
+        $stepHtml = '';
+        foreach ((array) ($plan['steps'] ?? []) as $s) {
+            if (!is_array($s)) {
+                continue;
+            }
+            $stepHtml .= '<li><strong>' . $esc($s['label'] ?? '') . '</strong>'
+                . (($s['reason'] ?? '') !== '' ? ' — <span class="meta">' . $esc($s['reason']) . '</span>' : '')
+                . '</li>';
+        }
 
         return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>'
             . $esc($d['product']) . '</title><style>
@@ -90,6 +127,7 @@ class AssemblyCertificateService
             th{color:#8b98a5;font-weight:500}
             .meta{font-size:.8rem;color:#8b98a5}
             .qr{font-family:ui-monospace,monospace;font-size:.75rem;word-break:break-all}
+            ol{margin:.4rem 0 0 1.1rem;padding:0;font-size:.85rem}
             @media print{body{background:#fff;color:#111}}
             </style></head><body>
             <p class="shop">' . $esc($d['shop_name']) . '</p>
@@ -99,6 +137,8 @@ class AssemblyCertificateService
             <tr><th>CPU</th><td>' . $esc($d['cpu']) . '</td></tr>
             <tr><th>GPU</th><td>' . $esc($d['gpu']) . '</td></tr>
             <tr><th>RAM</th><td>' . $esc($d['ram_gb']) . ' GB</td></tr>
+            <tr><th>Platform coverage</th><td>' . $esc($d['coverage_score'] ?? '—') . '% · fp <code>' . $esc($d['fingerprint_id'] ?? '—') . '</code> · ' . $esc($d['form_factor'] ?? '') . '</td></tr>
+            <tr><th>TPM / Secure Boot</th><td>' . (!empty($d['tpm_present']) ? 'TPM present' : 'TPM n/a') . ' · Secure Boot ' . $esc($d['secure_boot'] === null ? '—' : ($d['secure_boot'] ? 'on' : 'off')) . '</td></tr>
             <tr><th>GPU core peak</th><td>' . $esc($d['gpu_core_c']) . ' °C</td></tr>
             <tr><th>GPU hotspot peak</th><td>' . $esc($d['gpu_hotspot_c']) . ' °C <span class="meta">' . $esc($d['gpu_hotspot_source']) . '</span></td></tr>
             <tr><th>Therm spread</th><td>' . $esc($d['gpu_therm_spread']) . ' °C</td></tr>
@@ -107,7 +147,9 @@ class AssemblyCertificateService
             <tr><th>WHEA errors</th><td>' . $esc($whea ?? '0') . '</td></tr>
             <tr><th>Stability margin</th><td>' . ($margin !== null ? $esc($margin) . ' %' : '—') . '</td></tr>
             <tr><th>PCIe warnings</th><td>' . ($pcie !== '' ? $pcie : '—') . '</td></tr>
+            <tr><th>Lab plan</th><td>' . $esc($plan['label'] ?? '—') . (!empty($plan['gated']) ? ' (gated)' : '') . '</td></tr>
             </table>'
+            . ($stepHtml !== '' ? '<p class="meta">Adaptive steps</p><ol>' . $stepHtml . '</ol>' : '')
             . ($qr ? '<p class="meta qr">Verify offline: ' . $esc($qr) . '</p>' : '')
             . '<p class="meta">Generated ' . $esc($d['generated_at']) . ' · token ' . $esc($d['token']) . ' · Print → Save as PDF</p>
             </body></html>';

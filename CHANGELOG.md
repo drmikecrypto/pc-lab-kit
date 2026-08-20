@@ -6,6 +6,23 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.1.2] - 2026-08-21
+
+### Added — Enterprise masterpiece wedge
+- **Full Lab resume:** probe step checkpoints, soft-cancel that keeps completed work, Resume/Discard in Command Center
+- **Forever-on probe:** hardened Windows Service install/repair with failure recovery; Tauri skips second spawn when service/external probe is healthy
+- **Probe SLA strip** + `/health` fields (`uptime_s`, `pid`, `service_mode`, `auth_token`)
+- **Job queue worker** (`bin/job-worker.php`) with lease/heartbeat; fleet burn-in enqueue API
+- **Command Center OEM path:** Run → Progress → Verdict → Cert; Advanced collapsed; Intelligence Pulse demoted
+- **CDM-class storage:** DiskSpd matrix with IOPS + latency; refuses silent CDM claims if `diskspd.exe` missing
+- **Soak profiles** 15/30/60 min; Stability Oracle card on Verdict
+- **HMAC shop signing** for `.pclab` (AES-wrapped key at rest); offline verify; probe auth token on mutating routes
+- Sensor Deck **CSV timeline** export; CI workflow (Pest + Playwright smoke)
+- Linux probe Platform Intelligence / Adaptive / Drivers / Audit / Open Book (sysfs) parity modules
+
+### Changed
+- README rewritten for operators/engineers; `.gitignore` blocks sessions, settings keys, PHPUnit caches, `__pycache__`
+
 ## [4.1.1] - 2026-08-20
 
 ### Fixed

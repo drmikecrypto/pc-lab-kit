@@ -28,28 +28,59 @@
       open_book_vram: !!(wrap?.open_book_vram),
       note: wrap?.note || data?.note || '',
       dossier: data?.dossier || null,
+      platform: data?.platform || data?.dossier?.platform || null,
+      fingerprint: data?.fingerprint || data?.dossier?.fingerprint || null,
       thermal: data?.thermal || null,
       pcie: data?.pcie || null,
       provenance_total: data?.provenance_total ?? 0,
     };
   }
 
-  function truthCardsHtml(dossier) {
-    if (!dossier) return '';
-    const fw = dossier.firmware_inventory || {};
-    const board = dossier.board || {};
-    const cpu = dossier.cpu || {};
-    const gpu = dossier.gpu || {};
+  function coverageMeterHtml(fp) {
+    if (!fp) return '';
+    const score = Number(fp.coverage_score ?? 0);
+    const gaps = Array.isArray(fp.gaps) ? fp.gaps : [];
+    const gapList = gaps.slice(0, 6).map((g) =>
+      `<li><code>${esc(g.plane || g.reason || '')}</code> — ${esc(g.detail || '')}</li>`
+    ).join('');
+    return `<div class="dx-platform-coverage">
+      <div class="dx-platform-coverage__bar" role="meter" aria-valuenow="${esc(score)}" aria-valuemin="0" aria-valuemax="100">
+        <span style="width:${esc(Math.min(100, Math.max(0, score)))}%"></span>
+      </div>
+      <p class="fs-sm"><strong>${esc(score)}%</strong> platform coverage · ${esc(fp.planes_measured ?? '—')}/${esc(fp.planes_total ?? '—')} planes · ${esc(fp.form_factor || '—')} · fp <code>${esc((fp.id || '').slice(0, 12))}</code></p>
+      ${gapList ? `<ul class="dx-platform-coverage__gaps muted fs-xs">${gapList}</ul>` : ''}
+    </div>`;
+  }
+
+  function truthCardsHtml(dossier, platform, fingerprint) {
+    if (!dossier && !platform) return '';
+    const fw = (dossier && dossier.firmware_inventory) || {};
+    const board = (dossier && dossier.board) || {};
+    const cpu = (dossier && dossier.cpu) || {};
+    const gpu = (dossier && dossier.gpu) || {};
+    const plat = platform || (dossier && dossier.platform) || {};
+    const uefi = plat.uefi || fw.uefi || {};
+    const tpm = plat.tpm || fw.tpm || {};
+    const me = plat.me_psp || fw.me_psp || {};
+    const acpi = plat.acpi || {};
+    const smbios = plat.smbios || {};
     const cards = [
       {
         title: 'UEFI / BIOS',
-        body: `${board.bios_vendor || fw.bios_vendor || '—'} · ${board.bios || fw.bios_version || '—'}`,
-        meta: `Date ${board.bios_date || fw.bios_date || '—'} · SMBIOS ${board.smbios_major ?? '—'}.${board.smbios_minor ?? '—'}`,
+        body: `${board.bios_vendor || fw.bios_vendor || plat.bios?.vendor || '—'} · ${board.bios || fw.bios_version || plat.bios?.version || '—'}`,
+        meta: `${uefi.firmware_type || 'firmware'} · Secure Boot ${uefi.secure_boot == null && fw.secure_boot == null ? '—' : (uefi.secure_boot ?? fw.secure_boot) ? 'on' : 'off'} · ${plat.bios?.source || fw.provenance || 'wmi'}`,
+      },
+      {
+        title: 'SMBIOS',
+        body: smbios.available
+          ? `v${smbios.smbios_major ?? '—'}.${smbios.smbios_minor ?? '—'} · ${Object.keys(smbios.type_counts || {}).filter((k) => (smbios.type_counts || {})[k]).length} type groups`
+          : 'Raw tables unavailable',
+        meta: smbios.confidence || smbios.source || 'unavailable',
       },
       {
         title: 'CPU microcode',
-        body: cpu.microcode || fw.cpu_microcode || '—',
-        meta: `${cpu.model || '—'} · ${cpu.source || 'registry'}`,
+        body: cpu.microcode || fw.cpu_microcode || plat.microcode?.revision || '—',
+        meta: `${cpu.model || '—'} · ${cpu.source || plat.microcode?.source || 'registry'}`,
       },
       {
         title: 'GPU VBIOS',
@@ -60,24 +91,47 @@
       },
       {
         title: 'TPM · Secure Boot',
-        body: fw.tpm?.present ? `TPM ${fw.tpm.version || fw.tpm.spec_version || 'present'}` : 'TPM not reported',
-        meta: `Secure Boot: ${fw.secure_boot == null ? '—' : fw.secure_boot ? 'on' : 'off'}`,
+        body: tpm.present ? `TPM ${tpm.spec_version || tpm.version || 'present'} · ${tpm.manufacturer_id || ''}`.trim() : 'TPM not reported',
+        meta: `FW ${tpm.manufacturer_version || '—'} · PCR ${(tpm.pcr_banks || []).join(',') || '—'} (${tpm.pcr_bank_source || '—'}) · ready ${tpm.ready == null ? '—' : tpm.ready ? 'yes' : 'no'}`,
       },
       {
-        title: 'ACPI tables',
-        body: (fw.acpi_tables || []).slice(0, 12).join(', ') || '—',
-        meta: `${(fw.acpi_tables || []).length} signature(s) from HKLM:\\HARDWARE\\ACPI`,
+        title: 'UEFI policy',
+        body: `${uefi.firmware_type || 'firmware'} · Secure Boot ${uefi.secure_boot == null && fw.secure_boot == null ? '—' : (uefi.secure_boot ?? fw.secure_boot) ? 'on' : 'off'}`,
+        meta: `SetupMode ${uefi.setup_mode == null ? '—' : uefi.setup_mode ? 'on' : 'off'} · BitLocker ${uefi.bitlocker?.system_drive_protection || '—'} · entries ${(uefi.boot_entries || []).length}`,
+      },
+      {
+        title: 'ME / PSP',
+        body: me.present ? `${(me.vendor || 'me/psp').toUpperCase()} · ${(me.devices || []).length} device(s)` : 'Not detected',
+        meta: me.generic_driver ? 'generic driver — update recommended' : (me.confidence || me.source || '—'),
+      },
+      {
+        title: 'ACPI',
+        body: (acpi.signatures || fw.acpi_tables || []).slice(0, 10).join(', ') || '—',
+        meta: `${acpi.signature_count ?? (fw.acpi_tables || []).length} sig · FADT ${acpi.has_fadt ? 'yes' : 'no'} · DSDT ${acpi.has_dsdt ? 'yes' : 'no'} · TZ ${acpi.thermal_zone_count ?? '—'}`,
       },
       {
         title: 'Storage firmware',
-        body: (fw.storage_firmware || [])
+        body: (fw.storage_firmware || (plat.storage || []).map((d) => ({ name: d.friendly_name, firmware: d.firmware, source: d.source })))
           .map((d) => `${d.name || d.serial || 'disk'}: ${d.firmware || '—'}`)
           .slice(0, 4)
           .join(' · ') || '—',
-        meta: fw.provenance || 'storage_reliability',
+        meta: (plat.storage && plat.storage[0] && plat.storage[0].source) || fw.provenance || 'storage_reliability',
+      },
+      {
+        title: 'PCI config',
+        body: `${fw.pci_config_count ?? (plat.pci_config || []).length || (gpu.pci_config || []).length || 0} dump(s)`,
+        meta: (plat.pci_config || gpu.pci_config || [])[0]
+          ? `${(plat.pci_config || gpu.pci_config)[0].role || 'fn'} @ ${(plat.pci_config || gpu.pci_config)[0].pci_bdf || '—'}`
+          : 'elevate for Ring0 dumps',
+      },
+      {
+        title: 'EC / board sensors',
+        body: `${fw.ec_board_count ?? plat.ec_board?.count ?? 0} channel(s)`,
+        meta: plat.ec_board?.board_match_confidence || plat.ec_board?.source || 'lhm',
       },
     ];
-    return cards
+    const meter = coverageMeterHtml(fingerprint || dossier?.fingerprint);
+    return meter + cards
       .map(
         (c) => `<article class="dx-truth-card">
         <h4>${esc(c.title)}</h4>
@@ -179,7 +233,7 @@
       const table = pcieWarn + renderSensorTable(ob.sensors, ob.count, ob.open_book_therm, ob.open_book_vram, ob.note);
       const dossierHtml = renderDossierHtml(ob.dossier);
       const truth = el('dx-ob-truth-cards');
-      if (truth) truth.innerHTML = truthCardsHtml(ob.dossier);
+      if (truth) truth.innerHTML = truthCardsHtml(ob.dossier, ob.platform, ob.fingerprint);
       const hwTable = el('dx-hwref-openbook-table');
       if (hwTable) hwTable.innerHTML = table;
       const hwDossier = el('dx-hwref-dossier-body');
@@ -190,7 +244,7 @@
       if (obDossier) obDossier.innerHTML = dossierHtml;
       const gauges = el('dx-ob-gauges');
       if (gauges) gauges.innerHTML = renderGauges(ob.sensors, ob.thermal);
-      if (status) status.textContent = `${ob.count} open-book · ${ob.provenance_total || 0} tags · ${ob.dossier?.cpu?.model || 'Probe ok'}`;
+      if (status) status.textContent = `${ob.count} open-book · ${ob.fingerprint?.coverage_score ?? '—'}% coverage · ${ob.provenance_total || 0} tags · ${ob.dossier?.cpu?.model || 'Probe ok'}`;
       window.dispatchEvent(new CustomEvent('dx:openbook-updated', { detail: data }));
     } catch (e) {
       if (status) status.textContent = 'Probe offline';

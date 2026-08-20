@@ -41,12 +41,19 @@ fn fetch_probe_health() -> Option<(bool, i64)> {
 }
 
 fn format_probe_tooltip(status: &str) -> String {
-    if status == "running" {
+    if status == "running" || status.starts_with("service:") || status.starts_with("external:") {
         if let Some((elevated, count)) = fetch_probe_health() {
             let elev = if elevated { "elevated" } else { "not elevated" };
-            return format!("PC Lab Kit · Probe: running · {elev} · {count} open-book");
+            let mode = if status.starts_with("service:") {
+                "service"
+            } else if status.starts_with("external:") {
+                "external"
+            } else {
+                "sidecar"
+            };
+            return format!("PC Lab Kit · Probe: {mode} · {elev} · {count} open-book");
         }
-        return "PC Lab Kit · Probe: running".into();
+        return format!("PC Lab Kit · Probe: {status}");
     }
     format!("PC Lab Kit · Probe: {status}")
 }
@@ -54,6 +61,12 @@ fn format_probe_tooltip(status: &str) -> String {
 fn probe_status_message(status: &str) -> String {
     match status {
         "running" => "Probe is running on 127.0.0.1:18765.\nSensors, RGB, and benches are available.".into(),
+        s if s.starts_with("service:") => {
+            "Probe Windows Service is healthy on 127.0.0.1:18765.\nDesktop will not spawn a second probe.".into()
+        }
+        s if s.starts_with("external:") => {
+            "An external probe is already healthy on 127.0.0.1:18765.\nDesktop skipped sidecar spawn.".into()
+        }
         "unavailable" => "Probe is unavailable on this platform (or not bundled).\nLab UI still works for history and imports.".into(),
         s if s.starts_with("error") => format!("Probe error:\n{s}\n\nTry Restart Probe from this menu."),
         s if s.contains("exited") || s.contains("stopped") => {

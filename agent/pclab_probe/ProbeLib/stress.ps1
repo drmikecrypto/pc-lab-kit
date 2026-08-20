@@ -11,6 +11,9 @@ function Get-ProbeStressCatalog {
         @{ id = 'combined'; label = 'Combined CPU+GPU+RAM'; seconds_default = 45; max_seconds = 86400; profile = $true }
         @{ id = 'quick'; label = 'Quick 60s profile'; seconds_default = 60; max_seconds = 60; profile = $true }
         @{ id = 'oracle'; label = 'Stability oracle'; seconds_default = 120; max_seconds = 86400; profile = $true }
+        @{ id = 'soak_15'; label = 'Soak 15 min'; seconds_default = 900; max_seconds = 900; profile = $true; soak = $true }
+        @{ id = 'soak_30'; label = 'Soak 30 min'; seconds_default = 1800; max_seconds = 1800; profile = $true; soak = $true }
+        @{ id = 'soak_60'; label = 'Soak 60 min'; seconds_default = 3600; max_seconds = 3600; profile = $true; soak = $true }
     )
 }
 
@@ -324,6 +327,9 @@ function Invoke-ProbeStress {
         'gpu' { return Invoke-ProbeGpuStress -Seconds $seconds -CollectSamples:$collect }
         'combined' { return Invoke-ProbeCombinedStress -Seconds $seconds -CollectSamples:$collect }
         'quick' { return Invoke-ProbeCombinedStress -Seconds 60 -CollectSamples:$collect }
+        'soak_15' { return Invoke-ProbeCombinedStress -Seconds 900 -CollectSamples:$collect }
+        'soak_30' { return Invoke-ProbeCombinedStress -Seconds 1800 -CollectSamples:$collect }
+        'soak_60' { return Invoke-ProbeCombinedStress -Seconds 3600 -CollectSamples:$collect }
         'oracle' { return Invoke-ProbeStabilityOracle -Options $Options }
         default { throw "Unknown stress test: $Id" }
     }

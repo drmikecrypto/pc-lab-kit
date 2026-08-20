@@ -50,7 +50,7 @@ try
     BlackwellVramTherm.MergeIntoFlat(flat, vramSets);
     LhmGpuProvenance.TagGpuSensors(flat);
     var catalog = LhmGpuProvenance.CatalogFromFlat(flat);
-    var pciDumps = PciConfigDump.ReadNvidiaDisplays();
+    var pciDumps = PciConfigDump.ReadSelectedFunctions();
 
     var report = new Dictionary<string, object?>
     {
@@ -101,12 +101,13 @@ try
         ["pci_config"] = pciDumps.Select(d => new
         {
             pci_bdf = d.PciBdf,
-            vendor_id = $"10DE",
+            vendor_id = $"{d.VendorId:X4}",
             device_id = $"{d.DeviceId:X4}",
             subsystem_vendor_id = $"{d.SubsystemVendorId:X4}",
             subsystem_id = $"{d.SubsystemId:X4}",
             revision = $"{d.Revision:X2}",
             class_code = $"{d.ClassCode:X6}",
+            role = d.Role,
             config_hex = d.ConfigHex,
             source = d.Source,
         }).ToList(),

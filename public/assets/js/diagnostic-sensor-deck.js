@@ -91,6 +91,7 @@
     } catch (_) {}
     document.getElementById('dx-deck-save')?.addEventListener('click', saveLayout);
     document.getElementById('dx-deck-export-json')?.addEventListener('click', () => exportLayout('json'));
+    document.getElementById('dx-deck-export-csv')?.addEventListener('click', () => exportLayout('csv'));
     document.getElementById('dx-deck-export-rain')?.addEventListener('click', () => exportLayout('rainmeter'));
     timer = setInterval(tick, 2000);
     tick();

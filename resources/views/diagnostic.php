@@ -3,7 +3,11 @@
 $cfg = $config ?? [];
 $steps = $cfg['lite_steps'] ?? [];
 $tools = $cfg['pro_tools'] ?? [];
-$probeDl = (string) (($cfg['windows_agent'] ?? [])['download_url'] ?? '/download/probe-windows');
+$ua = strtolower((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
+$isLinuxClient = str_contains($ua, 'linux') && !str_contains($ua, 'android');
+$probeDl = $isLinuxClient
+    ? (string) (($cfg['linux_agent'] ?? [])['download_url'] ?? ($cfg['app_download']['linux'] ?? '/download/probe-linux'))
+    : (string) (($cfg['windows_agent'] ?? [])['download_url'] ?? '/download/probe-windows');
 $importFormats = $cfg['import_formats'] ?? [];
 $product = $cfg['product'] ?? [];
 $toolKit = new \App\Services\DiagnosticToolCatalogService();
@@ -39,38 +43,57 @@ $toolTotal = $toolKit->total();
 
     <div class="dx-lab-workspace">
         <nav class="dx-lab-nav" aria-label="Lab modules">
-            <p class="dx-lab-nav__brand">Modules</p>
+            <p class="dx-lab-nav__brand">PC Lab Kit</p>
             <button type="button" class="dx-lab-nav-btn is-active" data-dx-nav="command" aria-selected="true"><span class="dx-lab-nav-btn__icon" data-mark="CC"></span>Command Center</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="quick" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="Q"></span>Quick scan</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="hardware" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="HW"></span>Hardware Reference</button>
+            <p class="dx-lab-nav__section">Lab</p>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="openbook" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="OB"></span>Open Book</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="drivers" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="DR"></span>Drivers</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="stress" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="ST"></span>Stress</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="full" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="FS"></span>Full scan</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="arena" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="BA"></span>Benchmark Arena</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="toolkit" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="TK"></span>Toolkit</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="history" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="H"></span>History</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="advanced" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="+"></span>Advanced</button>
+            <details class="dx-lab-nav__more">
+                <summary>Advanced</summary>
+                <button type="button" class="dx-lab-nav-btn" data-dx-nav="quick" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="Q"></span>Quick scan</button>
+                <button type="button" class="dx-lab-nav-btn" data-dx-nav="hardware" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="HW"></span>Hardware Reference</button>
+                <button type="button" class="dx-lab-nav-btn" data-dx-nav="full" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="FS"></span>Full scan</button>
+                <button type="button" class="dx-lab-nav-btn" data-dx-nav="toolkit" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="TK"></span>Toolkit</button>
+                <button type="button" class="dx-lab-nav-btn" data-dx-nav="advanced" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="+"></span>Settings &amp; RGB</button>
+            </details>
         </nav>
 
         <div class="dx-lab-main">
+    <div id="dx-probe-sla" class="dx-probe-sla" hidden aria-live="polite"></div>
     <section class="dx-command-center glass-effect" id="dx-command-center" aria-label="Command Center">
         <p class="dx-command-center__eyebrow">Command Center</p>
-        <h2 class="dx-command-center__title">Run Full Lab</h2>
-        <p class="dx-command-center__lead">One action: probe → benches → stress → scored report with advisor cards. Keep advanced tabs for power users.</p>
+        <h2 class="dx-command-center__title">PC Lab Kit</h2>
+        <p class="dx-command-center__lead">Run → Progress → Verdict → Cert. One local lab for sensors, benches, and stress.</p>
+        <ol class="dx-oem-phases" aria-label="Lab phases">
+            <li data-dx-oem-phase="run" class="is-active">Run</li>
+            <li data-dx-oem-phase="progress">Progress</li>
+            <li data-dx-oem-phase="verdict">Verdict</li>
+            <li data-dx-oem-phase="cert">Cert</li>
+        </ol>
         <div class="dx-command-center__row">
             <label class="sr-only" for="dx-suite-profile">Suite profile</label>
             <select id="dx-suite-profile" aria-label="Suite profile">
+                <option value="adaptive" selected>Adaptive Lab (this machine)</option>
                 <option value="quick">Quick Lab (~5 min)</option>
-                <option value="standard" selected>Full Lab (~12 min)</option>
+                <option value="standard">Full Lab (~12 min)</option>
                 <option value="deep">Deep Lab (~20 min)</option>
+                <option value="soak_15">Soak 15 min</option>
+                <option value="soak_30">Soak 30 min</option>
+                <option value="soak_60">Soak 60 min</option>
             </select>
             <button type="button" class="dx-btn primary" id="dx-suite-run">Run Full Lab</button>
             <button type="button" class="dx-btn ghost" id="dx-suite-cancel" hidden>Cancel</button>
+            <button type="button" class="dx-btn ghost" id="dx-suite-preview-plan">Preview plan</button>
+            <button type="button" class="dx-btn ghost" id="dx-platform-audit-export">Export Platform Audit</button>
             <label class="dx-btn ghost dx-suite-import-label" for="dx-suite-import-file">Import .pclab</label>
             <input type="file" id="dx-suite-import-file" accept=".json,.pclab,.pclab.json,application/json" hidden>
         </div>
+        <div id="dx-suite-plan-preview" class="dx-suite-plan-preview muted fs-sm" hidden></div>
         <div id="dx-suite-import-result" class="dx-suite-import-result" hidden></div>
+        <div id="dx-suite-resume" class="dx-suite-resume" hidden role="status"></div>
         <div class="dx-suite-progress" aria-hidden="true"><span id="dx-suite-progress-bar"></span></div>
         <div class="dx-suite-meta">
             <span id="dx-suite-step">Idle</span>
@@ -83,11 +106,11 @@ $toolTotal = $toolKit->total();
 
             <section class="dx-lab-canvas" aria-label="Live canvas">
                 <div class="dx-lab-canvas__head">
-                    <h2>Live canvas</h2>
-                    <span class="muted fs-xs">Engine ↔ Advisor pulse · 3D digital twin</span>
+                    <h2>Live twin</h2>
+                    <span class="muted fs-xs">3D topology · probe SLA above</span>
                 </div>
                 <div class="dx-lab-canvas__grid">
-                    <section class="dx-pulse-visible" id="dx-intelligence-pulse" aria-label="Intelligence Pulse">
+                    <section class="dx-pulse-visible dx-pulse-demoted" id="dx-intelligence-pulse" aria-label="Lab activity" hidden>
                         <div class="dx-pulse-bridge">
                             <article class="dx-pulse-node engine">
                                 <div class="dx-pulse-ring" aria-hidden="true"></div>
@@ -481,6 +504,7 @@ $toolTotal = $toolKit->total();
                 <div class="dx-command-center__row" style="margin-bottom:0.75rem">
                     <button type="button" class="dx-btn ghost" id="dx-deck-save">Save layout</button>
                     <button type="button" class="dx-btn ghost" id="dx-deck-export-json">Export JSON</button>
+                    <button type="button" class="dx-btn ghost" id="dx-deck-export-csv">Export CSV timeline</button>
                     <button type="button" class="dx-btn ghost" id="dx-deck-export-rain">Export Rainmeter</button>
                 </div>
                 <div class="dx-sensor-deck__grid" id="dx-deck-grid"></div>
@@ -566,18 +590,21 @@ $toolTotal = $toolKit->total();
 </div>
 
 <?php
-$wa = $cfg['windows_agent'] ?? [];
-$agentHost = trim((string) ($wa['local_host'] ?? '127.0.0.1')) ?: '127.0.0.1';
-$agentPort = (int) ($wa['local_port'] ?? 18765);
+$probeAgent = $cfg['probe_agent'] ?? $cfg['windows_agent'] ?? [];
+$agentHost = trim((string) ($probeAgent['local_host'] ?? '127.0.0.1')) ?: '127.0.0.1';
+$agentPort = (int) ($probeAgent['local_port'] ?? 18765);
 $pclabAgentBase = 'http://' . $agentHost . ':' . max(1, min(65535, $agentPort));
 ?>
 <script>
 window.PCLAB_DIAGNOSTIC = {
     steps: <?= json_encode($steps, JSON_UNESCAPED_UNICODE) ?>,
     appDownload: <?= json_encode($cfg['app_download'] ?? [], JSON_UNESCAPED_UNICODE) ?>,
-    agentBase: <?= json_encode($pclabAgentBase, JSON_UNESCAPED_UNICODE) ?>
+    agentBase: <?= json_encode($pclabAgentBase, JSON_UNESCAPED_UNICODE) ?>,
+    linuxAgent: <?= json_encode($cfg['linux_agent'] ?? [], JSON_UNESCAPED_UNICODE) ?>,
+    windowsAgent: <?= json_encode($cfg['windows_agent'] ?? [], JSON_UNESCAPED_UNICODE) ?>
 };
 </script>
+<script defer src="/assets/js/diagnostic-capabilities.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-tabs.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-command-layout.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-toolkit.js?v=1.1.0"></script>

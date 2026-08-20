@@ -22,6 +22,7 @@ use App\Services\AssemblyCertificateService;
 use App\Services\LabReportExportService;
 use App\Services\LabSessionService;
 use App\Services\LabSuiteService;
+use App\Services\PlatformAuditService;
 use App\Services\SensorDeckService;
 use App\Services\SettingsService;
 use App\Services\SiliconDossierService;
@@ -347,7 +348,7 @@ class DiagnosticApiController
     public function diagnosticTelemetryStream(): void
     {
         $cfg = require dirname(__DIR__, 2) . '/config/diagnostic.php';
-        $wa = $cfg['windows_agent'] ?? [];
+        $wa = $cfg['probe_agent'] ?? $cfg['windows_agent'] ?? [];
         $host = trim((string) ($wa['local_host'] ?? '127.0.0.1')) ?: '127.0.0.1';
         $port = max(1, min(65535, (int) ($wa['local_port'] ?? 18765)));
         $url = "http://{$host}:{$port}/telemetry/stream";
@@ -383,6 +384,27 @@ class DiagnosticApiController
     public function diagnosticFleetDiscover(): string
     {
         return json_response(['probes' => (new \App\Services\ShopFleetService())->discover()]);
+    }
+
+    public function diagnosticFleetBurnIn(): string
+    {
+        $input = decode_json_body_limited(65536) ?? [];
+        $targets = $input['targets'] ?? ['127.0.0.1:18765'];
+        if (!is_array($targets) || $targets === []) {
+            $targets = ['127.0.0.1:18765'];
+        }
+        $profile = (string) ($input['profile'] ?? 'deep');
+        $result = (new \App\Services\ShopFleetService())->queueBurnIn(
+            array_map('strval', $targets),
+            $profile,
+            [
+                'duration_hours' => $input['duration_hours'] ?? 24,
+                'duration_seconds' => $input['duration_seconds'] ?? null,
+                'probe_base' => $input['probe_base'] ?? 'http://127.0.0.1:18765',
+            ]
+        );
+
+        return json_response(array_merge(['ok' => true], $result));
     }
 
     public function diagnosticFederatedAggregates(): string
@@ -694,6 +716,27 @@ class DiagnosticApiController
         ]);
     }
 
+    public function diagnosticSuitePlan(): string
+    {
+        $input = decode_json_body_limited(512000) ?? [];
+        $input['fp'] = $this->diagnosticFingerprint($input);
+        $plan = (new LabSuiteService())->planPreview($input);
+
+        return json_response($plan);
+    }
+
+    public function diagnosticPlatformAudit(): string
+    {
+        $input = decode_json_body_limited(1024000) ?? [];
+        $audit = (new PlatformAuditService())->build($input);
+
+        return json_response([
+            'ok' => true,
+            'audit' => $audit['document'],
+            'html' => $audit['html'],
+        ]);
+    }
+
     public function diagnosticSuiteStart(): string
     {
         $input = decode_json_body_limited(65536) ?? [];
@@ -704,7 +747,7 @@ class DiagnosticApiController
             'event_type' => 'diagnostic_suite_start',
             'target_type' => 'suite',
             'target_id' => (string) ($job['id'] ?? ''),
-            'metadata' => ['profile' => $job['profile'] ?? 'standard'],
+            'metadata' => ['profile' => $job['profile'] ?? 'adaptive'],
         ]);
 
         return json_response(['ok' => true, 'job' => $job]);
@@ -735,6 +778,27 @@ class DiagnosticApiController
         }
 
         return json_response(['ok' => true, 'job' => $job]);
+    }
+
+    public function diagnosticSuiteDiscard(string $id = ''): string
+    {
+        $input = decode_json_body_limited(65536) ?? [];
+        if ($id === '') {
+            $id = (string) ($input['id'] ?? $_GET['id'] ?? '');
+        }
+        $job = (new LabSuiteService())->discard($id);
+        if ($job === null) {
+            return json_response(['ok' => false, 'error' => 'not_found'], 404);
+        }
+
+        return json_response(['ok' => true, 'job' => $job]);
+    }
+
+    public function diagnosticSuiteResumable(): string
+    {
+        $jobs = (new LabSuiteService())->listResumable(10);
+
+        return json_response(['ok' => true, 'jobs' => $jobs]);
     }
 
     public function diagnosticSuitePatch(string $id = ''): string
@@ -815,6 +879,13 @@ class DiagnosticApiController
         if ($format === 'rainmeter') {
             header('Content-Type: text/plain; charset=utf-8');
             header('Content-Disposition: attachment; filename="PCLabKit-SensorDeck.ini"');
+
+            return (string) ($export['content'] ?? '');
+        }
+
+        if ($format === 'csv' || $format === 'timeline') {
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename="PCLabKit-SensorTimeline.csv"');
 
             return (string) ($export['content'] ?? '');
         }

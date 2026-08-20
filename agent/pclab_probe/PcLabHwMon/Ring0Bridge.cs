@@ -115,4 +115,55 @@ internal static class Ring0Bridge
         }
         return results;
     }
+
+    public sealed class SelectedPciFunction
+    {
+        public required string PciBdf { get; init; }
+        public required uint PciAddress { get; init; }
+        public required uint VendorId { get; init; }
+        public required uint DeviceId { get; init; }
+        public required string Role { get; init; }
+    }
+
+    /// <summary>
+    /// Display (class 0x03) and NVMe storage (class 0x01 subclass 0x08) functions for 256-byte config dumps.
+    /// Caps at 12 devices — identity, not a full bus analyzer.
+    /// </summary>
+    public static List<SelectedPciFunction> EnumerateSelectedPciFunctions(int max = 12)
+    {
+        var results = new List<SelectedPciFunction>();
+        if (!IsOpen) return results;
+        for (int bus = 0; bus < 256 && results.Count < max; bus++)
+        {
+            for (byte dev = 0; dev < 32 && results.Count < max; dev++)
+            {
+                for (byte fn = 0; fn < 8 && results.Count < max; fn++)
+                {
+                    var pci = GetPciAddress((byte)bus, dev, fn);
+                    if (!ReadPciConfig(pci, 0, out var idReg) || idReg == 0xFFFFFFFFu || idReg == 0)
+                        continue;
+                    if (!ReadPciConfig(pci, 0x08, out var classReg))
+                        continue;
+                    var baseClass = (classReg >> 24) & 0xFF;
+                    var subClass = (classReg >> 16) & 0xFF;
+                    string? role = null;
+                    if (baseClass == 0x03)
+                        role = "display";
+                    else if (baseClass == 0x01 && subClass == 0x08)
+                        role = "nvme";
+                    if (role is null)
+                        continue;
+                    results.Add(new SelectedPciFunction
+                    {
+                        PciBdf = $"{bus:X2}:{dev:X2}.{fn}",
+                        PciAddress = pci,
+                        VendorId = idReg & 0xFFFF,
+                        DeviceId = (idReg >> 16) & 0xFFFF,
+                        Role = role,
+                    });
+                }
+            }
+        }
+        return results;
+    }
 }

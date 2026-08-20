@@ -65,13 +65,26 @@
       byBus[bus].push(d);
     });
     const sum = lastInventory.summary || {};
+    const fp = lastInventory.fingerprint || lastDevicesRaw?.fingerprint || {};
+    const cov = sum.coverage_score ?? fp.coverage_score;
+    const gaps = Array.isArray(fp.gaps) ? fp.gaps : [];
     let html = `<div class="dx-hwref__summary muted fs-xs">
       ${esc(sum.total_devices ?? devices.length)} total ·
       ${esc(sum.present_devices ?? '—')} present ·
       ${esc(sum.hidden_devices ?? '—')} hidden ·
       ${esc(sum.driverless ?? '—')} driverless ·
       ${esc(sum.problem_devices ?? '—')} problem
+      ${cov != null ? ` · <strong>coverage ${esc(cov)}%</strong>` : ''}
+      ${sum.form_factor || fp.form_factor ? ` · ${esc(sum.form_factor || fp.form_factor)}` : ''}
     </div>`;
+    if (cov != null) {
+      html += `<div class="dx-platform-coverage">
+        <div class="dx-platform-coverage__bar" role="meter" aria-valuenow="${esc(cov)}" aria-valuemin="0" aria-valuemax="100">
+          <span style="width:${esc(Math.min(100, Math.max(0, Number(cov))))}%"></span>
+        </div>
+        ${gaps.length ? `<ul class="dx-platform-coverage__gaps muted fs-xs">${gaps.slice(0, 5).map((g) => `<li><code>${esc(g.plane || '')}</code> — ${esc(g.detail || g.reason || '')}</li>`).join('')}</ul>` : ''}
+      </div>`;
+    }
     Object.keys(byBus).sort().forEach((bus) => {
       html += `<details class="dx-hwref__bus" open><summary>${esc(bus)} <span class="muted">(${byBus[bus].length})</span></summary><ul class="dx-hwref__list">`;
       byBus[bus].forEach((d) => {

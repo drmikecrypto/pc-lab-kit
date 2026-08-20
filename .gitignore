@@ -2,6 +2,7 @@
 /storage/database/*.sqlite
 /storage/cache/
 /storage/suite/
+/storage/sessions/
 !public/downloads/.gitkeep
 build-cache/
 
@@ -50,6 +51,7 @@ service-account*.json
 **/.secrets/
 storage/settings/local.json
 storage/settings/sensor_deck.json
+storage/settings/machine.key
 
 # OS / editor junk
 .DS_Store
@@ -65,6 +67,10 @@ Thumbs.db
 /node_modules/
 /playwright-report/
 /test-results/
+.phpunit.result.cache
+**/.phpunit.result.cache
+**/__pycache__/
+*.pyc
 
 # Misc
 temp.md

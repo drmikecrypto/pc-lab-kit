@@ -34,4 +34,27 @@ class VerifyController
             'session' => $session,
         ]);
     }
+
+    /** Offline verify of an uploaded / posted .pclab JSON body. */
+    public function verifyPayload(): string
+    {
+        $input = decode_json_body_limited(4_000_000) ?? [];
+        $json = (string) ($input['json'] ?? '');
+        if ($json === '' && isset($input['format'])) {
+            $json = json_encode($input, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '';
+        }
+        try {
+            $svc = new \App\Services\LabSessionService();
+            $session = $svc->import($json);
+            $offline = $svc->verifyPayload($session);
+
+            return json_response([
+                'ok' => true,
+                'verified' => !empty($session['verified']) && $offline,
+                'session' => $session,
+            ]);
+        } catch (\Throwable $e) {
+            return json_response(['ok' => false, 'error' => $e->getMessage()], 400);
+        }
+    }
 }
