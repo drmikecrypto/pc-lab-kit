@@ -133,10 +133,8 @@ flowchart LR
   Tag[git tag v*] --> CI[GitHub Actions]
   CI --> Win[Windows Setup.exe]
   CI --> Lin[Linux AppImage]
-  CI --> ProbeZip[probe ZIP]
   Win --> Rel[GitHub Release]
   Lin --> Rel
-  ProbeZip --> Rel
 ```
 
 ## Optional AI advisor (BYOK)
