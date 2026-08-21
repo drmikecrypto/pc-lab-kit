@@ -1,4 +1,0 @@
-*.sh text eol=lf
-PcLabKit text eol=lf
-scripts/stage-app-payload.sh text eol=lf
-scripts/build-app-linux.sh text eol=lf
