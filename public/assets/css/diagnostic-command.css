@@ -290,5 +290,15 @@
   padding: 0.35rem 0.45rem;
   text-align: left;
 }
-.dx-pulse-demoted { display: none !important; }
+.dx-pulse-demoted,
+.dx-pulse-demoted.dx-pulse-visible {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
 

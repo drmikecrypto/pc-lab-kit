@@ -7,7 +7,9 @@ test.describe('Command Center OEM path + suite resume', () => {
     await expect(page.locator('#dx-command-center')).toBeVisible();
     await expect(page.locator('#dx-suite-run')).toBeVisible();
     await expect(page.locator('.dx-oem-phases')).toBeVisible();
-    await expect(page.locator('#dx-intelligence-pulse')).toBeHidden();
+    // Demoted from first viewport (attribute + CSS); assert attribute so layout CSS cannot flake visibility.
+    await expect(page.locator('#dx-intelligence-pulse')).toHaveAttribute('hidden', '');
+    await expect(page.locator('#dx-intelligence-pulse')).toHaveClass(/dx-pulse-demoted/);
     await expect(page.locator('#dx-suite-profile option[value="soak_15"]')).toHaveCount(1);
   });
 
