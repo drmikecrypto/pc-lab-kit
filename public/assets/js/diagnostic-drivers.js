@@ -23,7 +23,35 @@
       note.textContent = text || '';
       note.classList.toggle('is-error', !!isError);
     }
-    if (status && text) status.textContent = isError ? 'Error' : 'Ready';
+    if (status && text) status.textContent = isError ? 'Offline' : 'Ready';
+  }
+
+  function setHeading(count) {
+    const h = el('dx-drivers-heading');
+    const lead = el('dx-drivers-lead');
+    if (count == null) return;
+    if (h) {
+      h.textContent =
+        count === 0
+          ? 'No driver actions required'
+          : count === 1
+            ? '1 device needs install or update'
+            : `${count} devices need install or update`;
+    }
+    if (lead) {
+      lead.textContent =
+        count === 0
+          ? 'Rescan after plugging new hardware. Install/Update appears on each problem row when needed.'
+          : 'Install/Update on that exact row. Probe must be running (bundled in the desktop app).';
+    }
+  }
+
+  function offlineEmpty(detail) {
+    return `<div class="dx-panel-empty is-error">
+      <strong>Probe offline</strong>
+      <p class="muted fs-sm">Cannot read drivers. Open the PC Lab Kit desktop app so the bundled probe starts, then Rescan devices.</p>
+      ${detail ? `<p class="muted fs-xs">${esc(detail)}</p>` : ''}
+    </div>`;
   }
 
   function driverConfBadge(row) {
@@ -47,15 +75,16 @@
 
   function rowHtml(title, detail, severity, row, installAttrs) {
     const primary = row.primary_link && row.primary_link.url ? row.primary_link : null;
-    const links = (row.links || []).slice(0, 2).map((l) =>
-      `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || 'Download')}</a>`
-    ).join(' · ');
+    const links = (row.links || [])
+      .slice(0, 2)
+      .map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label || 'Download')}</a>`)
+      .join(' · ');
     const conf = driverConfBadge(row);
     const ids = hwId(row);
     const primaryBtn = primary
-      ? `<a href="${esc(primary.url)}" class="dx-btn primary dx-driver-primary" target="_blank" rel="noopener">${esc(primary.label || 'Open package')}</a>`
+      ? `<a href="${esc(primary.url)}" class="dx-btn ghost dx-driver-primary" target="_blank" rel="noopener">${esc(primary.label || 'Open package')}</a>`
       : '';
-    const installBtn = `<button type="button" class="dx-btn primary dx-driver-install" ${installAttrs}>Install / Update</button>`;
+    const installBtn = `<button type="button" class="dx-btn primary dx-driver-install" ${installAttrs}>Install driver</button>`;
     return `<article class="dx-driver-card ${esc(severity || '')}">
       <div class="dx-driver-card-head"><strong>${esc(title)}</strong>${conf}</div>
       <p class="muted fs-sm">${esc(detail || '')}</p>
@@ -64,20 +93,40 @@
     </article>`;
   }
 
+  function countActions(drivers, devices) {
+    const plan = drivers.action_plan || {};
+    const planItems = Array.isArray(plan.items) ? plan.items : [];
+    const actions = (drivers.actions || []).filter(
+      (a) => a && (a.severity === 'critical' || a.severity === 'warn' || a.severity === 'info')
+    );
+    const driverless = devices.driverless || devices.problem || [];
+    const problems = (devices.problem_devices || devices.problems || []).filter(Boolean);
+    const queue = (drivers.install_queue || []).filter((s) => s && s.status !== 'ok');
+    if (planItems.length) return planItems.length;
+    return actions.length + driverless.length + problems.length + queue.length;
+  }
+
   function renderDriverActions(drivers, devices) {
     const box = el('dx-driver-actions');
     if (!box) return;
     const plan = drivers.action_plan || {};
     const planItems = Array.isArray(plan.items) ? plan.items : [];
-    const actions = (drivers.actions || []).filter((a) => a && (a.severity === 'critical' || a.severity === 'warn' || a.severity === 'info'));
+    const actions = (drivers.actions || []).filter(
+      (a) => a && (a.severity === 'critical' || a.severity === 'warn' || a.severity === 'info')
+    );
     const driverless = devices.driverless || devices.problem || [];
     const problems = (devices.problem_devices || devices.problems || []).filter(Boolean);
     const queue = (drivers.install_queue || []).filter((s) => s && s.status !== 'ok');
+    const n = countActions(drivers, devices);
+    setHeading(n);
 
-    const missing = ([]).concat(driverless, problems);
+    const missing = [].concat(driverless, problems);
     if (!planItems.length && !actions.length && !missing.length && !queue.length) {
-      box.innerHTML = `<div class="dx-empty-hint">No driver installs needed right now. Score ${esc(String(drivers.score ?? '—'))} / ${esc(drivers.grade || '—')}. Rescan after plugging new hardware.</div>`;
-      setNote('All clear — no critical driver actions.', false);
+      box.innerHTML = `<div class="dx-panel-empty">
+        <strong>All clear</strong>
+        <p class="muted fs-sm">Score ${esc(String(drivers.score ?? '—'))} / ${esc(drivers.grade || '—')}. Rescan after plugging new hardware.</p>
+      </div>`;
+      setNote('No critical driver actions.', false);
       return;
     }
 
@@ -87,9 +136,11 @@
         <h3 class="dx-driver-queue-title">Action plan <span class="muted fs-xs">${esc(plan.count ?? planItems.length)} · ${esc(plan.installable_count ?? 0)} installable</span></h3>
         <p class="muted fs-xs">${esc(plan.note || 'Install chipset / ME before GPU.')}</p>
         <ol class="dx-driver-checklist">
-          ${planItems.map((it, idx) => {
-            const conf = it.match_confidence_pct != null ? `${it.match_confidence_pct}%` : (it.match_confidence || '');
-            return `<li class="dx-driver-check ${esc(it.severity || '')}">
+          ${planItems
+            .map((it, idx) => {
+              const conf =
+                it.match_confidence_pct != null ? `${it.match_confidence_pct}%` : it.match_confidence || '';
+              return `<li class="dx-driver-check ${esc(it.severity || '')}">
               <span class="dx-driver-check__ord">${idx + 1}</span>
               <div>
                 <strong>${esc((it.action || 'update').toUpperCase())}</strong> ${esc(it.device || it.title || '')}
@@ -98,39 +149,58 @@
               <button type="button" class="dx-btn primary dx-driver-install"
                 data-instance="${esc(it.instance_id || '')}"
                 data-category="${esc(it.category || '')}"
-                data-queue="">Install / Update</button>
+                data-queue="">Install driver</button>
             </li>`;
-          }).join('')}
+            })
+            .join('')}
         </ol>
       </div>`;
     }
 
-    const actionHtml = planItems.length ? '' : actions.map((a) => rowHtml(
-      a.title || a.name || 'Driver action',
-      a.detail || a.why || '',
-      a.severity || 'warn',
-      a,
-      `data-instance="${esc(a.instance_id || '')}" data-category="${esc(a.category || '')}" data-queue=""`
-    )).join('');
+    const actionHtml = planItems.length
+      ? ''
+      : actions
+          .map((a) =>
+            rowHtml(
+              a.title || a.name || 'Driver action',
+              a.detail || a.why || '',
+              a.severity || 'warn',
+              a,
+              `data-instance="${esc(a.instance_id || '')}" data-category="${esc(a.category || '')}" data-queue=""`
+            )
+          )
+          .join('');
 
-    const missingHtml = planItems.length ? '' : missing.map((d) => rowHtml(
-      `Needs driver: ${d.name || d.title || 'Unknown device'}`,
-      d.problem_message || d.category || d.status || '',
-      'critical',
-      d,
-      `data-instance="${esc(d.instance_id || '')}" data-category="${esc(d.category || '')}" data-queue=""`
-    )).join('');
+    const missingHtml = planItems.length
+      ? ''
+      : missing
+          .map((d) =>
+            rowHtml(
+              `Needs driver: ${d.name || d.title || 'Unknown device'}`,
+              d.problem_message || d.category || d.status || '',
+              'critical',
+              d,
+              `data-instance="${esc(d.instance_id || '')}" data-category="${esc(d.category || '')}" data-queue=""`
+            )
+          )
+          .join('');
 
-    const queueHtml = queue.length ? `<div class="dx-driver-queue">
+    const queueHtml = queue.length
+      ? `<div class="dx-driver-queue">
       <h3 class="dx-driver-queue-title">Install queue</h3>
-      ${queue.map((s) => rowHtml(
-        s.label || s.id || 'Queued package',
-        s.why || s.status || '',
-        s.status === 'critical' || s.status === 'action_required' ? 'critical' : 'warn',
-        s,
-        `data-instance="" data-category="${esc(s.id || '')}" data-queue="${esc(s.id || '')}"`
-      )).join('')}
-    </div>` : '';
+      ${queue
+        .map((s) =>
+          rowHtml(
+            s.label || s.id || 'Queued package',
+            s.why || s.status || '',
+            s.status === 'critical' || s.status === 'action_required' ? 'critical' : 'warn',
+            s,
+            `data-instance="" data-category="${esc(s.id || '')}" data-queue="${esc(s.id || '')}"`
+          )
+        )
+        .join('')}
+    </div>`
+      : '';
 
     box.innerHTML = `<div class="dx-driver-summary muted fs-sm">Score <strong>${esc(String(drivers.score ?? '—'))}</strong> / ${esc(drivers.grade || '—')} — Install runs on that hardware row via bundled Probe.</div>
       ${planHtml}${queueHtml}${missingHtml}${actionHtml}`;
@@ -151,7 +221,11 @@
     const category = btn.getAttribute('data-category') || '';
     const queueId = btn.getAttribute('data-queue') || '';
     const label = category || instanceId || 'driver';
-    if (!window.confirm(`Install the matched latest driver for ${label}? This may download a vendor package or open the GPU updater.`)) {
+    if (
+      !window.confirm(
+        `Install the matched latest driver for ${label}? This may download a vendor package or open the GPU updater.`
+      )
+    ) {
       return;
     }
     btn.disabled = true;
@@ -172,7 +246,10 @@
       if (!res.ok || data.ok === false) {
         setNote(`Install failed: ${data.error || data.status || res.status}`, true);
       } else {
-        setNote(`Install ${data.status || 'done'}${data.package_version ? ' · ' + data.package_version : ''}. Rescanning…`, false);
+        setNote(
+          `Install ${data.status || 'done'}${data.package_version ? ' · ' + data.package_version : ''}. Rescanning…`,
+          false
+        );
       }
       await rescanDrivers(false);
     } catch (_) {
@@ -185,7 +262,7 @@
   async function rescanDrivers(includeWu) {
     const status = el('dx-drivers-status');
     if (status) status.textContent = includeWu ? 'WU scan…' : 'Scanning…';
-    setNote(includeWu ? 'Scanning Windows Update for drivers (may take several minutes)…' : 'Rescanning drivers…', false);
+    setNote(includeWu ? 'Scanning Windows Update for drivers (may take several minutes)…' : 'Rescanning devices…', false);
     try {
       const url = includeWu ? `${AGENT()}/drivers?wu=1` : `${AGENT()}/drivers`;
       const res = await fetch(url, { mode: 'cors' });
@@ -206,9 +283,10 @@
       if (status) status.textContent = 'Ready';
     } catch (e) {
       const box = el('dx-driver-actions');
-      if (box) {
-        box.innerHTML = `<div class="dx-empty-hint is-error">Could not reach Probe /drivers. ${esc(e.message || e)}</div>`;
-      }
+      if (box) box.innerHTML = offlineEmpty(e.message || e);
+      setHeading(null);
+      const h = el('dx-drivers-heading');
+      if (h) h.textContent = 'Drivers unavailable';
       setNote('Probe offline — open the desktop app so the bundled probe starts.', true);
       if (status) status.textContent = 'Offline';
     }
@@ -222,12 +300,6 @@
     });
     window.addEventListener('dx:drivers-updated', (ev) => {
       if (ev.detail?.drivers) renderDriverActions(ev.detail.drivers, ev.detail.devices || {});
-    });
-    document.addEventListener('click', (ev) => {
-      const t = ev.target;
-      if (t instanceof Element && t.closest('[data-dx-goto="drivers"]')) {
-        if (window.dxActivateTab) window.dxActivateTab('drivers');
-      }
     });
   }
 

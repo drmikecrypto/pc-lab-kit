@@ -1,4 +1,4 @@
-// Playwright E2E — Full Lab happy path with mocked probe fixtures.
+// Playwright E2E — Programmed suite UI with mocked probe fixtures.
 
 const { test, expect } = require('@playwright/test');
 const path = require('path');
@@ -29,10 +29,14 @@ test.describe('Full Lab with mock probe', () => {
     });
   });
 
-  test('command center shows Run Full Lab and deep profile option', async ({ page }) => {
+  test('overview shows programmed suite with dynamic start label', async ({ page }) => {
     await page.goto('/diagnostic');
     await expect(page.locator('#dx-command-center')).toBeVisible();
-    await expect(page.locator('#dx-suite-run')).toContainText('Run Full Lab');
+    await page.locator('#dx-programmed-suite').evaluate((el) => {
+      el.open = true;
+    });
+    await expect(page.locator('#dx-suite-run')).toBeVisible();
+    await expect(page.locator('#dx-suite-run')).toContainText(/Start Adaptive Lab|Start /i);
     await expect(page.locator('#dx-suite-profile')).toBeVisible();
     await expect(page.locator('label[for="dx-suite-import-file"]')).toBeVisible();
   });

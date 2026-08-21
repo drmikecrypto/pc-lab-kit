@@ -6,6 +6,17 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.1.3] - 2026-08-21
+
+### Changed — Detect → decide → execute lab UI
+- **Overview** replaces Command Center as the home module: Probe instrument, detected hardware cards, and per-component Drivers / Test this actions
+- **Tabs are exclusive workspaces** — suite chrome and Live twin no longer stay on screen when opening Drivers, Test, or other modules
+- **Test** tab (was Stress): choose CPU / GPU / Memory targets, duration presets, and a precise Start label
+- **Drivers** tab: full-panel offline/empty states; `Rescan devices` / `Install driver` copy
+- **Programmed suite** demoted to a collapsed optional batch; CTA label matches the selected profile (e.g. Start Adaptive Lab)
+- Calm Probe-not-ready guidance instead of a loud “Full Lab could not start” banner
+- Primary nav: Overview · Drivers · Test · Open Book · History (Arena and the rest under Advanced)
+
 ## [4.1.2] - 2026-08-21
 
 ### Added — Enterprise masterpiece wedge

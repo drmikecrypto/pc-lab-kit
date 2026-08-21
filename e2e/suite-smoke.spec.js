@@ -3,8 +3,8 @@
 
 const { test, expect } = require('@playwright/test');
 
-test.describe('Command Center Full Lab UI', () => {
-  test('shows Run Full Lab CTA', async ({ page }) => {
+test.describe('Overview programmed suite UI', () => {
+  test('shows dynamic Start Lab CTA', async ({ page }) => {
     await page.route('**/api/diagnostic/suite/profiles', async (route) => {
       await route.fulfill({
         status: 200,
@@ -18,6 +18,9 @@ test.describe('Command Center Full Lab UI', () => {
 
     await page.goto('/diagnostic');
     await expect(page.locator('#dx-command-center')).toBeVisible();
-    await expect(page.locator('#dx-suite-run')).toContainText('Run Full Lab');
+    await page.locator('#dx-programmed-suite').evaluate((el) => {
+      el.open = true;
+    });
+    await expect(page.locator('#dx-suite-run')).toContainText(/Start Adaptive Lab|Start /i);
   });
 });

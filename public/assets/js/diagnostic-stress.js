@@ -1,5 +1,5 @@
 /**
- * Stress tab — custom duration (minutes/hours) + certificate strip.
+ * Test tab — choose hardware targets + duration, then run Probe stress.
  */
 (function () {
   const AGENT = () => (window.PCLAB_DIAGNOSTIC && window.PCLAB_DIAGNOSTIC.agentBase) || 'http://127.0.0.1:18765';
@@ -20,6 +20,29 @@
       .replace(/"/g, '&quot;');
   }
 
+  function selectedTargets() {
+    return Array.from(document.querySelectorAll('input[name="dx-test-target"]:checked')).map((c) => c.value);
+  }
+
+  function resolveProfile() {
+    if (el('dx-stress-oracle')?.checked) return 'oracle';
+    const t = selectedTargets();
+    if (!t.length) return '';
+    if (t.length === 1) return t[0];
+    if (t.length === 3) return 'combined';
+    if (t.includes('cpu') && t.includes('gpu') && !t.includes('memory')) return 'combined';
+    if (t.includes('cpu') && t.includes('memory') && !t.includes('gpu')) return 'combined';
+    if (t.includes('gpu') && t.includes('memory') && !t.includes('cpu')) return 'combined';
+    return 'combined';
+  }
+
+  function syncHiddenProfile() {
+    const profile = resolveProfile() || 'combined';
+    const sel = el('dx-stress-profile');
+    if (sel) sel.value = profile;
+    return profile;
+  }
+
   function durationSeconds() {
     const hours = Math.max(0, Math.min(24, Number(el('dx-stress-hours')?.value || 0)));
     const minutes = Math.max(0, Math.min(1440, Number(el('dx-stress-minutes')?.value || 0)));
@@ -27,6 +50,38 @@
     if (sec < 5) sec = 5;
     if (sec > MAX_SECONDS) sec = MAX_SECONDS;
     return sec;
+  }
+
+  function formatDurationLabel(sec) {
+    if (sec < 60) return `${sec}s`;
+    const m = Math.round(sec / 60);
+    if (m < 60) return `${m} min`;
+    const h = Math.floor(m / 60);
+    const rem = m % 60;
+    return rem ? `${h}h ${rem}m` : `${h}h`;
+  }
+
+  function targetLabel() {
+    if (el('dx-stress-oracle')?.checked) return 'Oracle';
+    const t = selectedTargets();
+    if (!t.length) return '';
+    const map = { cpu: 'CPU', gpu: 'GPU', memory: 'Memory' };
+    return t.map((x) => map[x] || x).join('+');
+  }
+
+  function updateRunLabel() {
+    const btn = el('dx-stress-run');
+    if (!btn || running) return;
+    const targets = targetLabel();
+    const sec = durationSeconds();
+    if (!targets) {
+      btn.textContent = 'Select a target';
+      btn.disabled = true;
+      return;
+    }
+    btn.disabled = false;
+    btn.textContent = `Start ${targets} · ${formatDurationLabel(sec)}`;
+    syncHiddenProfile();
   }
 
   function setStatus(text, isError) {
@@ -48,33 +103,57 @@
     if (wrap) wrap.setAttribute('aria-hidden', pct <= 0 ? 'true' : 'false');
   }
 
+  function applyPreselect() {
+    let target = '';
+    try {
+      target = sessionStorage.getItem('pclab_test_preselect') || '';
+      sessionStorage.removeItem('pclab_test_preselect');
+    } catch (_) {}
+    if (!target) return;
+    document.querySelectorAll('input[name="dx-test-target"]').forEach((cb) => {
+      cb.checked = cb.value === target;
+    });
+    if (el('dx-stress-oracle')) el('dx-stress-oracle').checked = false;
+    updateRunLabel();
+  }
+
   async function startStress() {
     if (running) return;
-    const profile = el('dx-stress-profile')?.value || 'combined';
+    const profile = syncHiddenProfile();
+    if (!profile) {
+      setStatus('Select at least one target.', true);
+      return;
+    }
     const seconds = durationSeconds();
     if (seconds > 1800) {
       const mins = Math.round(seconds / 60);
-      if (!window.confirm(`Run ${profile} stress for ${mins} minutes (${(seconds / 3600).toFixed(2)} h)? Long soaks heat the system — stay nearby.`)) {
+      if (
+        !window.confirm(
+          `Run ${targetLabel() || profile} for ${mins} minutes (${(seconds / 3600).toFixed(2)} h)? Long soaks heat the system — stay nearby.`
+        )
+      ) {
         return;
       }
     }
 
     running = true;
     finished = false;
-    el('dx-stress-run') && (el('dx-stress-run').disabled = true);
+    const runBtn = el('dx-stress-run');
+    if (runBtn) runBtn.disabled = true;
     const stop = el('dx-stress-stop');
     if (stop) stop.hidden = false;
     setProgress(3);
-    setStatus(`Starting ${profile} for ${seconds}s…`, false);
+    setStatus(`Starting ${targetLabel() || profile} for ${formatDurationLabel(seconds)}…`, false);
 
     try {
       const health = await fetch(AGENT() + '/health', { mode: 'cors' });
-      if (!health.ok) throw new Error('Probe offline');
+      if (!health.ok) throw new Error('Probe offline — open the desktop app, then retry.');
 
       const path = profile === 'oracle' ? '/stress/oracle/start' : '/stress/run';
-      const body = profile === 'oracle'
-        ? { seconds, collect_samples: true }
-        : { id: profile, seconds, percent: 100, collect_samples: true };
+      const body =
+        profile === 'oracle'
+          ? { seconds, collect_samples: true }
+          : { id: profile, seconds, percent: 100, collect_samples: true };
 
       const res = await fetch(AGENT() + path, {
         method: 'POST',
@@ -87,10 +166,9 @@
         throw new Error(data.error || data.message || `HTTP ${res.status}`);
       }
 
-      setStatus(`Running ${profile} · ${seconds}s`, false);
+      setStatus(`Running ${targetLabel() || profile} · ${formatDurationLabel(seconds)}`, false);
       window.dispatchEvent(new CustomEvent('dx:suite-stress-start'));
 
-      // Many probe stress endpoints are synchronous for short runs; for long runs poll thermal.
       const started = Date.now();
       clearInterval(pollTimer);
       pollTimer = setInterval(async () => {
@@ -105,7 +183,7 @@
             const gpu = tel.gpu_temp ?? tel.thermal?.gpu?.core_c;
             const hs = tel.gpu_hotspot ?? tel.thermal?.gpu?.hot_spot_c;
             setStatus(
-              `Running ${profile} · ${Math.floor(elapsed)}/${seconds}s` +
+              `Running ${targetLabel() || profile} · ${Math.floor(elapsed)}/${seconds}s` +
                 (cpu != null ? ` · CPU ${Math.round(cpu)}°` : '') +
                 (gpu != null ? ` · GPU ${Math.round(gpu)}°` : '') +
                 (hs != null ? ` · HS ${Math.round(hs)}°` : ''),
@@ -120,7 +198,6 @@
         }
       }, 2000);
 
-      // If response already includes a finished stress payload, finish immediately.
       if (data.stress || data.result || data.verdict || data.status === 'completed') {
         clearInterval(pollTimer);
         pollTimer = null;
@@ -128,10 +205,10 @@
       }
     } catch (e) {
       running = false;
-      el('dx-stress-run') && (el('dx-stress-run').disabled = false);
+      updateRunLabel();
       el('dx-stress-stop') && (el('dx-stress-stop').hidden = true);
       setProgress(0);
-      setStatus('Stress failed: ' + (e.message || e), true);
+      setStatus('Test failed: ' + (e.message || e), true);
     }
   }
 
@@ -141,16 +218,16 @@
     clearInterval(pollTimer);
     pollTimer = null;
     running = false;
-    el('dx-stress-run') && (el('dx-stress-run').disabled = false);
+    updateRunLabel();
     el('dx-stress-stop') && (el('dx-stress-stop').hidden = true);
     setProgress(100);
     const verdict = data.verdict || data.stress?.verdict || data.result?.verdict || 'completed';
-    setStatus(`Stress ${verdict}`, false);
+    setStatus(`Test ${verdict}`, false);
     const live = el('dx-stress-live');
     if (live) {
       live.innerHTML = `<div class="dx-stress-result"><strong>Done — ${esc(String(verdict))}</strong>
         <pre class="dx-hwref__raw muted fs-xs">${esc(JSON.stringify(data.stress || data.result || data, null, 2).slice(0, 4000))}</pre>
-        <p class="muted fs-sm">Export a full Assembly Certificate from Command Center Full Lab, or keep soaking with a longer custom duration.</p></div>`;
+        <p class="muted fs-sm">Export a certificate below, or run another duration.</p></div>`;
     }
   }
 
@@ -158,7 +235,7 @@
     clearInterval(pollTimer);
     pollTimer = null;
     running = false;
-    el('dx-stress-run') && (el('dx-stress-run').disabled = false);
+    updateRunLabel();
     el('dx-stress-stop') && (el('dx-stress-stop').hidden = true);
     setProgress(0);
     setStatus('Stopped by user', false);
@@ -167,13 +244,38 @@
     } catch (_) {}
   }
 
+  function setPresetMinutes(mins) {
+    const m = Math.max(0, Number(mins) || 0);
+    if (el('dx-stress-hours')) el('dx-stress-hours').value = String(Math.floor(m / 60));
+    if (el('dx-stress-minutes')) el('dx-stress-minutes').value = String(m % 60);
+    document.querySelectorAll('.dx-test-preset').forEach((b) => {
+      b.classList.toggle('is-active', Number(b.getAttribute('data-minutes')) === m);
+    });
+    updateRunLabel();
+  }
+
   function bind() {
     el('dx-stress-run')?.addEventListener('click', startStress);
     el('dx-stress-stop')?.addEventListener('click', stopStress);
-    document.addEventListener('click', (ev) => {
-      const t = ev.target;
-      if (t instanceof Element && t.closest('[data-dx-goto="stress"]')) {
-        if (window.dxActivateTab) window.dxActivateTab('stress');
+    document.querySelectorAll('input[name="dx-test-target"]').forEach((cb) => {
+      cb.addEventListener('change', updateRunLabel);
+    });
+    el('dx-stress-oracle')?.addEventListener('change', () => {
+      const on = !!el('dx-stress-oracle')?.checked;
+      document.querySelectorAll('input[name="dx-test-target"]').forEach((cb) => {
+        cb.disabled = on;
+      });
+      updateRunLabel();
+    });
+    el('dx-stress-hours')?.addEventListener('input', updateRunLabel);
+    el('dx-stress-minutes')?.addEventListener('input', updateRunLabel);
+    document.querySelectorAll('.dx-test-preset').forEach((btn) => {
+      btn.addEventListener('click', () => setPresetMinutes(btn.getAttribute('data-minutes')));
+    });
+    window.addEventListener('dx:tab-change', (ev) => {
+      if (ev.detail?.tab === 'stress') {
+        applyPreselect();
+        updateRunLabel();
       }
     });
     window.addEventListener('dx:suite-complete', (ev) => {
@@ -181,9 +283,10 @@
         window.PcLabOpenBook.applySuiteCert(ev.detail);
       }
     });
+    updateRunLabel();
   }
 
-  window.PcLabStress = { start: startStress, stop: stopStress, durationSeconds };
+  window.PcLabStress = { start: startStress, stop: stopStress, durationSeconds, updateRunLabel };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bind);

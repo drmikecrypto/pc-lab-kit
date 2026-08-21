@@ -21,9 +21,9 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.4.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.3.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.4.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-arena.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.0.1">
+<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.1.0">
 
 <div class="container dx-shell">
 
@@ -31,7 +31,7 @@ $toolTotal = $toolKit->total();
         <div class="dx-shell-hero__inner">
             <p class="dx-shell-eyebrow">PC Lab Kit</p>
             <h1 class="dx-shell-title sr-only">PC Lab Kit</h1>
-            <p class="dx-shell-lead"><?= e($product['full_tagline'] ?? 'One local lab — Full Lab suite, live sensors, drivers, stress, RGB, optional BYOK AI.') ?></p>
+            <p class="dx-shell-lead"><?= e($product['full_tagline'] ?? 'Detect hardware · choose drivers or tests · everything stays on this PC.') ?></p>
             <div class="dx-shell-meta">
                 <span class="dx-shell-pill dx-shell-pill--live">Local only</span>
                 <span class="dx-shell-pill"><?= (int) $toolTotal ?> tools unified</span>
@@ -44,15 +44,15 @@ $toolTotal = $toolKit->total();
     <div class="dx-lab-workspace">
         <nav class="dx-lab-nav" aria-label="Lab modules">
             <p class="dx-lab-nav__brand">PC Lab Kit</p>
-            <button type="button" class="dx-lab-nav-btn is-active" data-dx-nav="command" aria-selected="true"><span class="dx-lab-nav-btn__icon" data-mark="CC"></span>Command Center</button>
+            <button type="button" class="dx-lab-nav-btn is-active" data-dx-nav="command" aria-selected="true"><span class="dx-lab-nav-btn__icon" data-mark="OV"></span>Overview</button>
             <p class="dx-lab-nav__section">Lab</p>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="openbook" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="OB"></span>Open Book</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="drivers" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="DR"></span>Drivers</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="stress" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="ST"></span>Stress</button>
-            <button type="button" class="dx-lab-nav-btn" data-dx-nav="arena" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="BA"></span>Benchmark Arena</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="stress" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="TE"></span>Test</button>
+            <button type="button" class="dx-lab-nav-btn" data-dx-nav="openbook" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="OB"></span>Open Book</button>
             <button type="button" class="dx-lab-nav-btn" data-dx-nav="history" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="H"></span>History</button>
             <details class="dx-lab-nav__more">
                 <summary>Advanced</summary>
+                <button type="button" class="dx-lab-nav-btn" data-dx-nav="arena" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="BA"></span>Benchmark Arena</button>
                 <button type="button" class="dx-lab-nav-btn" data-dx-nav="quick" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="Q"></span>Quick scan</button>
                 <button type="button" class="dx-lab-nav-btn" data-dx-nav="hardware" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="HW"></span>Hardware Reference</button>
                 <button type="button" class="dx-lab-nav-btn" data-dx-nav="full" aria-selected="false"><span class="dx-lab-nav-btn__icon" data-mark="FS"></span>Full scan</button>
@@ -63,46 +63,49 @@ $toolTotal = $toolKit->total();
 
         <div class="dx-lab-main">
     <div id="dx-probe-sla" class="dx-probe-sla" hidden aria-live="polite"></div>
-    <section class="dx-command-center glass-effect" id="dx-command-center" aria-label="Command Center">
-        <p class="dx-command-center__eyebrow">Command Center</p>
-        <h2 class="dx-command-center__title">PC Lab Kit</h2>
-        <p class="dx-command-center__lead">Run → Progress → Verdict → Cert. One local lab for sensors, benches, and stress.</p>
-        <ol class="dx-oem-phases" aria-label="Lab phases">
-            <li data-dx-oem-phase="run" class="is-active">Run</li>
-            <li data-dx-oem-phase="progress">Progress</li>
-            <li data-dx-oem-phase="verdict">Verdict</li>
-            <li data-dx-oem-phase="cert">Cert</li>
-        </ol>
-        <div class="dx-command-center__row">
-            <label class="sr-only" for="dx-suite-profile">Suite profile</label>
-            <select id="dx-suite-profile" aria-label="Suite profile">
-                <option value="adaptive" selected>Adaptive Lab (this machine)</option>
-                <option value="quick">Quick Lab (~5 min)</option>
-                <option value="standard">Full Lab (~12 min)</option>
-                <option value="deep">Deep Lab (~20 min)</option>
-                <option value="soak_15">Soak 15 min</option>
-                <option value="soak_30">Soak 30 min</option>
-                <option value="soak_60">Soak 60 min</option>
-            </select>
-            <button type="button" class="dx-btn primary" id="dx-suite-run">Run Full Lab</button>
-            <button type="button" class="dx-btn ghost" id="dx-suite-cancel" hidden>Cancel</button>
-            <button type="button" class="dx-btn ghost" id="dx-suite-preview-plan">Preview plan</button>
-            <button type="button" class="dx-btn ghost" id="dx-platform-audit-export">Export Platform Audit</button>
-            <label class="dx-btn ghost dx-suite-import-label" for="dx-suite-import-file">Import .pclab</label>
-            <input type="file" id="dx-suite-import-file" accept=".json,.pclab,.pclab.json,application/json" hidden>
+
+    <nav class="dx-tabs dx-tabs--legacy-hidden" aria-label="Lab sections">
+        <div class="dx-tabs__list" role="tablist">
+            <button type="button" class="dx-tab-btn is-active" role="tab" data-dx-tab="command" aria-selected="true">Overview</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="quick" aria-selected="false">Quick scan</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="hardware" aria-selected="false">Hardware Reference</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="openbook" aria-selected="false">Open Book</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="drivers" aria-selected="false">Drivers</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="stress" aria-selected="false">Test</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="full" aria-selected="false">Full scan</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="arena" aria-selected="false">Benchmark Arena</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="toolkit" aria-selected="false">Toolkit</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="history" aria-selected="false">History</button>
+            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="advanced" aria-selected="false">Advanced</button>
         </div>
-        <div id="dx-suite-plan-preview" class="dx-suite-plan-preview muted fs-sm" hidden></div>
-        <div id="dx-suite-import-result" class="dx-suite-import-result" hidden></div>
-        <div id="dx-suite-resume" class="dx-suite-resume" hidden role="status"></div>
-        <div class="dx-suite-progress" aria-hidden="true"><span id="dx-suite-progress-bar"></span></div>
-        <div class="dx-suite-meta">
-            <span id="dx-suite-step">Idle</span>
-            <span id="dx-suite-status">Ready when Probe is running</span>
-        </div>
-        <div id="dx-suite-error" class="dx-suite-error" hidden role="alert"></div>
-        <div id="dx-advisor-cards" class="dx-advisor-cards" hidden></div>
-        <div id="dx-suite-result" class="dx-suite-result" hidden></div>
-    </section>
+    </nav>
+
+    <div class="dx-tab-panel is-active" data-dx-panel="command" role="tabpanel" id="dx-command-panel">
+        <section class="dx-command-center dx-overview glass-effect" id="dx-command-center" aria-label="Overview">
+            <p class="dx-command-center__eyebrow">Overview</p>
+            <h2 class="dx-command-center__title">Detect → decide → execute</h2>
+            <p class="dx-command-center__lead">See what Probe found, then open Drivers or Test for that component. No forced full run.</p>
+
+            <div class="dx-overview-probe" id="dx-overview-probe" role="status" aria-live="polite">
+                <div class="dx-overview-probe__row">
+                    <span class="dx-overview-probe__dot" id="dx-overview-probe-dot" data-state="unknown" aria-hidden="true"></span>
+                    <div>
+                        <strong id="dx-overview-probe-label">Probe</strong>
+                        <p class="muted fs-sm" id="dx-overview-probe-detail">Checking local Probe…</p>
+                    </div>
+                    <button type="button" class="dx-btn ghost" id="dx-overview-probe-retry">Recheck</button>
+                </div>
+            </div>
+
+            <div class="dx-overview-detected" aria-label="Detected hardware">
+                <div class="dx-overview-detected__head">
+                    <h3>Detected hardware</h3>
+                    <button type="button" class="dx-btn ghost" id="dx-overview-refresh">Rescan</button>
+                </div>
+                <div class="dx-overview-grid" id="dx-overview-grid">
+                    <p class="muted fs-sm dx-empty-hint">Waiting for Probe inventory…</p>
+                </div>
+            </div>
 
             <section class="dx-lab-canvas" aria-label="Live canvas">
                 <div class="dx-lab-canvas__head">
@@ -152,28 +155,47 @@ $toolTotal = $toolKit->total();
                 </div>
             </section>
 
-    <nav class="dx-tabs dx-tabs--legacy-hidden" aria-label="Lab sections">
-        <div class="dx-tabs__list" role="tablist">
-            <button type="button" class="dx-tab-btn is-active" role="tab" data-dx-tab="command" aria-selected="true">Command Center</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="quick" aria-selected="false">Quick scan</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="hardware" aria-selected="false">Hardware Reference</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="openbook" aria-selected="false">Open Book</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="drivers" aria-selected="false">Drivers</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="stress" aria-selected="false">Stress</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="full" aria-selected="false">Full scan</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="arena" aria-selected="false">Benchmark Arena</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="toolkit" aria-selected="false">Toolkit</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="history" aria-selected="false">History</button>
-            <button type="button" class="dx-tab-btn" role="tab" data-dx-tab="advanced" aria-selected="false">Advanced</button>
-        </div>
-    </nav>
-
-    <div class="dx-tab-panel is-active" data-dx-panel="command" role="tabpanel" id="dx-command-panel">
-        <div class="dx-command-next">
-            <p class="dx-command-next__item"><strong>1. Pick a profile</strong>Quick Lab (~5 min), Full Lab (~12 min), or Deep Lab (~20 min).</p>
-            <p class="dx-command-next__item"><strong>2. Run Full Lab</strong>Probe, benches, and stress stay on this PC. Watch progress above.</p>
-            <p class="dx-command-next__item"><strong>3. Or import</strong>Load a <code>.pclab</code> session if you already have a report.</p>
-        </div>
+            <details class="dx-programmed-suite" id="dx-programmed-suite">
+                <summary>Programmed suite <span class="muted fs-xs">optional batch · benches + stress in one plan</span></summary>
+                <div class="dx-programmed-suite__body">
+                    <ol class="dx-oem-phases" aria-label="Suite phases">
+                        <li data-dx-oem-phase="run" class="is-active">Run</li>
+                        <li data-dx-oem-phase="progress">Progress</li>
+                        <li data-dx-oem-phase="verdict">Verdict</li>
+                        <li data-dx-oem-phase="cert">Cert</li>
+                    </ol>
+                    <div class="dx-command-center__row">
+                        <label class="sr-only" for="dx-suite-profile">Suite profile</label>
+                        <select id="dx-suite-profile" aria-label="Suite profile">
+                            <option value="adaptive" selected>Adaptive Lab (this machine)</option>
+                            <option value="quick">Quick Lab (~5 min)</option>
+                            <option value="standard">Full Lab (~12 min)</option>
+                            <option value="deep">Deep Lab (~20 min)</option>
+                            <option value="soak_15">Soak 15 min</option>
+                            <option value="soak_30">Soak 30 min</option>
+                            <option value="soak_60">Soak 60 min</option>
+                        </select>
+                        <button type="button" class="dx-btn primary" id="dx-suite-run">Start Adaptive Lab</button>
+                        <button type="button" class="dx-btn ghost" id="dx-suite-cancel" hidden>Cancel</button>
+                        <button type="button" class="dx-btn ghost" id="dx-suite-preview-plan">Preview plan</button>
+                        <button type="button" class="dx-btn ghost" id="dx-platform-audit-export">Export Platform Audit</button>
+                        <label class="dx-btn ghost dx-suite-import-label" for="dx-suite-import-file">Import .pclab</label>
+                        <input type="file" id="dx-suite-import-file" accept=".json,.pclab,.pclab.json,application/json" hidden>
+                    </div>
+                    <div id="dx-suite-plan-preview" class="dx-suite-plan-preview muted fs-sm" hidden></div>
+                    <div id="dx-suite-import-result" class="dx-suite-import-result" hidden></div>
+                    <div id="dx-suite-resume" class="dx-suite-resume" hidden role="status"></div>
+                    <div class="dx-suite-progress" aria-hidden="true"><span id="dx-suite-progress-bar"></span></div>
+                    <div class="dx-suite-meta">
+                        <span id="dx-suite-step">Idle</span>
+                        <span id="dx-suite-status">Ready when Probe is running</span>
+                    </div>
+                    <div id="dx-suite-error" class="dx-suite-error" hidden role="alert"></div>
+                </div>
+            </details>
+            <div id="dx-advisor-cards" class="dx-advisor-cards" hidden></div>
+            <div id="dx-suite-result" class="dx-suite-result" hidden></div>
+        </section>
     </div>
 
     <div class="dx-tab-panel" data-dx-panel="quick" role="tabpanel" id="dx-wizard-panel" hidden>
@@ -243,12 +265,12 @@ $toolTotal = $toolKit->total();
                 <div>
                     <p class="dx-command-center__eyebrow">Open Book Lab</p>
                     <h2>Silicon truth · firmware · recovered sensors</h2>
-                    <p class="muted fs-sm">BIOS/UEFI, VBIOS, microcode, PCI config, SPD, EDID, and register-level thermals the vendor APIs hide. Requires elevated Probe. Stress runs live in the <strong>Stress</strong> tab.</p>
+                    <p class="muted fs-sm">BIOS/UEFI, VBIOS, microcode, PCI config, SPD, EDID, and register-level thermals the vendor APIs hide. Requires elevated Probe. Soak tests live in the <strong>Test</strong> tab.</p>
                 </div>
                 <div class="dx-hwref__toolbar">
                     <button type="button" class="dx-btn primary" id="dx-ob-refresh">Refresh</button>
                     <button type="button" class="dx-btn ghost" id="dx-ob-export-dossier">Export dossier</button>
-                    <button type="button" class="dx-btn ghost" data-dx-goto="stress">Open Stress</button>
+                    <button type="button" class="dx-btn ghost" data-dx-goto="stress">Open Test</button>
                     <span class="dx-hwref__status" id="dx-ob-status">Waiting for Probe…</span>
                 </div>
             </div>
@@ -273,59 +295,84 @@ $toolTotal = $toolKit->total();
             <div class="dx-drivers-lab__head">
                 <div>
                     <p class="dx-command-center__eyebrow">Drivers</p>
-                    <h2>Hardware that needs install or update</h2>
-                    <p class="muted fs-sm">Every problem, driverless, or outdated device with Install/Update on that exact row. Probe must be running (bundled in the desktop app).</p>
+                    <h2 id="dx-drivers-heading">Hardware that needs install or update</h2>
+                    <p class="muted fs-sm" id="dx-drivers-lead">Problem, driverless, or outdated devices — Install/Update on that row. Probe must be running.</p>
                 </div>
                 <div class="dx-hwref__toolbar">
-                    <button type="button" class="dx-btn primary" id="dx-drivers-rescan">Rescan drivers</button>
+                    <button type="button" class="dx-btn primary" id="dx-drivers-rescan">Rescan devices</button>
                     <button type="button" class="dx-btn ghost" id="dx-drivers-wu">Windows Update scan</button>
                     <span class="dx-hwref__status" id="dx-drivers-status">Idle</span>
                 </div>
             </div>
             <p class="muted fs-xs" id="dx-drivers-note" role="status"></p>
-            <div id="dx-driver-actions" class="dx-driver-actions dx-scroll-panel"></div>
+            <div id="dx-driver-actions" class="dx-driver-actions dx-scroll-panel">
+                <div class="dx-panel-empty" id="dx-drivers-empty">
+                    <strong>No scan yet</strong>
+                    <p class="muted fs-sm">Click <em>Rescan devices</em>. If Probe is offline, open the PC Lab Kit desktop app first.</p>
+                </div>
+            </div>
             <p class="muted fs-sm">Need PnP identity? <button type="button" class="dx-btn ghost" data-dx-goto="hardware">Hardware Reference</button></p>
         </section>
     </div>
 
     <div class="dx-tab-panel" data-dx-panel="stress" role="tabpanel" id="dx-stress-lab" hidden>
-        <section class="dx-stress-lab glass-effect" aria-label="Stress">
+        <section class="dx-stress-lab glass-effect" aria-label="Test">
             <div class="dx-stress-lab__head">
                 <div>
-                    <p class="dx-command-center__eyebrow">Stress</p>
-                    <h2>Custom soak · certificate</h2>
-                    <p class="muted fs-sm">CPU, GPU, memory, combined, or stability oracle. Set minutes or hours for enterprise soaks (up to 24h). Results stay on this PC.</p>
+                    <p class="dx-command-center__eyebrow">Test</p>
+                    <h2>Choose hardware · set duration · run</h2>
+                    <p class="muted fs-sm">Select targets and how long to soak. Results and certificates stay on this PC.</p>
                 </div>
                 <span class="dx-hwref__status" id="dx-stress-status">Idle</span>
             </div>
-            <div class="dx-stress-controls">
-                <label class="dx-stress-field">
-                    <span>Profile</span>
-                    <select id="dx-stress-profile" aria-label="Stress profile">
-                        <option value="combined" selected>Combined CPU+GPU+RAM</option>
-                        <option value="cpu">CPU only</option>
-                        <option value="gpu">GPU only</option>
-                        <option value="memory">Memory only</option>
-                        <option value="quick">Quick (~60s)</option>
-                        <option value="oracle">Stability oracle</option>
+            <div class="dx-test-composer">
+                <fieldset class="dx-test-targets">
+                    <legend>Targets</legend>
+                    <label class="dx-test-check"><input type="checkbox" name="dx-test-target" value="cpu" checked> CPU</label>
+                    <label class="dx-test-check"><input type="checkbox" name="dx-test-target" value="gpu" checked> GPU</label>
+                    <label class="dx-test-check"><input type="checkbox" name="dx-test-target" value="memory" checked> Memory</label>
+                </fieldset>
+                <div class="dx-test-duration">
+                    <span class="dx-test-duration__label">Duration</span>
+                    <div class="dx-test-presets" role="group" aria-label="Duration presets">
+                        <button type="button" class="dx-test-preset" data-minutes="1">1 min</button>
+                        <button type="button" class="dx-test-preset is-active" data-minutes="5">5 min</button>
+                        <button type="button" class="dx-test-preset" data-minutes="15">15 min</button>
+                        <button type="button" class="dx-test-preset" data-minutes="30">30 min</button>
+                    </div>
+                    <div class="dx-stress-controls dx-stress-controls--compact">
+                        <label class="dx-stress-field">
+                            <span>Hours</span>
+                            <input type="number" id="dx-stress-hours" min="0" max="24" step="1" value="0" aria-label="Test hours">
+                        </label>
+                        <label class="dx-stress-field">
+                            <span>Minutes</span>
+                            <input type="number" id="dx-stress-minutes" min="0" max="1440" step="1" value="5" aria-label="Test minutes">
+                        </label>
+                    </div>
+                </div>
+                <details class="dx-test-advanced">
+                    <summary>Advanced</summary>
+                    <label class="dx-test-check"><input type="checkbox" id="dx-stress-oracle"> Stability oracle (instead of selected targets)</label>
+                    <select id="dx-stress-profile" class="sr-only" aria-hidden="true" tabindex="-1">
+                        <option value="combined" selected>Combined</option>
+                        <option value="cpu">CPU</option>
+                        <option value="gpu">GPU</option>
+                        <option value="memory">Memory</option>
+                        <option value="quick">Quick</option>
+                        <option value="oracle">Oracle</option>
                     </select>
-                </label>
-                <label class="dx-stress-field">
-                    <span>Hours</span>
-                    <input type="number" id="dx-stress-hours" min="0" max="24" step="1" value="0" aria-label="Stress hours">
-                </label>
-                <label class="dx-stress-field">
-                    <span>Minutes</span>
-                    <input type="number" id="dx-stress-minutes" min="0" max="1440" step="1" value="5" aria-label="Stress minutes">
-                </label>
-                <button type="button" class="dx-btn primary" id="dx-stress-run">Start stress</button>
-                <button type="button" class="dx-btn ghost" id="dx-stress-stop" hidden>Stop</button>
+                </details>
+                <div class="dx-test-actions">
+                    <button type="button" class="dx-btn primary" id="dx-stress-run">Start CPU+GPU+Memory · 5 min</button>
+                    <button type="button" class="dx-btn ghost" id="dx-stress-stop" hidden>Stop</button>
+                </div>
             </div>
             <div class="dx-suite-progress" id="dx-stress-progress" aria-hidden="true"><span id="dx-stress-progress-bar"></span></div>
             <div class="dx-stress-live" id="dx-stress-live" aria-live="polite"></div>
             <div class="dx-stress-cert" id="dx-stress-cert">
                 <h3>Certificate</h3>
-                <p class="muted fs-sm" id="dx-ob-cert-status">Run stress here or Full Lab to issue an Assembly Certificate.</p>
+                <p class="muted fs-sm" id="dx-ob-cert-status">Complete a test here to issue an Assembly Certificate.</p>
                 <div id="dx-ob-cert-actions"></div>
                 <div id="dx-ob-cert-frame" class="dx-scroll-panel" hidden></div>
             </div>
@@ -346,7 +393,7 @@ $toolTotal = $toolKit->total();
                 </div>
                 <div class="dx-full-primary dx-desktop-only">
                     <button type="button" class="dx-btn primary" id="dx-fetch-probe">Connect Probe</button>
-                    <p class="muted fs-sm dx-full-note">Probe starts with this app. Connect for a live snapshot, or use <strong>Run Full Lab</strong> in Command Center.</p>
+                    <p class="muted fs-sm dx-full-note">Probe starts with this app. Connect for a live snapshot, or use Overview → Programmed suite for a batch plan.</p>
                 </div>
                 <p id="dx-probe-status" class="muted fs-xs dx-probe-status" role="status"></p>
                 <details class="dx-full-advanced">
@@ -575,13 +622,13 @@ $toolTotal = $toolKit->total();
         <aside class="dx-lab-rail" aria-label="Advisor rail">
             <p class="dx-lab-rail__title">Advisor</p>
             <div id="dx-rail-empty" class="dx-rail-empty">
-                <strong>Run Full Lab to fill this rail</strong>
-                Advisor cards (thermal, stability, upgrades) appear here after a suite finishes. Probe must be running — it starts with the desktop app.
+                <strong>Advisor waits for results</strong>
+                Cards appear after a Programmed suite or Test finishes. Detect hardware on Overview first; Probe starts with the desktop app.
             </div>
             <div id="dx-rail-advisor" class="dx-advisor-cards" hidden></div>
             <div class="dx-lab-rail-cert">
                 <h3>Certificates</h3>
-                <p class="muted fs-xs">After Full Lab, export assembly or stress certificates from Open Book or Command Center results.</p>
+                <p class="muted fs-xs">After a Test or Programmed suite, export certificates from Open Book or Overview results.</p>
                 <button type="button" class="dx-btn ghost" id="dx-rail-verify" onclick="location.hash='dx-openbook-lab'">Open Book Lab</button>
             </div>
         </aside>
@@ -605,20 +652,21 @@ window.PCLAB_DIAGNOSTIC = {
 };
 </script>
 <script defer src="/assets/js/diagnostic-capabilities.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-tabs.js?v=1.2.0"></script>
-<script defer src="/assets/js/diagnostic-command-layout.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-tabs.js?v=1.3.0"></script>
+<script defer src="/assets/js/diagnostic-command-layout.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-toolkit.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-compare.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-pulse.js?v=1.0.3"></script>
 <script defer src="/assets/js/diagnostic-arena.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-lab.js?v=1.7.3"></script>
 <script defer src="/assets/js/diagnostic-live.js?v=1.8.0"></script>
-<script defer src="/assets/js/diagnostic-drivers.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-stress.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-overview.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-drivers.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-stress.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.1.4"></script>
-<script defer src="/assets/js/diagnostic-suite.js?v=1.4.1"></script>
+<script defer src="/assets/js/diagnostic-suite.js?v=1.5.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>

@@ -18,6 +18,8 @@
       btn.classList.toggle('is-active', on);
       btn.setAttribute('aria-selected', on ? 'true' : 'false');
     });
+    document.body.dataset.dxTab = tab || 'command';
+
     const hashByTab = {
       command: 'dx-command-center',
       quick: 'dx-wizard',
@@ -34,6 +36,14 @@
     if (history.replaceState && hashByTab[tab]) {
       history.replaceState(null, '', '#' + hashByTab[tab]);
     }
+
+    const activePanel = document.querySelector(`[data-dx-panel="${tab}"]`);
+    if (activePanel && typeof activePanel.scrollIntoView === 'function') {
+      requestAnimationFrame(() => {
+        activePanel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      });
+    }
+
     window.dispatchEvent(new CustomEvent('dx:tab-change', { detail: { tab } }));
   }
 
@@ -53,6 +63,12 @@
     const goto = t.closest('[data-dx-goto]');
     if (goto) {
       const tab = goto.getAttribute('data-dx-goto');
+      const target = goto.getAttribute('data-dx-test-target');
+      if (target) {
+        try {
+          sessionStorage.setItem('pclab_test_preselect', target);
+        } catch (_) {}
+      }
       if (tab) activate(tab);
     }
   });

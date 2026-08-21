@@ -1,5 +1,5 @@
 /**
- * Command Center — Full Lab suite runner (probe suite + PHP finalize + resume).
+ * Overview programmed suite runner (probe suite + PHP finalize + resume).
  */
 (function () {
   const AGENT = () => (window.PCLAB_DIAGNOSTIC && window.PCLAB_DIAGNOSTIC.agentBase) || 'http://127.0.0.1:18765';
@@ -76,7 +76,9 @@
   function showSuiteError(message, detail) {
     const banner = el('dx-suite-error');
     const status = el('dx-suite-status');
-    const text = String(message || 'Suite failed');
+    const suite = el('dx-programmed-suite');
+    if (suite) suite.open = true;
+    const text = String(message || 'Suite could not start');
     console.error('[PcLabSuite]', text, detail || '');
     if (status) {
       status.textContent = text;
@@ -84,7 +86,7 @@
     }
     if (banner) {
       banner.hidden = false;
-      banner.innerHTML = `<strong>Full Lab could not start</strong><p>${esc(text)}</p>${
+      banner.innerHTML = `<strong>Probe not ready</strong><p>${esc(text)}</p>${
         detail ? `<p class="fs-xs muted">${esc(String(detail).slice(0, 280))}</p>` : ''
       }<div class="dx-suite-error__actions">
         <button type="button" class="dx-btn primary" id="dx-suite-retry">Retry</button>
@@ -101,13 +103,13 @@
           runSuite();
         } else {
           showSuiteError(
-            'Could not restart Probe from this window. Use the PC Lab Kit desktop app, then Retry.',
+            'Could not restart Probe from this window. Open the PC Lab Kit desktop app, then Retry.',
             'restart_probe unavailable'
           );
         }
       });
     }
-    setProgress(0, 'error');
+    setProgress(0, 'offline');
   }
 
   function clearSuiteError() {
@@ -360,7 +362,7 @@
     const finData = await fin.json().catch(() => ({}));
     if (!fin.ok || !finData?.ok) throw new Error(finData?.message || finData?.error || 'finalize failed');
     setProgress(100, 'done');
-    if (status) status.textContent = 'Full Lab complete.';
+    if (status) status.textContent = 'Programmed suite complete.';
     savePhpJob('');
     try {
       localStorage.removeItem(LS_PROBE);
@@ -457,7 +459,7 @@
     banner.hidden = false;
     const step = probeJob?.step || 'unknown';
     const pct = probeJob?.progress ?? '—';
-    banner.innerHTML = `<strong>Resume Full Lab</strong>
+    banner.innerHTML = `<strong>Resume programmed suite</strong>
       <p>Progress saved at <code>${esc(String(step))}</code> (${esc(String(pct))}%). Finalize without re-running completed steps.</p>
       <div class="dx-suite-error__actions">
         <button type="button" class="dx-btn primary" id="dx-suite-resume-btn">Resume</button>
@@ -583,7 +585,7 @@
         return;
       }
 
-      if (status) status.textContent = 'Starting Full Lab…';
+      if (status) status.textContent = 'Starting programmed suite…';
       const startRes = await fetch('/api/diagnostic/suite/start', {
         method: 'POST',
         headers: csrfHeaders(),
@@ -631,6 +633,7 @@
     } finally {
       if (runBtn) runBtn.disabled = false;
       if (cancelBtn) cancelBtn.hidden = true;
+      updateSuiteCtaLabel();
     }
   }
 
@@ -660,6 +663,15 @@
     } catch (_) {}
   }
 
+  function updateSuiteCtaLabel() {
+    const btn = el('dx-suite-run');
+    const sel = el('dx-suite-profile');
+    if (!btn || !sel || btn.disabled) return;
+    const opt = sel.options[sel.selectedIndex];
+    const label = (opt?.textContent || 'Lab').replace(/\s*\(~[^)]+\)\s*$/, '').trim();
+    btn.textContent = `Start ${label}`;
+  }
+
   function boot() {
     if (!el('dx-suite-run')) {
       console.warn('[PcLabSuite] #dx-suite-run missing — suite UI failed to initialize');
@@ -683,6 +695,8 @@
       }
     });
     el('dx-suite-import-file')?.addEventListener('change', importSession);
+    el('dx-suite-profile')?.addEventListener('change', updateSuiteCtaLabel);
+    updateSuiteCtaLabel();
     checkResumableOnBoot();
     setInterval(() => {
       probeHealth().catch(() => {});
@@ -804,7 +818,7 @@
           <p class="muted fs-sm">${esc(verified)} · signed ${esc(data.session?.signed_at || '—')}</p>
           <p>Silicon aging index: <strong>${esc(String(aging))}</strong></p>
           ${notes ? `<ul class="fs-sm">${notes}</ul>` : ''}
-          <p class="muted fs-xs">Run Full Lab on this machine to compute drift vs current hardware.</p>
+          <p class="muted fs-xs">Run a Programmed suite on this machine to compute drift vs current hardware.</p>
         </div>`;
       window.__dxImportedSession = data.session;
       window.dispatchEvent(new CustomEvent('dx:session-imported', { detail: data }));
