@@ -12,7 +12,7 @@ const config = {
     baseURL: process.env.PCLAB_BASE_URL || 'http://127.0.0.1:8080',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
-    channel: process.env.PCLAB_PLAYWRIGHT_CHANNEL || 'chrome',
+    channel: process.env.PCLAB_PLAYWRIGHT_CHANNEL || undefined,
   },
   webServer: process.env.PCLAB_SKIP_WEB_SERVER
     ? undefined
