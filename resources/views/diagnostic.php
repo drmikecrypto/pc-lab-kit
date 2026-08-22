@@ -19,11 +19,11 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-lab.css?v=1.6.6">
 <link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.7.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.5.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.4.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.1.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.4.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-arena.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.2.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.3.0">
 
 <div class="container dx-shell">
 
@@ -95,7 +95,10 @@ $toolTotal = $toolKit->total();
                     </div>
                     <button type="button" class="dx-btn ghost" id="dx-overview-probe-retry">Recheck</button>
                 </div>
+                <div id="dx-overview-trust" class="dx-overview-trust"></div>
             </div>
+
+            <div class="dx-overview-cert-handoff" id="dx-overview-cert-handoff" aria-label="Certificate handoff"></div>
 
             <div class="dx-overview-detected" aria-label="Detected hardware">
                 <div class="dx-overview-detected__head">
@@ -355,10 +358,22 @@ $toolTotal = $toolKit->total();
                 <details class="dx-test-advanced">
                     <summary>Advanced</summary>
                     <label class="dx-test-check"><input type="checkbox" id="dx-stress-oracle"> Stability oracle (instead of selected targets)</label>
+                    <label class="dx-stress-field dx-stress-gpu-mode">
+                        <span>GPU load mode</span>
+                        <select id="dx-stress-gpu-mode" aria-label="GPU stress load mode">
+                            <option value="fixed" selected>Fixed (power / thermal only)</option>
+                            <option value="adaptive">Adaptive (OCCT-style)</option>
+                            <option value="variable">Variable ramp</option>
+                            <option value="switch">Switch (idle ↔ load)</option>
+                        </select>
+                    </label>
                     <select id="dx-stress-profile" class="sr-only" aria-hidden="true" tabindex="-1">
                         <option value="combined" selected>Combined</option>
                         <option value="cpu">CPU</option>
                         <option value="gpu">GPU</option>
+                        <option value="gpu_adaptive">GPU adaptive</option>
+                        <option value="gpu_variable">GPU variable</option>
+                        <option value="gpu_switch">GPU switch</option>
                         <option value="memory">Memory</option>
                         <option value="quick">Quick</option>
                         <option value="oracle">Oracle</option>
@@ -555,6 +570,15 @@ $toolTotal = $toolKit->total();
                     <button type="button" class="dx-btn ghost" id="dx-deck-export-csv">Export CSV timeline</button>
                     <button type="button" class="dx-btn ghost" id="dx-deck-export-rain">Export Rainmeter</button>
                 </div>
+                <div class="dx-deck-thresholds" aria-label="Alert thresholds">
+                    <span class="muted fs-xs">Alerts ≥</span>
+                    <label class="dx-deck-th"><span>CPU °C</span><input type="number" id="dx-deck-th-cpu" min="40" max="110" step="1" value="90"></label>
+                    <label class="dx-deck-th"><span>GPU °C</span><input type="number" id="dx-deck-th-gpu" min="40" max="110" step="1" value="85"></label>
+                    <label class="dx-deck-th"><span>HS °C</span><input type="number" id="dx-deck-th-hs" min="40" max="120" step="1" value="95"></label>
+                    <label class="dx-deck-th"><span>CPU W</span><input type="number" id="dx-deck-th-cpupwr" min="50" max="500" step="5" value="200"></label>
+                    <label class="dx-deck-th"><span>GPU W</span><input type="number" id="dx-deck-th-gpupwr" min="50" max="800" step="10" value="400"></label>
+                </div>
+                <p class="dx-deck-alerts muted fs-sm" id="dx-deck-alerts" hidden role="status"></p>
                 <div class="dx-sensor-deck__grid" id="dx-deck-grid"></div>
             </section>
 
@@ -579,6 +603,37 @@ $toolTotal = $toolKit->total();
                 <div class="dx-tel-body"><div class="dx-tel-panels" id="dx-tel-panels"><div class="dx-tel-empty">Loading console…</div></div></div>
             </section>
 
+            <section class="dx-panel-card" id="dx-smart-panel" aria-label="SMART and PresentMon">
+                <div class="dx-tel-head">
+                    <div>
+                        <h2>Storage SMART · PresentMon</h2>
+                        <p>NVMe / SSD reliability + 1% / 0.1% lows without RTSS</p>
+                    </div>
+                    <button type="button" class="dx-btn ghost" id="dx-smart-refresh">Refresh SMART</button>
+                </div>
+                <div id="dx-smart-body" class="dx-smart-body"><p class="muted fs-sm">Waiting for Probe…</p></div>
+                <div class="dx-pm-capture">
+                    <label class="dx-stress-field">
+                        <span>Capture seconds</span>
+                        <input type="number" id="dx-pm-seconds" min="3" max="60" value="10" aria-label="PresentMon seconds">
+                    </label>
+                    <button type="button" class="dx-btn primary" id="dx-pm-capture">Capture frametimes</button>
+                    <p class="muted fs-sm" id="dx-pm-status" role="status"></p>
+                </div>
+            </section>
+
+            <section class="dx-panel-card" id="dx-fleet-panel" aria-label="Shop fleet">
+                <div class="dx-tel-head">
+                    <div>
+                        <h2>Shop fleet</h2>
+                        <p>Discover loopback probes · queue burn-in (local ports only)</p>
+                    </div>
+                    <button type="button" class="dx-btn ghost" id="dx-fleet-refresh">Discover</button>
+                </div>
+                <div id="dx-fleet-list" class="dx-fleet-list"><p class="muted fs-sm">Waiting…</p></div>
+                <p class="muted fs-xs" id="dx-fleet-status" role="status"></p>
+            </section>
+
             <section class="dx-rgb dx-panel-card" id="dx-rgb-lab">
                 <div class="dx-rgb-head">
                     <div>
@@ -591,10 +646,12 @@ $toolTotal = $toolKit->total();
                 <div class="dx-rgb-body">
                     <div class="dx-rgb-toolbar">
                         <button type="button" class="dx-btn ghost" id="dx-rgb-scan">Rescan RGB</button>
+                        <button type="button" class="dx-btn ghost" id="dx-rgb-kill-vendors" title="Stop competing vendor RGB">Kill vendor RGB</button>
                         <button type="button" class="dx-btn primary" id="dx-rgb-auto">Auto setup</button>
                         <button type="button" class="dx-btn ghost" id="dx-rgb-apply">Apply zones</button>
                         <button type="button" class="dx-btn ghost" id="dx-rgb-stop">Stop blink</button>
                     </div>
+                    <div class="dx-rgb-presets" id="dx-rgb-presets" role="group" aria-label="RGB preset packs"></div>
                     <div class="dx-rgb-devices" id="dx-rgb-devices"><div class="dx-rgb-empty">Scanning USB/HID…</div></div>
                 </div>
             </section>
@@ -610,6 +667,19 @@ $toolTotal = $toolKit->total();
                 </div>
                 <div id="dx-advanced-topo-svg" class="dx-hwref__topo"></div>
                 <div id="dx-advanced-topo-3d" class="dx-hwref__topo dx-topology-3d" hidden style="min-height:320px"></div>
+            </section>
+
+            <section class="dx-panel-card" id="dx-repair-panel" aria-label="OS maintenance">
+                <div class="dx-tel-head">
+                    <div>
+                        <h2>OS maintenance</h2>
+                        <p>Windows SFC / DISM / driver rescan — <strong>not</strong> a magic hardware fix</p>
+                    </div>
+                    <button type="button" class="dx-btn ghost" id="dx-repair-refresh">Refresh</button>
+                </div>
+                <p class="muted fs-sm" id="dx-repair-note">Requires elevated Probe. These are Microsoft tools; PC Lab Kit only launches them with your confirm.</p>
+                <div id="dx-repair-tools" class="dx-repair-tools"></div>
+                <pre class="dx-repair-log muted fs-xs" id="dx-repair-log" hidden></pre>
             </section>
 
             <section class="dx-panel-card" id="dx-launchers">
@@ -659,17 +729,20 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-toolkit.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-compare.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-pulse.js?v=1.0.3"></script>
-<script defer src="/assets/js/diagnostic-arena.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-lab.js?v=1.7.3"></script>
+<script defer src="/assets/js/diagnostic-arena.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-lab.js?v=1.7.4"></script>
 <script defer src="/assets/js/diagnostic-live.js?v=1.8.0"></script>
-<script defer src="/assets/js/diagnostic-overview.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-overview.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-drivers.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-stress.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-stress.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-rgb.js?v=1.1.4"></script>
+<script defer src="/assets/js/diagnostic-rgb.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-smart-frames.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-fleet.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-repair.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-suite.js?v=1.6.0"></script>
-<script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-openbook.js?v=1.3.0"></script>

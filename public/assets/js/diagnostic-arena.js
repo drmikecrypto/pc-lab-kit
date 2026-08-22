@@ -70,12 +70,18 @@
     const ref = c.reference_name ? `<p class="muted fs-xs">Nearest ref: ${c.reference_name}</p>` : '';
     const score = c.score != null ? `<p class="dx-arena-score">Score: <strong>${Number(c.score).toLocaleString()}</strong></p>` : '<p class="muted fs-sm">Run Full Lab or Toolkit benches</p>';
     const badge = c.reproducibility ? `<span class="dx-arena-badge ${badgeClass(c.reproducibility)}">${badgeLabel(c.reproducibility)}</span>` : '';
+    const method = c.percentile_method
+      ? `<p class="muted fs-xs dx-arena-method">${c.percentile_method}</p>`
+      : c.dataset_version
+        ? `<p class="muted fs-xs dx-arena-method">dataset_version=${c.dataset_version}</p>`
+        : '';
     return `<article class="dx-arena-card" data-component="${c.id}">
       <h3>${c.label}</h3>
       ${ringSvg(c.percentile, c.label)}
       ${score}
       ${ref}
       ${badge}
+      ${method}
     </article>`;
   }
 
@@ -98,9 +104,17 @@
       grid.innerHTML = (data.components || []).map(renderCard).join('');
       renderRadar(data.radar, radar);
       if (datasets && data.datasets) {
-        datasets.innerHTML = data.datasets.map((d) =>
-          `<div class="dx-arena-dataset-item"><strong>${d.label || d.key}</strong><br>${d.count} rows · ${d.component} · ${d.source_tier}</div>`
-        ).join('');
+        const honesty = data.percentile_method
+          ? `<p class="muted fs-xs dx-arena-honesty">${data.percentile_method}</p>`
+          : '';
+        datasets.innerHTML =
+          honesty +
+          data.datasets
+            .map(
+              (d) =>
+                `<div class="dx-arena-dataset-item"><strong>${d.label || d.key}</strong><br>${d.count} rows · ${d.component} · ${d.source_tier}</div>`
+            )
+            .join('');
       }
     } catch (e) {
       grid.innerHTML = `<p class="muted fs-sm">Arena unavailable: ${e.message}</p>`;

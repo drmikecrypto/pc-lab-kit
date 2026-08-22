@@ -55,9 +55,17 @@ final class AmbitiousUpgradeTest extends TestCase
             'widgets' => [
                 ['id' => 'cpu_temp', 'type' => 'gauge', 'source' => 'cpu_temp', 'label' => 'CPU'],
             ],
+            'alert_thresholds' => [
+                'cpu_temp_c' => 88,
+                'gpu_temp_c' => 82,
+            ],
         ]);
         $this->assertCount(1, $layout['widgets']);
+        $this->assertSame(88.0, $layout['alert_thresholds']['cpu_temp_c']);
+        $loaded = $svc->get();
+        $this->assertSame(88.0, $loaded['alert_thresholds']['cpu_temp_c']);
         $defaults = $svc->defaultLayout();
+        $this->assertArrayHasKey('alert_thresholds', $defaults);
         $sources = array_column($defaults['widgets'], 'source');
         $this->assertContains('gpu_hotspot', $sources);
         $this->assertContains('gpu_vram_temp', $sources);

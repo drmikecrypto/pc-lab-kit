@@ -31,7 +31,7 @@
 | **v4.0.2 Command Center** (layout 2.0, Arena, SSE stream, job queue, verify, Linux probe, E2E) | Shipped (4.0.2) |
 | Linux probe parity | Active — Platform Intelligence routes on `pclab_probe_linux` |
 | Full Vulkan compute suite | Shipped compute helper in 3.3.0 (raster/3D suite later) |
-| Windows Service forever-on probe | Parked |
+| Windows Service forever-on probe | Shipped (optional install) — default remains tray/sidecar; see SECURITY.md sensor trust |
 | MP4 / video push to LCD panels | Backlog |
 
 ---
@@ -90,7 +90,7 @@
 
 ### Critical gap (historical — resolved)
 
-Phases 0–5 and Pillars A–C ship today as the Tauri + PHP + probe stack. Remaining product gaps are intentional backlog: native Vulkan compute, Windows Service forever-on probe, Linux OC/RGB/Ring0 depth, MP4-to-LCD.
+Phases 0–5 and Pillars A–C ship today as the Tauri + PHP + probe stack. Remaining product gaps are intentional backlog: native Vulkan raster suite, Linux OC/RGB/Ring0 depth, MP4-to-LCD. Forever-on Windows Service install is optional (`Install-PcLabProbeService.ps1`); tray is the default operator story.
 
 ---
 
@@ -479,10 +479,11 @@ pc-lab-kit/
 
 ### Phase 1 — Desktop shell (3–4 weeks)
 
-**Goal:** Single installable app — **DONE** (tray sidecar; Windows Service still parked)
+**Goal:** Single installable app — **DONE** (tray default; optional Windows Service)
 
 - [x] Tauri 2 wrapper embedding existing web UI
-- [x] Auto-start agent as tray app + soft restart watchdog (Windows Service = backlog)
+- [x] Auto-start agent as tray app + soft restart watchdog
+- [x] Optional forever-on probe via `Install-PcLabProbeService.ps1` (Admin) — see [SECURITY.md](SECURITY.md#sensor-trust)
 - [x] Settings: AI API key, locale, telemetry retention
 - [x] Report history offline in SQLite
 

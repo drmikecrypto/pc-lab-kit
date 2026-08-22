@@ -21,6 +21,9 @@ class LabReportExportService
         $metrics = (array) ($analysis['metrics'] ?? []);
         $summary = (array) ($analysis['report_summary'] ?? []);
         $certificate = is_array($analysis['stress_certificate'] ?? null) ? $analysis['stress_certificate'] : null;
+        $datasets = new BenchmarkDatasetService();
+        $percentileMethod = (string) ($analysis['percentile_method'] ?? $datasets->percentileMethodBlurb());
+        $datasetVersion = (string) ($analysis['dataset_version'] ?? $datasets->datasetVersion());
 
         $doc = [
             'product' => 'PC Lab Kit Report',
@@ -35,6 +38,8 @@ class LabReportExportService
             'bottleneck' => $analysis['bottleneck'] ?? null,
             'metrics' => $metrics,
             'percentiles' => $percentiles,
+            'percentile_method' => $percentileMethod,
+            'dataset_version' => $datasetVersion,
             'risks' => array_slice((array) ($analysis['risks'] ?? []), 0, 8),
             'comparison' => $comparison,
             'ai' => is_array($analysis['ai'] ?? null) ? [
@@ -302,7 +307,9 @@ class LabReportExportService
      <strong>RAM</strong> {$esc((string) ($doc['ram_gb'] ?? '—'))} GB</p>
   <section><h2>Bottleneck</h2><p>{$esc((string) ($bn['message'] ?? $bn['type'] ?? '—'))}</p></section>
   <section><h2>Scores &amp; metrics</h2><table>{$metricRows}</table></section>
-  <section><h2>Dataset percentiles</h2><table>{$pctRows}</table></section>
+  <section><h2>Dataset percentiles</h2>
+  <p class="meta">{$esc((string) ($doc['percentile_method'] ?? ''))}</p>
+  <table>{$pctRows}</table></section>
   {$deltaHtml}
   <section><h2>Risks</h2><ul>{$riskHtml}</ul></section>
   {$aiHtml}

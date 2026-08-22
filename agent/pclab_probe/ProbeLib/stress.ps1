@@ -7,7 +7,10 @@ function Get-ProbeStressCatalog {
     return @(
         @{ id = 'cpu'; label = 'CPU stress'; seconds_default = 30; max_seconds = 86400; profile = $true }
         @{ id = 'memory'; label = 'Memory stress'; seconds_default = 30; max_seconds = 86400; profile = $true }
-        @{ id = 'gpu'; label = 'GPU stress'; seconds_default = 30; max_seconds = 86400; profile = $true }
+        @{ id = 'gpu'; label = 'GPU stress (fixed / thermal)'; seconds_default = 30; max_seconds = 86400; profile = $true }
+        @{ id = 'gpu_adaptive'; label = 'GPU adaptive (variable load)'; seconds_default = 90; max_seconds = 86400; profile = $true; adaptive = $true }
+        @{ id = 'gpu_variable'; label = 'GPU variable (power/thermal ramp)'; seconds_default = 90; max_seconds = 86400; profile = $true; adaptive = $true }
+        @{ id = 'gpu_switch'; label = 'GPU switch (idle↔load)'; seconds_default = 90; max_seconds = 86400; profile = $true; adaptive = $true }
         @{ id = 'combined'; label = 'Combined CPU+GPU+RAM'; seconds_default = 45; max_seconds = 86400; profile = $true }
         @{ id = 'quick'; label = 'Quick 60s profile'; seconds_default = 60; max_seconds = 60; profile = $true }
         @{ id = 'oracle'; label = 'Stability oracle'; seconds_default = 120; max_seconds = 86400; profile = $true }
@@ -181,28 +184,40 @@ function Invoke-ProbeMemoryStress {
     }
 }
 
+function Find-ProbeGpuStressExe {
+    if (Get-Command Find-ProbeVkBench -ErrorAction SilentlyContinue) {
+        $vk = Find-ProbeVkBench
+        if ($vk) { return $vk }
+    }
+    $candidates = @(
+        (Join-Path $PSScriptRoot '..\PcLabVkBench.exe'),
+        (Join-Path $PSScriptRoot '..\tools\PcLabVkBench\PcLabVkBench.exe')
+    )
+    foreach ($c in $candidates) {
+        if (Test-Path $c) { return (Resolve-Path $c).Path }
+    }
+    return $null
+}
+
 function Invoke-ProbeGpuStress {
-    param([int]$Seconds = 30, [switch]$CollectSamples)
+    param(
+        [int]$Seconds = 30,
+        [switch]$CollectSamples,
+        [string]$LoadMode = 'fixed'
+    )
     $Seconds = [Math]::Max(5, [Math]::Min(86400, $Seconds))
+    $LoadMode = ("$LoadMode").ToLower()
+    if ($LoadMode -in @('adaptive', 'variable', 'switch', 'gpu_adaptive', 'gpu_variable', 'gpu_switch')) {
+        return Invoke-ProbeGpuAdaptiveStress -Seconds $Seconds -CollectSamples:$CollectSamples -Style $LoadMode
+    }
+
     $stressStart = Get-Date
     $samples = New-Object System.Collections.Generic.List[object]
     $method = 'host_load'
     $vkScore = $null
     $vkEngine = $null
     $end = (Get-Date).AddSeconds($Seconds)
-
-    $vk = $null
-    if (Get-Command Find-ProbeVkBench -ErrorAction SilentlyContinue) {
-        $vk = Find-ProbeVkBench
-    } else {
-        $candidates = @(
-            (Join-Path $PSScriptRoot '..\PcLabVkBench.exe'),
-            (Join-Path $PSScriptRoot '..\tools\PcLabVkBench\PcLabVkBench.exe')
-        )
-        foreach ($c in $candidates) {
-            if (Test-Path $c) { $vk = (Resolve-Path $c).Path; break }
-        }
-    }
+    $vk = Find-ProbeGpuStressExe
 
     $jobs = @()
     if ($vk) {
@@ -250,10 +265,11 @@ function Invoke-ProbeGpuStress {
 
     return @{
         id = 'gpu'
-        label = 'PcLab GPU stress'
+        label = 'PcLab GPU stress (fixed load)'
         duration_s = $Seconds
         status = 'completed'
         method = $method
+        load_mode = 'fixed'
         engine = $vkEngine
         score = $vkScore
         cpu_temp_max = $cpuPeak
@@ -262,8 +278,152 @@ function Invoke-ProbeGpuStress {
         whea_errors = $wheaTotal
         whea_timeline = $wheaTimeline
         samples = @($samples)
-        note = if ($vk) { 'Native PcLabVkBench compute soak (D3D11 CS).' } else { 'Fallback host/watch — PcLabVkBench.exe missing.' }
+        note = if ($vk) {
+            'Fixed compute soak (FurMark-style) — power/thermal only. Use gpu_adaptive / gpu_variable / gpu_switch for OCCT-like boost coverage.'
+        } else {
+            'Fallback host/watch — PcLabVkBench.exe missing.'
+        }
         replaces = @('FurMark', 'MSI Kombustor')
+    }
+}
+
+<#
+  OCCT-style adaptive / variable / switch GPU loads: stepped VkBench soaks with idle gaps
+  so boost clocks and transient WHEA show up (fixed 100% forever often misses modern GPUs).
+#>
+function Invoke-ProbeGpuAdaptiveStress {
+    param(
+        [int]$Seconds = 90,
+        [switch]$CollectSamples,
+        [string]$Style = 'adaptive'
+    )
+    $Seconds = [Math]::Max(30, [Math]::Min(86400, $Seconds))
+    $Style = ("$Style").ToLower() -replace '^gpu_', ''
+    if ($Style -notin @('adaptive', 'variable', 'switch')) { $Style = 'adaptive' }
+
+    $stressStart = Get-Date
+    $samples = New-Object System.Collections.Generic.List[object]
+    $phases = New-Object System.Collections.Generic.List[object]
+    $vk = Find-ProbeGpuStressExe
+    $vkScore = $null
+    $vkEngine = $null
+
+    # Duty fractions of wall time spent under load (rest is idle sample window)
+    $plan = switch ($Style) {
+        'switch' {
+            @(
+                @{ label = 'load_burst_a'; duty = 0.55; idle_after = $true }
+                @{ label = 'idle_dwell'; duty = 0.0; idle_after = $false }
+                @{ label = 'load_burst_b'; duty = 0.55; idle_after = $true }
+            )
+        }
+        'variable' {
+            @(
+                @{ label = 'ramp_low'; duty = 0.35; idle_after = $false }
+                @{ label = 'ramp_mid'; duty = 0.55; idle_after = $false }
+                @{ label = 'ramp_high'; duty = 0.85; idle_after = $false }
+            )
+        }
+        default {
+            @(
+                @{ label = 'warm'; duty = 0.40; idle_after = $true }
+                @{ label = 'peak'; duty = 0.90; idle_after = $true }
+                @{ label = 'recover'; duty = 0.50; idle_after = $false }
+            )
+        }
+    }
+
+    $slice = [Math]::Max(8, [int]($Seconds / [Math]::Max(1, $plan.Count)))
+    $deadline = (Get-Date).AddSeconds($Seconds)
+
+    foreach ($step in $plan) {
+        if ((Get-Date) -ge $deadline) { break }
+        $remain = [Math]::Max(5, [int](($deadline - (Get-Date)).TotalSeconds))
+        $stepBudget = [Math]::Min($slice, $remain)
+        $loadSec = [Math]::Max(0, [int]($stepBudget * [double]$step.duty))
+        $idleSec = [Math]::Max(0, $stepBudget - $loadSec)
+        if ($step.duty -le 0) {
+            $loadSec = 0
+            $idleSec = $stepBudget
+        }
+
+        $phaseStart = Get-Date
+        if ($loadSec -gt 0) {
+            $jobs = @()
+            if ($vk) {
+                $jobs += Start-Job -ScriptBlock {
+                    param($exe, $sec)
+                    & $exe --stress-seconds $sec 2>&1 | Out-String
+                } -ArgumentList $vk, $loadSec
+            } else {
+                $until = (Get-Date).AddSeconds($loadSec)
+                $jobs += Start-Job -ScriptBlock {
+                    param($u)
+                    while ((Get-Date) -lt $u) {
+                        $x = 0.0
+                        for ($i = 0; $i -lt 80000; $i++) { $x += [Math]::Sin($i) * [Math]::Cos($i) }
+                    }
+                } -ArgumentList $until
+            }
+            $loadEnd = (Get-Date).AddSeconds($loadSec)
+            while ((Get-Date) -lt $loadEnd) {
+                Start-Sleep -Milliseconds 700
+                if ($CollectSamples) { $samples.Add((Get-ProbeStressThermalSample)) }
+            }
+            $out = $jobs | Wait-Job | Receive-Job
+            $jobs | Remove-Job -Force -ErrorAction SilentlyContinue
+            if ($vk -and $out) {
+                $line = ("$out" -split "`r?`n" | Where-Object { $_.Trim().StartsWith('{') } | Select-Object -Last 1)
+                if ($line) {
+                    try {
+                        $j = $line | ConvertFrom-Json
+                        if ($j.score) { $vkScore = $j.score }
+                        if ($j.engine) { $vkEngine = $j.engine }
+                    } catch {}
+                }
+            }
+        }
+        if ($idleSec -gt 0 -or $step.idle_after) {
+            $idleFor = if ($idleSec -gt 0) { $idleSec } else { [Math]::Min(5, [int](($deadline - (Get-Date)).TotalSeconds)) }
+            $idleEnd = (Get-Date).AddSeconds([Math]::Max(1, $idleFor))
+            while ((Get-Date) -lt $idleEnd -and (Get-Date) -lt $deadline) {
+                Start-Sleep -Milliseconds 700
+                if ($CollectSamples) { $samples.Add((Get-ProbeStressThermalSample)) }
+            }
+        }
+        $phases.Add(@{
+            label = $step.label
+            load_s = $loadSec
+            idle_s = $idleSec
+            duration_s = [Math]::Round(((Get-Date) - $phaseStart).TotalSeconds, 1)
+        })
+    }
+
+    $gpuPeak = ($samples | ForEach-Object { $_.gpu_temp } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
+    $cpuPeak = ($samples | ForEach-Object { $_.cpu_temp } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
+    $hsPeak = ($samples | ForEach-Object { $_.gpu_hotspot } | Where-Object { $_ -ne $null } | Measure-Object -Maximum).Maximum
+    $wheaTimeline = Get-ProbeWheaTimeline -Since $stressStart
+    $wheaTotal = ($samples | ForEach-Object { [int]$_.whea_errors } | Measure-Object -Sum).Sum
+    if ($wheaTimeline.count -gt $wheaTotal) { $wheaTotal = $wheaTimeline.count }
+
+    return @{
+        id = "gpu_$Style"
+        label = "PcLab GPU $Style stress"
+        duration_s = $Seconds
+        status = 'completed'
+        method = if ($vk) { "vulkan_d3d11_$Style" } else { "host_load_$Style" }
+        load_mode = $Style
+        engine = $vkEngine
+        score = $vkScore
+        phases = @($phases)
+        cpu_temp_max = $cpuPeak
+        gpu_temp_max = $gpuPeak
+        gpu_hotspot_max = $hsPeak
+        whea_errors = $wheaTotal
+        whea_timeline = $wheaTimeline
+        samples = @($samples)
+        note = "OCCT-like $Style GPU load (stepped soak + idle). Fixed gpu profile remains for pure power/thermal."
+        replaces = @('OCCT Adaptive', 'OCCT Variable', 'OCCT Switch', 'FurMark')
     }
 }
 
@@ -321,10 +481,15 @@ function Invoke-ProbeStress {
     if ($Options.ContainsKey('seconds') -and $Options.seconds) { $seconds = [int]$Options.seconds }
     if ($Options.ContainsKey('percent') -and $Options.percent) { $percent = [int]$Options.percent }
     if ($Options.ContainsKey('collect_samples') -and $Options.collect_samples -eq $false) { $collect = $false }
+    $gpuMode = 'fixed'
+    if ($Options.ContainsKey('gpu_mode') -and $Options.gpu_mode) { $gpuMode = [string]$Options.gpu_mode }
     switch ($Id.ToLower()) {
         'cpu' { return Invoke-ProbeCpuStress -Seconds $seconds -CollectSamples:$collect }
         'memory' { return Invoke-ProbeMemoryStress -Seconds $seconds -Percent $percent -CollectSamples:$collect }
-        'gpu' { return Invoke-ProbeGpuStress -Seconds $seconds -CollectSamples:$collect }
+        'gpu' { return Invoke-ProbeGpuStress -Seconds $seconds -CollectSamples:$collect -LoadMode $gpuMode }
+        'gpu_adaptive' { return Invoke-ProbeGpuAdaptiveStress -Seconds $seconds -CollectSamples:$collect -Style 'adaptive' }
+        'gpu_variable' { return Invoke-ProbeGpuAdaptiveStress -Seconds $seconds -CollectSamples:$collect -Style 'variable' }
+        'gpu_switch' { return Invoke-ProbeGpuAdaptiveStress -Seconds $seconds -CollectSamples:$collect -Style 'switch' }
         'combined' { return Invoke-ProbeCombinedStress -Seconds $seconds -CollectSamples:$collect }
         'quick' { return Invoke-ProbeCombinedStress -Seconds 60 -CollectSamples:$collect }
         'soak_15' { return Invoke-ProbeCombinedStress -Seconds 900 -CollectSamples:$collect }
@@ -373,7 +538,7 @@ function Invoke-ProbeStabilityOracle {
 
     $phases = @(
         @{ id = 'cpu'; label = 'CPU ramp'; fn = { Invoke-ProbeCpuStress -Seconds $stepSeconds -CollectSamples } }
-        @{ id = 'gpu'; label = 'GPU ramp'; fn = { Invoke-ProbeGpuStress -Seconds $stepSeconds -CollectSamples } }
+        @{ id = 'gpu'; label = 'GPU adaptive ramp'; fn = { Invoke-ProbeGpuAdaptiveStress -Seconds $stepSeconds -CollectSamples -Style 'adaptive' } }
         @{ id = 'combined'; label = 'Combined ramp'; fn = { Invoke-ProbeCombinedStress -Seconds ($stepSeconds * 2) -CollectSamples } }
     )
 

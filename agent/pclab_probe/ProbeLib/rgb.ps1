@@ -152,6 +152,59 @@ function Get-RgbBlockingProcesses {
     return @($found)
 }
 
+function Get-RgbPresetPack {
+    return @(
+        @{ id = 'gaming'; label = 'Gaming'; effect = 'breathing'; color = '#00ff88'; speed = 40 }
+        @{ id = 'static'; label = 'Static white'; effect = 'static'; color = '#ffffff'; speed = 50 }
+        @{ id = 'off'; label = 'All off'; effect = 'off'; color = '#000000'; speed = 0 }
+        @{ id = 'calm'; label = 'Calm blue'; effect = 'static'; color = '#3b82f6'; speed = 30 }
+    )
+}
+
+function Invoke-RgbStopVendorProcesses {
+    param([switch]$Confirm)
+    if (-not $Confirm) {
+        return @{
+            ok = $false
+            error = 'confirm_required'
+            blocking = @(Get-RgbBlockingProcesses)
+            note = 'Pass confirm=true to stop competing vendor RGB processes (shop floor).'
+        }
+    }
+    $map = @(
+        @{ pattern = 'iCUE'; label = 'iCUE' }
+        @{ pattern = 'SignalRgb'; label = 'SignalRGB' }
+        @{ pattern = 'RazerAppEngine'; label = 'Razer Synapse' }
+        @{ pattern = 'ArmouryCrate*'; label = 'Armoury Crate' }
+        @{ pattern = 'LightingService'; label = 'Aura / LightingService' }
+        @{ pattern = 'MSI.CentralServer'; label = 'MSI Center' }
+        @{ pattern = 'CAM'; label = 'NZXT CAM' }
+        @{ pattern = 'L-Connect*'; label = 'L-Connect' }
+        @{ pattern = 'TtRgb*'; label = 'TT RGB Plus' }
+    )
+    $stopped = [System.Collections.Generic.List[string]]::new()
+    $failed = [System.Collections.Generic.List[string]]::new()
+    foreach ($c in $map) {
+        $procs = @(Get-Process -Name $c.pattern -ErrorAction SilentlyContinue)
+        foreach ($p in $procs) {
+            try {
+                Stop-Process -Id $p.Id -Force -ErrorAction Stop
+                if (-not ($stopped -contains $c.label)) { $stopped.Add($c.label) }
+            } catch {
+                if (-not ($failed -contains $c.label)) { $failed.Add($c.label) }
+            }
+        }
+    }
+    Start-Sleep -Milliseconds 800
+    return @{
+        ok = ($failed.Count -eq 0)
+        stopped = @($stopped)
+        failed = @($failed)
+        still_blocking = @(Get-RgbBlockingProcesses)
+        note = 'Re-scan RGB after vendor suites exit. Prefer closing them yourself if Stop fails (elevated services).'
+    }
+}
+
 function Match-KnownRgbDevice {
     param([string]$InstanceId, [string]$FriendlyName)
     $text = ($InstanceId + ' ' + $FriendlyName).ToUpper()
@@ -392,6 +445,12 @@ function Get-RgbDeviceScan {
             backend = if ($controlReady) { 'openrgb' } elseif ($openRgb) { 'openrgb_blocked' } else { 'detect_only' }
             openrgb_path = $openRgb
             blocking_processes = $blocking
+            presets = @(Get-RgbPresetPack)
+            reliability = @{
+                rescan_after_update = $true
+                stop_vendors_path = '/rgb/stop-vendors'
+                note = 'After Windows/OpenRGB updates, Rescan. Kill vendor RGB first if devices vanish.'
+            }
         }
         software = Get-RgbSoftwareHints
         enable_guide = $enableGuide

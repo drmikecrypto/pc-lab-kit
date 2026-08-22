@@ -6,6 +6,16 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.1.6] - 2026-08-23
+
+### Added — Rival gap completion
+- Sensor trust path + Ring0 conflict banner; tray vs Windows Service docs truth
+- Adaptive / variable / switch GPU stress modes; stress certificate handoff from Overview
+- SMART panel + PresentMon 1%/0.1% capture; Sensor Deck live alert thresholds
+- RGB kill-vendor + preset packs; shop fleet UI; OS maintenance panel (SFC/DISM/pnputil)
+- Scorecard honesty (`percentile_method` + `dataset_version` on Arena/Lab reports)
+- Linux sensor density on `/health`; honest JSON sensor feed (not binary HWiNFO SM)
+
 ## [4.1.5] - 2026-08-22
 
 ### Security

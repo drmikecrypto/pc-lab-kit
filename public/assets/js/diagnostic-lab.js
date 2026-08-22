@@ -168,13 +168,16 @@
       : '';
 
     const pct = data.percentiles || {};
+    const honesty = data.percentile_method || data.dataset_version
+      ? `<p class="muted fs-xs mt-1">${esc(data.percentile_method || ('dataset_version=' + data.dataset_version))}</p>`
+      : `<p class="muted fs-xs mt-1">Empirical CDF vs local reference datasets — not UserBenchmark.</p>`;
     const pctHtml = (pct.cpu || pct.gpu || pct.gaming)
       ? `<div class="dx-metric-grid mt-2">
           ${pct.cpu ? `<div class="dx-metric"><strong>${pct.cpu}th</strong>CPU percentile</div>` : ''}
           ${pct.gpu ? `<div class="dx-metric"><strong>${pct.gpu}th</strong>GPU percentile</div>` : ''}
           ${pct.gaming ? `<div class="dx-metric"><strong>${pct.gaming}%</strong>Gaming index</div>` : ''}
           ${pct.workstation ? `<div class="dx-metric"><strong>${pct.workstation}%</strong>Workstation</div>` : ''}
-        </div>`
+        </div>${honesty}`
       : '';
 
     const token = data.saved?.token || data.report_token || '';

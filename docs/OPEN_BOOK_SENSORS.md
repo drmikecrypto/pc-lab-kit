@@ -60,6 +60,8 @@ The **Open Book** tab is dossier + live open-book gauges. **Stress** and **Drive
 - Absolute °C may differ slightly from MODS / other tools; treat **delta vs core** and **S1–S4 spread** as the diagnostic signal for paste/cooler seating.
 - Driver or VBIOS updates can move or re-lock registers — open-book paths can break; we keep fallbacks.
 - Requires **Administrator** probe so Ring0 can map BAR0.
+- Competing tools (HWiNFO, FanControl, Afterburner, etc.) can contest SMBus — Overview shows a conflict banner from `/health.sensor_trust`.
+- Trust path: **PcLabHwMon / LHM** — we do **not** ship WinRing0.sys. Sensors-only (non-elevated) and optional Windows Service modes are documented in [SECURITY.md](SECURITY.md#sensor-trust).
 
 ## Catalog backlog (same pillar)
 

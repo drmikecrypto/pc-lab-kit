@@ -24,6 +24,13 @@ final class BenchmarkArenaTest extends TestCase
         $this->assertArrayHasKey('components', $payload);
         $this->assertGreaterThan(0, count($payload['components']));
         $this->assertArrayHasKey('datasets', $payload);
+        $this->assertArrayHasKey('percentile_method', $payload);
+        $this->assertArrayHasKey('dataset_version', $payload);
+        $this->assertStringContainsString('Empirical CDF', (string) $payload['percentile_method']);
+        $this->assertStringContainsString('not UserBenchmark', (string) $payload['percentile_method']);
+        $first = $payload['components'][0];
+        $this->assertArrayHasKey('dataset_version', $first);
+        $this->assertSame($payload['dataset_version'], $first['dataset_version']);
     }
 
     public function testScorePercentileInRange(): void

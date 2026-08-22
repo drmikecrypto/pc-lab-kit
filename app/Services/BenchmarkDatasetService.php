@@ -46,6 +46,37 @@ class BenchmarkDatasetService
         return $out;
     }
 
+    /**
+     * Stable version string for scorecard honesty (catalog keys + row counts).
+     * Not a cloud algorithm — local empirical CDF only.
+     */
+    public function datasetVersion(): string
+    {
+        $parts = [];
+        $total = 0;
+        foreach ($this->getCatalog() as $key => $meta) {
+            $n = (int) ($meta['count'] ?? 0);
+            $total += $n;
+            $parts[] = $key . ':' . $n;
+        }
+        sort($parts);
+        $hash = substr(hash('sha256', implode('|', $parts)), 0, 12);
+
+        return 'local-' . count($parts) . 'ds-' . $total . 'rows-' . $hash;
+    }
+
+    /** Human method blurb for every percentile card (anti-UserBenchmark). */
+    public function percentileMethodBlurb(?int $rowCount = null): string
+    {
+        $n = $rowCount;
+        if ($n === null) {
+            $n = (int) ($this->getGlobalStats()['total_rows'] ?? 0);
+        }
+
+        return 'Empirical CDF vs local reference datasets (' . $n . ' rows) · dataset_version='
+            . $this->datasetVersion() . ' — not UserBenchmark.';
+    }
+
     /** lab = controlled PassMark test; gold = crowd backtest files (*benchmark* in filename). */
     public static function resolveSourceTier(string $filePath, ?string $override = null): string
     {

@@ -27,6 +27,7 @@ class SensorDeckService
         return [
             'version' => 1,
             'updated_at' => null,
+            'alert_thresholds' => $this->defaultAlertThresholds(),
             'widgets' => [
                 ['id' => 'cpu_temp', 'type' => 'gauge', 'source' => 'cpu_temp', 'label' => 'CPU °C', 'min' => 20, 'max' => 100],
                 ['id' => 'gpu_temp', 'type' => 'gauge', 'source' => 'gpu_temp', 'label' => 'GPU °C', 'min' => 20, 'max' => 100],
@@ -45,6 +46,31 @@ class SensorDeckService
         ];
     }
 
+    /** @return array<string, float> */
+    public function defaultAlertThresholds(): array
+    {
+        return [
+            'cpu_temp_c' => 90.0,
+            'gpu_temp_c' => 85.0,
+            'gpu_hotspot_c' => 95.0,
+            'package_power_w' => 200.0,
+            'gpu_power_w' => 400.0,
+        ];
+    }
+
+    /** @param array<string, mixed> $raw @return array<string, float> */
+    private function sanitizeAlertThresholds(array $raw): array
+    {
+        $defaults = $this->defaultAlertThresholds();
+        $out = [];
+        foreach ($defaults as $key => $def) {
+            $v = $raw[$key] ?? $def;
+            $out[$key] = is_numeric($v) ? (float) $v : $def;
+        }
+
+        return $out;
+    }
+
     /** @return array<string, mixed> */
     public function get(): array
     {
@@ -52,8 +78,15 @@ class SensorDeckService
             return $this->defaultLayout();
         }
         $data = json_decode((string) file_get_contents($this->path), true);
+        if (!is_array($data)) {
+            return $this->defaultLayout();
+        }
+        $merged = array_merge($this->defaultLayout(), $data);
+        $merged['alert_thresholds'] = $this->sanitizeAlertThresholds(
+            is_array($data['alert_thresholds'] ?? null) ? $data['alert_thresholds'] : []
+        );
 
-        return is_array($data) ? array_merge($this->defaultLayout(), $data) : $this->defaultLayout();
+        return $merged;
     }
 
     /** @param array<string, mixed> $input @return array<string, mixed> */
@@ -81,9 +114,13 @@ class SensorDeckService
         if ($clean === []) {
             throw new \InvalidArgumentException('no valid widgets');
         }
+        $thresholds = $this->sanitizeAlertThresholds(
+            is_array($input['alert_thresholds'] ?? null) ? $input['alert_thresholds'] : []
+        );
         $layout = [
             'version' => 1,
             'updated_at' => gmdate('c'),
+            'alert_thresholds' => $thresholds,
             'widgets' => $clean,
         ];
         file_put_contents($this->path, json_encode($layout, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), LOCK_EX);
@@ -95,6 +132,9 @@ class SensorDeckService
     public function export(string $format = 'json'): array
     {
         $layout = $this->get();
+        $thresholds = $this->sanitizeAlertThresholds(
+            is_array($layout['alert_thresholds'] ?? null) ? $layout['alert_thresholds'] : []
+        );
         if ($format === 'csv' || $format === 'timeline') {
             $historyUrl = 'http://127.0.0.1:18765/telemetry/history';
             $raw = @file_get_contents($historyUrl, false, stream_context_create([
@@ -125,11 +165,7 @@ class SensorDeckService
                 'format' => 'csv',
                 'filename' => 'PCLabKit-SensorTimeline.csv',
                 'content' => $csv,
-                'alert_thresholds' => [
-                    'cpu_temp_c' => 90,
-                    'gpu_temp_c' => 85,
-                    'gpu_hotspot_c' => 95,
-                ],
+                'alert_thresholds' => $thresholds,
             ];
         }
 

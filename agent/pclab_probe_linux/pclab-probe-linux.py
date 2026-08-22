@@ -147,6 +147,12 @@ class ProbeHandler(BaseHTTPRequestHandler):
 
         if path == "/health":
             elev = elevated()
+            dens = {}
+            try:
+                snap = sensors.telemetry_snapshot()
+                dens = snap.get("sensor_density") or {}
+            except Exception:
+                dens = {}
             self._send(
                 200,
                 {
@@ -166,6 +172,7 @@ class ProbeHandler(BaseHTTPRequestHandler):
                     "launchers": False,
                     "vkbench": False,
                     "auth_required": bool(PROBE_AUTH_TOKEN),
+                    "sensor_density": dens,
                     "note": "Linux Platform Intelligence — DMI/sysfs/hwmon; no Ring0 MMIO, OC, RGB, or Stability Oracle parity",
                     "honesty": {
                         "oc": False,
@@ -173,6 +180,7 @@ class ProbeHandler(BaseHTTPRequestHandler):
                         "ring0": False,
                         "stability_oracle": False,
                         "driver_install": False,
+                        "note": "hwmon/sysfs + optional nvidia-smi/smartctl — no Ring0",
                     },
                 },
             )

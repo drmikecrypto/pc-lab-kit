@@ -406,6 +406,109 @@
   margin: 2px 0 0;
 }
 
+.dx-overview-trust {
+  margin-top: 10px;
+}
+
+.dx-trust-banner {
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.dx-trust-banner.is-warn {
+  background: rgba(242, 159, 5, 0.1);
+  border: 1px solid rgba(242, 159, 5, 0.35);
+}
+
+.dx-trust-banner.is-info {
+  background: rgba(88, 166, 255, 0.08);
+  border: 1px solid rgba(88, 166, 255, 0.28);
+}
+
+.dx-trust-banner strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.dx-trust-meta {
+  margin: 0;
+}
+
+.dx-overview-cert-handoff {
+  margin: 12px 0 16px;
+}
+
+.dx-overview-cert-card {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.dx-overview-cert-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.dx-smart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.dx-smart-table th,
+.dx-smart-table td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dx-pm-capture {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.dx-fleet-list {
+  display: grid;
+  gap: 10px;
+}
+
+.dx-fleet-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dx-stress-gpu-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.dx-stress-gpu-mode select {
+  max-width: 280px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  color: inherit;
+}
+
 .dx-overview-detected__head {
   display: flex;
   align-items: center;

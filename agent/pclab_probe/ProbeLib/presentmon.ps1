@@ -1,6 +1,25 @@
 . "$PSScriptRoot\common.ps1"
 
+function Get-PresentMonPercentileLows {
+    param([double[]]$FpsSamples)
+    if (-not $FpsSamples -or $FpsSamples.Count -lt 2) {
+        return @{ fps_1pct_low = $null; fps_0_1pct_low = $null }
+    }
+    $sorted = @($FpsSamples | Sort-Object)
+    $n = $sorted.Count
+    $i1 = [Math]::Max(0, [int][Math]::Floor($n * 0.01))
+    $i01 = [Math]::Max(0, [int][Math]::Floor($n * 0.001))
+    if ($i1 -ge $n) { $i1 = $n - 1 }
+    if ($i01 -ge $n) { $i01 = $n - 1 }
+    return @{
+        fps_1pct_low = [math]::Round($sorted[$i1], 1)
+        fps_0_1pct_low = [math]::Round($sorted[$i01], 1)
+    }
+}
+
 function Get-ProbePresentMonTelemetry {
+    param([int]$TimedSeconds = 3)
+    $TimedSeconds = [Math]::Max(1, [Math]::Min(120, $TimedSeconds))
     $root = Split-Path $PSScriptRoot -Parent
     $candidates = @(
         (Join-Path $root "tools\PresentMon\PresentMon.exe"),
@@ -24,12 +43,11 @@ function Get-ProbePresentMonTelemetry {
 
     $outCsv = Join-Path $env:TEMP ("pclab_presentmon_" + [guid]::NewGuid().ToString("n") + ".csv")
     try {
-        # 3 second capture snapshot
         $proc = Start-Process -FilePath $exe -ArgumentList @(
             '--output_stdout', 'CSV',
             '--terminate_on_proc_exit',
             '--delay', '0',
-            '--timed', '3',
+            '--timed', "$TimedSeconds",
             '--no_summary'
         ) -RedirectStandardOutput $outCsv -NoNewWindow -Wait -PassThru
 
@@ -44,13 +62,17 @@ function Get-ProbePresentMonTelemetry {
 
         $frametimes = @()
         $msBetween = @()
+        $fpsSamples = @()
         foreach ($line in $lines | Select-Object -Skip 1) {
             $cols = $line -split ','
             if ($cols.Count -ge 10) {
                 $ft = 0.0
                 if ([double]::TryParse($cols[9], [ref]$ft) -and $ft -gt 0) { $frametimes += $ft }
                 $mb = 0.0
-                if ([double]::TryParse($cols[8], [ref]$mb) -and $mb -gt 0) { $msBetween += $mb }
+                if ([double]::TryParse($cols[8], [ref]$mb) -and $mb -gt 0) {
+                    $msBetween += $mb
+                    $fpsSamples += (1000.0 / $mb)
+                }
             }
         }
 
@@ -62,15 +84,21 @@ function Get-ProbePresentMonTelemetry {
             if ($idx -ge $sorted.Count) { $idx = $sorted.Count - 1 }
             $p99 = $sorted[$idx]
         }
+        $lows = Get-PresentMonPercentileLows -FpsSamples @($fpsSamples)
 
         return @{
             available = $true
             source = 'presentmon'
+            timed_s = $TimedSeconds
             fps_avg = [math]::Round($fps, 1)
+            fps_1pct_low = $lows.fps_1pct_low
+            fps_0_1pct_low = $lows.fps_0_1pct_low
             frametime_p99_ms = [math]::Round($p99, 2)
             sample_count = $frametimes.Count
             frametime_series = @($frametimes)
             ms_between_series = @($msBetween)
+            fps_series = @($fpsSamples)
+            methodology = '1%/0.1% lows = FPS samples at 1st / 0.1st percentile (sorted ascending), CapFrameX-compatible language'
         }
     } catch {
         return @{ available = $false; error = $_.Exception.Message }

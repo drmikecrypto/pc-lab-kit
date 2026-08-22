@@ -96,21 +96,42 @@ function Get-ProbeStorageTelemetry {
         foreach ($pd in Get-PhysicalDisk -ErrorAction SilentlyContinue) {
             $rel = $null
             try { $rel = Get-StorageReliabilityCounter -PhysicalDisk $pd -ErrorAction SilentlyContinue } catch {}
+            $bus = "$($pd.BusType)"
+            $isNvme = $bus -match 'NVMe' -or "$($pd.FriendlyName)" -match 'NVMe'
             $smart += @{
                 friendly_name    = $pd.FriendlyName
                 media_type       = $pd.MediaType
+                bus_type         = $bus
+                is_nvme          = [bool]$isNvme
                 health_status    = $pd.HealthStatus
                 operational_status = $pd.OperationalStatus
                 size_gb          = [math]::Round($pd.Size / 1GB, 1)
                 temperature_c    = if ($rel) { $rel.Temperature } else { $null }
                 wear_pct         = if ($rel) { $rel.Wear } else { $null }
+                endurance_tbw_estimate = if ($rel -and $null -ne $rel.Wear -and $pd.Size) {
+                    # Wear% is percent-used of rated endurance when exposed; TBW estimate is not guaranteed
+                    $null
+                } else { $null }
                 read_errors      = if ($rel) { $rel.ReadErrorsTotal } else { $null }
                 write_errors     = if ($rel) { $rel.WriteErrorsTotal } else { $null }
                 power_on_hours   = if ($rel) { $rel.PowerOnHours } else { $null }
                 flush_latency_ms = if ($rel) { $rel.FlushLatencyMax } else { $null }
+                smart_depth      = if ($rel) { 'os_reliability' } else { 'inventory_only' }
+                self_test = @{
+                    supported = $false
+                    note = 'OS reliability counters only. Install smartctl/nvme-cli for short/long self-test enqueue; full Admin SMART log pages need elevated IOCTL path.'
+                }
             }
         }
     } catch {}
+
+    # Optional smartctl presence (self-test enqueue helper)
+    $smartctl = $null
+    if (Get-Command smartctl -ErrorAction SilentlyContinue) {
+        $smartctl = (Get-Command smartctl).Source
+    } elseif (Test-Path (Join-Path $PSScriptRoot '..\tools\smartctl.exe')) {
+        $smartctl = (Resolve-Path (Join-Path $PSScriptRoot '..\tools\smartctl.exe')).Path
+    }
 
     $diskCounters = Get-CounterSafe @(
         '\PhysicalDisk(_Total)\Disk Read Bytes/sec',
@@ -123,6 +144,12 @@ function Get-ProbeStorageTelemetry {
     return @{
         drives = $disks
         smart  = $smart
+        smartctl_path = $smartctl
+        self_test_enqueue = if ($smartctl) {
+            @{ available = $true; tool = 'smartctl'; note = 'POST /storage/smart/self-test with { device, type: short|long }' }
+        } else {
+            @{ available = $false; note = 'Place smartctl.exe in agent tools or PATH for self-test enqueue' }
+        }
         performance = @{
             read_bytes_sec  = $diskCounters['\\physicaldisk(_total)\disk read bytes/sec']
             write_bytes_sec = $diskCounters['\\physicaldisk(_total)\disk write bytes/sec']
@@ -130,6 +157,43 @@ function Get-ProbeStorageTelemetry {
             avg_write_sec   = $diskCounters['\\physicaldisk(_total)\avg. disk sec/write']
             queue_length    = $diskCounters['\\physicaldisk(_total)\current disk queue length']
         }
+    }
+}
+
+function Invoke-ProbeSmartSelfTest {
+    param(
+        [string]$Device = '',
+        [ValidateSet('short', 'long')]
+        [string]$Type = 'short'
+    )
+    $smartctl = $null
+    if (Get-Command smartctl -ErrorAction SilentlyContinue) {
+        $smartctl = (Get-Command smartctl).Source
+    } elseif (Test-Path (Join-Path $PSScriptRoot '..\tools\smartctl.exe')) {
+        $smartctl = (Resolve-Path (Join-Path $PSScriptRoot '..\tools\smartctl.exe')).Path
+    }
+    if (-not $smartctl) {
+        return @{
+            ok = $false
+            error = 'smartctl_missing'
+            note = 'Install smartctl (smartmontools) or place tools/smartctl.exe for self-test enqueue.'
+        }
+    }
+    if (-not $Device) {
+        return @{ ok = $false; error = 'device_required'; note = 'Pass device e.g. /dev/sda or \\.\PhysicalDrive0' }
+    }
+    try {
+        $arg = if ($Type -eq 'long') { '-t'; 'long' } else { '-t'; 'short' }
+        $out = & $smartctl @arg $Device 2>&1 | Out-String
+        return @{
+            ok = $true
+            device = $Device
+            type = $Type
+            output = $out.Trim()
+            note = 'Self-test enqueued via smartctl — poll SMART health for progress.'
+        }
+    } catch {
+        return @{ ok = $false; error = $_.Exception.Message }
     }
 }
 

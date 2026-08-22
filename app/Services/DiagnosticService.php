@@ -138,6 +138,7 @@ class DiagnosticService
         $gameSettings = $this->predictGameSettings($metrics, $gameIds);
         $percentiles = $this->attachPercentiles($metrics, $normalized);
         $reportSummary = $this->buildReportSummary($normalized);
+        $datasets = new BenchmarkDatasetService();
 
         $result = [
             'mode' => 'full',
@@ -145,6 +146,8 @@ class DiagnosticService
             'health_grade' => $this->grade($health),
             'metrics' => $metrics,
             'percentiles' => $percentiles,
+            'percentile_method' => $datasets->percentileMethodBlurb(),
+            'dataset_version' => $datasets->datasetVersion(),
             'bottleneck' => $bottleneck,
             'risks' => $risks,
             'upgrade_suggestions' => $upgrades,

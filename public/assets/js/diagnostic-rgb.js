@@ -208,7 +208,65 @@
   function conflictBanner() {
     const blocking = scan?.control?.blocking_processes || [];
     if (!blocking.length) return '';
-    return `<div class="dx-rgb-conflict">Competing RGB software is running: <strong>${esc(blocking.join(', '))}</strong>. Close it so OpenRGB can control your lights.</div>`;
+    return `<div class="dx-rgb-conflict">Competing RGB software is running: <strong>${esc(blocking.join(', '))}</strong>.
+      Close it or use <em>Kill vendor RGB</em>, then Rescan so OpenRGB can control your lights.</div>`;
+  }
+
+  function renderPresets() {
+    const box = document.getElementById('dx-rgb-presets');
+    if (!box) return;
+    const packs = scan?.control?.presets || [];
+    if (!packs.length) {
+      box.innerHTML = '';
+      return;
+    }
+    box.innerHTML = packs
+      .map(
+        (p) =>
+          `<button type="button" class="dx-btn ghost dx-rgb-preset" data-preset="${esc(p.id)}">${esc(p.label || p.id)}</button>`
+      )
+      .join('');
+    box.querySelectorAll('.dx-rgb-preset').forEach((btn) => {
+      btn.addEventListener('click', () => applyPreset(btn.getAttribute('data-preset')));
+    });
+  }
+
+  function applyPreset(id) {
+    const pack = (scan?.control?.presets || []).find((p) => p.id === id);
+    if (!pack) return;
+    Object.keys(zoneState).forEach((zid) => {
+      zoneState[zid].color = pack.color || '#ffffff';
+      zoneState[zid].effect = pack.effect || 'static';
+      zoneState[zid].speed = pack.speed != null ? pack.speed : 50;
+    });
+    render();
+    if (pack.effect === 'off') {
+      stopBlink();
+    } else {
+      applyZones();
+    }
+  }
+
+  async function killVendors() {
+    if (!window.confirm('Stop competing vendor RGB processes (iCUE, SignalRGB, Armoury, etc.)?')) return;
+    const st = document.getElementById('dx-rgb-status');
+    try {
+      const res = await fetch(`${AGENT}/rgb/stop-vendors`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: await probeJsonHeaders(),
+        body: JSON.stringify({ confirm: true }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (st) {
+        st.textContent = data.ok
+          ? `Stopped: ${(data.stopped || []).join(', ') || 'none'} — rescanning…`
+          : data.note || data.error || 'Stop incomplete';
+      }
+      await rgbScan();
+    } catch (e) {
+      if (st) st.textContent = e.message || String(e);
+    }
   }
 
   function render() {
@@ -223,10 +281,14 @@
       st.className = 'dx-rgb-status ' + (ready ? 'ok' : 'warn');
     }
     if (!scan.devices?.length) {
-      list.innerHTML = '<div class="dx-rgb-empty">No RGB LED or controller found. Check USB cables, ARGB hub, or competing software (e.g. iCUE) blocking OpenRGB.</div>';
+      list.innerHTML =
+        conflictBanner() +
+        '<div class="dx-rgb-empty">No RGB LED or controller found. Check USB cables, ARGB hub, or competing software (e.g. iCUE) blocking OpenRGB. Use Kill vendor RGB, then Rescan after updates.</div>';
+      renderPresets();
       return;
     }
     list.innerHTML = conflictBanner() + scan.devices.map(renderDevice).join('');
+    renderPresets();
     list.querySelectorAll('input[data-z], select[data-z]').forEach((el) => {
       el.addEventListener('input', () => {
         const zid = el.dataset.z;
@@ -430,6 +492,7 @@
   window.addEventListener('dx:scan-complete', (e) => { window.__dxLastScan = e.detail; });
 
   document.getElementById('dx-rgb-scan')?.addEventListener('click', rgbScan);
+  document.getElementById('dx-rgb-kill-vendors')?.addEventListener('click', killVendors);
   document.getElementById('dx-rgb-apply')?.addEventListener('click', applyZones);
   document.getElementById('dx-rgb-auto')?.addEventListener('click', orchestratorProSetup);
   document.getElementById('dx-rgb-stop')?.addEventListener('click', stopBlink);

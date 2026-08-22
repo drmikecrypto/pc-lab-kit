@@ -22,7 +22,8 @@ class BenchmarkArenaService
     {
         $fp = $fingerprint ?? $this->resolveFingerprint();
         $userScores = $this->userLatestScores($fp);
-        $components = $this->buildComponentCards($userScores);
+        $honesty = $this->scorecardHonesty();
+        $components = $this->buildComponentCards($userScores, $honesty);
         $global = $this->datasets->getGlobalStats();
         $catalog = $this->datasets->getCatalog();
 
@@ -35,6 +36,8 @@ class BenchmarkArenaService
             ],
             'components' => $components,
             'radar' => $this->buildRadar($components),
+            'percentile_method' => $honesty['percentile_method'],
+            'dataset_version' => $honesty['dataset_version'],
             'datasets' => array_values(array_map(static fn (array $d) => [
                 'key' => $d['key'] ?? '',
                 'label' => $d['label'] ?? '',
@@ -45,8 +48,17 @@ class BenchmarkArenaService
         ];
     }
 
-    /** @param array<string, int|float> $userScores @return list<array<string, mixed>> */
-    private function buildComponentCards(array $userScores): array
+    /** @return array{percentile_method: string, dataset_version: string} */
+    private function scorecardHonesty(): array
+    {
+        return [
+            'percentile_method' => $this->datasets->percentileMethodBlurb(),
+            'dataset_version' => $this->datasets->datasetVersion(),
+        ];
+    }
+
+    /** @param array<string, int|float> $userScores @param array{percentile_method: string, dataset_version: string} $honesty @return list<array<string, mixed>> */
+    private function buildComponentCards(array $userScores, array $honesty): array
     {
         $defs = [
             'cpu' => ['label' => 'CPU', 'score_key' => 'cpu_score', 'metric' => 'mark'],
@@ -75,6 +87,8 @@ class BenchmarkArenaService
                 'reference_name' => $match['name'] ?? null,
                 'source_tier' => $match['source_tier'] ?? null,
                 'reproducibility' => $this->reproducibilityBadge($userScores, $def['score_key']),
+                'percentile_method' => $honesty['percentile_method'],
+                'dataset_version' => $honesty['dataset_version'],
             ];
         }
 

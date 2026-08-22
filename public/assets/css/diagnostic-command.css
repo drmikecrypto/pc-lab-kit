@@ -140,6 +140,10 @@
   background: rgba(0, 0, 0, 0.2);
   text-align: center;
 }
+.dx-sensor-deck__gauge.is-warn {
+  border-color: rgba(242, 159, 5, 0.55);
+  background: rgba(242, 159, 5, 0.08);
+}
 .dx-sensor-deck__val {
   font-size: 1.45rem;
   font-variant-numeric: tabular-nums;
@@ -147,6 +151,54 @@
 .dx-sensor-deck__lbl {
   font-size: 0.75rem;
   color: #8b98a5;
+}
+.dx-deck-thresholds {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.65rem;
+  margin-bottom: 0.65rem;
+}
+.dx-deck-th {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.7rem;
+  color: #8b98a5;
+}
+.dx-deck-th input {
+  width: 4.5rem;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  color: inherit;
+}
+.dx-deck-alerts {
+  margin: 0 0 0.75rem;
+}
+.dx-deck-alerts.is-warn {
+  color: #fbbf24;
+}
+.dx-repair-tools {
+  display: grid;
+  gap: 10px;
+  margin-top: 0.75rem;
+}
+.dx-repair-card {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dx-repair-log {
+  margin-top: 12px;
+  padding: 10px;
+  max-height: 240px;
+  overflow: auto;
+  white-space: pre-wrap;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 .dx-topology svg {
   width: 100%;

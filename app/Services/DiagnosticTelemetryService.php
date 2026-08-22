@@ -119,6 +119,12 @@ class DiagnosticTelemetryService
         if (!empty($gaming['fps_avg'])) {
             $out[] = ['id' => 'fps', 'label_fa' => 'FPS (PresentMon)', 'value' => $gaming['fps_avg'], 'unit' => '', 'severity' => 'ok'];
         }
+        if (!empty($gaming['fps_1pct_low'])) {
+            $out[] = ['id' => 'fps_1pct', 'label_fa' => '1% low', 'value' => $gaming['fps_1pct_low'], 'unit' => 'FPS', 'severity' => 'ok'];
+        }
+        if (!empty($gaming['fps_0_1pct_low'])) {
+            $out[] = ['id' => 'fps_01pct', 'label_fa' => '0.1% low', 'value' => $gaming['fps_0_1pct_low'], 'unit' => 'FPS', 'severity' => 'ok'];
+        }
         if (!empty($gaming['frametime_p99_ms'])) {
             $out[] = ['id' => 'ft_p99', 'label_fa' => 'FT P99', 'value' => $gaming['frametime_p99_ms'], 'unit' => 'ms', 'severity' => ($gaming['frametime_p99_ms'] > 20 ? 'warn' : 'ok')];
         }
@@ -184,12 +190,15 @@ class DiagnosticTelemetryService
 
         $panels = [
             $this->panel('PresentMon / Render', [
-                ['key' => 'FPS avg', 'value' => (string) ($g['fps_avg'] ?? '—')],
+                ['key' => 'FPS avg', 'value' => (string) ($g['fps_avg'] ?? $pm['fps_avg'] ?? '—')],
+                ['key' => '1% low', 'value' => (string) ($g['fps_1pct_low'] ?? $pm['fps_1pct_low'] ?? '—') . ' FPS'],
+                ['key' => '0.1% low', 'value' => (string) ($g['fps_0_1pct_low'] ?? $pm['fps_0_1pct_low'] ?? '—') . ' FPS'],
                 ['key' => 'Frametime mean', 'value' => (string) ($g['frametime_mean_ms'] ?? '—') . ' ms'],
                 ['key' => 'Frametime P99', 'value' => (string) ($g['frametime_p99_ms'] ?? '—') . ' ms'],
                 ['key' => 'Spike count', 'value' => (string) ($g['spike_count'] ?? ($map['stats']['spike_count'] ?? '—'))],
                 ['key' => 'Samples', 'value' => (string) ($g['samples'] ?? $pm['sample_count'] ?? '—')],
                 ['key' => 'Source', 'value' => (string) ($g['source'] ?? '—')],
+                ['key' => 'Method', 'value' => (string) ($g['methodology'] ?? $pm['methodology'] ?? 'percentile lows')],
                 ['key' => 'PresentMon', 'value' => !empty($pm['available']) ? 'Active' : ($pm['note'] ?? 'Optional — add tools/PresentMon.exe')],
             ]),
         ];

@@ -538,6 +538,8 @@ class DiagnosticImportService
             $out['fps_avg'] = round(array_sum($fps) / count($fps), 1);
             $idx = (int) floor(count($fps) * 0.01);
             $out['fps_1pct_low'] = $fps[$idx] ?? null;
+            $idx01 = (int) floor(count($fps) * 0.001);
+            $out['fps_0_1pct_low'] = $fps[$idx01] ?? null;
         }
         if (!empty($gaming['frametime_samples'])) {
             $ft = $gaming['frametime_samples'];

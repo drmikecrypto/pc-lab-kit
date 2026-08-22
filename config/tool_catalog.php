@@ -113,7 +113,7 @@ return [
         ['id' => 'lconnect_lcd', 'name' => 'L-Connect 3 LCD', 'category' => 'lcd', 'module' => 'lcd', 'coverage' => 'live', 'coverage_note' => 'Lian Li screen GIF + sensor layout'],
         ['id' => 'aida64_panel', 'name' => 'AIDA64 SensorPanel', 'category' => 'lcd', 'module' => 'lcd', 'coverage' => 'beta', 'coverage_note' => 'Telemetry console + Sensor Deck (beta)'],
         ['id' => 'rainmeter', 'name' => 'Rainmeter', 'category' => 'lcd', 'module' => 'lcd', 'coverage' => 'live', 'coverage_note' => 'Export sensor skins from Sensor Deck'],
-        ['id' => 'hwinfo_sm', 'name' => 'HWiNFO Shared Memory', 'category' => 'lcd', 'module' => 'lcd', 'coverage' => 'live', 'coverage_note' => 'Shared-memory sensor JSON writer GET /integrations/hwinfo-sm'],
+        ['id' => 'hwinfo_sm', 'name' => 'PC Lab Kit sensor JSON feed', 'category' => 'lcd', 'module' => 'lcd', 'coverage' => 'live', 'coverage_note' => 'JSON sensor feed (not binary HWiNFO SM) via GET /integrations/hwinfo-sm → %LOCALAPPDATA%\\PcLabKit\\Probe\\hwinfo-shared.json'],
         ['id' => 'wallpaper_engine', 'name' => 'Wallpaper Engine', 'category' => 'lcd', 'module' => 'lcd', 'coverage' => 'planned', 'coverage_note' => 'Sensor-linked wallpaper hooks'],
         ['id' => 'stream_deck', 'name' => 'Stream Deck', 'category' => 'lcd', 'module' => 'lcd', 'coverage' => 'planned', 'coverage_note' => 'Live sensor tiles plugin'],
         ['id' => 'aquasuite', 'name' => 'Aquasuite', 'category' => 'lcd', 'module' => 'lcd', 'coverage' => 'beta', 'coverage_note' => 'Custom loop telemetry + LCD layouts'],

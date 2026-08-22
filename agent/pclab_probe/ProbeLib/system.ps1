@@ -160,24 +160,30 @@ function Get-ProbeDeepTelemetry {
     if ($spikeMap.available) {
         $gaming = @{
             fps_avg = if ($present.fps_avg) { $present.fps_avg } else { $null }
+            fps_1pct_low = $present.fps_1pct_low
+            fps_0_1pct_low = $present.fps_0_1pct_low
             frametime_p99_ms = $spikeMap.stats.p99_ms
             frametime_mean_ms = $spikeMap.stats.mean_ms
             spike_count = $spikeMap.stats.spike_count
             source = $spikeMap.source
             samples = $spikeMap.stats.count
             spike_map = $spikeMap
+            methodology = $present.methodology
         }
     } elseif ($present.available -and $present.sample_count -gt 0) {
         . "$PSScriptRoot\frametime.ps1"
         $localMap = Build-FrametimeSpikeMap -Samples @($present.frametime_series)
         $gaming = @{
             fps_avg = $present.fps_avg
+            fps_1pct_low = $present.fps_1pct_low
+            fps_0_1pct_low = $present.fps_0_1pct_low
             frametime_p99_ms = $present.frametime_p99_ms
             frametime_mean_ms = $localMap.stats.mean_ms
             spike_count = $localMap.stats.spike_count
             source = 'presentmon'
             samples = $present.sample_count
             spike_map = $localMap
+            methodology = $present.methodology
         }
     }
 

@@ -81,6 +81,27 @@ class StressCertificateService
         $pass = $failures === [];
         $profile = (string) ($run['id'] ?? $run['profile'] ?? 'stress');
         $duration = $run['duration_s'] ?? $run['seconds'] ?? null;
+        $summary = $pass
+            ? sprintf('PASS — %s completed cleanly%s.', $profile, $duration ? " ({$duration}s)" : '')
+            : ('FAIL — ' . implode('; ', $failures));
+        $issued = gmdate('c');
+        $peaks = array_filter([
+            'cpu_temp_max' => $cpuPeak,
+            'gpu_temp_max' => $gpuPeak,
+            'gpu_hotspot_max' => $hotspotPeak,
+            'whea_errors' => $whea > 0 ? $whea : null,
+        ], static fn ($v) => $v !== null);
+
+        $html = $this->renderHtml([
+            'verdict' => $pass ? 'PASS' : 'FAIL',
+            'profile' => $profile,
+            'summary' => $summary,
+            'issued_at' => $issued,
+            'duration_s' => $duration,
+            'peaks' => $peaks,
+            'failures' => $failures,
+            'load_mode' => $run['load_mode'] ?? null,
+        ]);
 
         return [
             'verdict' => $pass ? 'PASS' : 'FAIL',
@@ -88,13 +109,8 @@ class StressCertificateService
             'profile' => $profile,
             'label' => $run['label'] ?? ('PC Lab Kit ' . $profile . ' stress'),
             'duration_s' => $duration,
-            'issued_at' => gmdate('c'),
-            'peaks' => array_filter([
-                'cpu_temp_max' => $cpuPeak,
-                'gpu_temp_max' => $gpuPeak,
-                'gpu_hotspot_max' => $hotspotPeak,
-                'whea_errors' => $whea > 0 ? $whea : null,
-            ], static fn ($v) => $v !== null),
+            'issued_at' => $issued,
+            'peaks' => $peaks,
             'whea_timeline' => $wheaTimeline,
             'pcie_warnings' => $pcieWarnings !== [] ? array_values($pcieWarnings) : null,
             'stability_margin_pct' => $stabilityMargin,
@@ -105,12 +121,44 @@ class StressCertificateService
                 'gpu_hotspot_max' => $hotspotLimit,
             ],
             'failures' => $failures,
-            'summary' => $pass
-                ? sprintf('PASS — %s completed cleanly%s.', $profile, $duration ? " ({$duration}s)" : '')
-                : ('FAIL — ' . implode('; ', $failures)),
+            'summary' => $summary,
             'sample_count' => count($samples),
             'engine' => 'pclab-probe',
+            'html' => $html,
         ];
+    }
+
+    /** @param array<string, mixed> $c */
+    private function renderHtml(array $c): string
+    {
+        $v = htmlspecialchars((string) ($c['verdict'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $sum = htmlspecialchars((string) ($c['summary'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $prof = htmlspecialchars((string) ($c['profile'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $at = htmlspecialchars((string) ($c['issued_at'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $mode = htmlspecialchars((string) ($c['load_mode'] ?? '—'), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+        $peaks = $c['peaks'] ?? [];
+        $peakRows = '';
+        if (is_array($peaks)) {
+            foreach ($peaks as $k => $val) {
+                $peakRows .= '<tr><td>' . htmlspecialchars((string) $k, ENT_QUOTES, 'UTF-8') . '</td><td>'
+                    . htmlspecialchars((string) $val, ENT_QUOTES, 'UTF-8') . '</td></tr>';
+            }
+        }
+        $failLis = '';
+        foreach ((array) ($c['failures'] ?? []) as $f) {
+            $failLis .= '<li>' . htmlspecialchars((string) $f, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</li>';
+        }
+
+        return '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>PC Lab Kit Stress Certificate</title>'
+            . '<style>body{font:15px/1.5 system-ui,sans-serif;max-width:640px;margin:2rem auto;padding:0 1rem}'
+            . 'h1{font-size:1.4rem}.pass{color:#1a7f37}.fail{color:#cf222e}table{border-collapse:collapse;width:100%}'
+            . 'td,th{border:1px solid #d0d7de;padding:.4rem .6rem;text-align:left}.muted{color:#656d76;font-size:.85rem}</style></head><body>'
+            . '<h1>PC Lab Kit · Stress certificate</h1>'
+            . '<p class="' . ($v === 'PASS' ? 'pass' : 'fail') . '"><strong>' . $v . '</strong> — ' . $sum . '</p>'
+            . '<p class="muted">Profile <code>' . $prof . '</code> · load mode ' . $mode . ' · issued ' . $at . '</p>'
+            . '<table><thead><tr><th>Peak</th><th>Value</th></tr></thead><tbody>' . ($peakRows ?: '<tr><td colspan="2">—</td></tr>') . '</tbody></table>'
+            . ($failLis !== '' ? '<h2>Failures</h2><ul>' . $failLis . '</ul>' : '')
+            . '<p class="muted">Local-first · verify offline · no cloud required.</p></body></html>';
     }
 
     private function num(mixed $v): ?float

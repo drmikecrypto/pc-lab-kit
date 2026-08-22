@@ -51,6 +51,30 @@ Identity: Windows `"agent":"pclab-probe"` / Linux `"agent":"pclab-probe-linux"`,
 | GET/POST | `/bench/*`, `/stress/*` | Native benchmarks and stress |
 | POST/GET | `/suite/start\|status\|cancel` | Full Lab async suite |
 | GET/POST | `/launchers`, `/launchers/run` | Optional third-party stress tools (Windows) |
+| GET | `/integrations/hwinfo-sm` | Write **JSON sensor feed** (see below) |
+| GET/POST | `/repair/*` | OS maintenance catalog / run (Windows; confirm required) |
+
+### Sensor JSON feed (not binary HWiNFO Shared Memory)
+
+`GET /integrations/hwinfo-sm` refreshes `%LOCALAPPDATA%\PcLabKit\Probe\hwinfo-shared.json` and returns metadata. This is a **JSON file feed** with HWiNFO-style sensor names — it is **not** the proprietary HWiNFO Shared Memory binary segment. Use it with Rainmeter WebParser, scripts, or overlays that can read a local file / HTTP JSON.
+
+Example payload:
+
+```json
+{
+  "schema_version": 1,
+  "feed_kind": "json_file",
+  "source": "pc-lab-kit",
+  "path": "C:\\\\Users\\\\…\\\\AppData\\\\Local\\\\PcLabKit\\\\Probe\\\\hwinfo-shared.json",
+  "sensors": [
+    { "name": "CPU Package", "value": 58.2, "unit": "°C" },
+    { "name": "GPU Core", "value": 61.0, "unit": "°C" },
+    { "name": "CPU Package Power", "value": 42.5, "unit": "W" }
+  ]
+}
+```
+
+Rainmeter can also poll `http://127.0.0.1:18765/telemetry` directly (Sensor Deck Rainmeter export). Afterburner/RTSS still expect their own injectors — this feed is for local overlays that accept JSON, not a drop-in HWiNFO SM replacement.
 
 ### Linux probe
 

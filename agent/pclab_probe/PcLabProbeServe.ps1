@@ -39,12 +39,15 @@ if (-not $script:ProbeAuthToken) {
 # Single source of truth: drives the startup banner, the "/" status page and the 404 hint,
 # so the three can never drift out of sync again.
 $script:Routes = @(
-    @{ method = 'GET';  path = '/health';             desc = 'liveness + capability flags' }
+    @{ method = 'GET';  path = '/health';             desc = 'liveness + capability flags + sensor trust' }
     @{ method = 'GET';  path = '/probe';              desc = 'full scan (hardware + thermals + drivers)' }
     @{ method = 'GET';  path = '/telemetry';          desc = 'fast counters' }
     @{ method = 'GET';  path = '/telemetry/stream';   desc = 'SSE live sensor stream (~5 Hz)' }
     @{ method = 'GET';  path = '/telemetry/history';  desc = "sparkline buffer ($script:RingMax samples)" }
-    @{ method = 'GET';  path = '/integrations/hwinfo-sm'; desc = 'write HWiNFO-style shared sensor JSON' }
+    @{ method = 'GET';  path = '/integrations/hwinfo-sm'; desc = 'write JSON sensor feed (HWiNFO-style names; not binary SM)' }
+    @{ method = 'GET';  path = '/storage/smart';      desc = 'SMART / NVMe reliability panel' }
+    @{ method = 'POST'; path = '/storage/smart/self-test'; desc = 'enqueue SMART self-test (smartctl)' }
+    @{ method = 'GET';  path = '/presentmon/capture'; desc = 'PresentMon session → 1%/0.1% lows (?seconds=)' }
     @{ method = 'GET';  path = '/devices';            desc = 'full PnP / PCI / USB / monitor inventory' }
     @{ method = 'GET';  path = '/drivers';            desc = 'driver advisor + install queue (?wu=1 optional WU scan)' }
     @{ method = 'POST'; path = '/drivers/install';    desc = 'one-click install matched package (confirm required)' }
@@ -61,6 +64,7 @@ $script:Routes = @(
     @{ method = 'POST'; path = '/rgb/lcd';            desc = 'upload GIF (local cache + OpenRGB push attempt)' }
     @{ method = 'POST'; path = '/rgb/stop';           desc = 'stop blink timers / set zones off' }
     @{ method = 'POST'; path = '/rgb/auto';           desc = 'auto RGB' }
+    @{ method = 'POST'; path = '/rgb/stop-vendors';  desc = 'stop competing vendor RGB processes (confirm)' }
     @{ method = 'POST'; path = '/orchestrate'; desc = 'full setup (RGB + fan + LCD)' }
     @{ method = 'GET';  path = '/bench/catalog';      desc = 'runnable benchmarks' }
     @{ method = 'POST'; path = '/bench/run';          desc = 'CPU / CPU-MT / memory / storage / GPU bench' }
@@ -75,6 +79,8 @@ $script:Routes = @(
     @{ method = 'GET';  path = '/audit';              desc = 'platform audit JSON (fingerprint + plan + drivers)' }
     @{ method = 'GET';  path = '/launchers';          desc = 'detect installed third-party stress tools' }
     @{ method = 'POST'; path = '/launchers/run';     desc = 'launch external stress tool with telemetry overlay' }
+    @{ method = 'GET';  path = '/repair/catalog';     desc = 'OS maintenance tools (SFC/DISM/pnputil)' }
+    @{ method = 'POST'; path = '/repair/run';         desc = 'run OS maintenance tool (confirm + elevated)' }
 )
 
 function Test-ProbeElevated {
@@ -129,7 +135,7 @@ try {
         $ctype = "application/json; charset=utf-8"
 
         # Mutating routes require the per-install probe token (header / Bearer only).
-        $mutating = $req.HttpMethod -eq 'POST' -and $path -match '^/(suite|stress|oc|rgb|bench|drivers/install|orchestrate|launchers)/'
+        $mutating = $req.HttpMethod -eq 'POST' -and $path -match '^/(suite|stress|oc|rgb|bench|drivers/install|orchestrate|launchers|storage|repair)/'
         if ($mutating -and $script:ProbeAuthToken) {
             $tok = $req.Headers['X-PcLab-Token']
             if (-not $tok) { $tok = $req.Headers['Authorization'] -replace '^Bearer\s+', '' }
@@ -234,7 +240,16 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
                 $lastErr = if ($script:ProbeLastError) { ($script:ProbeLastError -replace '"','\"') } else { '' }
                 $svc = $script:ServiceMode.ToString().ToLower()
                 $authRequired = ([bool]$script:ProbeAuthToken).ToString().ToLower()
-                $body = '{"ok":true,"agent":"pclab-probe","version":6,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"open_book_count":' + $obCount + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true,"uptime_s":' + $uptime + ',"pid":' + $PID + ',"service_mode":' + $svc + ',"last_error":' + $(if ($lastErr) { '"' + $lastErr + '"' } else { 'null' }) + ',"auth_required":' + $authRequired + ',"ring0":' + $elevated.ToString().ToLower() + '}'
+                . (Join-Path $scriptDir 'ProbeLib\sensor-trust.ps1')
+                $trust = Get-SensorTrustStatus -Elevated $elevated -ServiceMode $script:ServiceMode -ProbeRoot $scriptDir
+                $conflictsJson = '[]'
+                if ($trust.competing_tools -and @($trust.competing_tools).Count -gt 0) {
+                    $conflictsJson = (@($trust.competing_tools) | ConvertTo-Json -Compress)
+                    if (-not $conflictsJson.StartsWith('[')) { $conflictsJson = '[' + $conflictsJson + ']' }
+                }
+                $trustMsg = if ($trust.message) { ($trust.message -replace '\\','\\' -replace '"','\"') } else { '' }
+                $opStory = ($trust.operator_story -replace '\\','\\' -replace '"','\"')
+                $body = '{"ok":true,"agent":"pclab-probe","version":6,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"open_book_count":' + $obCount + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true,"uptime_s":' + $uptime + ',"pid":' + $PID + ',"service_mode":' + $svc + ',"last_error":' + $(if ($lastErr) { '"' + $lastErr + '"' } else { 'null' }) + ',"auth_required":' + $authRequired + ',"ring0":' + $elevated.ToString().ToLower() + ',"sensor_trust":{"backend":"' + $trust.backend + '","trust_mode":"' + $trust.trust_mode + '","ring0_path":' + $trust.ring0_path.ToString().ToLower() + ',"conflict":' + $trust.conflict.ToString().ToLower() + ',"competing_tools":' + $conflictsJson + ',"message":' + $(if ($trustMsg) { '"' + $trustMsg + '"' } else { 'null' }) + ',"operator_story":"' + $opStory + '","winring0_shipped":false}}'
             }
             "/probe" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $probeScript
@@ -276,6 +291,39 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
 . '$scriptDir\ProbeLib\hwinfo-sm.ps1'
 `$snap = Get-TelemetrySnapshot
 Write-PcLabHwInfoSharedMemory -Telemetry `$snap | ConvertTo-Json -Compress }
+"@
+            }
+            "/storage/smart" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\memory.ps1'
+. '$scriptDir\ProbeLib\platform.ps1'
+`$tel = Get-ProbeStorageTelemetry
+`$nvme = Get-ProbeNvmeSmartDetailed
+@{ ok = `$true; storage = `$tel; nvme_detailed = `$nvme } | ConvertTo-Json -Depth 10 -Compress }
+"@
+            }
+            "/storage/smart/self-test" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $tmp = Join-Path $env:TEMP ("pclab_smart_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    if (-not $raw) { $raw = '{}' }
+                    [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\memory.ps1'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+`$dev = if (`$j.device) { [string]`$j.device } else { '' }
+`$typ = if (`$j.type) { [string]`$j.type } else { 'short' }
+Invoke-ProbeSmartSelfTest -Device `$dev -Type `$typ | ConvertTo-Json -Depth 6 -Compress }
+"@
+                } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+            }
+            "/presentmon/capture" {
+                $sec = 10
+                if ($req.Url.Query -match 'seconds=(\d+)') { $sec = [int]$Matches[1] }
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+Get-ProbePresentMonTelemetry -TimedSeconds $sec | ConvertTo-Json -Depth 8 -Compress }
 "@
             }
             "/devices" {
@@ -473,6 +521,22 @@ else { Invoke-ProbeRgbAuto -Telemetry `$tel -Scan `$scan | ConvertTo-Json -Depth
 "@
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }
+            "/rgb/stop-vendors" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $tmp = Join-Path $env:TEMP ("pclab_rgbkill_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    if (-not $raw) { $raw = '{}' }
+                    [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$rgbScript'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+`$c = `$false
+if (`$null -ne `$j.confirm) { `$c = [bool]`$j.confirm }
+Invoke-RgbStopVendorProcesses -Confirm:`$c | ConvertTo-Json -Depth 6 -Compress }
+"@
+                } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+            }
             "/orchestrate" {
                 if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
                 $raw = Read-RequestBody $req
@@ -531,6 +595,7 @@ Invoke-ProbeBenchmark -Id `$id -Options `$opts | ConvertTo-Json -Depth 8 -Compre
 `$opts = @{}
 if (`$j.seconds) { `$opts.seconds = [int]`$j.seconds }
 if (`$j.percent) { `$opts.percent = [int]`$j.percent }
+if (`$j.gpu_mode) { `$opts.gpu_mode = [string]`$j.gpu_mode }
 Invoke-ProbeStress -Id `$id -Options `$opts | ConvertTo-Json -Depth 8 -Compress }
 "@
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
@@ -639,6 +704,29 @@ Get-ProbeExternalLaunchers | ConvertTo-Json -Depth 8 -Compress }
 . '$stressScript'
 `$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
 Invoke-ProbeExternalLauncher -Request `$j | ConvertTo-Json -Depth 10 -Compress }
+"@
+                } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+            }
+            "/repair/catalog" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\repair.ps1'
+Get-ProbeRepairCatalog | ConvertTo-Json -Depth 6 -Compress }
+"@
+            }
+            "/repair/run" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $tmp = Join-Path $env:TEMP ("pclab_repair_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    if (-not $raw) { $raw = '{}' }
+                    [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\repair.ps1'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+`$id = if (`$j.id) { [string]`$j.id } else { '' }
+`$c = `$false
+if (`$null -ne `$j.confirm) { `$c = [bool]`$j.confirm }
+Invoke-ProbeRepairTool -Id `$id -Confirm:`$c | ConvertTo-Json -Depth 6 -Compress }
 "@
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }

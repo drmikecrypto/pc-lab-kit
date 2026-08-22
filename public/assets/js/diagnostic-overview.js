@@ -25,6 +25,72 @@
     if (det) det.textContent = detail || '';
   }
 
+  function renderTrustBanner(data) {
+    const slot = el('dx-overview-trust');
+    if (!slot) return;
+    const trust = data.sensor_trust || {};
+    const competing = trust.competing_tools || [];
+    const parts = [];
+    if (competing.length) {
+      parts.push(
+        `<div class="dx-trust-banner is-warn" role="status">
+          <strong>Sensor conflict</strong>
+          <p class="muted fs-sm">${esc(trust.message || `Close ${competing.join(', ')} or expect wrong temps (shared Ring0 / SMBus).`)}</p>
+        </div>`
+      );
+    } else if (data.elevated === false) {
+      parts.push(
+        `<div class="dx-trust-banner is-info" role="status">
+          <strong>Sensors-only / limited</strong>
+          <p class="muted fs-sm">Probe is not elevated — die/board sensors limited. Restart via Start-PcLabProbe.bat for full Open Book coverage.</p>
+        </div>`
+      );
+    }
+    const mode = data.service_mode
+      ? 'Windows Service (always-on)'
+      : 'Tray / desktop sidecar';
+    const backend = trust.backend || (data.hwmon ? 'pclab_hwmon_lhm' : 'os_counters');
+    parts.push(
+      `<p class="muted fs-xs dx-trust-meta">Sensor path: <code>${esc(backend)}</code> · ${esc(mode)} · WinRing0 not shipped${
+        trust.operator_story ? ` · ${esc(trust.operator_story)}` : ''
+      }</p>`
+    );
+    slot.innerHTML = parts.join('');
+  }
+
+  function renderCertHandoff() {
+    const slot = el('dx-overview-cert-handoff');
+    if (!slot) return;
+    let last = null;
+    try {
+      last = JSON.parse(sessionStorage.getItem('pclab_last_stress_cert') || 'null');
+    } catch (_) {}
+    if (!last || !last.verdict) {
+      slot.innerHTML = `<p class="muted fs-sm">After a Test finishes, export Assembly / Stress certificate here for shop handoff.</p>`;
+      return;
+    }
+    slot.innerHTML = `<div class="dx-overview-cert-card">
+      <strong>Last stress: ${esc(String(last.verdict))}</strong>
+      <p class="muted fs-xs">${esc(last.summary || last.id || '')}</p>
+      <div class="dx-overview-cert-actions">
+        <button type="button" class="dx-btn primary" id="dx-overview-open-cert">Open certificate</button>
+        <button type="button" class="dx-btn ghost" data-dx-goto="stress">Back to Test</button>
+      </div>
+    </div>`;
+    el('dx-overview-open-cert')?.addEventListener('click', () => {
+      if (last.html) {
+        const w = window.open('', '_blank');
+        if (w) {
+          w.document.write(last.html);
+          w.document.close();
+        }
+      } else {
+        location.hash = 'dx-stress-lab';
+        window.dispatchEvent(new CustomEvent('dx:tab-change', { detail: { tab: 'stress' } }));
+      }
+    });
+  }
+
   async function checkProbe() {
     setProbeUi('unknown', 'Probe', 'Checking local Probe…');
     try {
@@ -34,11 +100,21 @@
       clearTimeout(timer);
       if (!res.ok) {
         setProbeUi('offline', 'Probe offline', `Health returned HTTP ${res.status}. Open the desktop app, then Recheck.`);
+        renderTrustBanner({});
         return false;
       }
       const data = await res.json().catch(() => ({}));
+      window.__dxLastHealth = data;
       const platform = data.platform || data.os || 'local';
-      setProbeUi('online', 'Probe online', `${platform} · ${AGENT().replace(/^https?:\/\//, '')}`);
+      const elev = data.elevated ? 'elevated' : 'user';
+      const svc = data.service_mode ? ' · service' : '';
+      let dens = '';
+      if (String(platform).toLowerCase() === 'linux' && data.sensor_density) {
+        const d = data.sensor_density;
+        dens = ` · ${d.temp_channels || 0}T/${d.fan_channels || 0}F/${d.voltage_channels || 0}V/${d.power_channels || 0}W`;
+      }
+      setProbeUi('online', 'Probe online', `${platform} · ${elev}${svc}${dens} · ${AGENT().replace(/^https?:\/\//, '')}`);
+      renderTrustBanner(data);
       return true;
     } catch (_) {
       setProbeUi(
@@ -46,6 +122,7 @@
         'Probe offline',
         'Not reachable on this PC. Open PC Lab Kit desktop so the bundled probe starts, then Recheck.'
       );
+      renderTrustBanner({});
       return false;
     }
   }
@@ -130,6 +207,7 @@
     const grid = el('dx-overview-grid');
     if (grid) grid.innerHTML = `<p class="muted fs-sm">Scanning inventory…</p>`;
     const online = await checkProbe();
+    renderCertHandoff();
     if (!online) {
       if (grid) {
         grid.innerHTML = `<div class="dx-panel-empty">
@@ -170,6 +248,7 @@
     window.addEventListener('dx:tab-change', (ev) => {
       if (ev.detail?.tab === 'command') refreshInventory();
     });
+    window.addEventListener('dx:stress-cert', () => renderCertHandoff());
     refreshInventory();
   }
 

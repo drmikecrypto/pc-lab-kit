@@ -26,8 +26,12 @@
 
   function resolveProfile() {
     if (el('dx-stress-oracle')?.checked) return 'oracle';
+    const gpuMode = el('dx-stress-gpu-mode')?.value || 'fixed';
     const t = selectedTargets();
     if (!t.length) return '';
+    if (t.length === 1 && t[0] === 'gpu' && gpuMode !== 'fixed') {
+      return gpuMode === 'adaptive' ? 'gpu_adaptive' : gpuMode === 'variable' ? 'gpu_variable' : gpuMode === 'switch' ? 'gpu_switch' : 'gpu';
+    }
     if (t.length === 1) return t[0];
     if (t.length === 3) return 'combined';
     if (t.includes('cpu') && t.includes('gpu') && !t.includes('memory')) return 'combined';
@@ -66,7 +70,12 @@
     const t = selectedTargets();
     if (!t.length) return '';
     const map = { cpu: 'CPU', gpu: 'GPU', memory: 'Memory' };
-    return t.map((x) => map[x] || x).join('+');
+    let label = t.map((x) => map[x] || x).join('+');
+    if (t.length === 1 && t[0] === 'gpu') {
+      const mode = el('dx-stress-gpu-mode')?.value || 'fixed';
+      if (mode !== 'fixed') label = `GPU ${mode}`;
+    }
+    return label;
   }
 
   function updateRunLabel() {
@@ -154,7 +163,13 @@
       const body =
         profile === 'oracle'
           ? { seconds, collect_samples: true }
-          : { id: profile, seconds, percent: 100, collect_samples: true };
+          : {
+              id: profile,
+              seconds,
+              percent: 100,
+              collect_samples: true,
+              gpu_mode: el('dx-stress-gpu-mode')?.value || 'fixed',
+            };
 
       const res = await fetch(AGENT() + path, {
         method: 'POST',
@@ -215,6 +230,67 @@
     }
   }
 
+  async function issueCertificate(data) {
+    const run = data.stress || data.result || data;
+    const samples = run.samples || data.samples || [];
+    try {
+      const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+      const res = await fetch('/api/diagnostic/stress/certificate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
+        body: JSON.stringify({ run, samples }),
+      });
+      const out = await res.json().catch(() => ({}));
+      const cert = out.certificate || out;
+      const verdict = cert.verdict || run.status || 'completed';
+      const status = el('dx-ob-cert-status');
+      const actions = el('dx-ob-cert-actions');
+      if (status) {
+        status.innerHTML = `Stress <strong>${esc(String(verdict))}</strong> · ready for shop handoff`;
+      }
+      let html = cert.html || null;
+      if (!html && cert.document) {
+        html = `<pre>${esc(JSON.stringify(cert.document, null, 2))}</pre>`;
+      }
+      if (actions) {
+        actions.innerHTML = `<button type="button" class="dx-btn primary" id="dx-stress-open-cert">Open stress certificate</button>
+          <button type="button" class="dx-btn ghost" data-dx-goto="command">Overview handoff</button>`;
+        el('dx-stress-open-cert')?.addEventListener('click', () => {
+          const frame = el('dx-ob-cert-frame');
+          if (frame && html) {
+            frame.hidden = false;
+            frame.innerHTML = html;
+          } else if (html) {
+            const w = window.open('', '_blank');
+            if (w) {
+              w.document.write(html);
+              w.document.close();
+            }
+          }
+        });
+      }
+      try {
+        sessionStorage.setItem(
+          'pclab_last_stress_cert',
+          JSON.stringify({
+            verdict,
+            id: run.id || resolveProfile(),
+            summary: cert.summary || run.note || '',
+            html: html || null,
+          })
+        );
+      } catch (_) {}
+      window.dispatchEvent(new CustomEvent('dx:stress-cert', { detail: cert }));
+      if (window.PcLabOpenBook?.applySuiteCert) {
+        window.PcLabOpenBook.applySuiteCert({
+          result: { analysis: { stress_certificate: cert }, assembly_certificate_html: html },
+        });
+      }
+    } catch (_) {
+      /* certificate optional */
+    }
+  }
+
   function finishOk(data) {
     if (finished) return;
     finished = true;
@@ -224,14 +300,15 @@
     updateRunLabel();
     el('dx-stress-stop') && (el('dx-stress-stop').hidden = true);
     setProgress(100);
-    const verdict = data.verdict || data.stress?.verdict || data.result?.verdict || 'completed';
+    const verdict = data.verdict || data.stress?.verdict || data.result?.verdict || data.status || 'completed';
     setStatus(`Test ${verdict}`, false);
     const live = el('dx-stress-live');
     if (live) {
       live.innerHTML = `<div class="dx-stress-result"><strong>Done — ${esc(String(verdict))}</strong>
         <pre class="dx-hwref__raw muted fs-xs">${esc(JSON.stringify(data.stress || data.result || data, null, 2).slice(0, 4000))}</pre>
-        <p class="muted fs-sm">Export a certificate below, or run another duration.</p></div>`;
+        <p class="muted fs-sm">Issuing certificate for shop handoff…</p></div>`;
     }
+    issueCertificate(data);
   }
 
   async function stopStress() {
@@ -276,8 +353,10 @@
       document.querySelectorAll('input[name="dx-test-target"]').forEach((cb) => {
         cb.disabled = on;
       });
+      if (el('dx-stress-gpu-mode')) el('dx-stress-gpu-mode').disabled = on;
       updateRunLabel();
     });
+    el('dx-stress-gpu-mode')?.addEventListener('change', updateRunLabel);
     el('dx-stress-hours')?.addEventListener('input', updateRunLabel);
     el('dx-stress-minutes')?.addEventListener('input', updateRunLabel);
     document.querySelectorAll('.dx-test-preset').forEach((btn) => {
