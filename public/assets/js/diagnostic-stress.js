@@ -146,6 +146,7 @@
     setStatus(`Starting ${targetLabel() || profile} for ${formatDurationLabel(seconds)}…`, false);
 
     try {
+      if (window.PcLabProbeAuth) await window.PcLabProbeAuth.ensure();
       const health = await fetch(AGENT() + '/health', { mode: 'cors' });
       if (!health.ok) throw new Error('Probe offline — open the desktop app, then retry.');
 
@@ -158,7 +159,9 @@
       const res = await fetch(AGENT() + path, {
         method: 'POST',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: (window.PcLabProbeAuth && window.PcLabProbeAuth.jsonHeaders()) || {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(body),
       });
       const data = await res.json().catch(() => ({}));
@@ -240,7 +243,15 @@
     setProgress(0);
     setStatus('Stopped by user', false);
     try {
-      await fetch(AGENT() + '/suite/cancel', { method: 'POST', mode: 'cors' });
+      if (window.PcLabProbeAuth) await window.PcLabProbeAuth.ensure();
+      await fetch(AGENT() + '/suite/cancel', {
+        method: 'POST',
+        mode: 'cors',
+        headers: (window.PcLabProbeAuth && window.PcLabProbeAuth.jsonHeaders()) || {
+          'Content-Type': 'application/json',
+        },
+        body: '{}',
+      });
     } catch (_) {}
   }
 

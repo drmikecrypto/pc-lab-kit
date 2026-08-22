@@ -43,6 +43,10 @@ final class Router
         $method = strtoupper($method);
         $path = rtrim($path, '/') ?: '/';
 
+        if ($method === 'POST' || $method === 'PUT' || $method === 'PATCH' || $method === 'DELETE') {
+            require_csrf();
+        }
+
         foreach ($this->routes as $route) {
             if ($route['method'] !== $method) {
                 continue;

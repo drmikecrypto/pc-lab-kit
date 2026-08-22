@@ -48,7 +48,10 @@
     try {
       const r = await fetch('/api/diagnostic/topology', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        headers: (window.PcLabCsrf && window.PcLabCsrf.headers()) || {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
         body: '{}',
       });
       if (!r.ok) return;

@@ -52,7 +52,7 @@
         var res = await fetch('/api/track/event', {
           method: 'POST',
           keepalive: true,
-          headers: { 'Content-Type': 'application/json' },
+          headers: (window.PcLabCsrf && window.PcLabCsrf.headers()) || { 'Content-Type': 'application/json' },
           body: bodyStr,
         });
         if (res.status !== 429 || a === 2) return;

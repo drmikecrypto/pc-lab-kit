@@ -54,7 +54,7 @@ class VerifyController
                 'session' => $session,
             ]);
         } catch (\Throwable $e) {
-            return json_response(['ok' => false, 'error' => $e->getMessage()], 400);
+            return json_response(['ok' => false, 'error' => 'verify_failed', 'message' => 'Could not verify certificate payload.'], 400);
         }
     }
 }

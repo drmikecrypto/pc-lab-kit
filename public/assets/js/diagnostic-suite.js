@@ -5,12 +5,6 @@
   const AGENT = () => (window.PCLAB_DIAGNOSTIC && window.PCLAB_DIAGNOSTIC.agentBase) || 'http://127.0.0.1:18765';
   const LS_PHP = 'pclab_suite_php_job';
   const LS_PROBE = 'pclab_suite_probe_token';
-  const LS_AUTH = 'pclab_probe_auth_token';
-
-  let probeAuthToken = '';
-  try {
-    probeAuthToken = localStorage.getItem(LS_AUTH) || '';
-  } catch (_) {}
 
   function fp() {
     try {
@@ -26,10 +20,19 @@
   }
 
   function probeHeaders(json = true) {
+    const auth = window.PcLabProbeAuth;
+    if (auth) {
+      return json ? auth.jsonHeaders() : auth.headers();
+    }
     const h = {};
     if (json) h['Content-Type'] = 'application/json';
-    if (probeAuthToken) h['X-PcLab-Token'] = probeAuthToken;
     return h;
+  }
+
+  async function ensureProbeAuth() {
+    if (window.PcLabProbeAuth) {
+      await window.PcLabProbeAuth.ensure();
+    }
   }
 
   function el(id) {
@@ -124,31 +127,37 @@
 
   async function cancelPhpJob(phpJobId) {
     if (!phpJobId) return;
-    await fetch(`/api/diagnostic/suite/cancel/${phpJobId}`, {
-      method: 'POST',
-      headers: csrfHeaders(),
-      body: JSON.stringify({ id: phpJobId }),
-    }).catch(() => {});
+    try {
+      const res = await fetch(`/api/diagnostic/suite/cancel/${phpJobId}`, {
+        method: 'POST',
+        headers: csrfHeaders(),
+        body: JSON.stringify({ id: phpJobId }),
+      });
+      if (!res.ok) {
+        const status = el('dx-suite-status');
+        if (status) status.textContent = `Cancel failed (HTTP ${res.status}). Try Discard.`;
+      }
+    } catch (e) {
+      const status = el('dx-suite-status');
+      if (status) status.textContent = 'Cancel failed — ' + (e.message || String(e));
+    }
   }
 
   async function probeHealth() {
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 4000);
     try {
+      await ensureProbeAuth();
       const res = await fetch(AGENT() + '/health', { mode: 'cors', signal: ctrl.signal });
       if (!res.ok) {
+        updateProbeSla({ ok: false });
         return { ok: false, detail: `HTTP ${res.status}` };
       }
       const data = await res.json().catch(() => ({}));
-      if (data?.auth_token) {
-        probeAuthToken = String(data.auth_token);
-        try {
-          localStorage.setItem(LS_AUTH, probeAuthToken);
-        } catch (_) {}
-      }
       updateProbeSla(data);
       return { ok: true, data };
     } catch (e) {
+      updateProbeSla({ ok: false });
       return { ok: false, detail: e.message || String(e) };
     } finally {
       clearTimeout(timer);
@@ -476,22 +485,29 @@
   }
 
   async function discardSuite(phpJobId) {
-    if (phpJobId) {
-      await fetch(`/api/diagnostic/suite/discard/${phpJobId}`, {
-        method: 'POST',
-        headers: csrfHeaders(),
-        body: JSON.stringify({ id: phpJobId }),
-      }).catch(() => {});
-    }
-    await fetch(AGENT() + '/suite/discard', {
-      method: 'POST',
-      mode: 'cors',
-      headers: probeHeaders(),
-      body: JSON.stringify({}),
-    }).catch(() => {});
-    savePhpJob('');
     const status = el('dx-suite-status');
-    if (status) status.textContent = 'Suite discarded.';
+    try {
+      if (phpJobId) {
+        const res = await fetch(`/api/diagnostic/suite/discard/${phpJobId}`, {
+          method: 'POST',
+          headers: csrfHeaders(),
+          body: JSON.stringify({ id: phpJobId }),
+        });
+        if (!res.ok && status) status.textContent = `Discard failed (HTTP ${res.status}).`;
+      }
+      await ensureProbeAuth();
+      const pRes = await fetch(AGENT() + '/suite/discard', {
+        method: 'POST',
+        mode: 'cors',
+        headers: probeHeaders(),
+        body: JSON.stringify({}),
+      });
+      if (!pRes.ok && status) status.textContent = `Probe discard failed (HTTP ${pRes.status}).`;
+      else if (status) status.textContent = 'Suite discarded.';
+    } catch (e) {
+      if (status) status.textContent = 'Discard failed — ' + (e.message || String(e));
+    }
+    savePhpJob('');
     setProgress(0, 'Idle');
   }
 
@@ -506,6 +522,7 @@
 
     let id = phpJobId || loadPhpJob();
     try {
+      await ensureProbeAuth();
       await probeHealth();
       const st = await pollProbeSuite();
       const probeJob = st?.job || st;
@@ -571,6 +588,7 @@
 
     let phpJobId = null;
     try {
+      await ensureProbeAuth();
       let health = await probeHealth();
       if (!health.ok) {
         await tryRestartProbe();
@@ -639,8 +657,21 @@
 
   async function cancelSuite() {
     try {
-      await fetch(AGENT() + '/suite/cancel', { method: 'POST', mode: 'cors', headers: probeHeaders(), body: '{}' });
-    } catch (_) {}
+      await ensureProbeAuth();
+      const res = await fetch(AGENT() + '/suite/cancel', {
+        method: 'POST',
+        mode: 'cors',
+        headers: probeHeaders(),
+        body: '{}',
+      });
+      if (!res.ok) {
+        const status = el('dx-suite-status');
+        if (status) status.textContent = `Probe cancel failed (HTTP ${res.status}).`;
+      }
+    } catch (e) {
+      const status = el('dx-suite-status');
+      if (status) status.textContent = 'Probe cancel failed — ' + (e.message || String(e));
+    }
     const phpId = loadPhpJob();
     if (phpId) await cancelPhpJob(phpId);
     const status = el('dx-suite-status');
@@ -677,6 +708,9 @@
       console.warn('[PcLabSuite] #dx-suite-run missing — suite UI failed to initialize');
       return;
     }
+    if (window.PcLabProbeAuth) {
+      window.PcLabProbeAuth.ensure().catch(() => {});
+    }
     document.addEventListener('click', (ev) => {
       const t = ev.target;
       if (!(t instanceof Element)) return;
@@ -699,7 +733,7 @@
     updateSuiteCtaLabel();
     checkResumableOnBoot();
     setInterval(() => {
-      probeHealth().catch(() => {});
+      probeHealth().catch(() => updateProbeSla({ ok: false }));
     }, 15000);
   }
 

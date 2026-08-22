@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import sys
 import threading
 import time
-import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
@@ -23,11 +23,14 @@ import openbook  # noqa: E402
 import platform_intel  # noqa: E402
 import sensors  # noqa: E402
 import suite  # noqa: E402
-from common import elevated, json_bytes  # noqa: E402
+from common import elevated, json_bytes, load_or_create_probe_token  # noqa: E402
 
 PORT = int(os.environ.get("PCLAB_PROBE_PORT", "18765"))
 VERSION = 2
 AGENT = "pclab-probe-linux"
+PROBE_AUTH_TOKEN = load_or_create_probe_token()
+_LOOPBACK_ORIGIN = re.compile(r"^https?://(127\.0\.0\.1|localhost)(:\d+)?$")
+_MUTATING = re.compile(r"^/(suite|stress|oc|rgb|bench|drivers/install|orchestrate|launchers)(/|$)")
 
 
 class ProbeHandler(BaseHTTPRequestHandler):
@@ -37,9 +40,17 @@ class ProbeHandler(BaseHTTPRequestHandler):
         sys.stderr.write("[pclab-linux] " + (fmt % args) + "\n")
 
     def _cors(self) -> None:
-        self.send_header("Access-Control-Allow-Origin", "*")
+        origin = self.headers.get("Origin") or ""
+        if _LOOPBACK_ORIGIN.match(origin):
+            self.send_header("Access-Control-Allow-Origin", origin)
+            self.send_header("Access-Control-Allow-Credentials", "true")
+        else:
+            self.send_header("Access-Control-Allow-Origin", "http://127.0.0.1")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header(
+            "Access-Control-Allow-Headers",
+            "Content-Type, X-PcLab-Token, Authorization",
+        )
 
     def _send(self, code: int, obj) -> None:
         body = json_bytes(obj)
@@ -61,6 +72,28 @@ class ProbeHandler(BaseHTTPRequestHandler):
         except Exception:
             return {}
 
+    def _require_auth(self, method: str, path: str) -> bool:
+        if method != "POST" or not PROBE_AUTH_TOKEN:
+            return True
+        if not _MUTATING.match(path):
+            return True
+        tok = self.headers.get("X-PcLab-Token") or ""
+        if not tok:
+            auth = self.headers.get("Authorization") or ""
+            if auth.lower().startswith("bearer "):
+                tok = auth[7:].strip()
+        if tok != PROBE_AUTH_TOKEN:
+            self._send(
+                401,
+                {
+                    "ok": False,
+                    "error": "unauthorized",
+                    "message": "X-PcLab-Token required for mutating routes",
+                },
+            )
+            return False
+        return True
+
     def do_OPTIONS(self) -> None:  # noqa: N802
         self.send_response(204)
         self._cors()
@@ -70,18 +103,21 @@ class ProbeHandler(BaseHTTPRequestHandler):
         try:
             self._dispatch("GET")
         except Exception as exc:
-            self._send(500, {"ok": False, "error": str(exc), "trace": traceback.format_exc()[-800:]})
+            self._send(500, {"ok": False, "error": str(exc)})
 
     def do_POST(self) -> None:  # noqa: N802
         try:
             self._dispatch("POST")
         except Exception as exc:
-            self._send(500, {"ok": False, "error": str(exc), "trace": traceback.format_exc()[-800:]})
+            self._send(500, {"ok": False, "error": str(exc)})
 
     def _dispatch(self, method: str) -> None:
         parsed = urlparse(self.path)
         path = parsed.path.rstrip("/") or "/"
         qs = parse_qs(parsed.query)
+
+        if not self._require_auth(method, path):
+            return
 
         if path == "/":
             self._send(
@@ -129,6 +165,7 @@ class ProbeHandler(BaseHTTPRequestHandler):
                     "rgb": False,
                     "launchers": False,
                     "vkbench": False,
+                    "auth_required": bool(PROBE_AUTH_TOKEN),
                     "note": "Linux Platform Intelligence — DMI/sysfs/hwmon; no Ring0 MMIO open-book",
                 },
             )
@@ -259,6 +296,7 @@ def main() -> None:
     threading.Thread(target=_history_loop, name="pclab-hist", daemon=True).start()
     print(f"[PcLab Probe Linux v{VERSION}] http://{host}:{PORT}/  elevated={elevated()}", flush=True)
     print("  routes: /health /devices /drivers /openbook /suite/* /audit /telemetry", flush=True)
+    print(f"  auth_required={bool(PROBE_AUTH_TOKEN)}", flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

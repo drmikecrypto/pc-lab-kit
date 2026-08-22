@@ -187,6 +187,7 @@ class DiagnosticApiController
 
     public function diagnosticFull(): string
     {
+        require_rate_limit('diagnostic_mutate', 40);
         $input = decode_json_body_limited(6_291_456);
         if ($input === null) {
             return json_response(['ok' => false, 'message' => 'Report too large.'], 413);
@@ -195,33 +196,40 @@ class DiagnosticApiController
             return json_response(['error' => 'Empty report'], 400);
         }
 
-        $payload = $input;
-        if (($input['probe_version'] ?? 0) >= 2 || ($input['agent'] ?? '') === 'pclab-probe') {
-            $payload = (new DiagnosticAgentService())->normalize($input);
-            $payload = array_merge($payload, [
-                'import_format' => $input['import_format'] ?? null,
-                'import_content' => $input['import_content'] ?? null,
-                'selected_games' => array_slice((array) ($input['selected_games'] ?? []), 0, 20),
+        try {
+            $payload = $input;
+            if (($input['probe_version'] ?? 0) >= 2 || ($input['agent'] ?? '') === 'pclab-probe') {
+                $payload = (new DiagnosticAgentService())->normalize($input);
+                $payload = array_merge($payload, [
+                    'import_format' => $input['import_format'] ?? null,
+                    'import_content' => $input['import_content'] ?? null,
+                    'selected_games' => array_slice((array) ($input['selected_games'] ?? []), 0, 20),
+                ]);
+            }
+
+            $result = (new DiagnosticService())->analyzeFull($payload);
+            $out = $this->finalizeDiagnostic('full', $payload, $result);
+
+            $fp = $this->diagnosticFingerprint($payload);
+            (new TrackUserEventAction())([
+                'fingerprint' => $fp,
+                'event_type' => 'diagnostic_full',
+                'target_type' => 'health',
+                'target_id' => (string) ($out['health_score'] ?? 0),
+                'metadata' => $this->labMetaFromAnalysis($out, $payload, 'full'),
             ]);
+
+            return json_response($out);
+        } catch (\Throwable $e) {
+            error_log('diagnosticFull: ' . $e->getMessage());
+
+            return json_response(['ok' => false, 'message' => 'Analysis failed. Please try again.'], 500);
         }
-
-        $result = (new DiagnosticService())->analyzeFull($payload);
-        $out = $this->finalizeDiagnostic('full', $payload, $result);
-
-        $fp = $this->diagnosticFingerprint($payload);
-        (new TrackUserEventAction())([
-            'fingerprint' => $fp,
-            'event_type' => 'diagnostic_full',
-            'target_type' => 'health',
-            'target_id' => (string) ($out['health_score'] ?? 0),
-            'metadata' => $this->labMetaFromAnalysis($out, $payload, 'full'),
-        ]);
-
-        return json_response($out);
     }
 
     public function diagnosticAgent(): string
     {
+        require_rate_limit('diagnostic_mutate', 40);
         $input = decode_json_body_limited(6_291_456);
         if ($input === null) {
             return json_response(['ok' => false, 'message' => 'Report too large.'], 413);
@@ -230,32 +238,39 @@ class DiagnosticApiController
             return json_response(['error' => 'Empty agent payload'], 400);
         }
 
-        $normalized = (new DiagnosticAgentService())->normalize($input);
-        $payload = array_merge($normalized, [
-            'selected_games' => array_slice((array) ($input['selected_games'] ?? []), 0, 20),
-            'imports' => $input['imports'] ?? [],
-            'import_format' => $input['import_format'] ?? null,
-            'import_content' => $input['import_content'] ?? null,
-            'telemetry' => $input['telemetry'] ?? ($normalized['telemetry'] ?? []),
-        ]);
+        try {
+            $normalized = (new DiagnosticAgentService())->normalize($input);
+            $payload = array_merge($normalized, [
+                'selected_games' => array_slice((array) ($input['selected_games'] ?? []), 0, 20),
+                'imports' => $input['imports'] ?? [],
+                'import_format' => $input['import_format'] ?? null,
+                'import_content' => $input['import_content'] ?? null,
+                'telemetry' => $input['telemetry'] ?? ($normalized['telemetry'] ?? []),
+            ]);
 
-        $result = (new DiagnosticService())->analyzeFull($payload);
-        $out = $this->finalizeDiagnostic('agent', $payload, $result);
+            $result = (new DiagnosticService())->analyzeFull($payload);
+            $out = $this->finalizeDiagnostic('agent', $payload, $result);
 
-        $fp = $this->diagnosticFingerprint($payload);
-        (new TrackUserEventAction())([
-            'fingerprint' => $fp,
-            'event_type' => 'diagnostic_agent',
-            'target_type' => 'health',
-            'target_id' => (string) ($out['health_score'] ?? 0),
-            'metadata' => $this->labMetaFromAnalysis($out, $payload, 'agent'),
-        ]);
+            $fp = $this->diagnosticFingerprint($payload);
+            (new TrackUserEventAction())([
+                'fingerprint' => $fp,
+                'event_type' => 'diagnostic_agent',
+                'target_type' => 'health',
+                'target_id' => (string) ($out['health_score'] ?? 0),
+                'metadata' => $this->labMetaFromAnalysis($out, $payload, 'agent'),
+            ]);
 
-        return json_response($out);
+            return json_response($out);
+        } catch (\Throwable $e) {
+            error_log('diagnosticAgent: ' . $e->getMessage());
+
+            return json_response(['ok' => false, 'message' => 'Analysis failed. Please try again.'], 500);
+        }
     }
 
     public function diagnosticImport(): string
     {
+        require_rate_limit('diagnostic_mutate', 40);
         $input = decode_json_body_limited(8_388_608);
         if ($input === null) {
             return json_response(['ok' => false, 'message' => 'Import file too large.'], 413);
@@ -266,23 +281,29 @@ class DiagnosticApiController
             return json_response(['error' => 'format and content required'], 400);
         }
 
-        $parsed = (new DiagnosticImportService())->parse($format, $content);
-        $base = (array) ($input['report'] ?? []);
-        if ($base !== []) {
-            $base['import_format'] = $format;
-            $base['import_content'] = $content;
-            $full = (new DiagnosticService())->analyzeFull($base);
-            $analysis = $this->finalizeDiagnostic('agent', $base, $full);
+        try {
+            $parsed = (new DiagnosticImportService())->parse($format, $content);
+            $base = (array) ($input['report'] ?? []);
+            if ($base !== []) {
+                $base['import_format'] = $format;
+                $base['import_content'] = $content;
+                $full = (new DiagnosticService())->analyzeFull($base);
+                $analysis = $this->finalizeDiagnostic('agent', $base, $full);
 
-            return json_response([
-                'import' => $parsed,
-                'analysis' => $analysis,
-                'saved' => $analysis['saved'] ?? [],
-                'comparison' => $analysis['comparison'] ?? null,
-            ]);
+                return json_response([
+                    'import' => $parsed,
+                    'analysis' => $analysis,
+                    'saved' => $analysis['saved'] ?? [],
+                    'comparison' => $analysis['comparison'] ?? null,
+                ]);
+            }
+
+            return json_response(['import' => $parsed]);
+        } catch (\Throwable $e) {
+            error_log('diagnosticImport: ' . $e->getMessage());
+
+            return json_response(['ok' => false, 'message' => 'Import failed. Please try again.'], 500);
         }
-
-        return json_response(['import' => $parsed]);
     }
 
     public function diagnosticGameSettings(): string
@@ -388,23 +409,61 @@ class DiagnosticApiController
 
     public function diagnosticFleetBurnIn(): string
     {
+        require_rate_limit('fleet_burn_in', 10);
         $input = decode_json_body_limited(65536) ?? [];
         $targets = $input['targets'] ?? ['127.0.0.1:18765'];
         if (!is_array($targets) || $targets === []) {
             $targets = ['127.0.0.1:18765'];
         }
         $profile = (string) ($input['profile'] ?? 'deep');
-        $result = (new \App\Services\ShopFleetService())->queueBurnIn(
-            array_map('strval', $targets),
-            $profile,
-            [
-                'duration_hours' => $input['duration_hours'] ?? 24,
-                'duration_seconds' => $input['duration_seconds'] ?? null,
-                'probe_base' => $input['probe_base'] ?? 'http://127.0.0.1:18765',
-            ]
-        );
+        try {
+            $result = (new \App\Services\ShopFleetService())->queueBurnIn(
+                array_map('strval', $targets),
+                $profile,
+                [
+                    'duration_hours' => $input['duration_hours'] ?? 24,
+                    'duration_seconds' => $input['duration_seconds'] ?? null,
+                    'probe_base' => $input['probe_base'] ?? 'http://127.0.0.1:18765',
+                ]
+            );
+        } catch (\InvalidArgumentException $e) {
+            return json_response(['ok' => false, 'error' => 'invalid_probe_base', 'message' => $e->getMessage()], 400);
+        }
 
         return json_response(array_merge(['ok' => true], $result));
+    }
+
+    /** Same-origin session bootstrap for probe mutating routes (never from /health). */
+    public function diagnosticProbeAuth(): string
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            @session_start();
+        }
+        $svc = new \App\Services\ProbeAuthService();
+        $cfg = require dirname(__DIR__, 2) . '/config/diagnostic.php';
+        $wa = $cfg['probe_agent'] ?? $cfg['windows_agent'] ?? [];
+        $host = trim((string) ($wa['local_host'] ?? '127.0.0.1')) ?: '127.0.0.1';
+        $port = (int) ($wa['local_port'] ?? 18765);
+        $base = 'http://' . $host . ':' . max(1, min(65535, $port));
+        if (!$svc->isLoopbackProbeBase($base)) {
+            return json_response(['ok' => false, 'error' => 'probe_not_loopback', 'auth_required' => false], 403);
+        }
+        $resolved = $svc->resolve();
+        if ($resolved['token'] === null) {
+            return json_response([
+                'ok' => true,
+                'auth_required' => false,
+                'token' => null,
+                'source' => $resolved['source'],
+            ]);
+        }
+
+        return json_response([
+            'ok' => true,
+            'auth_required' => true,
+            'token' => $resolved['token'],
+            'source' => $resolved['source'],
+        ]);
     }
 
     public function diagnosticFederatedAggregates(): string
@@ -817,6 +876,7 @@ class DiagnosticApiController
 
     public function diagnosticSuiteFinalize(string $id = ''): string
     {
+        require_rate_limit('suite_finalize', 20);
         set_time_limit(180);
         $input = decode_json_body_limited(12_582_912);
         if ($input === null) {
@@ -835,7 +895,7 @@ class DiagnosticApiController
         } catch (\Throwable $e) {
             error_log('suite finalize: ' . $e->getMessage());
 
-            return json_response(['ok' => false, 'error' => 'finalize_failed', 'message' => $e->getMessage()], 500);
+            return json_response(['ok' => false, 'error' => 'finalize_failed', 'message' => 'Suite finalize failed. Please try again.'], 500);
         }
 
         $fp = $this->diagnosticFingerprint($input);

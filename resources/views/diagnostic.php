@@ -651,6 +651,7 @@ window.PCLAB_DIAGNOSTIC = {
     windowsAgent: <?= json_encode($cfg['windows_agent'] ?? [], JSON_UNESCAPED_UNICODE) ?>
 };
 </script>
+<script defer src="/assets/js/diagnostic-probe-auth.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-capabilities.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-tabs.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-command-layout.js?v=1.3.0"></script>

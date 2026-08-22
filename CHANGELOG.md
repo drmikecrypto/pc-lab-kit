@@ -6,6 +6,17 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.1.4] - 2026-08-22
+
+### Security
+- Probe `/health` no longer returns `auth_token`; UI bootstraps via `GET /api/diagnostic/probe-auth` (session)
+- Linux probe auth parity (token file/env, header gate, loopback CORS); Windows drops `?token=` and tightens SSE CORS
+- Server-side CSRF verification on all PHP mutating routes; fleet `probe_base` allowlist + per-session rate limits
+- Tauri CSP enabled (self + loopback probe)
+
+### Changed
+- Calm cancel/discard and Probe SLA down states; Capabilities soft-hide for Linux-missing Advanced actions
+
 ## [4.1.3] - 2026-08-21
 
 ### Changed — Detect → decide → execute lab UI

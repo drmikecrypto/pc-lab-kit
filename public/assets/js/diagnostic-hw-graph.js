@@ -79,7 +79,7 @@
     try {
       const r = await fetch(API, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: (window.PcLabCsrf && window.PcLabCsrf.headers()) || { 'Content-Type': 'application/json' },
         body: JSON.stringify({ probe: probe || lastProbe || {} }),
       });
       const data = await r.json();

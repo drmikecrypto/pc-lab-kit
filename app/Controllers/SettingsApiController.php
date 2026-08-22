@@ -15,6 +15,7 @@ class SettingsApiController
 
     public function save(): string
     {
+        require_rate_limit('settings_save', 30);
         $input = decode_json_body_limited(65536);
         if ($input === null) {
             return json_response(['ok' => false, 'message' => 'Request too large.'], 413);

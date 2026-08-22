@@ -41,17 +41,25 @@ jobs:
           npm ci || npm install
           npx playwright install --with-deps chromium
       - name: Start PHP lab + mock probe
+        env:
+          PCLAB_PROBE_TOKEN: e2e-mock-token
         run: |
           php -S 127.0.0.1:8080 -t public >/tmp/php.log 2>&1 &
           node e2e/mock-probe-server.js 18765 >/tmp/mock-probe.log 2>&1 &
           sleep 2
           curl -sf http://127.0.0.1:8080/diagnostic >/dev/null
           curl -sf http://127.0.0.1:18765/health >/dev/null
+          # Health must not leak auth_token
+          ! curl -sf http://127.0.0.1:18765/health | grep -q auth_token
+          # Session probe-auth returns mock token
+          curl -sf -c /tmp/pclab.ck http://127.0.0.1:8080/diagnostic >/dev/null
+          curl -sf -b /tmp/pclab.ck http://127.0.0.1:8080/api/diagnostic/probe-auth | grep -q e2e-mock-token
       - name: Playwright
         run: npx playwright test e2e/suite-resume-oem.spec.js e2e/suite-smoke.spec.js
         env:
           CI: 'true'
           PCLAB_BASE_URL: http://127.0.0.1:8080
           PCLAB_SKIP_WEB_SERVER: '1'
+          PCLAB_PROBE_TOKEN: e2e-mock-token
           # Use bundled Chromium from `playwright install` (not system Chrome channel).
           PCLAB_PLAYWRIGHT_CHANNEL: ''

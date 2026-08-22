@@ -23,9 +23,15 @@
     }
     const st = el('dx-toolkit-run-status');
     if (st) {
-      st.textContent = probeOk
-        ? 'Probe connected — run a benchmark here, or open the Stress tab for soaks.'
-        : 'Start PcLab Probe (bundled in the desktop app) for native benchmarks.';
+      if (probeOk) {
+        st.textContent = 'Probe connected — run a benchmark here, or open the Test tab for soaks.';
+        st.classList.remove('is-error');
+      } else {
+        st.innerHTML =
+          'Probe not ready. Open the desktop app so the bundled probe starts. <button type="button" class="dx-btn ghost" id="dx-toolkit-retry-probe">Retry</button>';
+        st.classList.add('is-error');
+        st.querySelector('#dx-toolkit-retry-probe')?.addEventListener('click', () => probeHealth());
+      }
     }
     document.querySelectorAll('.dx-toolkit-run-btn').forEach((btn) => {
       btn.disabled = !probeOk || btn.dataset.busy === '1';
@@ -35,11 +41,26 @@
   async function loadCatalog() {
     try {
       const res = await fetch('/api/diagnostic/toolkit');
-      if (!res.ok) return;
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       catalog = await res.json();
       renderCatalog(catalog);
       renderRunButtons(catalog.runnable || {});
-    } catch (_) {}
+    } catch (_) {
+      const grid = el('dx-toolkit-grid');
+      if (grid) {
+        grid.innerHTML = `<div class="dx-panel-empty is-error">
+          <strong>Toolkit unavailable</strong>
+          <p class="muted fs-sm">Could not load the catalog. Retry after the lab is ready.</p>
+          <button type="button" class="dx-btn primary" id="dx-toolkit-retry-catalog">Retry</button>
+        </div>`;
+        grid.querySelector('#dx-toolkit-retry-catalog')?.addEventListener('click', () => loadCatalog());
+      }
+      const st = el('dx-toolkit-run-status');
+      if (st) {
+        st.textContent = 'Catalog load failed — Retry above.';
+        st.classList.add('is-error');
+      }
+    }
   }
 
   function renderSummary(summary) {
@@ -159,7 +180,7 @@
     try {
       const res = await fetch('/api/diagnostic/stress/certificate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: (window.PcLabCsrf && window.PcLabCsrf.headers()) || { 'Content-Type': 'application/json' },
         body: JSON.stringify({ run, samples: run.samples || [] }),
       });
       const data = await res.json();
@@ -208,16 +229,22 @@
     if (out) { out.hidden = false; out.textContent = 'Working…'; }
     startOverlay(btn.querySelector('strong')?.textContent || id);
     try {
+      if (window.PcLabProbeAuth) await window.PcLabProbeAuth.ensure();
       const path = kind === 'stress' ? '/stress/run' : '/bench/run';
       const body = kind === 'stress'
         ? { id, seconds, collect_samples: true }
         : { id, seconds };
       const res = await fetch(AGENT + path, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: (window.PcLabProbeAuth && window.PcLabProbeAuth.jsonHeaders()) || {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(body),
       });
       const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || data.message || `HTTP ${res.status}`);
+      }
       let cert = null;
       if (kind === 'stress') {
         cert = await issueCertificate(data);

@@ -34,9 +34,9 @@
 
     // Soft-hide Windows-only surfaces when Linux probe reports them unavailable
     const winOnly = [
-      { sel: '#dx-rgb-lab, [data-dx-goto="rgb"], [href="#dx-rgb-lab"]', on: caps.rgb !== false },
-      { sel: '[data-dx-panel="oc"], #dx-oc-lab, [href="#dx-oc-lab"]', on: caps.oc !== false },
-      { sel: '#dx-launchers, [data-dx-goto="launchers"]', on: caps.launchers !== false },
+      { sel: '#dx-rgb-lab, [data-dx-goto="rgb"], [href="#dx-rgb-lab"], [data-dx-panel="rgb"]', on: caps.rgb !== false },
+      { sel: '[data-dx-panel="oc"], #dx-oc-lab, [href="#dx-oc-lab"], [data-dx-goto="oc"]', on: caps.oc !== false },
+      { sel: '#dx-launchers, [data-dx-goto="launchers"], [data-dx-panel="launchers"]', on: caps.launchers !== false },
     ];
     winOnly.forEach(({ sel, on }) => {
       document.querySelectorAll(sel).forEach((node) => {
@@ -52,6 +52,10 @@
         }
       });
     });
+
+    if (!caps.ok && !caps.platform) {
+      document.documentElement.dataset.probePlatform = 'offline';
+    }
 
     // Prefer Linux probe download when health says linux
     if (isLinux && cfg.appDownload && cfg.appDownload.linux) {

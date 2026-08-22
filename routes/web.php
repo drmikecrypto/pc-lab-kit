@@ -48,6 +48,7 @@ $router->post('/api/diagnostic/hardware-graph', fn () => $api->diagnosticHardwar
 $router->get('/api/diagnostic/telemetry/stream', fn () => $api->diagnosticTelemetryStream());
 $router->get('/api/diagnostic/fleet/discover', fn () => $api->diagnosticFleetDiscover());
 $router->post('/api/diagnostic/fleet/burn-in', fn () => $api->diagnosticFleetBurnIn());
+$router->get('/api/diagnostic/probe-auth', fn () => $api->diagnosticProbeAuth());
 $router->get('/api/diagnostic/federated/aggregates', fn () => $api->diagnosticFederatedAggregates());
 $router->get('/api/diagnostic/history', fn () => $api->diagnosticHistory());
 $router->get('/api/diagnostic/report/{token}', fn (string $token) => $api->diagnosticReport($token));

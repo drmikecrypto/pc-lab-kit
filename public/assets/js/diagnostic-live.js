@@ -332,7 +332,10 @@
     } catch (_) {
       strip.classList.remove('visible');
       const note = el('dx-sensor-note');
-      if (note) { note.hidden = true; }
+      if (note) {
+        note.hidden = false;
+        note.textContent = 'Probe offline — sensor strip pauses until the desktop probe is running.';
+      }
       const box = el('dx-driver-actions');
       if (box) { box.hidden = true; box.innerHTML = ''; }
     }
@@ -461,10 +464,13 @@
         note.hidden = false;
         note.textContent = 'Installing driver package…';
       }
+      if (window.PcLabProbeAuth) await window.PcLabProbeAuth.ensure();
       const res = await fetch(`${AGENT}/drivers/install`, {
         method: 'POST',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: (window.PcLabProbeAuth && window.PcLabProbeAuth.jsonHeaders()) || {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           confirm: true,
           instance_id: instanceId,
@@ -531,7 +537,7 @@
     } catch (_) {
       if (note) {
         note.hidden = false;
-        note.textContent = 'Could not reach Probe /drivers. Is Start-PcLabProbe.bat running?';
+        note.textContent = 'Probe not ready — open the desktop app, then Rescan drivers.';
       }
       if (box) box.hidden = false;
     }

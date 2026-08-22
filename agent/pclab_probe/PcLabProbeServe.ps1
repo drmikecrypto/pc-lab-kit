@@ -128,12 +128,11 @@ try {
         $code = 200
         $ctype = "application/json; charset=utf-8"
 
-        # Mutating routes require the per-install probe token (header or query).
+        # Mutating routes require the per-install probe token (header / Bearer only).
         $mutating = $req.HttpMethod -eq 'POST' -and $path -match '^/(suite|stress|oc|rgb|bench|drivers/install|orchestrate|launchers)/'
         if ($mutating -and $script:ProbeAuthToken) {
             $tok = $req.Headers['X-PcLab-Token']
             if (-not $tok) { $tok = $req.Headers['Authorization'] -replace '^Bearer\s+', '' }
-            if (-not $tok) { $tok = $req.QueryString['token'] }
             if (-not $tok -or $tok -ne $script:ProbeAuthToken) {
                 $code = 401
                 $body = '{"ok":false,"error":"unauthorized","message":"X-PcLab-Token required for mutating routes"}'
@@ -152,7 +151,13 @@ try {
         if ($path -eq "/telemetry/stream" -and $req.HttpMethod -eq 'GET') {
             $res.StatusCode = 200
             $res.ContentType = "text/event-stream; charset=utf-8"
-            $res.Headers.Add("Access-Control-Allow-Origin", "*")
+            $sseOrigin = $req.Headers['Origin']
+            if ($sseOrigin -match '^https?://(127\.0\.0\.1|localhost)(:\d+)?$') {
+                $res.Headers.Add("Access-Control-Allow-Origin", $sseOrigin)
+                $res.Headers.Add("Access-Control-Allow-Credentials", "true")
+            } else {
+                $res.Headers.Add("Access-Control-Allow-Origin", "http://127.0.0.1")
+            }
             $res.Headers.Add("Cache-Control", "no-cache")
             $res.SendChunked = $true
             $enc = [System.Text.Encoding]::UTF8
@@ -229,8 +234,7 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
                 $lastErr = if ($script:ProbeLastError) { ($script:ProbeLastError -replace '"','\"') } else { '' }
                 $svc = $script:ServiceMode.ToString().ToLower()
                 $authRequired = ([bool]$script:ProbeAuthToken).ToString().ToLower()
-                $tokJson = if ($script:ProbeAuthToken) { '"' + $script:ProbeAuthToken + '"' } else { 'null' }
-                $body = '{"ok":true,"agent":"pclab-probe","version":6,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"open_book_count":' + $obCount + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true,"uptime_s":' + $uptime + ',"pid":' + $PID + ',"service_mode":' + $svc + ',"last_error":' + $(if ($lastErr) { '"' + $lastErr + '"' } else { 'null' }) + ',"auth_required":' + $authRequired + ',"auth_token":' + $tokJson + ',"ring0":' + $elevated.ToString().ToLower() + '}'
+                $body = '{"ok":true,"agent":"pclab-probe","version":6,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"open_book_count":' + $obCount + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true,"uptime_s":' + $uptime + ',"pid":' + $PID + ',"service_mode":' + $svc + ',"last_error":' + $(if ($lastErr) { '"' + $lastErr + '"' } else { 'null' }) + ',"auth_required":' + $authRequired + ',"ring0":' + $elevated.ToString().ToLower() + '}'
             }
             "/probe" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $probeScript

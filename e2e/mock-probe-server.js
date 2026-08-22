@@ -32,7 +32,6 @@ const routes = {
       ...h,
       ok: true,
       auth_required: true,
-      auth_token: AUTH,
       uptime_s: 42,
       pid: 1,
       service_mode: false,

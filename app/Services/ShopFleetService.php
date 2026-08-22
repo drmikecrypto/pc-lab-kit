@@ -9,6 +9,9 @@ namespace App\Services;
  */
 class ShopFleetService
 {
+    public const DEFAULT_PROBE_PORT = 18765;
+    public const FLEET_PORT_BASE = 18760;
+
     /** @return list<array<string, mixed>> */
     public function discover(int $timeoutMs = 800): array
     {
@@ -18,7 +21,8 @@ class ShopFleetService
             return $this->localhostProbe();
         }
         for ($i = 1; $i <= min(32, $base); ++$i) {
-            $url = "http://127.0.0.1:1876{$i}/health";
+            $port = self::FLEET_PORT_BASE + $i;
+            $url = 'http://127.0.0.1:' . $port . '/health';
             $ctx = stream_context_create(['http' => ['timeout' => $timeoutMs / 1000]]);
             $raw = @file_get_contents($url, false, $ctx);
             if ($raw === false) {
@@ -26,11 +30,47 @@ class ShopFleetService
             }
             $json = json_decode($raw, true);
             if (is_array($json) && !empty($json['ok'])) {
-                $hosts[] = ['host' => '127.0.0.1', 'port' => 18760 + $i, 'health' => $json];
+                // Never forward secrets if a legacy probe still echoes them
+                unset($json['auth_token']);
+                $hosts[] = ['host' => '127.0.0.1', 'port' => $port, 'health' => $json];
             }
         }
 
         return array_merge($this->localhostProbe(), $hosts);
+    }
+
+    /**
+     * Normalize and allowlist probe_base to loopback ports only.
+     */
+    public function allowlistProbeBase(?string $probeBase, ?int $fleetScanMax = null): ?string
+    {
+        $raw = trim((string) ($probeBase ?? ''));
+        if ($raw === '') {
+            $raw = 'http://127.0.0.1:' . self::DEFAULT_PROBE_PORT;
+        }
+        $parts = parse_url($raw);
+        if (!is_array($parts)) {
+            return null;
+        }
+        $scheme = strtolower((string) ($parts['scheme'] ?? 'http'));
+        if ($scheme !== 'http' && $scheme !== 'https') {
+            return null;
+        }
+        $host = strtolower((string) ($parts['host'] ?? ''));
+        if ($host !== '127.0.0.1' && $host !== 'localhost' && $host !== '::1') {
+            return null;
+        }
+        $port = (int) ($parts['port'] ?? self::DEFAULT_PROBE_PORT);
+        $maxExtra = $fleetScanMax ?? (int) (getenv('PCLAB_FLEET_SCAN') ?: 0);
+        $allowed = [self::DEFAULT_PROBE_PORT];
+        for ($i = 1; $i <= min(32, max(0, $maxExtra)); ++$i) {
+            $allowed[] = self::FLEET_PORT_BASE + $i;
+        }
+        if (!in_array($port, $allowed, true)) {
+            return null;
+        }
+
+        return 'http://127.0.0.1:' . $port;
     }
 
     /**
@@ -40,11 +80,17 @@ class ShopFleetService
      */
     public function queueBurnIn(array $targets, string $profile = 'deep', array $opts = []): array
     {
+        $probeBase = $this->allowlistProbeBase(
+            isset($opts['probe_base']) ? (string) $opts['probe_base'] : null
+        );
+        if ($probeBase === null) {
+            throw new \InvalidArgumentException('probe_base must be a loopback allowlisted port');
+        }
+
         $queue = new JobQueueService();
         $jobs = [];
         $hours = (float) ($opts['duration_hours'] ?? 24);
         $seconds = isset($opts['duration_seconds']) ? (int) $opts['duration_seconds'] : null;
-        $probeBase = (string) ($opts['probe_base'] ?? 'http://127.0.0.1:18765');
         foreach ($targets as $t) {
             $payload = [
                 'target' => $t,
@@ -58,7 +104,7 @@ class ShopFleetService
             $jobs[] = $queue->enqueue('burn_in_24h', $payload, $t);
         }
 
-        return ['queued' => count($jobs), 'job_ids' => $jobs];
+        return ['queued' => count($jobs), 'job_ids' => $jobs, 'probe_base' => $probeBase];
     }
 
     /** @return list<array<string, mixed>> */
@@ -66,7 +112,7 @@ class ShopFleetService
     {
         $cfg = require dirname(__DIR__, 2) . '/config/diagnostic.php';
         $wa = $cfg['probe_agent'] ?? $cfg['windows_agent'] ?? [];
-        $port = (int) ($wa['local_port'] ?? 18765);
+        $port = (int) ($wa['local_port'] ?? self::DEFAULT_PROBE_PORT);
         $url = 'http://127.0.0.1:' . $port . '/health';
         $ctx = stream_context_create(['http' => ['timeout' => 1]]);
         $raw = @file_get_contents($url, false, $ctx);
@@ -74,9 +120,11 @@ class ShopFleetService
             return [];
         }
         $json = json_decode($raw, true);
+        if (!is_array($json) || empty($json['ok'])) {
+            return [];
+        }
+        unset($json['auth_token']);
 
-        return is_array($json) && !empty($json['ok'])
-            ? [['host' => '127.0.0.1', 'port' => $port, 'health' => $json]]
-            : [];
+        return [['host' => '127.0.0.1', 'port' => $port, 'health' => $json]];
     }
 }

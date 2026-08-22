@@ -69,14 +69,27 @@
   }
 
   async function fetchHistory() {
+    const note = document.getElementById('dx-telemetry-note') || document.getElementById('dx-telemetry-status');
     try {
       const res = await fetch(`${AGENT}/telemetry/history`, { mode: 'cors' });
       if (res.ok) {
         history = await res.json();
         if (!Array.isArray(history)) history = [];
         drawSparklines();
+        if (note) {
+          note.textContent = '';
+          note.classList.remove('is-error');
+        }
+      } else if (note) {
+        note.textContent = 'Probe not ready — telemetry history unavailable. Retry from Overview.';
+        note.classList.add('is-error');
       }
-    } catch (_) {}
+    } catch (_) {
+      if (note) {
+        note.textContent = 'Probe offline — open the desktop app, then refresh telemetry.';
+        note.classList.add('is-error');
+      }
+    }
   }
 
   async function fetchDriversAndPresent(includeWu) {

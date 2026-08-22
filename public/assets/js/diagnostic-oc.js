@@ -8,6 +8,11 @@
   let countdownTimer = null;
   let cancelCountdown = false;
 
+  async function probeJsonHeaders() {
+    if (window.PcLabProbeAuth) await window.PcLabProbeAuth.ensure();
+    return (window.PcLabProbeAuth && window.PcLabProbeAuth.jsonHeaders()) || { 'Content-Type': 'application/json' };
+  }
+
   function esc(s) {
     const d = document.createElement('div');
     d.textContent = s ?? '';
@@ -103,7 +108,7 @@
       const res = await fetch(`${AGENT}/oc/preflight`, {
         method: 'POST',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await probeJsonHeaders(),
         body: JSON.stringify({ idle_seconds: 10, load_seconds: 10 }),
       });
       lastPreflight = await res.json();
@@ -158,7 +163,7 @@
       const res = await fetch(`${AGENT}/oc/apply`, {
         method: 'POST',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await probeJsonHeaders(),
         body: JSON.stringify(lastOcPlan),
       });
       lastApply = await res.json();
@@ -170,7 +175,7 @@
       const watchRes = await fetch(`${AGENT}/oc/watch`, {
         method: 'POST',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await probeJsonHeaders(),
         body: JSON.stringify({ seconds: 60, breach_seconds: 20, auto_rollback: true }),
       });
       lastWatch = await watchRes.json();
@@ -199,7 +204,12 @@
     setOcStep('rollback');
     if (st) st.textContent = 'Rolling back…';
     try {
-      const res = await fetch(`${AGENT}/oc/rollback`, { method: 'POST', mode: 'cors' });
+      const res = await fetch(`${AGENT}/oc/rollback`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: await probeJsonHeaders(),
+        body: '{}',
+      });
       const data = await res.json();
       if (!data.ok) throw new Error('rollback failed');
       if (st) st.textContent = 'Previous settings restored.';
@@ -212,9 +222,10 @@
     const st = document.getElementById('dx-oc-status');
     if (!lastOcPlan) return;
     try {
+      const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
       const res = await fetch('/api/diagnostic/oc/report', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf },
         body: JSON.stringify({
           plan: lastOcPlan,
           apply: lastApply || {},

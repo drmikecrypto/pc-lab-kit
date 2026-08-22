@@ -13,6 +13,11 @@
     return { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': t };
   }
 
+  async function probeJsonHeaders() {
+    if (window.PcLabProbeAuth) await window.PcLabProbeAuth.ensure();
+    return (window.PcLabProbeAuth && window.PcLabProbeAuth.jsonHeaders()) || { 'Content-Type': 'application/json' };
+  }
+
   function esc(s) {
     const d = document.createElement('div');
     d.textContent = s ?? '';
@@ -253,7 +258,7 @@
       const applyRes = await fetch(`${AGENT}/orchestrate`, {
         method: 'POST',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await probeJsonHeaders(),
         body: JSON.stringify({ plan }),
       });
       const apply = await applyRes.json();
@@ -312,7 +317,7 @@
 
     try {
       const res = await fetch(`${AGENT}/rgb/apply`, {
-        method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', mode: 'cors', headers: await probeJsonHeaders(),
         body: JSON.stringify({ zones }),
       });
       const data = await res.json();
@@ -337,7 +342,12 @@
   async function stopBlink() {
     const stEl = document.getElementById('dx-rgb-status');
     try {
-      const res = await fetch(`${AGENT}/rgb/stop`, { method: 'POST', mode: 'cors' });
+      const res = await fetch(`${AGENT}/rgb/stop`, {
+        method: 'POST',
+        mode: 'cors',
+        headers: await probeJsonHeaders(),
+        body: '{}',
+      });
       const data = await res.json().catch(() => ({}));
       if (stEl) {
         stEl.textContent = data.message || 'Blink stopped · jobs cleared';
@@ -389,7 +399,7 @@
 
     try {
       const res = await fetch(`${AGENT}/rgb/lcd`, {
-        method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' },
+        method: 'POST', mode: 'cors', headers: await probeJsonHeaders(),
         body: JSON.stringify(payload),
       });
       const data = await res.json();

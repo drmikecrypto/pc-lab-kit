@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import time
+import uuid
 from typing import Any
 
 
@@ -43,6 +44,39 @@ def sha256_hex(material: str) -> str:
 
 def json_bytes(obj: Any) -> bytes:
     return json.dumps(obj, ensure_ascii=False, separators=(",", ":"), default=str).encode("utf-8")
+
+
+def probe_token_path() -> str:
+    xdg = os.environ.get("XDG_DATA_HOME") or os.path.join(os.path.expanduser("~"), ".local", "share")
+    return os.path.join(xdg, "PcLabKit", "Probe", "auth.token")
+
+
+def load_or_create_probe_token() -> str:
+    """Env PCLAB_PROBE_TOKEN or ~/.local/share/PcLabKit/Probe/auth.token (create GUID)."""
+    env = (os.environ.get("PCLAB_PROBE_TOKEN") or "").strip()
+    if env:
+        return env
+    path = probe_token_path()
+    try:
+        if os.path.isfile(path):
+            with open(path, "r", encoding="ascii", errors="replace") as fh:
+                existing = fh.read().strip()
+            if existing:
+                return existing
+    except Exception:
+        pass
+    token = uuid.uuid4().hex
+    try:
+        os.makedirs(os.path.dirname(path), mode=0o700, exist_ok=True)
+        with open(path, "w", encoding="ascii") as fh:
+            fh.write(token)
+        try:
+            os.chmod(path, 0o600)
+        except Exception:
+            pass
+    except Exception:
+        pass
+    return token
 
 
 def chassis_is_laptop(chassis_type: str | int | None) -> bool:

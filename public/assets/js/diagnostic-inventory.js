@@ -158,7 +158,7 @@
     try {
       const res = await fetch('/api/diagnostic/topology', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: (window.PcLabCsrf && window.PcLabCsrf.headers()) || { 'Content-Type': 'application/json' },
         body: JSON.stringify({ probe: probeBundle }),
       });
       const data = await res.json();
@@ -187,7 +187,7 @@
         try {
           const res = await fetch('/api/diagnostic/topology', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: (window.PcLabCsrf && window.PcLabCsrf.headers()) || { 'Content-Type': 'application/json' },
             body: JSON.stringify({ probe: { devices: lastDevicesRaw, probe_version: 2, agent: 'pclab-probe' } }),
           });
           const data = await res.json();
@@ -232,7 +232,7 @@
 
       const presentRes = await fetch('/api/diagnostic/inventory/present', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: (window.PcLabCsrf && window.PcLabCsrf.headers()) || { 'Content-Type': 'application/json' },
         body: JSON.stringify({ devices }),
       });
       lastInventory = await presentRes.json();

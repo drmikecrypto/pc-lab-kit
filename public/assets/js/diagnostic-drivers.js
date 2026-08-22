@@ -231,10 +231,13 @@
     btn.disabled = true;
     setNote('Installing driver package…', false);
     try {
+      if (window.PcLabProbeAuth) await window.PcLabProbeAuth.ensure();
       const res = await fetch(`${AGENT()}/drivers/install`, {
         method: 'POST',
         mode: 'cors',
-        headers: { 'Content-Type': 'application/json' },
+        headers: (window.PcLabProbeAuth && window.PcLabProbeAuth.jsonHeaders()) || {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({
           confirm: true,
           instance_id: instanceId,

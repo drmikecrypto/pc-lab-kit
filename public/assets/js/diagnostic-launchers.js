@@ -43,9 +43,12 @@
     const status = document.getElementById('dx-launcher-status');
     if (status) status.textContent = 'Launching ' + id + '…';
     try {
+      if (window.PcLabProbeAuth) await window.PcLabProbeAuth.ensure();
       const res = await fetch(AGENT() + '/launchers/run', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: (window.PcLabProbeAuth && window.PcLabProbeAuth.jsonHeaders()) || {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ id, seconds: 90 }),
       });
       const data = await res.json();
@@ -55,7 +58,7 @@
       }
       const certRes = await fetch('/api/diagnostic/stress/certificate', {
         method: 'POST',
-        headers: {
+        headers: (window.PcLabCsrf && window.PcLabCsrf.headers()) || {
           'Content-Type': 'application/json',
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
         },
