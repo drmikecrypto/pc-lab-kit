@@ -23,7 +23,7 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.4.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.4.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-arena.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.1.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.2.0">
 
 <div class="container dx-shell">
 
@@ -263,17 +263,18 @@ $toolTotal = $toolKit->total();
         <section class="dx-openbook-lab glass-effect" aria-label="Open Book Lab">
             <div class="dx-openbook-lab__head">
                 <div>
-                    <p class="dx-command-center__eyebrow">Open Book Lab</p>
-                    <h2>Silicon truth · firmware · recovered sensors</h2>
-                    <p class="muted fs-sm">BIOS/UEFI, VBIOS, microcode, PCI config, SPD, EDID, and register-level thermals the vendor APIs hide. Requires elevated Probe. Soak tests live in the <strong>Test</strong> tab.</p>
+                    <p class="dx-command-center__eyebrow">Platform Console</p>
+                    <h2>Daily assembly · silicon truth · firmware planes</h2>
+                    <p class="muted fs-sm">Coverage meter + firmware identity for shop-floor assembly. BIOS/UEFI, VBIOS, microcode, PCI config, SPD, EDID, and recovered thermals. Requires elevated Probe. Soak tests live in the <strong>Test</strong> tab.</p>
                 </div>
                 <div class="dx-hwref__toolbar">
-                    <button type="button" class="dx-btn primary" id="dx-ob-refresh">Refresh</button>
+                    <button type="button" class="dx-btn primary" id="dx-ob-refresh">Refresh assembly</button>
                     <button type="button" class="dx-btn ghost" id="dx-ob-export-dossier">Export dossier</button>
                     <button type="button" class="dx-btn ghost" data-dx-goto="stress">Open Test</button>
                     <span class="dx-hwref__status" id="dx-ob-status">Waiting for Probe…</span>
                 </div>
             </div>
+            <div id="dx-ob-assembly" class="dx-ob-assembly" aria-label="Assembly checklist" hidden></div>
             <div class="dx-truth-cards" id="dx-ob-truth-cards" aria-label="Firmware identity cards"></div>
             <div class="dx-openbook-lab__grid dx-openbook-lab__grid--two">
                 <aside class="dx-openbook-lab__col" id="dx-ob-dossier" aria-label="Silicon dossier">
@@ -651,8 +652,8 @@ window.PCLAB_DIAGNOSTIC = {
     windowsAgent: <?= json_encode($cfg['windows_agent'] ?? [], JSON_UNESCAPED_UNICODE) ?>
 };
 </script>
-<script defer src="/assets/js/diagnostic-probe-auth.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-capabilities.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-probe-auth.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-capabilities.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-tabs.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-command-layout.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-toolkit.js?v=1.1.0"></script>
@@ -667,11 +668,11 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.1.4"></script>
-<script defer src="/assets/js/diagnostic-suite.js?v=1.5.0"></script>
+<script defer src="/assets/js/diagnostic-suite.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-openbook.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-openbook.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-inventory.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-launchers.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry-stream.js?v=1.0.0"></script>

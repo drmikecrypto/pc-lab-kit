@@ -17,6 +17,8 @@ require $root . '/vendor/autoload.php';
 use App\Database;
 use App\Services\JobQueueService;
 use App\Services\LabSuiteService;
+use App\Services\ProbeAuthService;
+use App\Services\ShopFleetService;
 use App\Support\Env;
 
 Env::load($root . '/.env');
@@ -109,14 +111,14 @@ function runBurnIn(string $jobId, array $payload, JobQueueService $queue, string
         $seconds = max(30, min(86400, (int) $payload['duration_seconds']));
     }
     $profile = (string) ($payload['profile'] ?? 'deep');
-    $probeBase = rtrim((string) ($payload['probe_base'] ?? 'http://127.0.0.1:18765'), '/');
-    $token = (string) ($payload['probe_token'] ?? '');
-    if ($token === '') {
-        $tokFile = (getenv('LOCALAPPDATA') ?: sys_get_temp_dir()) . '/PcLabKit/Probe/auth.token';
-        if (is_file($tokFile)) {
-            $token = trim((string) file_get_contents($tokFile));
-        }
+    $probeBaseRaw = (string) ($payload['probe_base'] ?? 'http://127.0.0.1:18765');
+    $probeBase = (new ShopFleetService())->allowlistProbeBase($probeBaseRaw);
+    if ($probeBase === null) {
+        throw new RuntimeException('probe_base not allowlisted for loopback fleet');
     }
+    // Never trust client-supplied probe_token in job payload — read local token only.
+    $resolved = (new ProbeAuthService())->resolve();
+    $token = (string) ($resolved['token'] ?? '');
 
     $queue->updateProgress($jobId, 5, 'running');
     $queue->heartbeat($jobId, $owner, $leaseSec);

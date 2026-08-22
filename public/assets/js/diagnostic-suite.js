@@ -171,9 +171,16 @@
     const elev = data.elevated || data.ring0 ? 'elevated' : 'user';
     const svc = data.service_mode ? 'service' : 'sidecar';
     const up = data.uptime_s != null ? `${Math.round(Number(data.uptime_s))}s` : '—';
+    const auth =
+      data.auth_required === true
+        ? ' · auth on'
+        : data.auth_required === false
+          ? ' · auth off'
+          : '';
+    const plat = data.platform ? ` · ${String(data.platform)}` : '';
     rail.hidden = false;
     rail.innerHTML = `<span class="dx-probe-sla__dot is-${alive}"></span>
-      <strong>Probe</strong> ${esc(alive)} · ${esc(elev)} · ${esc(svc)} · up ${esc(up)}
+      <strong>Probe</strong> ${esc(alive)} · ${esc(elev)} · ${esc(svc)} · up ${esc(up)}${esc(auth)}${esc(plat)}
       ${data.last_error ? ` · <span class="warn">${esc(String(data.last_error).slice(0, 80))}</span>` : ''}`;
   }
 
@@ -641,6 +648,11 @@
         }
         showSuiteError('Probe refused to start the suite.', why);
         return;
+      }
+
+      const honesty = pData?.honesty?.note || pData?.job?.honesty?.note;
+      if (honesty && status) {
+        status.textContent = honesty;
       }
 
       await waitProbeAndFinalize(phpJobId, pData?.plan);

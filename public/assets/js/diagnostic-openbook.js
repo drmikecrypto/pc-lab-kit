@@ -40,15 +40,90 @@
     if (!fp) return '';
     const score = Number(fp.coverage_score ?? 0);
     const gaps = Array.isArray(fp.gaps) ? fp.gaps : [];
+    const planes = Array.isArray(fp.planes) ? fp.planes : [];
     const gapList = gaps.slice(0, 6).map((g) =>
       `<li><code>${esc(g.plane || g.reason || '')}</code> — ${esc(g.detail || '')}</li>`
     ).join('');
+    const planeChips = planes.slice(0, 12).map((p) => {
+      const id = typeof p === 'string' ? p : (p.id || p.name || '');
+      const ok = typeof p === 'object' ? p.ok !== false && p.measured !== false : true;
+      return `<span class="dx-ob-plane ${ok ? 'is-ok' : 'is-gap'}">${esc(id)}</span>`;
+    }).join('');
     return `<div class="dx-platform-coverage">
       <div class="dx-platform-coverage__bar" role="meter" aria-valuenow="${esc(score)}" aria-valuemin="0" aria-valuemax="100">
         <span style="width:${esc(Math.min(100, Math.max(0, score)))}%"></span>
       </div>
       <p class="fs-sm"><strong>${esc(score)}%</strong> platform coverage · ${esc(fp.planes_measured ?? '—')}/${esc(fp.planes_total ?? '—')} planes · ${esc(fp.form_factor || '—')} · fp <code>${esc((fp.id || '').slice(0, 12))}</code></p>
+      ${planeChips ? `<div class="dx-ob-planes">${planeChips}</div>` : ''}
       ${gapList ? `<ul class="dx-platform-coverage__gaps muted fs-xs">${gapList}</ul>` : ''}
+    </div>`;
+  }
+
+  function assemblyChecklistHtml(ob) {
+    const fp = ob.fingerprint || {};
+    const dossier = ob.dossier || {};
+    const plat = ob.platform || dossier.platform || {};
+    const fw = dossier.firmware_inventory || {};
+    const cpu = dossier.cpu || {};
+    const gpu = dossier.gpu || {};
+    const steps = [
+      {
+        id: 'uefi',
+        label: 'UEFI / BIOS identity',
+        ok: !!(plat.bios?.version || fw.bios_version || dossier.board?.bios),
+        hint: 'Elevate Probe if BIOS fields are empty',
+      },
+      {
+        id: 'microcode',
+        label: 'CPU microcode',
+        ok: !!(cpu.microcode || fw.cpu_microcode || plat.microcode?.revision),
+        hint: 'Registry / OS microcode revision',
+      },
+      {
+        id: 'vbios',
+        label: 'GPU VBIOS',
+        ok: !!(gpu.vbios || fw.gpu_vbios),
+        hint: 'Vendor identity string + hash when available',
+      },
+      {
+        id: 'tpm',
+        label: 'TPM / Secure Boot',
+        ok: !!(plat.tpm?.present || fw.tpm?.present || fw.secure_boot != null),
+        hint: 'Platform security plane',
+      },
+      {
+        id: 'openbook',
+        label: 'Open-book sensors',
+        ok: (ob.count || 0) > 0,
+        hint: 'Recovered thermals / VRAM — needs elevation for Ring0',
+      },
+      {
+        id: 'coverage',
+        label: 'Coverage ≥ 60%',
+        ok: Number(fp.coverage_score ?? 0) >= 60,
+        hint: `Currently ${fp.coverage_score ?? '—'}%`,
+      },
+    ];
+    const done = steps.filter((s) => s.ok).length;
+    const next = steps.find((s) => !s.ok);
+    return `<div class="dx-ob-assembly__inner">
+      <div class="dx-ob-assembly__head">
+        <strong>Assembly checklist</strong>
+        <span class="muted fs-xs">${done}/${steps.length} ready for daily verify</span>
+      </div>
+      <ol class="dx-ob-assembly__list">${steps
+        .map(
+          (s) => `<li class="${s.ok ? 'is-ok' : 'is-todo'}">
+          <span class="dx-ob-assembly__mark">${s.ok ? '✓' : '○'}</span>
+          <span><strong>${esc(s.label)}</strong><br><span class="muted fs-xs">${esc(s.hint)}</span></span>
+        </li>`
+        )
+        .join('')}</ol>
+      ${
+        next
+          ? `<p class="dx-ob-assembly__next muted fs-sm">Next: <strong>${esc(next.label)}</strong> — ${esc(next.hint)}</p>`
+          : `<p class="dx-ob-assembly__next is-ok fs-sm">Assembly planes look complete — export dossier or run Test soak.</p>`
+      }
     </div>`;
   }
 
@@ -234,6 +309,11 @@
       const dossierHtml = renderDossierHtml(ob.dossier);
       const truth = el('dx-ob-truth-cards');
       if (truth) truth.innerHTML = truthCardsHtml(ob.dossier, ob.platform, ob.fingerprint);
+      const assembly = el('dx-ob-assembly');
+      if (assembly) {
+        assembly.hidden = false;
+        assembly.innerHTML = assemblyChecklistHtml(ob);
+      }
       const hwTable = el('dx-hwref-openbook-table');
       if (hwTable) hwTable.innerHTML = table;
       const hwDossier = el('dx-hwref-dossier-body');
@@ -247,12 +327,24 @@
       if (status) status.textContent = `${ob.count} open-book · ${ob.fingerprint?.coverage_score ?? '—'}% coverage · ${ob.provenance_total || 0} tags · ${ob.dossier?.cpu?.model || 'Probe ok'}`;
       window.dispatchEvent(new CustomEvent('dx:openbook-updated', { detail: data }));
     } catch (e) {
-      if (status) status.textContent = 'Probe offline';
-      const msg = '<p class="muted fs-sm">Open Book unavailable — start elevated Probe (bundled in the desktop app).</p>';
-      ['dx-ob-table', 'dx-hwref-openbook-table'].forEach((id) => {
+      if (status) status.textContent = 'Probe not ready';
+      const msg = `<div class="dx-panel-empty is-error">
+        <strong>Probe not ready</strong>
+        <p class="muted fs-sm">Open Book needs the desktop Probe (elevated for Ring0 firmware planes). Start PC Lab Kit, then Refresh assembly.</p>
+        <button type="button" class="dx-btn primary" id="dx-ob-retry">Retry</button>
+      </div>`;
+      ['dx-ob-table', 'dx-hwref-openbook-table', 'dx-ob-dossier-body'].forEach((id) => {
         const n = el(id);
         if (n) n.innerHTML = msg;
       });
+      el('dx-ob-retry')?.addEventListener('click', () => refresh());
+      const assembly = el('dx-ob-assembly');
+      if (assembly) {
+        assembly.hidden = false;
+        assembly.innerHTML = `<div class="dx-ob-assembly__inner"><p class="muted fs-sm">Assembly checklist waits for Probe.</p></div>`;
+      }
+      const truth = el('dx-ob-truth-cards');
+      if (truth) truth.innerHTML = '';
     }
   }
 

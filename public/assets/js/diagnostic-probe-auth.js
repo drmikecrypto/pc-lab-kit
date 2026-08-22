@@ -1,13 +1,17 @@
 /**
  * Same-origin probe token bootstrap (PHP session). Never from /health.
+ * In-memory only — no localStorage (XSS / shared-profile residual).
  */
 (function () {
-  const LS_AUTH = 'pclab_probe_auth_token';
+  const LEGACY_LS = 'pclab_probe_auth_token';
   let cached = '';
+  let fetchedAt = 0;
   let inflight = null;
+  const TTL_MS = 30 * 60 * 1000;
 
+  // Drop any legacy persisted token from earlier builds
   try {
-    cached = localStorage.getItem(LS_AUTH) || '';
+    localStorage.removeItem(LEGACY_LS);
   } catch (_) {}
 
   function token() {
@@ -24,8 +28,12 @@
     return headers({ 'Content-Type': 'application/json' });
   }
 
-  async function ensure() {
-    if (cached) return cached;
+  function isFresh() {
+    return !!cached && Date.now() - fetchedAt < TTL_MS;
+  }
+
+  async function ensure(force) {
+    if (!force && isFresh()) return cached;
     if (inflight) return inflight;
     inflight = (async () => {
       try {
@@ -33,16 +41,14 @@
           credentials: 'same-origin',
           headers: { Accept: 'application/json' },
         });
-        if (!res.ok) return '';
+        if (!res.ok) return cached || '';
         const data = await res.json().catch(() => ({}));
         if (data && data.token) {
           cached = String(data.token);
-          try {
-            localStorage.setItem(LS_AUTH, cached);
-          } catch (_) {}
+          fetchedAt = Date.now();
         }
       } catch (_) {
-        /* probe auth optional until probe is up */
+        /* probe auth optional until lab is up */
       } finally {
         inflight = null;
       }
@@ -53,8 +59,9 @@
 
   function clear() {
     cached = '';
+    fetchedAt = 0;
     try {
-      localStorage.removeItem(LS_AUTH);
+      localStorage.removeItem(LEGACY_LS);
     } catch (_) {}
   }
 

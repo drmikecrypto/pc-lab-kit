@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: PC Lab Kit Diagnostic API
-  version: 4.1.4
+  version: 4.1.5
   description: Local-first PC laboratory REST API (localhost only).
 servers:
   - url: http://127.0.0.1:8080

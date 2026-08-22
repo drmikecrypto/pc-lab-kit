@@ -6,6 +6,17 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.1.5] - 2026-08-22
+
+### Security
+- Probe token kept in memory only (no `localStorage`); legacy key cleared on load
+- Broader per-session rate limits on suite/OC/orchestrate/session/fleet discover paths
+- Fleet job worker uses `ProbeAuthService` and ignores payload `probe_token`
+
+### Changed
+- Open Book Platform Console: assembly checklist + plane chips + calm offline empty
+- Linux probe honesty flags (no Stability Oracle / OC / RGB / Ring0 parity messaging)
+
 ## [4.1.4] - 2026-08-22
 
 ### Security

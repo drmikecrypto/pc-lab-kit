@@ -222,6 +222,85 @@
   padding-left: 1.1rem;
 }
 
+.dx-ob-planes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.dx-ob-plane {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid #30363d;
+  background: #161b22;
+  color: #8b949e;
+}
+
+.dx-ob-plane.is-ok {
+  border-color: #238636;
+  color: #3fb950;
+}
+
+.dx-ob-plane.is-gap {
+  border-color: #9e6a03;
+  color: #d29922;
+}
+
+.dx-ob-assembly {
+  margin: 0 0 1rem;
+  border: 1px solid #30363d;
+  background: #0d1117;
+  padding: 0.85rem 1rem;
+}
+
+.dx-ob-assembly__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.55rem;
+}
+
+.dx-ob-assembly__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.5rem;
+}
+
+.dx-ob-assembly__list li {
+  display: flex;
+  gap: 0.45rem;
+  align-items: flex-start;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid #21262d;
+  background: #161b22;
+}
+
+.dx-ob-assembly__list li.is-ok {
+  border-color: #23863633;
+}
+
+.dx-ob-assembly__mark {
+  font-weight: 700;
+  color: #8b949e;
+}
+
+.dx-ob-assembly__list li.is-ok .dx-ob-assembly__mark {
+  color: #3fb950;
+}
+
+.dx-ob-assembly__next {
+  margin: 0.65rem 0 0;
+}
+
+.dx-ob-assembly__next.is-ok {
+  color: #3fb950;
+}
+
 .dx-driver-checklist {
   list-style: none;
   margin: 0;

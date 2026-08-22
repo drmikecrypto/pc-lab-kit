@@ -30,6 +30,15 @@ def status() -> dict[str, Any]:
     with _lock:
         out = dict(_state)
         out["ok"] = True
+        out["platform"] = "linux"
+        out["honesty"] = {
+            "stability_oracle": False,
+            "oc": False,
+            "rgb": False,
+            "ring0": False,
+            "driver_install": False,
+            "note": "Linux suite uses sysfs/hwmon benches + short stress samples — not Windows Stability Oracle / Ring0 parity.",
+        }
         return out
 
 
@@ -119,7 +128,15 @@ def start(profile: str, inventory: dict[str, Any] | None, telemetry: dict[str, A
         daemon=True,
     )
     _thread.start()
-    return {"ok": True, "id": job_id, "job": status()}
+    return {
+        "ok": True,
+        "id": job_id,
+        "job": status(),
+        "honesty": {
+            "stability_oracle": False,
+            "note": "Linux Adaptive Lab is Platform Intelligence + sysfs benches; OC/RGB/Ring0/Stability Oracle remain Windows-only.",
+        },
+    }
 
 
 def _run_job(

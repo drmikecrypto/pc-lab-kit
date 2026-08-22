@@ -166,7 +166,14 @@ class ProbeHandler(BaseHTTPRequestHandler):
                     "launchers": False,
                     "vkbench": False,
                     "auth_required": bool(PROBE_AUTH_TOKEN),
-                    "note": "Linux Platform Intelligence — DMI/sysfs/hwmon; no Ring0 MMIO open-book",
+                    "note": "Linux Platform Intelligence — DMI/sysfs/hwmon; no Ring0 MMIO, OC, RGB, or Stability Oracle parity",
+                    "honesty": {
+                        "oc": False,
+                        "rgb": False,
+                        "ring0": False,
+                        "stability_oracle": False,
+                        "driver_install": False,
+                    },
                 },
             )
             return

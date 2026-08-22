@@ -157,6 +157,7 @@ class DiagnosticApiController
 
     public function diagnosticLite(): string
     {
+        require_rate_limit('diagnostic_mutate', 40);
         set_time_limit(120);
         $input = decode_json_body_limited(524288);
         if ($input === null) {
@@ -351,6 +352,7 @@ class DiagnosticApiController
 
     public function diagnosticHardwareGraph(): string
     {
+        require_rate_limit('diagnostic_mutate', 40);
         $body = decode_json_body_limited(512_000);
         $probe = is_array($body['probe'] ?? null) ? $body['probe'] : [];
         if ($probe === [] && is_array($body['raw'] ?? null)) {
@@ -404,6 +406,7 @@ class DiagnosticApiController
 
     public function diagnosticFleetDiscover(): string
     {
+        require_rate_limit('fleet_discover', 30);
         return json_response(['probes' => (new \App\Services\ShopFleetService())->discover()]);
     }
 
@@ -544,6 +547,7 @@ class DiagnosticApiController
     /** Issue a stress pass/fail certificate from Probe run JSON + optional samples. */
     public function diagnosticStressCertificate(): string
     {
+        require_rate_limit('diagnostic_mutate', 30);
         $input = decode_json_body_limited(2_097_152);
         if ($input === null) {
             return json_response(['error' => 'payload_too_large'], 413);
@@ -607,6 +611,7 @@ class DiagnosticApiController
     /** OC safety report HTML (print → PDF). */
     public function diagnosticOcReportExport(): string
     {
+        require_rate_limit('oc_mutate', 30);
         $input = decode_json_body_limited(2_097_152);
         if ($input === null) {
             return json_response(['error' => 'payload_too_large'], 413);
@@ -676,6 +681,7 @@ class DiagnosticApiController
 
     public function diagnosticOcPlan(): string
     {
+        require_rate_limit('oc_mutate', 30);
         $input = decode_json_body_limited(6_291_456);
         if ($input === null) {
             return json_response(['error' => 'payload_too_large'], 413);
@@ -709,6 +715,7 @@ class DiagnosticApiController
 
     public function diagnosticOrchestrate(): string
     {
+        require_rate_limit('orchestrate', 20);
         $input = decode_json_body_limited(2_097_152);
         if ($input === null) {
             return json_response(['error' => 'payload_too_large'], 413);
@@ -734,6 +741,7 @@ class DiagnosticApiController
 
     public function diagnosticOrchestrateNarrate(): string
     {
+        require_rate_limit('orchestrate', 30);
         $input = decode_json_body_limited(262144);
         if ($input === null) {
             return json_response(['error' => 'payload_too_large'], 413);
@@ -752,6 +760,7 @@ class DiagnosticApiController
 
     public function trackEvent(): string
     {
+        require_rate_limit('track_event', 120);
         $input = decode_json_body_limited(20000);
         if ($input === null) {
             return json_response(['success' => false], 413);
@@ -777,6 +786,7 @@ class DiagnosticApiController
 
     public function diagnosticSuitePlan(): string
     {
+        require_rate_limit('suite_mutate', 40);
         $input = decode_json_body_limited(512000) ?? [];
         $input['fp'] = $this->diagnosticFingerprint($input);
         $plan = (new LabSuiteService())->planPreview($input);
@@ -786,6 +796,7 @@ class DiagnosticApiController
 
     public function diagnosticPlatformAudit(): string
     {
+        require_rate_limit('suite_mutate', 20);
         $input = decode_json_body_limited(1024000) ?? [];
         $audit = (new PlatformAuditService())->build($input);
 
@@ -798,6 +809,7 @@ class DiagnosticApiController
 
     public function diagnosticSuiteStart(): string
     {
+        require_rate_limit('suite_mutate', 20);
         $input = decode_json_body_limited(65536) ?? [];
         $input['fp'] = $this->diagnosticFingerprint($input);
         $job = (new LabSuiteService())->start($input);
@@ -827,6 +839,7 @@ class DiagnosticApiController
 
     public function diagnosticSuiteCancel(string $id = ''): string
     {
+        require_rate_limit('suite_mutate', 40);
         $input = decode_json_body_limited(65536) ?? [];
         if ($id === '') {
             $id = (string) ($input['id'] ?? $_GET['id'] ?? '');
@@ -841,6 +854,7 @@ class DiagnosticApiController
 
     public function diagnosticSuiteDiscard(string $id = ''): string
     {
+        require_rate_limit('suite_mutate', 40);
         $input = decode_json_body_limited(65536) ?? [];
         if ($id === '') {
             $id = (string) ($input['id'] ?? $_GET['id'] ?? '');
@@ -862,6 +876,7 @@ class DiagnosticApiController
 
     public function diagnosticSuitePatch(string $id = ''): string
     {
+        require_rate_limit('suite_mutate', 60);
         $input = decode_json_body_limited(524288) ?? [];
         if ($id === '') {
             $id = (string) ($input['id'] ?? '');
@@ -920,6 +935,7 @@ class DiagnosticApiController
 
     public function diagnosticSensorDeckSave(): string
     {
+        require_rate_limit('sensor_deck', 40);
         $input = decode_json_body_limited(131072) ?? [];
         try {
             $layout = (new SensorDeckService())->save($input);
@@ -984,6 +1000,7 @@ class DiagnosticApiController
 
     public function diagnosticSessionExport(): string
     {
+        require_rate_limit('session_mutate', 20);
         $input = decode_json_body_limited(12_582_912) ?? [];
         $analysis = is_array($input['analysis'] ?? null) ? $input['analysis'] : $input;
         if ($analysis === []) {
@@ -1000,6 +1017,7 @@ class DiagnosticApiController
 
     public function diagnosticSessionImport(): string
     {
+        require_rate_limit('session_mutate', 20);
         $input = decode_json_body_limited(12_582_912) ?? [];
         $json = (string) ($input['json'] ?? $input['session'] ?? '');
         if ($json === '' && isset($input['format'])) {
@@ -1047,6 +1065,7 @@ class DiagnosticApiController
 
     public function diagnosticStabilityOracleInterpret(): string
     {
+        require_rate_limit('diagnostic_mutate', 30);
         $input = decode_json_body_limited(4_194_304) ?? [];
         $run = is_array($input['run'] ?? null) ? $input['run'] : $input;
         if ($run === []) {

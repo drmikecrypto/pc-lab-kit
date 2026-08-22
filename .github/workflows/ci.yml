@@ -54,6 +54,24 @@ jobs:
           # Session probe-auth returns mock token
           curl -sf -c /tmp/pclab.ck http://127.0.0.1:8080/diagnostic >/dev/null
           curl -sf -b /tmp/pclab.ck http://127.0.0.1:8080/api/diagnostic/probe-auth | grep -q e2e-mock-token
+          # CSRF reject without token
+          code=$(curl -s -o /tmp/csrf.json -w '%{http_code}' -b /tmp/pclab.ck \
+            -X POST http://127.0.0.1:8080/api/diagnostic/suite/start \
+            -H 'Content-Type: application/json' \
+            -d '{"profile":"adaptive"}')
+          test "$code" = "403"
+          grep -q csrf_invalid /tmp/csrf.json
+          # CSRF accept with meta token from diagnostic HTML
+          curl -sf -b /tmp/pclab.ck -c /tmp/pclab.ck http://127.0.0.1:8080/diagnostic -o /tmp/diag.html
+          csrf=$(grep -oP 'name="csrf-token" content="\K[^"]+' /tmp/diag.html | head -1)
+          test -n "$csrf"
+          code=$(curl -s -o /tmp/ok.json -w '%{http_code}' -b /tmp/pclab.ck \
+            -X POST http://127.0.0.1:8080/api/diagnostic/suite/start \
+            -H 'Content-Type: application/json' \
+            -H "X-CSRF-TOKEN: $csrf" \
+            -d '{"profile":"adaptive"}')
+          test "$code" = "200"
+          grep -q '"ok"' /tmp/ok.json
       - name: Playwright
         run: npx playwright test e2e/suite-resume-oem.spec.js e2e/suite-smoke.spec.js
         env:

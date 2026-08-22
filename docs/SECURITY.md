@@ -15,7 +15,8 @@ PC Lab Kit is a **local-first** lab. Hardening targets malicious browser tabs on
 - Windows and Linux probes bind to **127.0.0.1** and require `X-PcLab-Token` (or `Authorization: Bearer`) on mutating POSTs.
 - Token lives in `%LOCALAPPDATA%\PcLabKit\Probe\auth.token` (Windows) or `~/.local/share/PcLabKit/Probe/auth.token` (Linux), overridable with `PCLAB_PROBE_TOKEN`.
 - **`GET /health` never returns the token** — only `auth_required: true`.
-- The web UI bootstraps the token via same-origin `GET /api/diagnostic/probe-auth` (PHP session), then caches it in `localStorage`.
+- The web UI bootstraps the token via same-origin `GET /api/diagnostic/probe-auth` (PHP session) and keeps it **in memory only** (30-minute TTL, re-fetch). It does **not** persist to `localStorage`.
+- The fleet job worker resolves the token via `ProbeAuthService` and **ignores** any `probe_token` field in job payloads.
 
 ## CSRF
 

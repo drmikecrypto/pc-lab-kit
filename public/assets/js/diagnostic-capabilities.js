@@ -22,6 +22,32 @@
 
   window.PCLAB_PROBE_CAPS = Object.assign({}, DEFAULTS);
 
+  function ensureLinuxEmptyStates(caps, isLinux) {
+    let banner = document.getElementById('dx-linux-advanced-note');
+    const need =
+      isLinux &&
+      (caps.oc === false || caps.rgb === false || caps.launchers === false || caps.vkbench === false);
+    if (!need) {
+      if (banner) banner.hidden = true;
+      return;
+    }
+    if (!banner) {
+      const host =
+        document.querySelector('[data-dx-panel="advanced"]') ||
+        document.getElementById('dx-advanced-lab') ||
+        document.querySelector('.dx-lab-nav');
+      if (!host) return;
+      banner = document.createElement('div');
+      banner.id = 'dx-linux-advanced-note';
+      banner.className = 'dx-panel-empty';
+      banner.setAttribute('role', 'status');
+      host.prepend(banner);
+    }
+    banner.hidden = false;
+    banner.innerHTML = `<strong>Linux probe limits</strong>
+      <p class="muted fs-sm">OC, RGB, launchers, and Ring0 Open Book MMIO stay Windows-only. Suite / Adaptive Lab / Drivers / Audit / sysfs Open Book work here — not Stability Oracle parity.</p>`;
+  }
+
   function applyCaps(health) {
     const caps = Object.assign({}, DEFAULTS, health || {});
     caps.ok = !!(health && (health.ok !== false));
@@ -52,6 +78,8 @@
         }
       });
     });
+
+    ensureLinuxEmptyStates(caps, isLinux);
 
     if (!caps.ok && !caps.platform) {
       document.documentElement.dataset.probePlatform = 'offline';
