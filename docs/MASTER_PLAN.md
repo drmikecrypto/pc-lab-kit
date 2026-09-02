@@ -579,14 +579,17 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 
 ## Immediate next steps
 
+**Shipped in v4.1.7 (competitive wedge):** Sensor Tree, PresentMon start/stop sessions, dense JSON overlay feed, VkBench artifact/CRC fail → stress cert, elevated SMART depth badges.
+
 1. Daily assembly on **Open Book** Platform Console (coverage meter + firmware planes)
 2. Community verify RTX 50 Hot Spot / VRAM MMIO when hardware is available
 3. Tighter per-die VRAM maps as community offsets stabilize
 4. **Linux probe parity** — Platform Intelligence / Adaptive Lab / Drivers / Audit / Open Book (sysfs) shipped in `agent/pclab_probe_linux`; OC/RGB/Ring0 remain Windows-only
+5. **Parked infra:** full PawnIO kernel migration; live SuperIO fan-curve apply; CapFrameX-class analytics UI; fleet multi-host burn-in console polish
 
 ### Recommended focus
 
-Windows Platform Intelligence + Adaptive Lab + Driver action plan. Linux probe catches Platform Intelligence / Adaptive / Drivers / Audit / Open Book (sysfs); OC/RGB/Ring0 stay Windows-only.
+Operator credibility vs HWiNFO / CapFrameX / OCCT depth on shipped surfaces. Next verticals after wedge: PawnIO trust path + FanControl export→apply when safe.
 ---
 
 ## Assumptions

@@ -303,17 +303,60 @@ function Get-ProbeThermalSummary {
 
 function Get-TelemetrySnapshot {
     $t = Get-ProbeDeepTelemetry
+
+    $cpuLoad = $null
+    try {
+        $cores = @($t.cpu.clocks.per_core)
+        if ($cores.Count -gt 0) {
+            $cpuLoad = [math]::Round(($cores | Measure-Object -Property util_pct -Average).Average, 1)
+        }
+    } catch {}
+
+    $ramUsedPct = $null
+    try {
+        $availMb = $t.ram.status.available_mb
+        $totalGb = $t.ram.total_gb
+        if ($null -ne $availMb -and $totalGb -gt 0) {
+            $totalMb = [double]$totalGb * 1024.0
+            if ($totalMb -gt 0) {
+                $ramUsedPct = [math]::Round(100.0 * (1.0 - ([double]$availMb / $totalMb)), 1)
+            }
+        }
+    } catch {}
+
+    $fanRpm = $null
+    try {
+        $fanRows = @()
+        if ($t.hwmon.available -and $t.hwmon.sensors_flat) {
+            $fanRows = @($t.hwmon.sensors_flat | Where-Object { $_.type -eq 'Fan' -and $null -ne $_.value -and [double]$_.value -gt 0 })
+        }
+        if ($fanRows.Count -gt 0) {
+            $fanRpm = [math]::Round(($fanRows | Measure-Object -Property value -Maximum).Maximum, 0)
+        }
+    } catch {}
+
+    $gpuBoard = $t.gpu.power.board_w
+    if ($null -eq $gpuBoard) { $gpuBoard = $t.power.gpu_board_w }
+    if ($null -eq $gpuBoard) { $gpuBoard = $t.gpu.power.draw_w }
+
     $snap = @{
-        ts = $t.collected_at
-        cpu_temp = $t.cpu.thermal.package_c
-        cpu_hotspot = $t.cpu.thermal.hotspot_c
-        gpu_temp = $t.gpu.thermal.core_c
-        gpu_hotspot = $t.gpu.thermal.hot_spot_c
-        gpu_vram_temp = $t.gpu.thermal.memory_c
-        gpu_power = $t.gpu.power.draw_w
-        gpu_util = $t.gpu.render.gpu_util_pct
-        vcore = $t.power.vcore
-        fps = $t.gaming.fps_avg
+        ts              = $t.collected_at
+        cpu_temp        = $t.cpu.thermal.package_c
+        cpu_hotspot     = $t.cpu.thermal.hotspot_c
+        gpu_temp        = $t.gpu.thermal.core_c
+        gpu_hotspot     = $t.gpu.thermal.hot_spot_c
+        gpu_vram_temp   = $t.gpu.thermal.memory_c
+        gpu_power       = $t.gpu.power.draw_w
+        gpu_power_w     = $gpuBoard
+        package_power_w = $t.power.cpu_package_w
+        gpu_util        = $t.gpu.render.gpu_util_pct
+        cpu_load        = $cpuLoad
+        ram_used_pct    = $ramUsedPct
+        fan_rpm         = $fanRpm
+        vcore           = $t.power.vcore
+        fps             = $t.gaming.fps_avg
+        fps_1pct_low    = $t.gaming.fps_1pct_low
+        sensors_flat    = if ($t.hwmon.available) { $t.hwmon.sensors_flat } else { $null }
     }
     Push-PcLabCoreSample -Sample $snap | Out-Null
     return $snap

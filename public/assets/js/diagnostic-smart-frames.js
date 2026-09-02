@@ -1,5 +1,5 @@
 /**
- * SMART / NVMe health panel + PresentMon capture into lab context.
+ * SMART / NVMe health panel + PresentMon capture / session into lab context.
  */
 (function () {
   const AGENT = () => (window.PCLAB_DIAGNOSTIC && window.PCLAB_DIAGNOSTIC.agentBase) || 'http://127.0.0.1:18765';
@@ -35,6 +35,13 @@
     return '\\\\.\\PhysicalDrive' + index;
   }
 
+  function depthBadge(depth, admin) {
+    const d = String(depth || 'os_reliability');
+    const elevated = /elevated|ioctl|smartctl|admin|nvme_log/i.test(d) || !!admin;
+    const cls = elevated ? (admin ? 'is-admin' : 'is-elevated') : '';
+    return `<span class="dx-smart-depth-badge ${cls}" title="${esc(d)}">${esc(d)}</span>`;
+  }
+
   async function enqueueSelfTest(device, type) {
     const st = el('dx-smart-selftest-status');
     if (st) st.textContent = `Enqueueing ${type} self-test…`;
@@ -65,6 +72,11 @@
       const data = await res.json();
       window.__dxLastSmart = data;
       const rows = data.storage?.smart || [];
+      const detailed = data.nvme_detailed || [];
+      const byName = {};
+      for (const d of detailed) {
+        if (d.friendly_name) byName[String(d.friendly_name).toLowerCase()] = d;
+      }
       const enqueue = data.storage?.self_test_enqueue || {};
       if (!rows.length) {
         box.innerHTML = `<div class="dx-panel-empty"><strong>No reliability counters</strong>
@@ -76,6 +88,9 @@
         <th>Drive</th><th>Health</th><th>Temp</th><th>Wear</th><th>POH</th><th>Depth</th><th>Self-test</th>
       </tr></thead><tbody>${rows
         .map((r, i) => {
+          const deep = byName[String(r.friendly_name || '').toLowerCase()] || {};
+          const depth = deep.smart_depth || r.smart_depth || 'os_reliability';
+          const admin = !!(deep.admin_smart || r.admin_smart);
           const dev = esc(deviceHint(r, i));
           const actions = canTest
             ? `<button type="button" class="dx-btn ghost dx-smart-st" data-device="${dev}" data-type="short">Short</button>
@@ -87,7 +102,7 @@
         <td>${r.temperature_c != null ? esc(r.temperature_c) + '°C' : '—'}</td>
         <td>${r.wear_pct != null ? esc(r.wear_pct) + '%' : '—'}</td>
         <td>${r.power_on_hours != null ? esc(r.power_on_hours) : '—'}</td>
-        <td class="muted fs-xs">${esc(r.smart_depth || 'os_reliability')}</td>
+        <td>${depthBadge(depth, admin)}</td>
         <td class="dx-smart-actions">${actions}</td>
       </tr>`;
         })
@@ -108,9 +123,71 @@
     }
   }
 
+  function drawSeries(data) {
+    const canvas = el('dx-pm-spark');
+    if (!canvas) return;
+    const series = data.fps_series || data.frametime_series || [];
+    if (!series.length) {
+      canvas.hidden = true;
+      return;
+    }
+    canvas.hidden = false;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    const vals = series.map(Number).filter((n) => Number.isFinite(n));
+    if (vals.length < 2) return;
+    const min = Math.min(...vals);
+    const max = Math.max(...vals);
+    const span = Math.max(1e-6, max - min);
+    ctx.strokeStyle = 'rgba(34, 211, 238, 0.85)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    vals.forEach((v, i) => {
+      const x = (i / (vals.length - 1)) * (w - 4) + 2;
+      const y = h - 4 - ((v - min) / span) * (h - 8);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+
+  async function pushPresentToLab(data) {
+    window.__dxLastPresentMon = data;
+    try {
+      sessionStorage.setItem('pclab_last_presentmon', JSON.stringify(data));
+    } catch (_) {}
+    try {
+      await fetch('/api/diagnostic/telemetry/present', {
+        method: 'POST',
+        headers: csrfHeaders(),
+        body: JSON.stringify({
+          gaming: {
+            fps_avg: data.fps_avg,
+            fps_1pct_low: data.fps_1pct_low,
+            fps_0_1pct_low: data.fps_0_1pct_low,
+            frametime_p99_ms: data.frametime_p99_ms,
+            source: 'presentmon',
+            methodology: data.methodology,
+            samples: data.sample_count,
+          },
+          presentmon: data,
+        }),
+      });
+    } catch (_) {}
+  }
+
+  function setSessionButtons(running) {
+    const start = el('dx-pm-session-start');
+    const stop = el('dx-pm-session-stop');
+    if (start) start.disabled = !!running;
+    if (stop) stop.disabled = !running;
+  }
+
   async function capturePresentMon() {
     const st = el('dx-pm-status');
-    const sec = Math.max(3, Math.min(60, Number(el('dx-pm-seconds')?.value || 10)));
+    const sec = Math.max(3, Math.min(120, Number(el('dx-pm-seconds')?.value || 10)));
     if (st) st.textContent = `Capturing ${sec}s…`;
     try {
       const res = await fetch(AGENT() + `/presentmon/capture?seconds=${sec}`, { mode: 'cors' });
@@ -119,48 +196,91 @@
         if (st) st.textContent = data.note || data.error || 'PresentMon not available';
         return;
       }
-      window.__dxLastPresentMon = data;
-      try {
-        sessionStorage.setItem('pclab_last_presentmon', JSON.stringify(data));
-      } catch (_) {}
+      await pushPresentToLab(data);
+      drawSeries(data);
       if (st) {
         st.textContent = `FPS avg ${data.fps_avg ?? '—'} · 1% ${data.fps_1pct_low ?? '—'} · 0.1% ${data.fps_0_1pct_low ?? '—'} · P99 ${data.frametime_p99_ms ?? '—'} ms`;
       }
-      try {
-        await fetch('/api/diagnostic/telemetry/present', {
-          method: 'POST',
-          headers: csrfHeaders(),
-          body: JSON.stringify({
-            gaming: {
-              fps_avg: data.fps_avg,
-              fps_1pct_low: data.fps_1pct_low,
-              fps_0_1pct_low: data.fps_0_1pct_low,
-              frametime_p99_ms: data.frametime_p99_ms,
-              source: 'presentmon',
-              methodology: data.methodology,
-              samples: data.sample_count,
-            },
-            presentmon: data,
-          }),
-        });
-      } catch (_) {}
     } catch (e) {
       if (st) st.textContent = e.message || String(e);
     }
   }
 
+  async function startSession() {
+    const st = el('dx-pm-status');
+    if (st) st.textContent = 'Starting PresentMon session…';
+    try {
+      const res = await fetch(AGENT() + '/presentmon/session/start', {
+        method: 'POST',
+        mode: 'cors',
+        headers: await probeJsonHeaders(),
+        body: JSON.stringify({}),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!data.ok && !data.running) {
+        if (st) st.textContent = data.note || data.error || 'Could not start session';
+        setSessionButtons(false);
+        return;
+      }
+      setSessionButtons(true);
+      if (st) st.textContent = data.note || data.process_note || 'Session running — stop when ready to review';
+    } catch (e) {
+      if (st) st.textContent = e.message || String(e);
+      setSessionButtons(false);
+    }
+  }
+
+  async function stopSession() {
+    const st = el('dx-pm-status');
+    if (st) st.textContent = 'Stopping & parsing session…';
+    try {
+      const res = await fetch(AGENT() + '/presentmon/session/stop', {
+        method: 'POST',
+        mode: 'cors',
+        headers: await probeJsonHeaders(),
+        body: '{}',
+      });
+      const data = await res.json().catch(() => ({}));
+      setSessionButtons(false);
+      if (!data.available && data.sample_count == null) {
+        if (st) st.textContent = data.note || data.error || 'No session data';
+        return;
+      }
+      await pushPresentToLab(data);
+      drawSeries(data);
+      if (st) {
+        st.textContent = `Session ${data.duration_s ?? '—'}s · FPS avg ${data.fps_avg ?? '—'} · 1% ${data.fps_1pct_low ?? '—'} · 0.1% ${data.fps_0_1pct_low ?? '—'} · n=${data.sample_count ?? 0}`;
+      }
+    } catch (e) {
+      setSessionButtons(false);
+      if (st) st.textContent = e.message || String(e);
+    }
+  }
+
+  async function refreshSessionStatus() {
+    try {
+      const res = await fetch(AGENT() + '/presentmon/session/status', { mode: 'cors' });
+      const data = await res.json().catch(() => ({}));
+      setSessionButtons(!!data.running);
+    } catch (_) {}
+  }
+
   function bind() {
     el('dx-smart-refresh')?.addEventListener('click', refreshSmart);
     el('dx-pm-capture')?.addEventListener('click', capturePresentMon);
+    el('dx-pm-session-start')?.addEventListener('click', startSession);
+    el('dx-pm-session-stop')?.addEventListener('click', stopSession);
     window.addEventListener('dx:tab-change', (ev) => {
       if (ev.detail?.tab === 'full' || ev.detail?.tab === 'command' || ev.detail?.tab === 'advanced') {
         refreshSmart();
+        refreshSessionStatus();
       }
     });
     if (el('dx-smart-body')) refreshSmart();
+    refreshSessionStatus();
   }
 
-  window.PcLabSmartFrames = { refreshSmart, capturePresentMon };
+  window.PcLabSmartFrames = { refreshSmart, capturePresentMon, startSession, stopSession };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', bind);

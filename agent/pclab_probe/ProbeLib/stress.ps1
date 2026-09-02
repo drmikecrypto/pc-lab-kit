@@ -216,6 +216,7 @@ function Invoke-ProbeGpuStress {
     $method = 'host_load'
     $vkScore = $null
     $vkEngine = $null
+    $artifactErrors = 0
     $end = (Get-Date).AddSeconds($Seconds)
     $vk = Find-ProbeGpuStressExe
 
@@ -307,6 +308,7 @@ function Invoke-ProbeGpuAdaptiveStress {
     $vk = Find-ProbeGpuStressExe
     $vkScore = $null
     $vkEngine = $null
+    $artifactErrors = 0
 
     # Duty fractions of wall time spent under load (rest is idle sample window)
     $plan = switch ($Style) {
@@ -353,7 +355,7 @@ function Invoke-ProbeGpuAdaptiveStress {
             if ($vk) {
                 $jobs += Start-Job -ScriptBlock {
                     param($exe, $sec)
-                    & $exe --stress-seconds $sec 2>&1 | Out-String
+                    & $exe --stress-seconds $sec --artifact-check 2>&1 | Out-String
                 } -ArgumentList $vk, $loadSec
             } else {
                 $until = (Get-Date).AddSeconds($loadSec)
@@ -379,6 +381,11 @@ function Invoke-ProbeGpuAdaptiveStress {
                         $j = $line | ConvertFrom-Json
                         if ($j.score) { $vkScore = $j.score }
                         if ($j.engine) { $vkEngine = $j.engine }
+                        if ($null -ne $j.artifact_errors) {
+                            $artifactErrors += [int]$j.artifact_errors
+                        } elseif ($j.ok -eq $false) {
+                            $artifactErrors += 1
+                        }
                     } catch {}
                 }
             }
@@ -406,15 +413,17 @@ function Invoke-ProbeGpuAdaptiveStress {
     $wheaTotal = ($samples | ForEach-Object { [int]$_.whea_errors } | Measure-Object -Sum).Sum
     if ($wheaTimeline.count -gt $wheaTotal) { $wheaTotal = $wheaTimeline.count }
 
+    $status = if ($artifactErrors -gt 0) { 'failed' } else { 'completed' }
     return @{
         id = "gpu_$Style"
         label = "PcLab GPU $Style stress"
         duration_s = $Seconds
-        status = 'completed'
+        status = $status
         method = if ($vk) { "vulkan_d3d11_$Style" } else { "host_load_$Style" }
         load_mode = $Style
         engine = $vkEngine
         score = $vkScore
+        artifact_errors = $artifactErrors
         phases = @($phases)
         cpu_temp_max = $cpuPeak
         gpu_temp_max = $gpuPeak
@@ -422,7 +431,8 @@ function Invoke-ProbeGpuAdaptiveStress {
         whea_errors = $wheaTotal
         whea_timeline = $wheaTimeline
         samples = @($samples)
-        note = "OCCT-like $Style GPU load (stepped soak + idle). Fixed gpu profile remains for pure power/thermal."
+        error = if ($artifactErrors -gt 0) { "GPU artifact/CRC errors: $artifactErrors" } else { $null }
+        note = "OCCT-like $Style GPU load (stepped soak + idle + artifact check). Fixed gpu profile remains for pure power/thermal."
         replaces = @('OCCT Adaptive', 'OCCT Variable', 'OCCT Switch', 'FurMark')
     }
 }
@@ -437,6 +447,7 @@ function Invoke-ProbeCombinedStress {
     $samples = @($cpu.samples) + @($mem.samples) + @($gpu.samples)
     $status = if ($mem.status -eq 'failed' -or $gpu.status -eq 'failed') { 'failed' } else { 'completed' }
     $wheaTotal = [int]$cpu.whea_errors + [int]$mem.whea_errors + [int]$gpu.whea_errors
+    $artifactErrors = [int]$gpu.artifact_errors
     $wheaEvents = @()
     foreach ($part in @($cpu, $mem, $gpu)) {
         if ($part.whea_timeline -and $part.whea_timeline.events) {
@@ -464,6 +475,7 @@ function Invoke-ProbeCombinedStress {
         gpu_temp_max = @($cpu.gpu_temp_max, $mem.gpu_temp_max, $gpu.gpu_temp_max) | Where-Object { $_ -ne $null } | Measure-Object -Maximum | Select-Object -ExpandProperty Maximum
         gpu_hotspot_max = $gpu.gpu_hotspot_max
         errors_found = [int]$mem.errors_found
+        artifact_errors = $artifactErrors
         whea_errors = $wheaTotal
         whea_timeline = $wheaTimeline
         pcie_warnings = if ($pcie) { @($pcie.warnings) } else { @() }

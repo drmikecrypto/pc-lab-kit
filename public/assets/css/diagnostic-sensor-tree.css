@@ -1,0 +1,105 @@
+/* Sensor Tree — HWiNFO-class hierarchy */
+.dx-sensor-tree {
+  margin-top: 1.25rem;
+}
+.dx-st-search {
+  min-width: 12rem;
+  max-width: 18rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  color: inherit;
+  font-size: 0.85rem;
+}
+.dx-st-favs {
+  padding: 0.5rem 1.25rem 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+}
+.dx-st-body {
+  max-height: 28rem;
+  overflow: auto;
+  padding: 0.75rem 1.25rem 1.25rem;
+}
+.dx-st-group {
+  margin: 0.35rem 0;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+}
+.dx-st-group > summary {
+  cursor: pointer;
+  padding: 0.45rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  list-style: none;
+}
+.dx-st-group > summary::-webkit-details-marker { display: none; }
+.dx-st-row {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr) auto auto;
+  gap: 0.35rem 0.5rem;
+  align-items: center;
+  padding: 0.28rem 0.65rem 0.28rem 0.5rem;
+  font-size: 0.8rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+.dx-st-row.is-fav {
+  background: rgba(34, 211, 238, 0.06);
+}
+.dx-st-star {
+  border: 0;
+  background: transparent;
+  color: rgba(250, 204, 21, 0.85);
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0;
+}
+.dx-st-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dx-st-ob {
+  font-size: 0.65rem;
+  opacity: 0.55;
+  letter-spacing: 0.04em;
+}
+.dx-st-val {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.dx-st-minmax {
+  white-space: nowrap;
+  justify-self: end;
+}
+.dx-pm-spark {
+  display: block;
+  width: 100%;
+  max-width: 40rem;
+  height: 4.5rem;
+  margin-top: 0.75rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+}
+.dx-smart-depth-badge {
+  display: inline-block;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  background: rgba(148, 163, 184, 0.2);
+  color: rgba(226, 232, 240, 0.9);
+}
+.dx-smart-depth-badge.is-elevated {
+  background: rgba(34, 197, 94, 0.2);
+  color: #86efac;
+}
+.dx-smart-depth-badge.is-admin {
+  background: rgba(56, 189, 248, 0.22);
+  color: #7dd3fc;
+}

@@ -6,6 +6,19 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.1.7] - 2026-09-02
+
+### Added — Competitive wedge (4.1.6-series depth)
+- **Sensor Tree** Advanced panel: searchable hierarchy, favorites, live min/max from Probe `sensors_flat`
+- **PresentMon sessions**: start/stop capture + FPS series review folded into lab gaming telemetry
+- **Dense JSON sensor feed** (`hwinfo-shared.json` schema v2) — ≥12 channels when elevated; denser toolkit overlay @ ~1 Hz
+- **GPU artifact / CRC fail** on adaptive VkBench soaks; stress certificates FAIL on `artifact_errors` (not only thermals/WHEA)
+- **Elevated SMART depth** badges when Probe is Admin (`elevated_os_ioctl` / smartctl availability tags)
+
+### Changed
+- Fixed GPU stress remains power/thermal-only; adaptive/variable/switch paths carry artifact verification
+- SMART / PresentMon panel: session controls + depth badges
+
 ## [4.1.6] - 2026-08-23
 
 ### Added — Rival gap completion

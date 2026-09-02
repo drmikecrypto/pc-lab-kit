@@ -48,6 +48,9 @@ $script:Routes = @(
     @{ method = 'GET';  path = '/storage/smart';      desc = 'SMART / NVMe reliability panel' }
     @{ method = 'POST'; path = '/storage/smart/self-test'; desc = 'enqueue SMART self-test (smartctl)' }
     @{ method = 'GET';  path = '/presentmon/capture'; desc = 'PresentMon session → 1%/0.1% lows (?seconds=)' }
+    @{ method = 'POST'; path = '/presentmon/session/start'; desc = 'start PresentMon capture session (CapFrameX-lite)' }
+    @{ method = 'POST'; path = '/presentmon/session/stop'; desc = 'stop PresentMon session + parse series' }
+    @{ method = 'GET';  path = '/presentmon/session/status'; desc = 'PresentMon session running?' }
     @{ method = 'GET';  path = '/devices';            desc = 'full PnP / PCI / USB / monitor inventory' }
     @{ method = 'GET';  path = '/drivers';            desc = 'driver advisor + install queue (?wu=1 optional WU scan)' }
     @{ method = 'POST'; path = '/drivers/install';    desc = 'one-click install matched package (confirm required)' }
@@ -135,7 +138,7 @@ try {
         $ctype = "application/json; charset=utf-8"
 
         # Mutating routes require the per-install probe token (header / Bearer only).
-        $mutating = $req.HttpMethod -eq 'POST' -and $path -match '^/(suite|stress|oc|rgb|bench|drivers/install|orchestrate|launchers|storage|repair)/'
+        $mutating = $req.HttpMethod -eq 'POST' -and $path -match '^/(suite|stress|oc|rgb|bench|drivers/install|orchestrate|launchers|storage|repair|presentmon)/'
         if ($mutating -and $script:ProbeAuthToken) {
             $tok = $req.Headers['X-PcLab-Token']
             if (-not $tok) { $tok = $req.Headers['Authorization'] -replace '^Bearer\s+', '' }
@@ -324,6 +327,34 @@ Invoke-ProbeSmartSelfTest -Device `$dev -Type `$typ | ConvertTo-Json -Depth 6 -C
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$scriptDir\ProbeLib\presentmon.ps1'
 Get-ProbePresentMonTelemetry -TimedSeconds $sec | ConvertTo-Json -Depth 8 -Compress }
+"@
+            }
+            "/presentmon/session/start" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $tmp = Join-Path $env:TEMP ("pclab_pm_start_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    if (-not $raw) { $raw = '{}' }
+                    [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+`$pn = if (`$j.process_name) { [string]`$j.process_name } else { '' }
+Start-ProbePresentMonSession -ProcessName `$pn | ConvertTo-Json -Depth 6 -Compress }
+"@
+                } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+            }
+            "/presentmon/session/stop" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+Stop-ProbePresentMonSession | ConvertTo-Json -Depth 8 -Compress }
+"@
+            }
+            "/presentmon/session/status" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+Get-ProbePresentMonSessionStatus | ConvertTo-Json -Depth 6 -Compress }
 "@
             }
             "/devices" {

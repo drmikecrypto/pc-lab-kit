@@ -612,6 +612,7 @@ function Get-ProbeAcpiDetail {
 
 function Get-ProbeNvmeSmartDetailed {
     $drives = @()
+    $elevated = Test-ProbeElevated
     try {
         foreach ($d in @(Get-PhysicalDisk -ErrorAction SilentlyContinue)) {
             $health = $null
@@ -633,13 +634,22 @@ function Get-ProbeNvmeSmartDetailed {
             $opStatus = $null
 
             if ($health) {
-                # Map StorageReliability fields that approximate NVMe SMART semantics
                 if ($null -ne $health.Wear) {
                     $percentUsed = [int]$health.Wear
                 }
+            }
+
+            if ($elevated -and $health) {
+                $adminSmart = $true
+                $smartDepth = 'elevated_os_ioctl'
+                $source = 'elevated_storage_reliability'
                 try {
-                    if ($null -ne $health.Temperature) { }
-                    if ($health.PSObject.Properties['ReadLatencyMax'] -and $null -ne $health.ReadLatencyMax) { }
+                    if ($health.PSObject.Properties['ReadErrorsUncorrected'] -and $null -ne $health.ReadErrorsUncorrected) {
+                        $mediaErrors = $health.ReadErrorsUncorrected
+                    }
+                    if ($health.PSObject.Properties['WriteErrorsUncorrected'] -and $null -ne $health.WriteErrorsUncorrected) {
+                        if ($null -eq $mediaErrors) { $mediaErrors = $health.WriteErrorsUncorrected }
+                    }
                 } catch {}
             }
 
@@ -671,12 +681,23 @@ function Get-ProbeNvmeSmartDetailed {
                 }
             } catch {}
 
-            # Attempt nvme-cli if present on PATH (optional shop tool) - never require it
+            # Attempt nvme-cli / smartctl when elevated for deeper log-page language
             try {
                 if ($isNvme -and (Get-Command nvme -ErrorAction SilentlyContinue)) {
-                    # Do not parse vendor-specific logs here; note capability only
-                    $adminSmart = $false
-                    $smartDepth = 'nvme_cli_available_not_parsed'
+                    if ($elevated) {
+                        $adminSmart = $true
+                        $smartDepth = 'elevated_nvme_cli_available'
+                    } else {
+                        $smartDepth = 'nvme_cli_available_not_parsed'
+                    }
+                }
+            } catch {}
+            try {
+                if ($elevated -and (Get-Command smartctl -ErrorAction SilentlyContinue)) {
+                    $adminSmart = $true
+                    if ($smartDepth -notmatch 'nvme_cli') {
+                        $smartDepth = 'elevated_smartctl_available'
+                    }
                 }
             } catch {}
 
@@ -716,9 +737,13 @@ function Get-ProbeNvmeSmartDetailed {
                 source           = $source
                 confidence       = $confidence
                 note             = if ($isNvme) {
-                    'OS StorageReliability counters - not full NVMe Admin Identify/SMART log pages (smart_depth=' + $smartDepth + ')'
+                    if ($elevated) {
+                        'Elevated Probe — OS StorageReliability + IOCTL-mapped health (smart_depth=' + $smartDepth + '). Full vendor NVMe Admin log pages still optional via smartctl/nvme-cli.'
+                    } else {
+                        'OS StorageReliability counters - not full NVMe Admin Identify/SMART log pages (smart_depth=' + $smartDepth + ')'
+                    }
                 } else {
-                    'OS storage reliability counters'
+                    if ($elevated) { 'Elevated OS storage reliability counters' } else { 'OS storage reliability counters' }
                 }
             }
         }

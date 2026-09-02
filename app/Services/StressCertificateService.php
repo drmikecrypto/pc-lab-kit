@@ -77,6 +77,17 @@ class StressCertificateService
         if (($run['errors_found'] ?? 0) > 0) {
             $failures[] = 'Memory errors detected: ' . (int) $run['errors_found'];
         }
+        $artifactErrors = (int) ($run['artifact_errors'] ?? 0);
+        if ($artifactErrors === 0 && isset($run['parts']) && is_array($run['parts'])) {
+            foreach ($run['parts'] as $part) {
+                if (is_array($part)) {
+                    $artifactErrors += (int) ($part['artifact_errors'] ?? 0);
+                }
+            }
+        }
+        if ($artifactErrors > 0) {
+            $failures[] = "GPU artifact / CRC errors detected: {$artifactErrors}";
+        }
 
         $pass = $failures === [];
         $profile = (string) ($run['id'] ?? $run['profile'] ?? 'stress');
@@ -90,6 +101,7 @@ class StressCertificateService
             'gpu_temp_max' => $gpuPeak,
             'gpu_hotspot_max' => $hotspotPeak,
             'whea_errors' => $whea > 0 ? $whea : null,
+            'artifact_errors' => $artifactErrors > 0 ? $artifactErrors : null,
         ], static fn ($v) => $v !== null);
 
         $html = $this->renderHtml([

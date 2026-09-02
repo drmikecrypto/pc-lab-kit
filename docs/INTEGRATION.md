@@ -62,17 +62,25 @@ Example payload:
 
 ```json
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "feed_kind": "json_file",
   "source": "pc-lab-kit",
+  "sensor_count": 12,
   "path": "C:\\\\Users\\\\…\\\\AppData\\\\Local\\\\PcLabKit\\\\Probe\\\\hwinfo-shared.json",
   "sensors": [
     { "name": "CPU Package", "value": 58.2, "unit": "°C" },
     { "name": "GPU Core", "value": 61.0, "unit": "°C" },
-    { "name": "CPU Package Power", "value": 42.5, "unit": "W" }
+    { "name": "GPU Hot Spot", "value": 72.0, "unit": "°C" },
+    { "name": "CPU Package Power", "value": 42.5, "unit": "W" },
+    { "name": "GPU Board Power", "value": 180.0, "unit": "W" },
+    { "name": "CPU Load", "value": 34.0, "unit": "%" },
+    { "name": "GPU Load", "value": 88.0, "unit": "%" },
+    { "name": "RAM Used %", "value": 61.0, "unit": "%" }
   ]
 }
 ```
+
+Dense channel map (when Probe/HwMon elevated) includes CPU/GPU temps, hotspot, VRAM junction, package + board power, loads, RAM %, fans, Vcore, FPS / 1% low when PresentMon has samples.
 
 Rainmeter can also poll `http://127.0.0.1:18765/telemetry` directly (Sensor Deck Rainmeter export). Afterburner/RTSS still expect their own injectors — this feed is for local overlays that accept JSON, not a drop-in HWiNFO SM replacement.
 

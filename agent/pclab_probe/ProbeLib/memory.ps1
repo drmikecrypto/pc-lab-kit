@@ -91,6 +91,7 @@ function Get-ProbeStorageTelemetry {
     }
 
     $smart = @()
+    $elevated = Test-ProbeElevated
     try {
         Import-Module Storage -ErrorAction SilentlyContinue
         foreach ($pd in Get-PhysicalDisk -ErrorAction SilentlyContinue) {
@@ -98,6 +99,25 @@ function Get-ProbeStorageTelemetry {
             try { $rel = Get-StorageReliabilityCounter -PhysicalDisk $pd -ErrorAction SilentlyContinue } catch {}
             $bus = "$($pd.BusType)"
             $isNvme = $bus -match 'NVMe' -or "$($pd.FriendlyName)" -match 'NVMe'
+            $smartDepth = if ($rel) { 'os_reliability' } else { 'inventory_only' }
+            $adminSmart = $false
+            $mediaErrors = $null
+            $spare = $null
+            $critWarn = $null
+
+            if ($elevated -and $rel) {
+                $smartDepth = 'elevated_os_reliability'
+                $adminSmart = $true
+                try {
+                    if ($rel.PSObject.Properties['ReadErrorsUncorrected'] -and $null -ne $rel.ReadErrorsUncorrected) {
+                        $mediaErrors = $rel.ReadErrorsUncorrected
+                    }
+                    if ($rel.PSObject.Properties['Wear'] -and $null -ne $rel.Wear) {
+                        $smartDepth = 'elevated_os_ioctl'
+                    }
+                } catch {}
+            }
+
             $smart += @{
                 friendly_name    = $pd.FriendlyName
                 media_type       = $pd.MediaType
@@ -109,17 +129,24 @@ function Get-ProbeStorageTelemetry {
                 temperature_c    = if ($rel) { $rel.Temperature } else { $null }
                 wear_pct         = if ($rel) { $rel.Wear } else { $null }
                 endurance_tbw_estimate = if ($rel -and $null -ne $rel.Wear -and $pd.Size) {
-                    # Wear% is percent-used of rated endurance when exposed; TBW estimate is not guaranteed
                     $null
                 } else { $null }
                 read_errors      = if ($rel) { $rel.ReadErrorsTotal } else { $null }
                 write_errors     = if ($rel) { $rel.WriteErrorsTotal } else { $null }
                 power_on_hours   = if ($rel) { $rel.PowerOnHours } else { $null }
                 flush_latency_ms = if ($rel) { $rel.FlushLatencyMax } else { $null }
-                smart_depth      = if ($rel) { 'os_reliability' } else { 'inventory_only' }
+                media_errors     = $mediaErrors
+                available_spare  = $spare
+                critical_warning = $critWarn
+                admin_smart      = $adminSmart
+                smart_depth      = $smartDepth
                 self_test = @{
                     supported = $false
-                    note = 'OS reliability counters only. Install smartctl/nvme-cli for short/long self-test enqueue; full Admin SMART log pages need elevated IOCTL path.'
+                    note = if ($elevated) {
+                        'Elevated Probe — OS reliability + IOCTL-mapped fields when exposed. Install smartctl for short/long self-test enqueue.'
+                    } else {
+                        'OS reliability counters only. Run Probe as Admin for elevated SMART depth; install smartctl for self-test enqueue.'
+                    }
                 }
             }
         }

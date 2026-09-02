@@ -69,21 +69,19 @@ test('lab report export includes percentiles and history delta', function () {
         ->and($built['document']['percentiles']['cpu'])->toBe(80);
 });
 
-test('stress certificate fails on thermal breach', function () {
-    $pass = (new StressCertificateService())->issue([
-        'id' => 'cpu',
-        'status' => 'completed',
-        'duration_s' => 30,
-        'cpu_temp_max' => 78,
-    ]);
-    expect($pass['passed'])->toBeTrue()->and($pass['verdict'])->toBe('PASS');
-
+test('stress certificate fails on GPU artifact errors', function () {
     $fail = (new StressCertificateService())->issue([
-        'id' => 'cpu',
-        'status' => 'completed',
-        'cpu_temp_max' => 98,
-    ], [], ['cpu_temp_max' => 95]);
-    expect($fail['passed'])->toBeFalse()->and($fail['verdict'])->toBe('FAIL');
+        'id' => 'gpu_adaptive',
+        'status' => 'failed',
+        'duration_s' => 90,
+        'artifact_errors' => 3,
+        'error' => 'GPU artifact/CRC errors: 3',
+        'cpu_temp_max' => 70,
+        'gpu_temp_max' => 75,
+    ]);
+    expect($fail['passed'])->toBeFalse()
+        ->and($fail['verdict'])->toBe('FAIL')
+        ->and(implode(' ', $fail['failures']))->toContain('artifact');
 });
 
 test('tool catalog runnable lists expanded bench and stress profiles', function () {

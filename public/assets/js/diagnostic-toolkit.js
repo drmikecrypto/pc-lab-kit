@@ -150,11 +150,21 @@
         const res = await fetch(AGENT + '/telemetry', { mode: 'cors' });
         if (!res.ok) return;
         const t = await res.json();
-        const cpu = t.cpu_temp ?? t.sensors?.cpu_temp_max ?? t.thermal?.cpu ?? '—';
-        const gpu = t.gpu_temp ?? t.sensors?.gpu_temp_max ?? t.thermal?.gpu ?? '—';
-        ov.textContent = `Live overlay · CPU ${cpu}°C · GPU ${gpu}°C · ${label}`;
+        const snap = t._snapshot || t;
+        const cpu = snap.cpu_temp ?? t.cpu?.thermal?.package_c ?? '—';
+        const gpu = snap.gpu_temp ?? t.gpu?.thermal?.core_c ?? '—';
+        const hs = snap.gpu_hotspot ?? t.gpu?.thermal?.hot_spot_c ?? '—';
+        const vram = snap.gpu_vram_temp ?? t.gpu?.thermal?.memory_c ?? '—';
+        const cpup = snap.package_power_w ?? t.power?.cpu_package_w ?? '—';
+        const gpup = snap.gpu_power_w ?? snap.gpu_power ?? t.gpu?.power?.draw_w ?? '—';
+        const load = snap.cpu_load ?? '—';
+        const gutil = snap.gpu_util ?? t.gpu?.render?.gpu_util_pct ?? '—';
+        const ram = snap.ram_used_pct ?? '—';
+        const fan = snap.fan_rpm ?? '—';
+        const fps = snap.fps ?? t.gaming?.fps_avg ?? '—';
+        ov.textContent = `Live · CPU ${cpu}°C ${load}% ${cpup}W · GPU ${gpu}°C HS ${hs}°C VRAM ${vram}°C ${gutil}% ${gpup}W · RAM ${ram}% · Fan ${fan} · FPS ${fps} · ${label}`;
       } catch (_) {}
-    }, 1500);
+    }, 1000);
   }
 
   function stopOverlay() {

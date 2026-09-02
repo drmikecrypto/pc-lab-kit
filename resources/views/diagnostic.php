@@ -18,7 +18,8 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-pulse.css?v=1.1.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-lab.css?v=1.6.6">
 <link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.7.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.5.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.6.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-sensor-tree.css?v=1.0.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.1.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.4.0">
@@ -582,6 +583,22 @@ $toolTotal = $toolKit->total();
                 <div class="dx-sensor-deck__grid" id="dx-deck-grid"></div>
             </section>
 
+            <section class="dx-panel-card dx-sensor-tree" id="dx-sensor-tree" aria-label="Sensor tree">
+                <div class="dx-tel-head">
+                    <div>
+                        <h2>Sensor Tree</h2>
+                        <p>HWiNFO-style hierarchy — search, favorites, live min/max this session</p>
+                    </div>
+                    <div class="dx-command-center__row" style="margin:0">
+                        <input type="search" id="dx-sensor-tree-search" class="dx-st-search" placeholder="Search sensors…" aria-label="Search sensors">
+                        <button type="button" class="dx-btn ghost" id="dx-sensor-tree-refresh">Refresh</button>
+                        <span class="muted fs-xs" id="dx-sensor-tree-status" role="status"></span>
+                    </div>
+                </div>
+                <div class="dx-st-favs" id="dx-sensor-tree-favs" aria-label="Favorite sensors"></div>
+                <div class="dx-st-body" id="dx-sensor-tree-body"><p class="muted fs-sm">Loading sensors…</p></div>
+            </section>
+
             <section class="dx-tel dx-panel-card" id="dx-telemetry">
                 <div class="dx-tel-head">
                     <div>
@@ -614,11 +631,14 @@ $toolTotal = $toolKit->total();
                 <div id="dx-smart-body" class="dx-smart-body"><p class="muted fs-sm">Waiting for Probe…</p></div>
                 <div class="dx-pm-capture">
                     <label class="dx-stress-field">
-                        <span>Capture seconds</span>
-                        <input type="number" id="dx-pm-seconds" min="3" max="60" value="10" aria-label="PresentMon seconds">
+                        <span>Timed capture (s)</span>
+                        <input type="number" id="dx-pm-seconds" min="3" max="120" value="10" aria-label="PresentMon seconds">
                     </label>
                     <button type="button" class="dx-btn primary" id="dx-pm-capture">Capture frametimes</button>
+                    <button type="button" class="dx-btn ghost" id="dx-pm-session-start">Start session</button>
+                    <button type="button" class="dx-btn ghost" id="dx-pm-session-stop" disabled>Stop &amp; review</button>
                     <p class="muted fs-sm" id="dx-pm-status" role="status"></p>
+                    <canvas id="dx-pm-spark" class="dx-pm-spark" width="640" height="72" hidden aria-label="PresentMon FPS series"></canvas>
                 </div>
             </section>
 
@@ -726,7 +746,7 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-capabilities.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-tabs.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-command-layout.js?v=1.3.0"></script>
-<script defer src="/assets/js/diagnostic-toolkit.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-toolkit.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-compare.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-pulse.js?v=1.0.3"></script>
 <script defer src="/assets/js/diagnostic-arena.js?v=1.1.0"></script>
@@ -738,11 +758,12 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.2.0"></script>
-<script defer src="/assets/js/diagnostic-smart-frames.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-fleet.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-repair.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-suite.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-sensor-tree.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-smart-frames.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-openbook.js?v=1.3.0"></script>
