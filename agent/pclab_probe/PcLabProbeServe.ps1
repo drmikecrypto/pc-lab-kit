@@ -558,7 +558,9 @@ elseif (`$j.gif_base64) { `$bytes = [Convert]::FromBase64String([string]`$j.gif_
 `$di = if (`$null -ne `$j.display_index) { [int]`$j.display_index } else { -1 }
 `$ogi = if (`$null -ne `$j.openrgb_index) { [int]`$j.openrgb_index } else { -1 }
 `$src = if (`$j.source_path) { [string]`$j.source_path } else { `$null }
-Invoke-LcdStudioApply -PanelId ([string]`$j.panel_id) -Bytes `$bytes -FileName `$fn -SourcePath `$src -FitMode `$fit -Mode `$mode -PlayDisplay:`$play -DisplayIndex `$di -OpenRgbIndex `$ogi | ConvertTo-Json -Depth 12 -Compress }
+`$skipBrowser = [bool](`$j.skip_browser -or `$j.prefer_tauri)
+`$liqMatch = if (`$j.liquidctl_match) { [string]`$j.liquidctl_match } else { 'kraken' }
+Invoke-LcdStudioApply -PanelId ([string]`$j.panel_id) -Bytes `$bytes -FileName `$fn -SourcePath `$src -FitMode `$fit -Mode `$mode -PlayDisplay:`$play -DisplayIndex `$di -OpenRgbIndex `$ogi -SkipBrowser:`$skipBrowser -LiquidctlMatch `$liqMatch | ConvertTo-Json -Depth 12 -Compress }
 "@
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }
@@ -577,7 +579,8 @@ Invoke-LcdStudioApply -PanelId ([string]`$j.panel_id) -Bytes `$bytes -FileName `
 `$mode = if (`$j.mode) { [string]`$j.mode } else { 'media' }
 `$shape = if (`$j.shape) { [string]`$j.shape } else { 'rect' }
 `$fit = if (`$j.fit_mode) { [string]`$j.fit_mode } else { 'fit' }
-Start-LcdDisplayPlayer -MediaPath `$path -DisplayIndex `$di -Mode `$mode -Shape `$shape -FitMode `$fit | ConvertTo-Json -Depth 8 -Compress }
+`$skipBrowser = [bool](`$j.skip_browser -or `$j.prefer_tauri)
+Start-LcdDisplayPlayer -MediaPath `$path -DisplayIndex `$di -Mode `$mode -Shape `$shape -FitMode `$fit -SkipBrowser:`$skipBrowser | ConvertTo-Json -Depth 8 -Compress }
 "@
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }

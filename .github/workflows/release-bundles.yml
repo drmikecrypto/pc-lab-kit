@@ -10,8 +10,59 @@ permissions:
   contents: write
 
 jobs:
+  # Fail fast: desktop must be MAJOR.MINOR.PATCH (Tauri); APP_VERSION may be four-part marketing.
+  release-preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Assert desktop versions are equal MAJOR.MINOR.PATCH
+        run: |
+          set -euo pipefail
+          pkg=$(node -p "require('./desktop/package.json').version")
+          tauri=$(node -p "JSON.parse(require('fs').readFileSync('desktop/src-tauri/tauri.conf.json','utf8')).version")
+          cargo=$(grep -m1 '^version' desktop/src-tauri/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "package.json=$pkg tauri.conf=$tauri Cargo.toml=$cargo"
+          semver='^[0-9]+\.[0-9]+\.[0-9]+$'
+          for v in "$pkg" "$tauri" "$cargo"; do
+            if ! [[ "$v" =~ $semver ]]; then
+              echo "::error::Version '$v' must be MAJOR.MINOR.PATCH (Tauri rejects four-part versions)."
+              exit 1
+            fi
+          done
+          if [[ "$pkg" != "$tauri" || "$pkg" != "$cargo" ]]; then
+            echo "::error::desktop package.json, tauri.conf.json, and Cargo.toml versions must match."
+            exit 1
+          fi
+
+      - name: Prefetch Windows PHP pin (releases then archives)
+        run: |
+          set -euo pipefail
+          url=$(node -p "JSON.parse(require('fs').readFileSync('config/build-deps.json','utf8')).php_windows_url")
+          ver=$(node -p "JSON.parse(require('fs').readFileSync('config/build-deps.json','utf8')).php_windows_version")
+          archive1=$(node -p "const u=require('fs').readFileSync('config/build-deps.json','utf8'); const j=JSON.parse(u); j.php_windows_url.replace('/releases/','/archives/')")
+          archive2="https://windows.php.net/downloads/releases/archives/php-${ver}-nts-Win32-vs17-x64.zip"
+          ok=0
+          for try in "$url" "$archive1" "$archive2"; do
+            echo "Checking $try"
+            code=$(curl -sS -o /dev/null -w '%{http_code}' -L --head "$try" || true)
+            if [[ "$code" != "200" && "$code" != "302" && "$code" != "301" ]]; then
+              code=$(curl -sS -o /dev/null -w '%{http_code}' -L -r 0-0 "$try" || true)
+            fi
+            echo "HTTP $code"
+            if [[ "$code" == "200" || "$code" == "206" || "$code" == "302" || "$code" == "301" ]]; then
+              ok=1
+              break
+            fi
+          done
+          if [[ "$ok" != "1" ]]; then
+            echo "::error::PHP Windows pin $ver not found on releases or archives. Refresh config/build-deps.json."
+            exit 1
+          fi
+
   test:
     runs-on: ubuntu-latest
+    needs: release-preflight
     steps:
       - uses: actions/checkout@v4
 

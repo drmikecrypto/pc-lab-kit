@@ -54,6 +54,51 @@ function Find-LcdLiquidctl {
     return $null
 }
 
+function Get-LcdToolsPaths {
+    $root = Split-Path $PSScriptRoot -Parent
+    return @{
+        ffmpeg = @(
+            (Join-Path $root 'tools\ffmpeg\ffmpeg.exe'),
+            (Join-Path $root 'tools\ffmpeg.exe')
+        )
+        liquidctl = @(
+            (Join-Path $root 'tools\liquidctl\liquidctl.exe'),
+            (Join-Path $root 'tools\liquidctl.exe')
+        )
+        tools_dir = (Join-Path $root 'tools')
+        fetch_script = (Join-Path (Split-Path (Split-Path $root -Parent) -Parent) 'scripts\fetch-lcd-tools.ps1')
+        note = 'Drop portable binaries under agent/pclab_probe/tools/ or run scripts/fetch-lcd-tools.ps1 then Rescan.'
+    }
+}
+
+function Get-LcdLiquidctlDevices {
+    $exe = Find-LcdLiquidctl
+    if (-not $exe) { return @() }
+    try {
+        $raw = & $exe list --json 2>$null | Out-String
+        if (-not $raw) { $raw = & $exe list 2>$null | Out-String }
+        $devs = @()
+        try {
+            $j = $raw | ConvertFrom-Json
+            foreach ($d in @($j)) {
+                $devs += @{
+                    id = "$($d.id)"
+                    description = if ($d.description) { "$($d.description)" } else { "$($d)" }
+                    bus = "$($d.bus)"
+                    address = "$($d.address)"
+                }
+            }
+        } catch {
+            foreach ($line in ($raw -split "`n")) {
+                if ($line -match '(?i)kraken|nzxt|aio') {
+                    $devs += @{ id = ($line.Trim()); description = ($line.Trim()) }
+                }
+            }
+        }
+        return @($devs)
+    } catch { return @() }
+}
+
 function Resolve-LcdTransportPreference {
     param([string]$Vendor, [string]$Kind, [string]$DeviceType)
     $v = ("$Vendor").ToLower()
@@ -85,7 +130,7 @@ function New-LcdPanelObject {
     $caps = @{
         gif = $true
         video = ($Transport -eq 'windows_display')
-        live_dashboard = $true
+        live_dashboard = ($Transport -eq 'windows_display')
         max_duration_s = if ($Transport -eq 'windows_display') { 7200 } else { 120 }
         max_fps = if ($Transport -eq 'windows_display') { 60 } else { 30 }
         max_mb = if ($Transport -eq 'windows_display') { 512 } else { 25 }
@@ -256,9 +301,13 @@ function Get-LcdPanelCatalog {
         panel_count = @($panels).Count
         panels = @($panels)
         tools = @{
-            ffmpeg = $ffmpeg
-            liquidctl = $liquidctl
-            openrgb = (Get-OpenRgbExecutable)
+            ffmpeg = [bool]$ffmpeg
+            liquidctl = [bool]$liquidctl
+            openrgb = [bool](Get-OpenRgbExecutable)
+            liquidctl_devices = @(Get-LcdLiquidctlDevices)
+            paths = Get-LcdToolsPaths
+            ffmpeg_path = $ffmpeg
+            liquidctl_path = $liquidctl
         }
         note = 'LCD Studio panels: windows_display for long video; liquidctl/openrgb for AIO HID; stage_only when protocol missing.'
     }
@@ -325,22 +374,29 @@ function Invoke-LcdMediaFit {
             target_h = $TargetH
             kind = $kind
             fallback = 'ffmpeg_missing'
+            ffmpeg_missing = $true
             note = 'ffmpeg not found - media stored as-is; display player letterboxes. Place tools/ffmpeg/ffmpeg.exe for panel-fit transcode.'
         }
     }
 
-    # scale + pad (fit) / crop (fill) / stretch / round via geq alpha on PNG sequence→mp4 is heavy;
-    # for round_mask we produce mp4 with black letterbox and rely on player CSS circle clip for display;
-    # HID path gets centered fit into WxH.
-    $vf = switch ($FitMode) {
+    # fit / fill / stretch; round_mask: circular alpha GIF when OutKind=gif, else pad + CSS hint for video display
+    $baseScale = switch ($FitMode) {
         'stretch' { "scale=${TargetW}:${TargetH}" }
         'fill' { "scale=${TargetW}:${TargetH}:force_original_aspect_ratio=increase,crop=${TargetW}:${TargetH}" }
-        'round_mask' { "scale=${TargetW}:${TargetH}:force_original_aspect_ratio=decrease,pad=${TargetW}:${TargetH}:(ow-iw)/2:(oh-ih)/2:black" }
         default { "scale=${TargetW}:${TargetH}:force_original_aspect_ratio=decrease,pad=${TargetW}:${TargetH}:(ow-iw)/2:(oh-ih)/2:black" }
+    }
+    $roundAlpha = "format=rgba,geq=lum='p(X,Y)':a='if(lte(hypot(X-W/2\,Y-H/2)\,min(W\,H)/2)\,255\,0)'"
+    $useRoundGif = ($FitMode -eq 'round_mask' -and $OutKind -eq 'gif')
+    if ($useRoundGif) {
+        $vf = "$baseScale,$roundAlpha"
+        $outExt = '.gif'
+        $outPath = Join-Path $lib ("fit_${TargetW}x${TargetH}_${FitMode}_$stamp$outExt")
+    } else {
+        $vf = $baseScale
     }
 
     $args = @('-y', '-i', $SourcePath, '-vf', $vf)
-    if ($OutKind -eq 'gif') {
+    if ($OutKind -eq 'gif' -or $useRoundGif) {
         $args += @('-loop', '0', $outPath)
     } else {
         $args += @('-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', '-b:v', '2M', $outPath)
@@ -368,6 +424,8 @@ function Invoke-LcdMediaFit {
             target_h = $TargetH
             kind = $OutKind
             round_mask_hint = ($FitMode -eq 'round_mask')
+            circular_alpha = [bool]$useRoundGif
+            ffmpeg_missing = $false
         }
     } catch {
         $copyPath = Join-Path $lib ("raw_err_$stamp$ext")
@@ -397,9 +455,18 @@ function Invoke-LcdLiquidctlPush {
     if (-not (Test-Path $MediaPath)) {
         return @{ pushed = $false; attempted = $false; transport = 'liquidctl'; reason = 'missing_media' }
     }
-    # Prefer GIF for liquidctl screen gif; if mp4, try anyway then fail honest
     $kind = Detect-LcdMediaKind -FileName $MediaPath -Bytes ([IO.File]::ReadAllBytes($MediaPath) | Select-Object -First 16)
-    $mode = if ($kind -eq 'gif') { 'gif' } else { 'static' }
+    if ($kind -ne 'gif') {
+        return @{
+            pushed = $false
+            attempted = $false
+            transport = 'liquidctl'
+            reason = 'needs_gif'
+            media_kind = $kind
+            message = 'liquidctl HID push needs a GIF. Place tools/ffmpeg/ffmpeg.exe so LCD Studio can auto-convert video, or upload a GIF.'
+        }
+    }
+    $mode = 'gif'
     $argsTried = @()
     $ok = $false
     $err = ''
@@ -506,12 +573,13 @@ function Start-LcdDisplayPlayer {
         [string]$Mode = 'media',
         [string]$Shape = 'rect',
         [string]$FitMode = 'fit',
-        [hashtable]$Bounds = $null
+        [hashtable]$Bounds = $null,
+        [bool]$SkipBrowser = $false
     )
-    Stop-LcdDisplayPlayer | Out-Null
+    if (-not $SkipBrowser) { Stop-LcdDisplayPlayer | Out-Null }
 
     if ($Mode -eq 'media' -and -not (Test-Path $MediaPath)) {
-        return @{ ok = $false; played_on_display = $false; error = 'missing_media' }
+        return @{ ok = $false; played_on_display = $false; player_ready = $false; error = 'missing_media' }
     }
 
     if (-not $Bounds) {
@@ -535,6 +603,40 @@ function Start-LcdDisplayPlayer {
     $w = [int]$Bounds.width
     $h = [int]$Bounds.height
 
+    $baseOut = @{
+        ok = $true
+        transport = 'windows_display'
+        pushed = $false
+        display_index = $DisplayIndex
+        bounds = $Bounds
+        html = $htmlPath
+        player_html = $htmlPath
+        player_url = $fileUrl
+        media_path = $MediaPath
+        mode = $Mode
+    }
+
+    if ($SkipBrowser) {
+        @{
+            display_index = $DisplayIndex
+            html = $htmlPath
+            player_url = $fileUrl
+            media = $MediaPath
+            mode = $Mode
+            bounds = $Bounds
+            started_at = (Get-Date).ToUniversalTime().ToString('o')
+            positioned = $true
+            skip_browser = $true
+        } | ConvertTo-Json -Depth 5 | Set-Content $script:LcdPlayerStatePath -Encoding UTF8
+        return ($baseOut + @{
+            played_on_display = $false
+            player_ready = $true
+            browser_launched = $false
+            positioned = $true
+            message = "LCD player HTML ready for Tauri ($w x $h on display $DisplayIndex)."
+        })
+    }
+
     $browser = $null
     foreach ($c in @(
         "${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe",
@@ -546,25 +648,24 @@ function Start-LcdDisplayPlayer {
     }
 
     if (-not $browser) {
-        # Fallback: default association (not positioned)
         $proc = Start-Process -FilePath $htmlPath -PassThru
         @{
             pid = $proc.Id
             display_index = $DisplayIndex
             html = $htmlPath
+            player_url = $fileUrl
             mode = $Mode
             started_at = (Get-Date).ToUniversalTime().ToString('o')
             positioned = $false
         } | ConvertTo-Json | Set-Content $script:LcdPlayerStatePath -Encoding UTF8
-        return @{
-            ok = $true
+        return ($baseOut + @{
             played_on_display = $true
-            transport = 'windows_display'
-            pushed = $false
+            player_ready = $true
+            browser_launched = $true
             positioned = $false
             pid = $proc.Id
             message = 'Opened LCD player in default browser (positioning unavailable without Edge/Chrome).'
-        }
+        })
     }
 
     $args = @(
@@ -579,6 +680,7 @@ function Start-LcdDisplayPlayer {
         pid = $proc.Id
         display_index = $DisplayIndex
         html = $htmlPath
+        player_url = $fileUrl
         media = $MediaPath
         mode = $Mode
         bounds = $Bounds
@@ -587,17 +689,14 @@ function Start-LcdDisplayPlayer {
         browser = $browser
     } | ConvertTo-Json -Depth 5 | Set-Content $script:LcdPlayerStatePath -Encoding UTF8
 
-    return @{
-        ok = $true
+    return ($baseOut + @{
         played_on_display = $true
-        transport = 'windows_display'
-        pushed = $false
+        player_ready = $true
+        browser_launched = $true
         positioned = $true
         pid = $proc.Id
-        display_index = $DisplayIndex
-        bounds = $Bounds
-        message = "LCD player on display $DisplayIndex ($w×$h). Esc closes the window; or POST /lcd/stop."
-    }
+        message = "LCD player on display $DisplayIndex ($w x $h). Esc closes; or POST /lcd/stop."
+    })
 }
 
 function Find-LcdPanelById {
@@ -634,7 +733,9 @@ function Invoke-LcdStudioApply {
         [int]$DisplayIndex = -1,
         [int]$ExpectedW = 0,
         [int]$ExpectedH = 0,
-        [int]$OpenRgbIndex = -1
+        [int]$OpenRgbIndex = -1,
+        [bool]$SkipBrowser = $false,
+        [string]$LiquidctlMatch = 'kraken'
     )
 
     $panel = Find-LcdPanelById -PanelId $PanelId
@@ -658,8 +759,17 @@ function Invoke-LcdStudioApply {
     $stored = $false
     $fit = $null
     if ($Mode -eq 'dashboard') {
+        if ($panel.transport -ne 'windows_display') {
+            return @{
+                ok = $false
+                error = 'dashboard_display_only'
+                message = 'Live dashboard plays on Windows displays only (not HID stage/openrgb stubs).'
+            }
+        }
         . "$PSScriptRoot\orchestrator.ps1"
-        $dash = Write-ProbeLcdDashboard -Port 18765
+        $gw = [int]$panel.geometry.w
+        $gh = [int]$panel.geometry.h
+        $dash = Write-ProbeLcdDashboard -Port 18765 -Width $gw -Height $gh
         $mediaPath = $dash
         $kind = 'dashboard'
     } else {
@@ -706,14 +816,22 @@ function Invoke-LcdStudioApply {
     if ($forceDisplay) {
         $di = if ($DisplayIndex -ge 0) { $DisplayIndex } elseif ($null -ne $panel.display_index) { [int]$panel.display_index } else { 0 }
         $play = Start-LcdDisplayPlayer -MediaPath $mediaPath -DisplayIndex $di -Mode $(if ($Mode -eq 'dashboard') { 'dashboard' } else { 'media' }) `
-            -Shape $panel.geometry.shape -FitMode $FitMode -Bounds $panel.display_bounds
+            -Shape $panel.geometry.shape -FitMode $FitMode -Bounds $panel.display_bounds -SkipBrowser:$SkipBrowser
         $played = [bool]$play.played_on_display
     }
 
     if ($transport -ne 'windows_display' -or -not $forceDisplay) {
         switch ($transport) {
             'liquidctl' {
-                $push = Invoke-LcdLiquidctlPush -MediaPath $mediaPath
+                $liqKind = Detect-LcdMediaKind -FileName $mediaPath -Bytes ([IO.File]::ReadAllBytes($mediaPath) | Select-Object -First 16)
+                if ($liqKind -ne 'gif' -and (Find-LcdFfmpeg)) {
+                    $gifFit = Invoke-LcdMediaFit -SourcePath $mediaPath `
+                        -TargetW ([int]$panel.geometry.w) -TargetH ([int]$panel.geometry.h) `
+                        -FitMode $(if ($FitMode) { $FitMode } else { 'fit' }) -OutKind 'gif'
+                    if ($gifFit.ok -and $gifFit.path) { $mediaPath = $gifFit.path; if ($fit) { $fit.transcoded = $true; $fit.kind = 'gif' } }
+                }
+                $match = if ($LiquidctlMatch) { $LiquidctlMatch } else { 'kraken' }
+                $push = Invoke-LcdLiquidctlPush -MediaPath $mediaPath -Match $match
                 $pushed = [bool]$push.pushed
                 if (-not $pushed) {
                     $stage = Invoke-LcdStageOnly -MediaPath $mediaPath -PanelId $PanelId
@@ -751,6 +869,7 @@ function Invoke-LcdStudioApply {
         'Saved / staged - hardware not confirmed'
     }
 
+    $ffmpegMissing = if ($fit -and $fit.ffmpeg_missing) { $true } elseif ($fit -and $fit.fallback -eq 'ffmpeg_missing') { $true } else { $false }
     return @{
         ok = $true
         panel_id = $PanelId
@@ -767,8 +886,13 @@ function Invoke-LcdStudioApply {
         transport = $transport
         pushed = $pushed
         played_on_display = $played
+        player_ready = if ($play) { [bool]$play.player_ready } else { $false }
+        player_html = if ($play -and $play.player_html) { $play.player_html } elseif ($play) { $play.html } else { $null }
+        player_url = if ($play) { $play.player_url } else { $null }
         attempted = if ($push) { [bool]$push.attempted } else { $false }
         transcoded = if ($fit) { [bool]$fit.transcoded } else { $false }
+        ffmpeg_missing = $ffmpegMissing
+        circular_alpha = if ($fit) { [bool]$fit.circular_alpha } else { $false }
         push = $push
         play = $play
         message = ($headline + '. ' + $(if ($push -and $push.message) { $push.message } elseif ($play -and $play.message) { $play.message } else { '' })).Trim()

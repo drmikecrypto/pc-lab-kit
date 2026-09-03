@@ -1,10 +1,12 @@
 /**
  * LCD Studio — universal AIO / case panel media (GIF + longer video).
+ * Tauri-first display player when desktop shell is present; Edge/Chrome fallback in browser.
  */
 (function () {
   const AGENT = () => (window.PCLAB_DIAGNOSTIC && window.PCLAB_DIAGNOSTIC.agentBase) || 'http://127.0.0.1:18765';
   let panels = [];
   let selectedId = null;
+  let catalogTools = {};
 
   function el(id) {
     return document.getElementById(id);
@@ -16,6 +18,14 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function isTauriShell() {
+    return !!(window.__TAURI__?.core?.invoke || window.__TAURI_INTERNALS__?.invoke);
+  }
+
+  function tauriInvoke() {
+    return window.__TAURI__?.core?.invoke || window.__TAURI_INTERNALS__?.invoke || null;
   }
 
   async function probeJsonHeaders() {
@@ -47,6 +57,65 @@
     return `<span class="dx-lcd-badge dx-lcd-badge--shape">${esc(shape || 'rect')}</span>`;
   }
 
+  function mediaBadge(p) {
+    const caps = p.capabilities || {};
+    if (p.transport === 'windows_display' && caps.video) {
+      return '<span class="dx-lcd-badge">video</span>';
+    }
+    if (p.transport === 'stage_only') {
+      return '<span class="dx-lcd-badge dx-lcd-badge--stage">gif / stage</span>';
+    }
+    return '<span class="dx-lcd-badge">gif</span>';
+  }
+
+  function renderToolsPanel() {
+    const box = el('dx-lcd-tools');
+    if (!box) return;
+    const tools = catalogTools || {};
+    const paths = tools.paths || {};
+    const missing = [];
+    if (!tools.ffmpeg) missing.push('ffmpeg');
+    if (!tools.liquidctl) missing.push('liquidctl');
+    if (!missing.length) {
+      box.hidden = true;
+      box.innerHTML = '';
+      return;
+    }
+    const ffHint = (paths.ffmpeg && paths.ffmpeg[0]) || 'agent/pclab_probe/tools/ffmpeg/ffmpeg.exe';
+    const liqHint = (paths.liquidctl && paths.liquidctl[0]) || 'agent/pclab_probe/tools/liquidctl/liquidctl.exe';
+    box.hidden = false;
+    box.innerHTML = `<div class="dx-lcd-tools-card">
+      <strong>Install tools</strong>
+      <p class="muted fs-xs">${esc(paths.note || 'Drop portable binaries under agent/pclab_probe/tools/ then Rescan.')}</p>
+      <ul class="dx-lcd-tools-list fs-xs">
+        ${!tools.ffmpeg ? `<li><code>ffmpeg</code> → <code>${esc(ffHint)}</code> (or run <code>scripts/fetch-lcd-tools.ps1</code>)</li>` : ''}
+        ${!tools.liquidctl ? `<li><code>liquidctl</code> → <code>${esc(liqHint)}</code> or <code>pip install liquidctl</code> on PATH</li>` : ''}
+      </ul>
+      <button type="button" class="dx-btn ghost" id="dx-lcd-tools-rescan">Rescan after install</button>
+    </div>`;
+    el('dx-lcd-tools-rescan')?.addEventListener('click', refreshPanels);
+  }
+
+  function renderLiquidctlPicker() {
+    const wrap = el('dx-lcd-liquidctl-wrap');
+    const sel = el('dx-lcd-liquidctl-match');
+    if (!wrap || !sel) return;
+    const p = selectedPanel();
+    const devs = Array.isArray(catalogTools.liquidctl_devices) ? catalogTools.liquidctl_devices : [];
+    const show = !!(p && p.transport === 'liquidctl' && catalogTools.liquidctl && devs.length > 1);
+    wrap.hidden = !show;
+    if (!show) return;
+    const prev = sel.value;
+    sel.innerHTML = devs
+      .map((d) => {
+        const id = d.id || d.description || 'kraken';
+        const label = d.description || d.id || id;
+        return `<option value="${esc(id)}">${esc(label)}</option>`;
+      })
+      .join('');
+    if (prev && [...sel.options].some((o) => o.value === prev)) sel.value = prev;
+  }
+
   function renderList() {
     const box = el('dx-lcd-panels');
     if (!box) return;
@@ -58,12 +127,12 @@
       .map((p) => {
         const g = p.geometry || {};
         const active = p.id === selectedId ? ' is-active' : '';
-        const caps = p.capabilities || {};
         return `<button type="button" class="dx-lcd-panel-card${active}" data-panel="${esc(p.id)}">
           <strong>${esc(p.label)}</strong>
           <span class="dx-lcd-panel-meta">${esc(p.vendor)} · ${g.w || '?'}×${g.h || '?'}</span>
           <span class="dx-lcd-panel-badges">${transportBadge(p.transport)}${shapeBadge(g.shape)}
-            ${caps.video ? '<span class="dx-lcd-badge">video</span>' : '<span class="dx-lcd-badge">gif</span>'}
+            ${mediaBadge(p)}
+            ${p.capabilities?.live_dashboard ? '<span class="dx-lcd-badge dx-lcd-badge--disp">dashboard</span>' : ''}
           </span>
         </button>`;
       })
@@ -87,6 +156,30 @@
     if (fit && p?.geometry?.fit_default && !fit.dataset.touched) {
       fit.value = p.geometry.fit_default;
     }
+    const note = el('dx-lcd-honesty');
+    if (note) {
+      const n = p?.honesty?.note || '';
+      const hidHint =
+        p && p.transport !== 'windows_display'
+          ? ' HID path is GIF-oriented; long video needs a Windows display panel.'
+          : '';
+      note.textContent = n ? n + hidHint : '';
+    }
+    const dashBtn = el('dx-lcd-dashboard');
+    if (dashBtn) {
+      const ok = !!(p && p.transport === 'windows_display' && p.capabilities?.live_dashboard);
+      dashBtn.disabled = !ok;
+      dashBtn.title = ok ? 'Live telemetry on this display' : 'Dashboard is Windows-display only';
+    }
+    const file = el('dx-lcd-file');
+    if (file && p) {
+      if (p.transport === 'windows_display') {
+        file.setAttribute('accept', 'image/gif,video/mp4,video/webm,.gif,.mp4,.webm,.mov');
+      } else {
+        file.setAttribute('accept', 'image/gif,.gif,video/mp4,video/webm,.mp4,.webm');
+      }
+    }
+    renderLiquidctlPicker();
   }
 
   async function refreshPanels() {
@@ -96,6 +189,7 @@
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       panels = data.panels || [];
+      catalogTools = data.tools || {};
       window.__dxLcdPanels = data;
       if (!selectedId && panels.length) {
         const secondary = panels.find((p) => p.transport === 'windows_display' && !p.primary);
@@ -103,9 +197,11 @@
       }
       renderList();
       updatePreviewChrome();
-      const tools = data.tools || {};
+      renderToolsPanel();
+      const tools = catalogTools;
+      const liqN = Array.isArray(tools.liquidctl_devices) ? tools.liquidctl_devices.length : 0;
       setStatus(
-        `${panels.length} panels · ffmpeg ${tools.ffmpeg ? 'yes' : 'no'} · liquidctl ${tools.liquidctl ? 'yes' : 'no'} · OpenRGB ${tools.openrgb ? 'yes' : 'no'}`,
+        `${panels.length} panels · ffmpeg ${tools.ffmpeg ? 'yes' : 'no'} · liquidctl ${tools.liquidctl ? 'yes' : 'no'}${liqN ? ` (${liqN})` : ''} · OpenRGB ${tools.openrgb ? 'yes' : 'no'} · player ${isTauriShell() ? 'Tauri' : 'browser'}`,
         'muted'
       );
     } catch (e) {
@@ -145,29 +241,25 @@
     }
   }
 
-  async function tryTauriPlayer(play) {
-    if (!play?.played_on_display) return;
-    try {
-      const invoke = window.__TAURI__?.core?.invoke || window.__TAURI_INTERNALS__?.invoke;
-      if (!invoke) return;
-      const b = play.bounds || {};
-      const html = play.html || null;
-      // Probe already launched Edge; Tauri can also open if we have local html path
-      if (html) {
-        await invoke('lcd_open_player', {
-          args: {
-            url: html,
-            x: b.x,
-            y: b.y,
-            width: b.width,
-            height: b.height,
-            title: 'PC Lab Kit LCD',
-          },
-        });
-      }
-    } catch (_) {
-      /* probe Edge player is primary */
-    }
+  async function openTauriPlayer(data) {
+    const invoke = tauriInvoke();
+    if (!invoke) return false;
+    const play = data.play || {};
+    const url = data.player_url || play.player_url || data.player_html || play.player_html || play.html;
+    if (!url) return false;
+    const b = play.bounds || data.bounds || {};
+    await invoke('lcd_open_player', {
+      args: {
+        url,
+        label: 'lcd-player',
+        x: b.x ?? 0,
+        y: b.y ?? 0,
+        width: b.width ?? 800,
+        height: b.height ?? 600,
+        title: 'PC Lab Kit LCD',
+      },
+    });
+    return true;
   }
 
   async function applyMedia(opts = {}) {
@@ -179,11 +271,20 @@
     const input = el('dx-lcd-file');
     const file = input?.files?.[0];
     const mode = opts.mode || 'media';
+    if (mode === 'dashboard' && p.transport !== 'windows_display') {
+      setStatus('Live dashboard is Windows-display only.', 'warn');
+      return;
+    }
     if (mode === 'media' && !file) {
       setStatus('Choose a GIF, MP4, or WebM file.', 'warn');
       return;
     }
+    if (mode === 'media' && p.transport !== 'windows_display' && file && /\.(mp4|webm|mov)$/i.test(file.name) && !catalogTools.ffmpeg) {
+      setStatus('HID panels need GIF (or install tools/ffmpeg for auto video→GIF).', 'warn');
+      return;
+    }
     const fit = el('dx-lcd-fit')?.value || 'fit';
+    const preferTauri = isTauriShell() && (p.transport === 'windows_display' || mode === 'dashboard' || opts.forcePlay);
     setStatus(mode === 'dashboard' ? 'Opening live dashboard…' : 'Fitting & applying…', 'muted');
     try {
       const payload = {
@@ -193,7 +294,15 @@
         play_display: p.transport === 'windows_display' || !!opts.forcePlay,
         display_index: p.display_index != null ? p.display_index : undefined,
         openrgb_index: p.openrgb_index != null ? p.openrgb_index : undefined,
+        skip_browser: preferTauri,
+        prefer_tauri: preferTauri,
       };
+      const liqSel = el('dx-lcd-liquidctl-match');
+      if (p.transport === 'liquidctl' && liqSel && !liqSel.closest('[hidden]') && liqSel.value) {
+        payload.liquidctl_match = liqSel.value;
+      } else if (p.transport === 'liquidctl') {
+        payload.liquidctl_match = 'kraken';
+      }
       if (file && mode === 'media') {
         payload.file_name = file.name;
         payload.media_base64 = await fileToBase64(file);
@@ -209,16 +318,26 @@
         setStatus(esc(data.message || data.error || 'Apply failed'), 'warn');
         return;
       }
+      let tauriOk = false;
+      if (preferTauri && (data.player_ready || data.player_url || data.play?.html)) {
+        try {
+          tauriOk = await openTauriPlayer(data);
+        } catch (err) {
+          setStatus(esc('Tauri player failed: ' + (err.message || err)), 'warn');
+        }
+      }
       let cls = 'warn';
-      if (data.pushed || data.played_on_display) cls = 'ok';
+      if (data.pushed || data.played_on_display || tauriOk) cls = 'ok';
       const bits = [
         data.pushed ? 'HID pushed' : null,
-        data.played_on_display ? 'playing on display' : null,
+        tauriOk ? 'playing on display (Tauri)' : data.played_on_display ? 'playing on display' : null,
+        data.player_ready && !tauriOk && !data.played_on_display ? 'player HTML ready' : null,
         data.transcoded ? 'transcoded' : null,
+        data.ffmpeg_missing ? 'ffmpeg missing' : null,
+        data.circular_alpha ? 'circular alpha' : null,
         data.transport ? `transport=${data.transport}` : null,
       ].filter(Boolean);
       setStatus(`<strong>${esc(data.message || 'Done')}</strong><br>${esc(bits.join(' · '))}`, cls);
-      await tryTauriPlayer(data.play);
     } catch (e) {
       setStatus(esc(e.message || e), 'warn');
     }
@@ -233,8 +352,8 @@
         body: '{}',
       });
       try {
-        const invoke = window.__TAURI__?.core?.invoke;
-        if (invoke) await invoke('lcd_close_player', { label: null });
+        const invoke = tauriInvoke();
+        if (invoke) await invoke('lcd_close_player', { label: 'lcd-player' });
       } catch (_) {}
       setStatus('LCD player stopped.', 'ok');
     } catch (e) {

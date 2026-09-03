@@ -47,9 +47,11 @@ pub async fn lcd_open_player(app: AppHandle, args: LcdPlayerArgs) -> Result<Stri
         .inner_size(w, h)
         .decorations(false)
         .always_on_top(true)
-        .skip_taskbar(false)
+        .skip_taskbar(true)
         .resizable(false)
         .position(x, y)
+        .visible(true)
+        .focused(true)
         .build()
         .map_err(|e| e.to_string())?;
     Ok(label)

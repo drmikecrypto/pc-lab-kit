@@ -681,6 +681,7 @@ $toolTotal = $toolKit->total();
                             <button type="button" class="dx-btn ghost" id="dx-lcd-refresh">Rescan panels</button>
                             <button type="button" class="dx-btn ghost" id="dx-lcd-stop">Stop player</button>
                         </div>
+                        <div class="dx-lcd-tools" id="dx-lcd-tools" hidden></div>
                         <div class="dx-lcd-panels" id="dx-lcd-panels"></div>
                         <div class="dx-lcd-work">
                             <div class="dx-lcd-preview" id="dx-lcd-preview"><span class="muted fs-xs">Preview</span></div>
@@ -688,6 +689,10 @@ $toolTotal = $toolKit->total();
                                 <label>
                                     <span>Media (GIF / MP4 / WebM)</span>
                                     <input type="file" id="dx-lcd-file" accept="image/gif,video/mp4,video/webm,.gif,.mp4,.webm,.mov">
+                                </label>
+                                <label id="dx-lcd-liquidctl-wrap" hidden>
+                                    <span>liquidctl device</span>
+                                    <select id="dx-lcd-liquidctl-match"></select>
                                 </label>
                                 <label>
                                     <span>Fit mode</span>
@@ -702,6 +707,7 @@ $toolTotal = $toolKit->total();
                                     <button type="button" class="dx-btn primary" id="dx-lcd-apply">Apply to panel</button>
                                     <button type="button" class="dx-btn ghost" id="dx-lcd-dashboard">Live dashboard</button>
                                 </div>
+                                <p class="dx-lcd-honesty muted fs-xs" id="dx-lcd-honesty" aria-live="polite"></p>
                             </div>
                         </div>
                         <div class="dx-lcd-status muted fs-sm" id="dx-lcd-studio-status" role="status"></div>
@@ -791,7 +797,7 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.3.0"></script>
-<script defer src="/assets/js/diagnostic-lcd-studio.js?v=1.0.0"></script>
+<script defer src="/assets/js/diagnostic-lcd-studio.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-fleet.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-repair.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-suite.js?v=1.6.0"></script>

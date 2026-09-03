@@ -6,6 +6,19 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.2.0.0] - 2026-09-03
+
+> Marketing / `APP_VERSION` **4.2.0.0**; desktop Tauri/npm/Cargo bundle **4.2.2** (Tauri requires MAJOR.MINOR.PATCH).
+
+### Changed — LCD Studio credibility + operator tools
+- Tauri-first display player when desktop shell is present (`skip_browser` / `prefer_tauri`); Edge/Chrome remains probe-only fallback
+- Apply responses surface `player_html` / `player_url`, `ffmpeg_missing`, and circular-alpha round_mask when ffmpeg can emit GIF
+- liquidctl path auto video→GIF when ffmpeg is present; clear needs-GIF honesty otherwise; multi-device `liquidctl_match` picker
+- Live dashboard denser telemetry tiles; advertised only on `windows_display` panels
+- LCD Studio **Install tools** UX + `tools_paths` hints; `scripts/fetch-lcd-tools.ps1` for portable ffmpeg
+- Release **release-preflight**: equal desktop MAJOR.MINOR.PATCH + PHP URL check with archives fallback
+- Bootstrap PHP download tries archives ZIP when the current releases URL 404s
+
 ## [4.2.0] - 2026-09-03
 
 ### Fixed — Release CI

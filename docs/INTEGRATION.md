@@ -52,18 +52,23 @@ Identity: Windows `"agent":"pclab-probe"` / Linux `"agent":"pclab-probe-linux"`,
 | POST | `/lcd/play-display` | Fullscreen player on a Windows display index |
 | POST | `/lcd/stop` | Stop LCD display player |
 | POST | `/orchestrate` | RGB + fan + LCD orchestration |
-
-### LCD Studio honesty
-
-- **Confirmed play** on Windows secondary/primary monitors uses the display-path player (`played_on_display`).
-- **NZXT / liquidctl** may report a real push when the CLI succeeds; otherwise `stage_only` / `attempted`.
-- **OpenRGB** GIF apply is never claimed as confirmed hardware push — response notes stay non-confirm.
-- Optional **ffmpeg** under `agent/pclab_probe/tools/ffmpeg/` improves video→GIF / resize; without it, GIF still plays on display path.
 | GET/POST | `/bench/*`, `/stress/*` | Native benchmarks and stress |
 | POST/GET | `/suite/start\|status\|cancel` | Full Lab async suite |
 | GET/POST | `/launchers`, `/launchers/run` | Optional third-party stress tools (Windows) |
 | GET | `/integrations/hwinfo-sm` | Write **JSON sensor feed** (see below) |
 | GET/POST | `/repair/*` | OS maintenance catalog / run (Windows; confirm required) |
+
+### LCD Studio honesty
+
+- **Confirmed play** on Windows secondary/primary monitors uses the display-path player (`played_on_display`). In the Tauri desktop shell the lab prefers `lcd_open_player` (`skip_browser` / `prefer_tauri`); Edge/Chrome `--app=` remains the probe-only fallback.
+- Apply responses may include `player_html` / `player_url`, `ffmpeg_missing`, and `circular_alpha` (round_mask GIF when ffmpeg can emit alpha).
+- **NZXT / liquidctl** may report a real push when the CLI succeeds (GIF required; video→GIF when ffmpeg is present); otherwise `stage_only` / `attempted`.
+- **OpenRGB** GIF apply is never claimed as confirmed hardware push — response notes stay non-confirm.
+- Optional **ffmpeg** under `agent/pclab_probe/tools/ffmpeg/` improves video→GIF / resize; without it, GIF still plays on display path.
+- Live dashboard is **Windows-display only**.
+- Missing ffmpeg/liquidctl: LCD Studio shows **Install tools** with expected paths; run `scripts/fetch-lcd-tools.ps1` for portable ffmpeg, then Rescan.
+- Multi-Kraken: pass `liquidctl_match` on `/lcd/apply` (UI picker when `tools.liquidctl_devices.length > 1`).
+- Release builds: refresh `php_windows_url` in `config/build-deps.json` when windows.php.net rotates ZIPs; preflight and `bootstrap-build-tools.ps1` also try the **archives** URL. Marketing/`APP_VERSION` may be four-part (e.g. `4.2.0.0`); desktop Tauri versions stay `MAJOR.MINOR.PATCH`.
 
 ### Sensor JSON feed (not binary HWiNFO Shared Memory)
 

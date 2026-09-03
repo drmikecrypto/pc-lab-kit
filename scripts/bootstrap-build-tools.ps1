@@ -53,8 +53,29 @@ function Get-BundledWindowsPhpDir {
     $cfg = Get-BuildDepsConfig
     $zipPath = Join-Path $cache 'php-win-x64.zip'
     $url = [string]$cfg.php_windows_url
-    Write-Host "Downloading PHP $($cfg.php_windows_version) for Windows..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri $url -OutFile $zipPath -UseBasicParsing
+    $ver = [string]$cfg.php_windows_version
+    $urls = @($url)
+    if ($url -match '/releases/' -and $url -notmatch '/archives/') {
+        $urls += ($url -replace '/releases/', '/archives/')
+        $urls += "https://windows.php.net/downloads/releases/archives/php-$ver-nts-Win32-vs17-x64.zip"
+    }
+    $downloaded = $false
+    foreach ($tryUrl in $urls) {
+        Write-Host "Downloading PHP $ver for Windows..." -ForegroundColor Cyan
+        Write-Host "  $tryUrl" -ForegroundColor DarkGray
+        try {
+            Invoke-WebRequest -Uri $tryUrl -OutFile $zipPath -UseBasicParsing
+            if ((Test-Path $zipPath) -and ((Get-Item $zipPath).Length -gt 1000000)) {
+                $downloaded = $true
+                break
+            }
+        } catch {
+            Write-Host "  failed: $($_.Exception.Message)" -ForegroundColor Yellow
+        }
+    }
+    if (-not $downloaded) {
+        throw "Failed to download PHP $ver. Refresh php_windows_url in config/build-deps.json (releases or archives)."
+    }
 
     New-Item -ItemType Directory -Force -Path $runtimeDir | Out-Null
     Expand-Archive -Path $zipPath -DestinationPath $runtimeDir -Force

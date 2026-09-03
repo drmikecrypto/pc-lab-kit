@@ -2,7 +2,7 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; **Universal LCD Studio in v4.2.0**. Capability-first doctrine: own the full lab, not an import shell.  
+**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; Universal LCD Studio **v4.2.0**; credibility + operator tools **v4.2.0.0** (desktop bundle **4.2.2**). Capability-first doctrine: own the full lab, not an import shell.  
 **Last updated:** 2026-09-03  
 **Repository:** [pc-lab-kit](../README.md)
 
@@ -581,6 +581,8 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 
 ## Immediate next steps
 
+**Shipped in v4.2.0.0 (LCD credibility + operator tools):** Tauri-first display player; ffmpeg/HID honesty; denser live dashboard on Windows displays only; Install tools UX + `fetch-lcd-tools.ps1`; liquidctl multi-device match; release-preflight semver + PHP archives fallback. Desktop installer version **4.2.2**.
+
 **Shipped in v4.2.0 (Universal LCD Studio):** RGB Lab LCD Studio UI; `/lcd/*` probe routes; GIF/MP4/WebM library + fit modes; Windows display player + Tauri LCD windows; liquidctl / OpenRGB / stage_only honesty.
 
 **Shipped in v4.1.7 (competitive wedge):** Sensor Tree, PresentMon sessions, dense JSON overlay feed, VkBench artifact/CRC fail → stress cert, elevated SMART depth badges.
@@ -593,7 +595,7 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 
 ### Recommended focus
 
-Operator credibility on LCD Studio honesty badges + HWiNFO / CapFrameX / OCCT depth. Next verticals: deeper HID plugins where safe, then PawnIO trust path.
+LCD honesty + tool drop-in path are the operator story; next verticals: deeper HID plugins where safe, then PawnIO trust path.
 ---
 
 ## Assumptions

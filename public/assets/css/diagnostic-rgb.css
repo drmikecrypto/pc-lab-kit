@@ -201,6 +201,28 @@
   gap: 0.45rem;
   margin-top: 0.5rem;
 }
+.dx-lcd-honesty {
+  margin: 0.55rem 0 0;
+  line-height: 1.35;
+  max-width: 36rem;
+}
+.dx-lcd-tools {
+  margin: 0.65rem 0 0.85rem;
+}
+.dx-lcd-tools-card {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 10px;
+  background: rgba(251, 191, 36, 0.06);
+}
+.dx-lcd-tools-list {
+  margin: 0.45rem 0 0.65rem 1.1rem;
+  padding: 0;
+}
+.dx-lcd-tools-list code {
+  font-size: 0.85em;
+  word-break: break-all;
+}
 .dx-lcd-status {
   margin-top: 0.75rem;
   line-height: 1.45;

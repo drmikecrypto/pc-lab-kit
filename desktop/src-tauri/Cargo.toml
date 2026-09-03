@@ -1,6 +1,6 @@
 [package]
 name = "pclabkit"
-version = "4.2.0"
+version = "4.2.2"
 description = "PC Lab Kit desktop shell"
 authors = ["drmikecrypto"]
 edition = "2021"

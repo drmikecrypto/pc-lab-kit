@@ -2389,7 +2389,7 @@ dependencies = [
 
 [[package]]
 name = "pclabkit"
-version = "4.2.0"
+version = "4.2.2"
 dependencies = [
  "dirs 5.0.1",
  "serde",
@@ -2398,6 +2398,7 @@ dependencies = [
  "tauri-build",
  "tauri-plugin-opener",
  "tauri-plugin-single-instance",
+ "url",
  "which",
 ]
 
