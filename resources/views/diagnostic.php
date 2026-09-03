@@ -685,6 +685,7 @@ $toolTotal = $toolKit->total();
                         <div class="dx-lcd-panels" id="dx-lcd-panels"></div>
                         <div class="dx-lcd-work">
                             <div class="dx-lcd-preview" id="dx-lcd-preview"><span class="muted fs-xs">Preview</span></div>
+                            <div class="dx-lcd-library" id="dx-lcd-library" aria-label="LCD media library"></div>
                             <div class="dx-lcd-controls">
                                 <label>
                                     <span>Media (GIF / MP4 / WebM)</span>
@@ -706,6 +707,7 @@ $toolTotal = $toolKit->total();
                                 <div class="dx-lcd-actions">
                                     <button type="button" class="dx-btn primary" id="dx-lcd-apply">Apply to panel</button>
                                     <button type="button" class="dx-btn ghost" id="dx-lcd-dashboard">Live dashboard</button>
+                                    <button type="button" class="dx-btn ghost" id="dx-lcd-open-stage" hidden>Open staged folder</button>
                                 </div>
                                 <p class="dx-lcd-honesty muted fs-xs" id="dx-lcd-honesty" aria-live="polite"></p>
                             </div>
@@ -797,7 +799,7 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-rgb.js?v=1.3.0"></script>
-<script defer src="/assets/js/diagnostic-lcd-studio.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-lcd-studio.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-fleet.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-repair.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-suite.js?v=1.6.0"></script>
@@ -806,7 +808,7 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-smart-frames.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-openbook.js?v=1.3.0"></script>
+<script defer src="/assets/js/diagnostic-openbook.js?v=1.4.0"></script>
 <script defer src="/assets/js/diagnostic-inventory.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-launchers.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry-stream.js?v=1.0.0"></script>

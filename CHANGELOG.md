@@ -6,6 +6,15 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.2.3] - 2026-09-03
+
+### Added
+- LCD Studio **media library** (`GET /lcd/library`) — re-apply recent clips without re-upload
+- **Open staged folder** (`POST /lcd/open-stage`) for stage_only / HID fallback honesty
+
+### Changed
+- Open Book assembly checklist progress meter; calm Probe-offline empty states (checklist still usable)
+
 ## [4.2.0.0] - 2026-09-03
 
 > Marketing / `APP_VERSION` **4.2.0.0**; desktop Tauri/npm/Cargo bundle **4.2.2** (Tauri requires MAJOR.MINOR.PATCH).

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: PC Lab Kit Diagnostic API
-  version: 4.2.0.0
+  version: 4.2.3
   description: Local-first PC laboratory REST API (localhost only).
 servers:
   - url: http://127.0.0.1:8080
@@ -49,6 +49,9 @@ paths:
   /lcd/panels:
     get:
       summary: LCD Studio panel discovery (HID + Windows displays)
+  /lcd/library:
+    get:
+      summary: Recent LCD media library entries for re-apply
   /lcd/apply:
     post:
       summary: Fit + push/play GIF/MP4/WebM to a panel
@@ -58,3 +61,6 @@ paths:
   /lcd/stop:
     post:
       summary: Stop LCD display player
+  /lcd/open-stage:
+    post:
+      summary: Open staged LCD file or folder in Explorer

@@ -48,9 +48,11 @@ Identity: Windows `"agent":"pclab-probe"` / Linux `"agent":"pclab-probe-linux"`,
 | POST | `/rgb/stop` | Stop blink timers; set OpenRGB zones off |
 | POST | `/rgb/lcd` | Legacy LCD upload (GIF/video base64); delegates to LCD Studio (`pushed` / `attempted` / `played_on_display`) |
 | GET | `/lcd/panels` | LCD Studio panel catalog (HID coolers + Windows monitors) |
+| GET | `/lcd/library` | Recent LCD media library entries (re-apply via `source_path`) |
 | POST | `/lcd/apply` | Fit + stage/push/play media (GIF/MP4/WebM; `fit_mode`, `panel_id`, transport honesty) |
 | POST | `/lcd/play-display` | Fullscreen player on a Windows display index |
 | POST | `/lcd/stop` | Stop LCD display player |
+| POST | `/lcd/open-stage` | Open staged LCD file/folder in Explorer (`path` / `staged_path`) |
 | POST | `/orchestrate` | RGB + fan + LCD orchestration |
 | GET/POST | `/bench/*`, `/stress/*` | Native benchmarks and stress |
 | POST/GET | `/suite/start\|status\|cancel` | Full Lab async suite |

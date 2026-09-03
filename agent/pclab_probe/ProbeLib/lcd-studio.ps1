@@ -19,6 +19,57 @@ function Get-LcdCacheDir {
     return $dir
 }
 
+function Get-LcdLibraryList {
+    param([int]$Limit = 20)
+    $dir = Get-LcdLibraryDir
+    $Limit = [Math]::Max(1, [Math]::Min(50, $Limit))
+    $items = @()
+    Get-ChildItem -Path $dir -File -ErrorAction SilentlyContinue |
+        Where-Object { $_.Extension -match '\.(gif|mp4|webm|mov|mkv)$' } |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First $Limit |
+        ForEach-Object {
+            $kind = Detect-LcdMediaKind -FileName $_.FullName -Bytes ([IO.File]::ReadAllBytes($_.FullName) | Select-Object -First 16)
+            $items += @{
+                id = $_.Name
+                name = $_.Name
+                path = $_.FullName
+                kind = $kind
+                size_bytes = [int64]$_.Length
+                mtime = $_.LastWriteTimeUtc.ToString('o')
+            }
+        }
+    return @{
+        ok = $true
+        library_dir = $dir
+        count = @($items).Count
+        items = @($items)
+    }
+}
+
+function Open-LcdStagedPath {
+    param([string]$Path)
+    if (-not $Path) {
+        return @{ ok = $false; error = 'missing_path'; message = 'Provide path or staged_path.' }
+    }
+    if (-not (Test-Path -LiteralPath $Path)) {
+        # If directory missing, try parent; if file missing, fail honest
+        $parent = Split-Path -Parent $Path
+        if ($parent -and (Test-Path -LiteralPath $parent)) {
+            Start-Process -FilePath 'explorer.exe' -ArgumentList $parent | Out-Null
+            return @{ ok = $true; opened = $parent; selected = $false; message = 'Opened stage folder (file missing).' }
+        }
+        return @{ ok = $false; error = 'not_found'; message = "Path not found: $Path" }
+    }
+    $item = Get-Item -LiteralPath $Path
+    if ($item.PSIsContainer) {
+        Start-Process -FilePath 'explorer.exe' -ArgumentList $item.FullName | Out-Null
+        return @{ ok = $true; opened = $item.FullName; selected = $false; message = 'Opened stage folder in Explorer.' }
+    }
+    Start-Process -FilePath 'explorer.exe' -ArgumentList ('/select,' + $item.FullName) | Out-Null
+    return @{ ok = $true; opened = $item.FullName; selected = $true; message = 'Selected staged file in Explorer.' }
+}
+
 function Get-LcdPlayerDir {
     $dir = Join-Path $env:LOCALAPPDATA 'PcLabKit\Probe\lcd-player'
     if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }

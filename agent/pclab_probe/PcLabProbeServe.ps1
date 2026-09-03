@@ -66,9 +66,11 @@ $script:Routes = @(
     @{ method = 'POST'; path = '/rgb/apply';          desc = 'apply zone colors/effects' }
     @{ method = 'POST'; path = '/rgb/lcd';            desc = 'upload GIF/video (LCD Studio apply; legacy alias)' }
     @{ method = 'GET';  path = '/lcd/panels';         desc = 'LCD Studio panel discovery (AIO HID + Windows displays)' }
+    @{ method = 'GET';  path = '/lcd/library';        desc = 'recent LCD media library entries for re-apply' }
     @{ method = 'POST'; path = '/lcd/apply';          desc = 'fit + push/play media to panel (GIF/MP4/WebM)' }
     @{ method = 'POST'; path = '/lcd/play-display';   desc = 'fullscreen player on Windows display index' }
     @{ method = 'POST'; path = '/lcd/stop';           desc = 'stop LCD display player' }
+    @{ method = 'POST'; path = '/lcd/open-stage';     desc = 'open staged LCD file/folder in Explorer' }
     @{ method = 'POST'; path = '/rgb/stop';           desc = 'stop blink timers / set zones off' }
     @{ method = 'POST'; path = '/rgb/auto';           desc = 'auto RGB' }
     @{ method = 'POST'; path = '/rgb/stop-vendors';  desc = 'stop competing vendor RGB processes (confirm)' }
@@ -538,6 +540,12 @@ Save-ProbeLcdGif -DeviceId `$j.device_id -Bytes `$bytes -ExpectedW ([int]`$j.exp
 Get-LcdPanelCatalog | ConvertTo-Json -Depth 12 -Compress }
 "@
             }
+            "/lcd/library" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\lcd-studio.ps1'
+Get-LcdLibraryList -Limit 20 | ConvertTo-Json -Depth 8 -Compress }
+"@
+            }
             "/lcd/apply" {
                 if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
                 $raw = Read-RequestBody $req
@@ -590,6 +598,21 @@ Start-LcdDisplayPlayer -MediaPath `$path -DisplayIndex `$di -Mode `$mode -Shape 
 & { . '$scriptDir\ProbeLib\lcd-studio.ps1'
 Stop-LcdDisplayPlayer | ConvertTo-Json -Depth 6 -Compress }
 "@
+            }
+            "/lcd/open-stage" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $tmp = Join-Path $env:TEMP ("pclab_lcd_stage_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    if (-not $raw) { $raw = '{}' }
+                    [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\lcd-studio.ps1'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+`$p = if (`$j.path) { [string]`$j.path } elseif (`$j.staged_path) { [string]`$j.staged_path } else { '' }
+Open-LcdStagedPath -Path `$p | ConvertTo-Json -Depth 6 -Compress }
+"@
+                } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }
             "/rgb/stop" {
                 if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }

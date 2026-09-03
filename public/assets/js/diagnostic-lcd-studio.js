@@ -7,6 +7,8 @@
   let panels = [];
   let selectedId = null;
   let catalogTools = {};
+  let lastStagedPath = null;
+  let libraryItems = [];
 
   function el(id) {
     return document.getElementById(id);
@@ -66,6 +68,55 @@
       return '<span class="dx-lcd-badge dx-lcd-badge--stage">gif / stage</span>';
     }
     return '<span class="dx-lcd-badge">gif</span>';
+  }
+
+  function setOpenStageVisible(path) {
+    lastStagedPath = path || null;
+    const btn = el('dx-lcd-open-stage');
+    if (!btn) return;
+    btn.hidden = !lastStagedPath;
+  }
+
+  function renderLibrary() {
+    const box = el('dx-lcd-library');
+    if (!box) return;
+    if (!libraryItems.length) {
+      box.innerHTML = `<p class="muted fs-xs dx-lcd-library-empty">Library empty — apply a clip once to save it for re-apply.</p>`;
+      return;
+    }
+    box.innerHTML =
+      `<div class="dx-lcd-library-head muted fs-xs">Library (tap to re-apply)</div>` +
+      `<div class="dx-lcd-library-strip">` +
+      libraryItems
+        .map((it) => {
+          const label = it.name || it.id || 'clip';
+          const kind = it.kind || '?';
+          return `<button type="button" class="dx-lcd-lib-chip" data-path="${esc(it.path)}" title="${esc(it.path)}">
+            <span class="dx-lcd-lib-kind">${esc(kind)}</span>
+            <span class="dx-lcd-lib-name">${esc(label)}</span>
+          </button>`;
+        })
+        .join('') +
+      `</div>`;
+    box.querySelectorAll('[data-path]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const path = btn.getAttribute('data-path');
+        applyMedia({ mode: 'media', sourcePath: path });
+      });
+    });
+  }
+
+  async function refreshLibrary() {
+    try {
+      const res = await fetch(AGENT() + '/lcd/library', { mode: 'cors' });
+      if (!res.ok) throw new Error(`library HTTP ${res.status}`);
+      const data = await res.json();
+      libraryItems = data.items || [];
+      renderLibrary();
+    } catch (_) {
+      libraryItems = [];
+      renderLibrary();
+    }
   }
 
   function renderToolsPanel() {
@@ -198,6 +249,7 @@
       renderList();
       updatePreviewChrome();
       renderToolsPanel();
+      await refreshLibrary();
       const tools = catalogTools;
       const liqN = Array.isArray(tools.liquidctl_devices) ? tools.liquidctl_devices.length : 0;
       setStatus(
@@ -271,12 +323,13 @@
     const input = el('dx-lcd-file');
     const file = input?.files?.[0];
     const mode = opts.mode || 'media';
+    const sourcePath = opts.sourcePath || null;
     if (mode === 'dashboard' && p.transport !== 'windows_display') {
       setStatus('Live dashboard is Windows-display only.', 'warn');
       return;
     }
-    if (mode === 'media' && !file) {
-      setStatus('Choose a GIF, MP4, or WebM file.', 'warn');
+    if (mode === 'media' && !file && !sourcePath) {
+      setStatus('Choose a GIF, MP4, or WebM file (or pick from Library).', 'warn');
       return;
     }
     if (mode === 'media' && p.transport !== 'windows_display' && file && /\.(mp4|webm|mov)$/i.test(file.name) && !catalogTools.ffmpeg) {
@@ -285,7 +338,7 @@
     }
     const fit = el('dx-lcd-fit')?.value || 'fit';
     const preferTauri = isTauriShell() && (p.transport === 'windows_display' || mode === 'dashboard' || opts.forcePlay);
-    setStatus(mode === 'dashboard' ? 'Opening live dashboard…' : 'Fitting & applying…', 'muted');
+    setStatus(mode === 'dashboard' ? 'Opening live dashboard…' : sourcePath ? 'Re-applying from library…' : 'Fitting & applying…', 'muted');
     try {
       const payload = {
         panel_id: p.id,
@@ -303,7 +356,9 @@
       } else if (p.transport === 'liquidctl') {
         payload.liquidctl_match = 'kraken';
       }
-      if (file && mode === 'media') {
+      if (sourcePath) {
+        payload.source_path = sourcePath;
+      } else if (file && mode === 'media') {
         payload.file_name = file.name;
         payload.media_base64 = await fileToBase64(file);
       }
@@ -326,6 +381,12 @@
           setStatus(esc('Tauri player failed: ' + (err.message || err)), 'warn');
         }
       }
+      const staged =
+        data.push?.staged_path ||
+        data.staged_path ||
+        (data.transport === 'stage_only' ? data.media_path : null) ||
+        (data.push?.fallback === 'stage_only' ? data.push?.staged_path : null);
+      setOpenStageVisible(staged);
       let cls = 'warn';
       if (data.pushed || data.played_on_display || tauriOk) cls = 'ok';
       const bits = [
@@ -334,10 +395,34 @@
         data.player_ready && !tauriOk && !data.played_on_display ? 'player HTML ready' : null,
         data.transcoded ? 'transcoded' : null,
         data.ffmpeg_missing ? 'ffmpeg missing' : null,
-        data.circular_alpha ? 'circular alpha' : null,
+        staged ? 'staged' : null,
         data.transport ? `transport=${data.transport}` : null,
       ].filter(Boolean);
       setStatus(`<strong>${esc(data.message || 'Done')}</strong><br>${esc(bits.join(' · '))}`, cls);
+      await refreshLibrary();
+    } catch (e) {
+      setStatus(esc(e.message || e), 'warn');
+    }
+  }
+
+  async function openStagedFolder() {
+    if (!lastStagedPath) {
+      setStatus('No staged path from the last apply.', 'warn');
+      return;
+    }
+    try {
+      const res = await fetch(AGENT() + '/lcd/open-stage', {
+        method: 'POST',
+        mode: 'cors',
+        headers: await probeJsonHeaders(),
+        body: JSON.stringify({ path: lastStagedPath }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!data.ok) {
+        setStatus(esc(data.message || data.error || 'Could not open Explorer'), 'warn');
+        return;
+      }
+      setStatus(esc(data.message || 'Opened in Explorer'), 'ok');
     } catch (e) {
       setStatus(esc(e.message || e), 'warn');
     }
@@ -366,6 +451,7 @@
     el('dx-lcd-refresh')?.addEventListener('click', refreshPanels);
     el('dx-lcd-apply')?.addEventListener('click', () => applyMedia({ mode: 'media' }));
     el('dx-lcd-dashboard')?.addEventListener('click', () => applyMedia({ mode: 'dashboard', forcePlay: true }));
+    el('dx-lcd-open-stage')?.addEventListener('click', openStagedFolder);
     el('dx-lcd-stop')?.addEventListener('click', stopPlayer);
     el('dx-lcd-fit')?.addEventListener('change', (e) => {
       e.target.dataset.touched = '1';

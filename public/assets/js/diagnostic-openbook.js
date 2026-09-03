@@ -106,15 +106,19 @@
     ];
     const done = steps.filter((s) => s.ok).length;
     const next = steps.find((s) => !s.ok);
+    const pct = Math.round((done / steps.length) * 100);
     return `<div class="dx-ob-assembly__inner">
       <div class="dx-ob-assembly__head">
         <strong>Assembly checklist</strong>
-        <span class="muted fs-xs">${done}/${steps.length} ready for daily verify</span>
+        <span class="muted fs-xs">${done}/${steps.length} ready · ${pct}%</span>
+      </div>
+      <div class="dx-ob-assembly__meter" role="meter" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100" aria-label="Assembly checklist progress">
+        <span style="width:${pct}%"></span>
       </div>
       <ol class="dx-ob-assembly__list">${steps
         .map(
           (s) => `<li class="${s.ok ? 'is-ok' : 'is-todo'}">
-          <span class="dx-ob-assembly__mark">${s.ok ? '✓' : '○'}</span>
+          <span class="dx-ob-assembly__mark" aria-hidden="true">${s.ok ? '✓' : '○'}</span>
           <span><strong>${esc(s.label)}</strong><br><span class="muted fs-xs">${esc(s.hint)}</span></span>
         </li>`
         )
@@ -327,24 +331,35 @@
       if (status) status.textContent = `${ob.count} open-book · ${ob.fingerprint?.coverage_score ?? '—'}% coverage · ${ob.provenance_total || 0} tags · ${ob.dossier?.cpu?.model || 'Probe ok'}`;
       window.dispatchEvent(new CustomEvent('dx:openbook-updated', { detail: data }));
     } catch (e) {
-      if (status) status.textContent = 'Probe not ready';
-      const msg = `<div class="dx-panel-empty is-error">
-        <strong>Probe not ready</strong>
-        <p class="muted fs-sm">Open Book needs the desktop Probe (elevated for Ring0 firmware planes). Start PC Lab Kit, then Refresh assembly.</p>
-        <button type="button" class="dx-btn primary" id="dx-ob-retry">Retry</button>
+      if (status) status.textContent = 'Probe offline — checklist still available';
+      const msg = `<div class="dx-panel-empty dx-ob-offline">
+        <strong>Probe not connected</strong>
+        <p class="muted fs-sm">Open Book firmware planes need the desktop Probe. Start PC Lab Kit (elevate for Ring0), then Refresh assembly. This is not a hard failure — use the checklist below while you wait.</p>
+        <button type="button" class="dx-btn ghost" id="dx-ob-retry">Retry Probe</button>
       </div>`;
       ['dx-ob-table', 'dx-hwref-openbook-table', 'dx-ob-dossier-body'].forEach((id) => {
         const n = el(id);
         if (n) n.innerHTML = msg;
       });
+      const gauges = el('dx-ob-gauges');
+      if (gauges) {
+        gauges.innerHTML = `<p class="muted fs-sm">Live gauges pause until Probe answers.</p>`;
+      }
       el('dx-ob-retry')?.addEventListener('click', () => refresh());
       const assembly = el('dx-ob-assembly');
       if (assembly) {
         assembly.hidden = false;
-        assembly.innerHTML = `<div class="dx-ob-assembly__inner"><p class="muted fs-sm">Assembly checklist waits for Probe.</p></div>`;
+        assembly.innerHTML = assemblyChecklistHtml({
+          count: 0,
+          fingerprint: { coverage_score: 0 },
+          dossier: {},
+          platform: {},
+        });
       }
       const truth = el('dx-ob-truth-cards');
-      if (truth) truth.innerHTML = '';
+      if (truth) {
+        truth.innerHTML = `<p class="muted fs-sm dx-ob-truth-offline">Firmware identity cards appear when Probe returns a dossier.</p>`;
+      }
     }
   }
 

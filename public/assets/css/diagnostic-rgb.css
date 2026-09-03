@@ -223,6 +223,48 @@
   font-size: 0.85em;
   word-break: break-all;
 }
+.dx-lcd-library {
+  margin: 0.55rem 0 0.35rem;
+  max-width: 100%;
+}
+.dx-lcd-library-head {
+  margin-bottom: 0.35rem;
+}
+.dx-lcd-library-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.dx-lcd-lib-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  max-width: 11rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.dx-lcd-lib-chip:hover {
+  border-color: rgba(94, 234, 212, 0.45);
+}
+.dx-lcd-lib-kind {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.65;
+}
+.dx-lcd-lib-name {
+  font-size: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 10rem;
+}
 .dx-lcd-status {
   margin-top: 0.75rem;
   line-height: 1.45;
