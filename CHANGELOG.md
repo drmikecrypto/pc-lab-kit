@@ -6,7 +6,11 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
-## [4.1.6.0] - 2026-09-03
+## [4.2.0] - 2026-09-03
+
+### Fixed — Release CI
+- Pin Windows bundled PHP download to **8.4.25** (`config/build-deps.json`; 8.4.24 ZIP 404)
+- App/desktop version is **4.2.0** semver (Tauri rejects four-part `4.1.6.0`)
 
 ### Added — Universal LCD Studio
 - **LCD Studio** in RGB Lab: discover AIO/case HID panels + Windows displays; GIF / MP4 / WebM ingest with fit modes (`fit` / `fill` / `stretch` / `round_mask`)

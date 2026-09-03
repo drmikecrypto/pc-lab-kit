@@ -1,6 +1,6 @@
 {
-  "php_windows_version": "8.4.24",
-  "php_windows_url": "https://windows.php.net/downloads/releases/php-8.4.24-nts-Win32-vs17-x64.zip",
+  "php_windows_version": "8.4.25",
+  "php_windows_url": "https://windows.php.net/downloads/releases/php-8.4.25-nts-Win32-vs17-x64.zip",
   "php_linux_min": "8.2.0",
   "composer_url": "https://getcomposer.org/download/latest-stable/composer.phar",
   "dotnet_channel": "8.0",

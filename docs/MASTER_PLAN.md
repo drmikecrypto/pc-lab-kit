@@ -2,7 +2,7 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; **Universal LCD Studio in v4.1.6.0**. Capability-first doctrine: own the full lab, not an import shell.  
+**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; **Universal LCD Studio in v4.2.0**. Capability-first doctrine: own the full lab, not an import shell.  
 **Last updated:** 2026-09-03  
 **Repository:** [pc-lab-kit](../README.md)
 
@@ -29,7 +29,7 @@
 | **Pillar E — Open-Book Sensors** (Blackwell Hot Spot MMIO + catalog, dossier, assembly cert) | Shipped (3.4.0–4.0.0) — see [OPEN_BOOK_SENSORS.md](OPEN_BOOK_SENSORS.md) |
 | **v4.0.1 HRE** (Stability Oracle, `.pclab`, 3D topology, driver confidence, Rust R1 hook) | Shipped (4.0.1) |
 | **v4.0.2 Command Center** (layout 2.0, Arena, SSE stream, job queue, verify, Linux probe, E2E) | Shipped (4.0.2) |
-| **v4.1.6.0 Universal LCD Studio** (GIF+MP4/WebM, display player, HID plugins, RGB Lab UI) | Shipped (4.1.6.0) |
+| **v4.2.0 Universal LCD Studio** (GIF+MP4/WebM, display player, HID plugins, RGB Lab UI) | Shipped (4.2.0) |
 | Linux probe parity | Active — Platform Intelligence routes on `pclab_probe_linux` |
 | Full Vulkan compute suite | Shipped compute helper in 3.3.0 (raster/3D suite later) |
 | Windows Service forever-on probe | Shipped (optional install) — default remains tray/sidecar; see SECURITY.md sensor trust |
@@ -91,7 +91,7 @@
 
 ### Critical gap (historical — resolved)
 
-Phases 0–5 and Pillars A–C ship today as the Tauri + PHP + probe stack. LCD Studio (v4.1.6.0) covers GIF + longer video via display-path player and honest HID plugins. Remaining gaps: native Vulkan raster suite, Linux OC/RGB/Ring0 depth, deep per-OEM LCD protocols. Forever-on Windows Service install is optional (`Install-PcLabProbeService.ps1`); tray is the default operator story.
+Phases 0–5 and Pillars A–C ship today as the Tauri + PHP + probe stack. LCD Studio (v4.2.0) covers GIF + longer video via display-path player and honest HID plugins. Remaining gaps: native Vulkan raster suite, Linux OC/RGB/Ring0 depth, deep per-OEM LCD protocols. Forever-on Windows Service install is optional (`Install-PcLabProbeService.ps1`); tray is the default operator story.
 
 ---
 
@@ -540,7 +540,7 @@ pc-lab-kit/
 - [x] Tauri/web parity for RGB apply + Orchestrator orchestration
 - [x] Sensor Deck: gauges, export Rainmeter/JSON
 - [x] LCD GIF pipeline polish (blink timing + push path in 3.2.1)
-- [x] LCD Studio video + multi-panel (GIF/MP4/WebM, display player, transports) in 4.1.6.0
+- [x] LCD Studio video + multi-panel (GIF/MP4/WebM, display player, transports) in 4.2.0
 
 **Exit criteria:** RGB apply + fan/LCD orchestration works from desktop shell; Sensor Deck exportable
 
@@ -581,7 +581,7 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 
 ## Immediate next steps
 
-**Shipped in v4.1.6.0 (Universal LCD Studio):** RGB Lab LCD Studio UI; `/lcd/*` probe routes; GIF/MP4/WebM library + fit modes; Windows display player + Tauri LCD windows; liquidctl / OpenRGB / stage_only honesty.
+**Shipped in v4.2.0 (Universal LCD Studio):** RGB Lab LCD Studio UI; `/lcd/*` probe routes; GIF/MP4/WebM library + fit modes; Windows display player + Tauri LCD windows; liquidctl / OpenRGB / stage_only honesty.
 
 **Shipped in v4.1.7 (competitive wedge):** Sensor Tree, PresentMon sessions, dense JSON overlay feed, VkBench artifact/CRC fail → stress cert, elevated SMART depth badges.
 
