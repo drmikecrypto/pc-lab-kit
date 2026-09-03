@@ -20,7 +20,7 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-live.css?v=1.7.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-telemetry.css?v=1.6.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-sensor-tree.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.1.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-rgb.css?v=1.2.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.4.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-arena.css?v=1.0.0">
@@ -673,6 +673,39 @@ $toolTotal = $toolKit->total();
                     </div>
                     <div class="dx-rgb-presets" id="dx-rgb-presets" role="group" aria-label="RGB preset packs"></div>
                     <div class="dx-rgb-devices" id="dx-rgb-devices"><div class="dx-rgb-empty">Scanning USB/HID…</div></div>
+
+                    <div class="dx-lcd-studio" id="dx-lcd-studio" aria-label="LCD Studio">
+                        <h3>LCD Studio</h3>
+                        <p class="muted fs-sm">One studio for AIO pump LCDs and case/secondary displays — GIF or longer video. Never claims “Applied” unless HID push or display playback confirms.</p>
+                        <div class="dx-lcd-toolbar">
+                            <button type="button" class="dx-btn ghost" id="dx-lcd-refresh">Rescan panels</button>
+                            <button type="button" class="dx-btn ghost" id="dx-lcd-stop">Stop player</button>
+                        </div>
+                        <div class="dx-lcd-panels" id="dx-lcd-panels"></div>
+                        <div class="dx-lcd-work">
+                            <div class="dx-lcd-preview" id="dx-lcd-preview"><span class="muted fs-xs">Preview</span></div>
+                            <div class="dx-lcd-controls">
+                                <label>
+                                    <span>Media (GIF / MP4 / WebM)</span>
+                                    <input type="file" id="dx-lcd-file" accept="image/gif,video/mp4,video/webm,.gif,.mp4,.webm,.mov">
+                                </label>
+                                <label>
+                                    <span>Fit mode</span>
+                                    <select id="dx-lcd-fit">
+                                        <option value="fit">Fit (letterbox)</option>
+                                        <option value="fill">Fill (crop)</option>
+                                        <option value="stretch">Stretch</option>
+                                        <option value="round_mask">Round mask (AIO)</option>
+                                    </select>
+                                </label>
+                                <div class="dx-lcd-actions">
+                                    <button type="button" class="dx-btn primary" id="dx-lcd-apply">Apply to panel</button>
+                                    <button type="button" class="dx-btn ghost" id="dx-lcd-dashboard">Live dashboard</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dx-lcd-status muted fs-sm" id="dx-lcd-studio-status" role="status"></div>
+                    </div>
                 </div>
             </section>
 
@@ -757,7 +790,8 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-stress.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-oc.js?v=1.1.0"></script>
-<script defer src="/assets/js/diagnostic-rgb.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-rgb.js?v=1.3.0"></script>
+<script defer src="/assets/js/diagnostic-lcd-studio.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-fleet.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-repair.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-suite.js?v=1.6.0"></script>

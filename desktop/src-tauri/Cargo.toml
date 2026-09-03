@@ -1,6 +1,6 @@
 [package]
 name = "pclabkit"
-version = "4.1.7"
+version = "4.1.6.0"
 description = "PC Lab Kit desktop shell"
 authors = ["drmikecrypto"]
 edition = "2021"
@@ -20,3 +20,4 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 dirs = "5"
 which = "6"
+url = "2"

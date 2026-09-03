@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: PC Lab Kit Diagnostic API
-  version: 4.1.7
+  version: 4.1.6.0
   description: Local-first PC laboratory REST API (localhost only).
 servers:
   - url: http://127.0.0.1:8080
@@ -45,3 +45,16 @@ paths:
   /api/diagnostic/federated/aggregates:
     get:
       summary: Opt-in local federated benchmark aggregates
+  # Probe LCD Studio (localhost:18765 — documented for clients; not PHP-proxied by default)
+  /lcd/panels:
+    get:
+      summary: LCD Studio panel discovery (HID + Windows displays)
+  /lcd/apply:
+    post:
+      summary: Fit + push/play GIF/MP4/WebM to a panel
+  /lcd/play-display:
+    post:
+      summary: Fullscreen media player on a Windows display index
+  /lcd/stop:
+    post:
+      summary: Stop LCD display player

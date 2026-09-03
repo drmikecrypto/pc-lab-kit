@@ -197,7 +197,7 @@
       lcd = `<div class="dx-rgb-lcd">
         <div class="dx-rgb-zone-lbl">LCD ${dev.lcd.width}×${dev.lcd.height} <span class="dx-rgb-lcd-badge">GIF</span></div>
         <div class="dx-rgb-lcd-preview${round ? '' : ' square'}" id="lcd-prev-${esc(dev.id)}"><span class="muted fs-xs">Preview</span></div>
-        <input type="file" accept="image/gif" class="dx-file-input" data-lcd-dev="${esc(dev.id)}" data-lcd-w="${dev.lcd.width}" data-lcd-h="${dev.lcd.height}" data-lcd-ogi="${ogi}">
+        <input type="file" accept="image/gif,video/mp4,video/webm,.gif,.mp4,.webm" class="dx-file-input" data-lcd-dev="${esc(dev.id)}" data-lcd-w="${dev.lcd.width}" data-lcd-h="${dev.lcd.height}" data-lcd-ogi="${ogi}">
         <div class="dx-rgb-lcd-status muted fs-xs" id="lcd-st-${esc(dev.id)}"></div>
       </div>`;
     }
@@ -429,7 +429,7 @@
 
   async function uploadGif(input) {
     const file = input.files?.[0];
-    if (!file || file.size > 25 * 1024 * 1024) return;
+    if (!file || file.size > 512 * 1024 * 1024) return;
     const buf = await file.arrayBuffer();
     const dim = parseGifDimensions(buf);
     const ew = parseInt(input.dataset.lcdW, 10);
@@ -442,9 +442,18 @@
     const prev = document.getElementById(`lcd-prev-${devId}`);
     if (prev) {
       prev.innerHTML = '';
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(file);
-      prev.appendChild(img);
+      if (file.type.startsWith('video/') || /\.(mp4|webm)$/i.test(file.name)) {
+        const v = document.createElement('video');
+        v.src = URL.createObjectURL(file);
+        v.muted = true;
+        v.autoplay = true;
+        v.loop = true;
+        prev.appendChild(v);
+      } else {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        prev.appendChild(img);
+      }
     }
     setLcdStatus(devId, mismatchNote + 'Uploading…', 'muted');
     const bytes = new Uint8Array(buf);
@@ -455,6 +464,9 @@
       expected_w: ew,
       expected_h: eh,
       gif_base64: btoa(binary),
+      media_base64: btoa(binary),
+      file_name: file.name,
+      fit_mode: ew && eh && ew === eh ? 'round_mask' : 'fit',
     };
     const ogi = input.dataset.lcdOgi;
     if (ogi !== '' && ogi != null) payload.openrgb_index = parseInt(ogi, 10);
@@ -475,6 +487,9 @@
       if (data.pushed) {
         pushCls = 'ok';
         headline = 'Applied to device';
+      } else if (data.played_on_display) {
+        pushCls = 'ok';
+        headline = 'Playing on Windows display';
       } else if (data.attempted || data.push?.attempted) {
         pushCls = 'warn';
         headline = 'Push attempted — verify on panel';

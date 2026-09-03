@@ -6,6 +6,19 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.1.6.0] - 2026-09-03
+
+### Added — Universal LCD Studio
+- **LCD Studio** in RGB Lab: discover AIO/case HID panels + Windows displays; GIF / MP4 / WebM ingest with fit modes (`fit` / `fill` / `stretch` / `round_mask`)
+- Probe routes: `GET /lcd/panels`, `POST /lcd/apply`, `POST /lcd/play-display`, `POST /lcd/stop` (auth on mutating paths)
+- Display-path player (browser `--app=` + window bounds; Tauri `lcd_open_player` / `lcd_close_player`)
+- Transport plugins with honest status: `windows_display`, `liquidctl` (NZXT when available), `openrgb` (non-confirm), `stage_only`
+- Expanded USB LCD catalog (ASUS / Turing-class VID/PID); legacy `POST /rgb/lcd` aliases into LCD Studio apply
+
+### Changed
+- RGB scan LCD meta includes `transport`, `shape`, `video_supported`, `push_hint=lcd_studio`
+- Probe `rgb.ps1` / `lcd-studio.ps1` kept UTF-8 with BOM for Windows PowerShell 5.1 Persian-safe parse
+
 ## [4.1.7] - 2026-09-02
 
 ### Added — Competitive wedge (4.1.6-series depth)

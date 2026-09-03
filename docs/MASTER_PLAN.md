@@ -2,8 +2,8 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars A–E shipped through **v4.0.2** (Command Center 2.0, Benchmark Arena, SSE telemetry, job queue, Linux probe MVP, verify portal). Capability-first doctrine: own the full lab, not an import shell.  
-**Last updated:** 2026-08-20  
+**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; **Universal LCD Studio in v4.1.6.0**. Capability-first doctrine: own the full lab, not an import shell.  
+**Last updated:** 2026-09-03  
 **Repository:** [pc-lab-kit](../README.md)
 
 > Historical sections below still mention Flutter/Qt in places. Prefer this status block and the root README for what ships today.
@@ -29,10 +29,11 @@
 | **Pillar E — Open-Book Sensors** (Blackwell Hot Spot MMIO + catalog, dossier, assembly cert) | Shipped (3.4.0–4.0.0) — see [OPEN_BOOK_SENSORS.md](OPEN_BOOK_SENSORS.md) |
 | **v4.0.1 HRE** (Stability Oracle, `.pclab`, 3D topology, driver confidence, Rust R1 hook) | Shipped (4.0.1) |
 | **v4.0.2 Command Center** (layout 2.0, Arena, SSE stream, job queue, verify, Linux probe, E2E) | Shipped (4.0.2) |
+| **v4.1.6.0 Universal LCD Studio** (GIF+MP4/WebM, display player, HID plugins, RGB Lab UI) | Shipped (4.1.6.0) |
 | Linux probe parity | Active — Platform Intelligence routes on `pclab_probe_linux` |
 | Full Vulkan compute suite | Shipped compute helper in 3.3.0 (raster/3D suite later) |
 | Windows Service forever-on probe | Shipped (optional install) — default remains tray/sidecar; see SECURITY.md sensor trust |
-| MP4 / video push to LCD panels | Backlog |
+| Per-OEM AIO HID reverse-engineer (Armoury / iCUE depth) | Parked — display-path + liquidctl/OpenRGB honesty first |
 
 ---
 
@@ -90,7 +91,7 @@
 
 ### Critical gap (historical — resolved)
 
-Phases 0–5 and Pillars A–C ship today as the Tauri + PHP + probe stack. Remaining product gaps are intentional backlog: native Vulkan raster suite, Linux OC/RGB/Ring0 depth, MP4-to-LCD. Forever-on Windows Service install is optional (`Install-PcLabProbeService.ps1`); tray is the default operator story.
+Phases 0–5 and Pillars A–C ship today as the Tauri + PHP + probe stack. LCD Studio (v4.1.6.0) covers GIF + longer video via display-path player and honest HID plugins. Remaining gaps: native Vulkan raster suite, Linux OC/RGB/Ring0 depth, deep per-OEM LCD protocols. Forever-on Windows Service install is optional (`Install-PcLabProbeService.ps1`); tray is the default operator story.
 
 ---
 
@@ -538,7 +539,8 @@ pc-lab-kit/
 
 - [x] Tauri/web parity for RGB apply + Orchestrator orchestration
 - [x] Sensor Deck: gauges, export Rainmeter/JSON
-- [x] LCD GIF pipeline polish (blink timing + push path in 3.2.1; MP4 later)
+- [x] LCD GIF pipeline polish (blink timing + push path in 3.2.1)
+- [x] LCD Studio video + multi-panel (GIF/MP4/WebM, display player, transports) in 4.1.6.0
 
 **Exit criteria:** RGB apply + fan/LCD orchestration works from desktop shell; Sensor Deck exportable
 
@@ -579,17 +581,19 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 
 ## Immediate next steps
 
-**Shipped in v4.1.7 (competitive wedge):** Sensor Tree, PresentMon start/stop sessions, dense JSON overlay feed, VkBench artifact/CRC fail → stress cert, elevated SMART depth badges.
+**Shipped in v4.1.6.0 (Universal LCD Studio):** RGB Lab LCD Studio UI; `/lcd/*` probe routes; GIF/MP4/WebM library + fit modes; Windows display player + Tauri LCD windows; liquidctl / OpenRGB / stage_only honesty.
 
-1. Daily assembly on **Open Book** Platform Console (coverage meter + firmware planes)
-2. Community verify RTX 50 Hot Spot / VRAM MMIO when hardware is available
-3. Tighter per-die VRAM maps as community offsets stabilize
-4. **Linux probe parity** — Platform Intelligence / Adaptive Lab / Drivers / Audit / Open Book (sysfs) shipped in `agent/pclab_probe_linux`; OC/RGB/Ring0 remain Windows-only
-5. **Parked infra:** full PawnIO kernel migration; live SuperIO fan-curve apply; CapFrameX-class analytics UI; fleet multi-host burn-in console polish
+**Shipped in v4.1.7 (competitive wedge):** Sensor Tree, PresentMon sessions, dense JSON overlay feed, VkBench artifact/CRC fail → stress cert, elevated SMART depth badges.
+
+1. Validate LCD Studio on secondary case/AIO monitors + NZXT liquidctl when hardware is present
+2. Daily assembly on **Open Book** Platform Console (coverage meter + firmware planes)
+3. Community verify RTX 50 Hot Spot / VRAM MMIO when hardware is available
+4. **Linux probe parity** — OC/RGB/Ring0 remain Windows-only
+5. **Parked:** per-OEM AIO HID reverse-engineer; PawnIO kernel migration; SuperIO fan-curve apply; CapFrameX-class analytics UI
 
 ### Recommended focus
 
-Operator credibility vs HWiNFO / CapFrameX / OCCT depth on shipped surfaces. Next verticals after wedge: PawnIO trust path + FanControl export→apply when safe.
+Operator credibility on LCD Studio honesty badges + HWiNFO / CapFrameX / OCCT depth. Next verticals: deeper HID plugins where safe, then PawnIO trust path.
 ---
 
 ## Assumptions
@@ -616,7 +620,8 @@ Operator credibility vs HWiNFO / CapFrameX / OCCT depth on shipped surfaces. Nex
 | `GET /telemetry` | Fast counters + ring buffer sample |
 | `GET /telemetry/history` | 120-sample sparkline buffer |
 | `GET /oc/status`, `POST /oc/apply`, `POST /oc/rollback` | Orchestrator auto-OC |
-| `GET /rgb/scan`, `POST /rgb/apply`, `POST /rgb/lcd`, `POST /rgb/stop`, `POST /rgb/auto` | RGB/LCD control (LCD: `pushed` / `attempted`) |
+| `GET /rgb/scan`, `POST /rgb/apply`, `POST /rgb/lcd`, `POST /rgb/stop`, `POST /rgb/auto` | RGB/LCD control (legacy LCD → LCD Studio) |
+| `GET /lcd/panels`, `POST /lcd/apply`, `POST /lcd/play-display`, `POST /lcd/stop` | LCD Studio catalog / apply / display player |
 | `POST /orchestrate` | Professional RGB+fan+LCD setup |
 
 ### API routes (to extract)

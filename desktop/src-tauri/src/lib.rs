@@ -1,4 +1,5 @@
 mod lab;
+mod lcd_player;
 
 use lab::{resolve_resource_lab, LabRuntime};
 use std::io::{Read, Write};
@@ -142,7 +143,9 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_lab_url,
             get_probe_status,
-            restart_probe
+            restart_probe,
+            lcd_player::lcd_open_player,
+            lcd_player::lcd_close_player
         ])
         .setup(|app| {
             let lab_dir = match resolve_resource_lab(app.path()) {
@@ -276,13 +279,18 @@ pub fn run() {
         })
         .on_window_event(|window, event| {
             if let tauri::WindowEvent::CloseRequested { api, .. } = event {
-                // Keep lab alive in tray — hide instead of destroy.
-                api.prevent_close();
-                let _ = window.hide();
+                // Keep main lab alive in tray — hide instead of destroy.
+                // LCD player windows should close for real.
+                if window.label() == "main" {
+                    api.prevent_close();
+                    let _ = window.hide();
+                }
             }
             if let tauri::WindowEvent::Destroyed = event {
-                if let Some(handle) = window.app_handle().try_state::<ShutdownHandle>() {
-                    handle.0.shutdown();
+                if window.label() == "main" {
+                    if let Some(handle) = window.app_handle().try_state::<ShutdownHandle>() {
+                        handle.0.shutdown();
+                    }
                 }
             }
         })

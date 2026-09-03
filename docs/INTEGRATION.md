@@ -46,8 +46,19 @@ Identity: Windows `"agent":"pclab-probe"` / Linux `"agent":"pclab-probe-linux"`,
 | GET/POST | `/oc/*` | Safe OC (Windows only) |
 | GET/POST | `/rgb/*` | RGB scan / apply / LCD (Windows only) |
 | POST | `/rgb/stop` | Stop blink timers; set OpenRGB zones off |
-| POST | `/rgb/lcd` | Upload GIF (local cache; `pushed` / `attempted` in response) |
+| POST | `/rgb/lcd` | Legacy LCD upload (GIF/video base64); delegates to LCD Studio (`pushed` / `attempted` / `played_on_display`) |
+| GET | `/lcd/panels` | LCD Studio panel catalog (HID coolers + Windows monitors) |
+| POST | `/lcd/apply` | Fit + stage/push/play media (GIF/MP4/WebM; `fit_mode`, `panel_id`, transport honesty) |
+| POST | `/lcd/play-display` | Fullscreen player on a Windows display index |
+| POST | `/lcd/stop` | Stop LCD display player |
 | POST | `/orchestrate` | RGB + fan + LCD orchestration |
+
+### LCD Studio honesty
+
+- **Confirmed play** on Windows secondary/primary monitors uses the display-path player (`played_on_display`).
+- **NZXT / liquidctl** may report a real push when the CLI succeeds; otherwise `stage_only` / `attempted`.
+- **OpenRGB** GIF apply is never claimed as confirmed hardware push — response notes stay non-confirm.
+- Optional **ffmpeg** under `agent/pclab_probe/tools/ffmpeg/` improves video→GIF / resize; without it, GIF still plays on display path.
 | GET/POST | `/bench/*`, `/stress/*` | Native benchmarks and stress |
 | POST/GET | `/suite/start\|status\|cancel` | Full Lab async suite |
 | GET/POST | `/launchers`, `/launchers/run` | Optional third-party stress tools (Windows) |

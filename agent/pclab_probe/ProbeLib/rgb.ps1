@@ -1,4 +1,4 @@
-. "$PSScriptRoot\common.ps1"
+﻿. "$PSScriptRoot\common.ps1"
 
 # Known USB RGB / LCD devices (VID/PID) — labeling + LCD size hints.
 # OpenRGB --list-devices remains the control source of truth when available.
@@ -26,8 +26,11 @@ $script:KnownRgbDb = @(
     @{ vid='1532'; pid='0c00'; vendor='Razer'; type='hub'; name='Razer RGB Controller'; zones=@('strip','fan') }
     @{ vid='0b05'; pid='1867'; vendor='ASUS'; type='motherboard'; name='ASUS Aura USB'; zones=@('header_argb','header_rgb') }
     @{ vid='0b05'; pid='1872'; vendor='ASUS'; type='motherboard'; name='ASUS Aura Terminal'; zones=@('strip','fan_ring') }
+    @{ vid='0b05'; pid='1899'; vendor='ASUS'; type='aio_lcd'; name='ASUS ROG Ryujin / LCD AIO'; lcd_w=480; lcd_h=480; zones=@('pump_lcd','pump_ring') }
+    @{ vid='0b05'; pid='18f3'; vendor='ASUS'; type='aio_lcd'; name='ASUS LCD Cooler'; lcd_w=480; lcd_h=480; zones=@('pump_lcd','pump_ring') }
     @{ vid='1462'; pid='7d25'; vendor='MSI'; type='motherboard'; name='MSI Mystic Light USB'; zones=@('board','strip','fan') }
     @{ vid='1fc9'; pid='0094'; vendor='Phanteks'; type='case'; name='Phanteks RGB Controller'; zones=@('case_front','fan_ring') }
+    @{ vid='0416'; pid='5011'; vendor='Generic'; type='case_lcd'; name='Turing / USB Case LCD'; lcd_w=480; lcd_h=320; zones=@('pump_lcd') }
     @{ vid='0416'; pid='5302'; vendor='Generic'; type='case_lcd'; name='USB Sensor / Case LCD Panel'; lcd_w=480; lcd_h=480; zones=@('pump_lcd') }
 )
 
@@ -386,7 +389,10 @@ function Get-RgbDeviceScan {
                     width = $d.lcd_width
                     height = $d.lcd_height
                     gif_supported = $true
-                    push_hint = 'gif_cache_and_openrgb'
+                    video_supported = ($d.device_type -eq 'case_lcd')
+                    shape = if ($d.lcd_width -eq $d.lcd_height) { 'round' } else { 'rect' }
+                    push_hint = 'lcd_studio'
+                    transport = if ($d.device_type -eq 'case_lcd') { 'windows_display' } elseif ($d.vendor -eq 'NZXT') { 'liquidctl' } else { 'openrgb' }
                 }
             } else { $null }
             instance_id = $d.instance_id
@@ -416,7 +422,16 @@ function Get-RgbDeviceScan {
         }
         $lcdMeta = $null
         if ($looksLcd) {
-            $lcdMeta = @{ width = 480; height = 480; gif_supported = $true; push_hint = 'openrgb'; openrgb_index = $og.index }
+            $lcdMeta = @{
+                width = 480
+                height = 480
+                gif_supported = $true
+                video_supported = $false
+                shape = 'round'
+                push_hint = 'lcd_studio'
+                transport = if ($og.name -match 'NZXT|Kraken') { 'liquidctl' } else { 'openrgb' }
+                openrgb_index = $og.index
+            }
             if ($og.name -match 'NZXT|Kraken') { $lcdMeta.width = 640; $lcdMeta.height = 640 }
         }
         $merged += @{
@@ -685,16 +700,30 @@ function Save-ProbeLcdGif {
         [byte[]]$Bytes,
         [int]$ExpectedW = 0,
         [int]$ExpectedH = 0,
-        [int]$OpenRgbIndex = -1
+        [int]$OpenRgbIndex = -1,
+        [string]$FileName = 'media.gif',
+        [string]$FitMode = 'fit'
     )
     if ($Bytes.Length -lt 10) {
         return @{ ok = $false; error = 'empty_file'; message = 'Empty file.' }
     }
+
+    $studioPath = Join-Path $PSScriptRoot 'lcd-studio.ps1'
+    if (Test-Path $studioPath) {
+        . $studioPath
+        $panelId = $DeviceId
+        if ($OpenRgbIndex -ge 0) { $panelId = "og_$OpenRgbIndex" }
+        return Invoke-LcdStudioApply -PanelId $panelId -Bytes $Bytes -FileName $FileName `
+            -FitMode $(if ($ExpectedW -eq $ExpectedH -and $ExpectedW -gt 0) { 'round_mask' } else { $FitMode }) `
+            -PlayDisplay:($panelId -match '^disp_') `
+            -ExpectedW $ExpectedW -ExpectedH $ExpectedH -OpenRgbIndex $OpenRgbIndex
+    }
+
     if ($Bytes[0..2] -join ',' -ne '71,73,70') {
         return @{
             ok = $false
             error = 'not_gif'
-            message = 'Only GIF files are accepted.'
+            message = 'Only GIF files are accepted on legacy path. Use LCD Studio (/lcd/apply) for MP4/WebM.'
             message_fa = 'فقط فایل GIF پذیرفته می‌شود.'
         }
     }

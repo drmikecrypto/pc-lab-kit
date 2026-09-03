@@ -78,6 +78,136 @@
 .dx-rgb-lcd-status { margin-top: 8px; line-height: 1.5; color: rgba(255,255,255,0.55); }
 .dx-rgb-lcd-status.ok { color: #86efac; }
 .dx-rgb-lcd-status.warn { color: #fbbf24; }
+
+/* LCD Studio */
+.dx-lcd-studio {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.dx-lcd-studio h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+.dx-lcd-studio > .muted {
+  margin: 0 0 0.85rem;
+}
+.dx-lcd-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+.dx-lcd-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+.dx-lcd-panel-card {
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 12px;
+  padding: 0.75rem;
+  color: inherit;
+  cursor: pointer;
+}
+.dx-lcd-panel-card.is-active {
+  border-color: rgba(34, 211, 238, 0.55);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25);
+}
+.dx-lcd-panel-card strong {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+.dx-lcd-panel-meta {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 0.4rem;
+}
+.dx-lcd-panel-badges,
+.dx-lcd-badge {
+  display: inline-flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+.dx-lcd-badge {
+  font-size: 0.62rem;
+  letter-spacing: 0.02em;
+  padding: 0.12rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(148, 163, 184, 0.2);
+}
+.dx-lcd-badge--disp { background: rgba(34, 197, 94, 0.22); color: #86efac; }
+.dx-lcd-badge--hid { background: rgba(56, 189, 248, 0.22); color: #7dd3fc; }
+.dx-lcd-badge--og { background: rgba(167, 139, 250, 0.22); color: #c4b5fd; }
+.dx-lcd-badge--stage { background: rgba(251, 191, 36, 0.18); color: #fcd34d; }
+.dx-lcd-badge--shape { background: rgba(255, 255, 255, 0.08); }
+.dx-lcd-work {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .dx-lcd-work { grid-template-columns: 1fr; }
+}
+.dx-lcd-preview {
+  aspect-ratio: 1;
+  max-width: 200px;
+  border-radius: 12px;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dx-lcd-preview.is-round {
+  border-radius: 50%;
+}
+.dx-lcd-preview img,
+.dx-lcd-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.dx-lcd-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 0.65rem;
+}
+.dx-lcd-controls select,
+.dx-lcd-controls input[type=file] {
+  font-size: 0.8rem;
+}
+.dx-lcd-controls select {
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.4);
+  color: inherit;
+}
+.dx-lcd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+}
+.dx-lcd-status {
+  margin-top: 0.75rem;
+  line-height: 1.45;
+}
+.dx-lcd-status.ok { color: #86efac; }
+.dx-lcd-status.warn { color: #fbbf24; }
+
 .dx-rgb-lcd-steps { margin: 6px 0 0 1.1rem; padding: 0; font-size: 11px; }
 .dx-rgb-dash-link { color: #67e8f9; text-decoration: underline; }
 .dx-rgb-lcd {
