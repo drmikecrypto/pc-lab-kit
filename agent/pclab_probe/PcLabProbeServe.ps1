@@ -51,8 +51,10 @@ $script:Routes = @(
     @{ method = 'POST'; path = '/presentmon/session/start'; desc = 'start PresentMon capture session (CapFrameX-lite)' }
     @{ method = 'POST'; path = '/presentmon/session/stop'; desc = 'stop PresentMon session + parse series' }
     @{ method = 'GET';  path = '/presentmon/session/status'; desc = 'PresentMon session running?' }
+    @{ method = 'GET';  path = '/presentmon/session/foreground'; desc = 'best-effort foreground process hint for session label' }
     @{ method = 'GET';  path = '/presentmon/sessions'; desc = 'list saved PresentMon / CapFrameX session reviews' }
-    @{ method = 'GET';  path = '/presentmon/sessions/{id}'; desc = 'full session artifact (series + histogram + spikes)' }
+    @{ method = 'GET';  path = '/presentmon/sessions/{id}'; desc = 'full session artifact (series + histogram + spikes + context)' }
+    @{ method = 'GET';  path = '/presentmon/sessions/{id}/export'; desc = 'export CapFrameX-shaped JSON for a saved session' }
     @{ method = 'POST'; path = '/presentmon/sessions/import'; desc = 'import CapFrameX JSON into Session Review' }
     @{ method = 'GET';  path = '/devices';            desc = 'full PnP / PCI / USB / monitor inventory' }
     @{ method = 'GET';  path = '/drivers';            desc = 'driver advisor + install queue (?wu=1 optional WU scan)' }
@@ -333,10 +335,21 @@ Invoke-ProbeSmartSelfTest -Device `$dev -Type `$typ | ConvertTo-Json -Depth 6 -C
             "/presentmon/capture" {
                 $sec = 10
                 if ($req.Url.Query -match 'seconds=(\d+)') { $sec = [int]$Matches[1] }
-                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+                $ctxTmp = Join-Path $env:TEMP ("pclab_pm_ctx_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    $ringJson = '[]'
+                    try {
+                        if ($script:Ring -and $script:Ring.Count -gt 0) {
+                            $ringJson = ($script:Ring | ConvertTo-Json -Depth 6 -Compress)
+                            if (-not $ringJson) { $ringJson = '[]' }
+                        }
+                    } catch { $ringJson = '[]' }
+                    [System.IO.File]::WriteAllText($ctxTmp, $ringJson, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$scriptDir\ProbeLib\presentmon.ps1'
-Get-ProbePresentMonTelemetry -TimedSeconds $sec | ConvertTo-Json -Depth 8 -Compress }
+Get-ProbePresentMonTelemetry -TimedSeconds $sec -ContextJsonPath '$ctxTmp' | ConvertTo-Json -Depth 10 -Compress }
 "@
+                } finally { Remove-Item $ctxTmp -Force -ErrorAction SilentlyContinue }
             }
             "/presentmon/session/start" {
                 if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
@@ -355,15 +368,32 @@ Start-ProbePresentMonSession -ProcessName `$pn | ConvertTo-Json -Depth 6 -Compre
             }
             "/presentmon/session/stop" {
                 if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
-                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+                $ctxTmp = Join-Path $env:TEMP ("pclab_pm_ctx_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    $ringJson = '[]'
+                    try {
+                        if ($script:Ring -and $script:Ring.Count -gt 0) {
+                            $ringJson = ($script:Ring | ConvertTo-Json -Depth 6 -Compress)
+                            if (-not $ringJson) { $ringJson = '[]' }
+                        }
+                    } catch { $ringJson = '[]' }
+                    [System.IO.File]::WriteAllText($ctxTmp, $ringJson, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$scriptDir\ProbeLib\presentmon.ps1'
-Stop-ProbePresentMonSession | ConvertTo-Json -Depth 8 -Compress }
+Stop-ProbePresentMonSession -ContextJsonPath '$ctxTmp' | ConvertTo-Json -Depth 10 -Compress }
 "@
+                } finally { Remove-Item $ctxTmp -Force -ErrorAction SilentlyContinue }
             }
             "/presentmon/session/status" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$scriptDir\ProbeLib\presentmon.ps1'
 Get-ProbePresentMonSessionStatus | ConvertTo-Json -Depth 6 -Compress }
+"@
+            }
+            "/presentmon/session/foreground" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+Get-ProbePresentMonForegroundHint | ConvertTo-Json -Depth 4 -Compress }
 "@
             }
             "/presentmon/sessions" {
@@ -880,7 +910,14 @@ Invoke-ProbeRepairTool -Id `$id -Confirm:`$c | ConvertTo-Json -Depth 6 -Compress
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }
             default {
-                if ($path -match '^/presentmon/sessions/([^/]+)$') {
+                if ($path -match '^/presentmon/sessions/([^/]+)/export$') {
+                    $pmSid = $Matches[1]
+                    $safeSid = ($pmSid -replace '[^\w\-]', '')
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+Export-ProbePresentMonCapFrameX -Id '$safeSid' | ConvertTo-Json -Depth 12 -Compress }
+"@
+                } elseif ($path -match '^/presentmon/sessions/([^/]+)$') {
                     $pmSid = $Matches[1]
                     if ($pmSid -eq 'import') {
                         $code = 405

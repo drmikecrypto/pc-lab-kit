@@ -256,13 +256,19 @@
     if (!box) return;
     const spikes = session?.spikes?.spikes || [];
     const thr = session?.spikes?.threshold_ms;
+    const ctxNote = session?.context?.note;
+    const ctxOk = !!(session?.context?.available || session?.spikes?.context_attached);
     if (!spikes.length) {
-      box.innerHTML = `<p class="muted fs-sm">No stutter spikes above threshold${thr != null ? ` (${thr} ms)` : ''}.</p>`;
+      box.innerHTML = `<p class="muted fs-sm">No stutter spikes above threshold${thr != null ? ` (${thr} ms)` : ''}.</p>
+        ${ctxNote && !ctxOk ? `<p class="muted fs-xs">${esc(ctxNote)}</p>` : ''}`;
       return;
     }
-    box.innerHTML = `<div class="dx-pm-spikes-head">Spikes (≥ ${esc(thr ?? '—')} ms) · ${spikes.length}</div>
+    const fmt = (v, u = '') => (v != null && v !== '' ? `${esc(v)}${u}` : '—');
+    box.innerHTML = `<div class="dx-pm-spikes-head">Spikes (≥ ${esc(thr ?? '—')} ms) · ${spikes.length}${
+      ctxOk ? ' · temps from Probe ring' : ctxNote ? ` · ${esc(ctxNote)}` : ' · no thermal context'
+    }</div>
       <table class="dx-smart-table dx-pm-spikes-table"><thead><tr>
-        <th>#</th><th>t (ms)</th><th>ft</th><th>FPS</th><th>Cause</th>
+        <th>#</th><th>t (ms)</th><th>ft</th><th>FPS</th><th>CPU</th><th>GPU</th><th>Hotspot</th><th>Pkg W</th><th>Cause</th>
       </tr></thead><tbody>${spikes
         .map(
           (s, i) => `<tr>
@@ -270,17 +276,72 @@
         <td>${esc(s.t_ms)}</td>
         <td>${esc(s.ft_ms)}</td>
         <td>${esc(s.fps ?? '—')}</td>
+        <td>${fmt(s.cpu_c, '°')}</td>
+        <td>${fmt(s.gpu_c, '°')}</td>
+        <td>${fmt(s.gpu_hotspot_c, '°')}</td>
+        <td>${fmt(s.package_w)}</td>
         <td>${esc(s.likely_cause || '—')}</td>
       </tr>`
         )
         .join('')}</tbody></table>`;
   }
 
+  function drawTrend(sessions) {
+    const canvas = el('dx-pm-trend');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    const list = (sessions || []).slice(0, 12).reverse();
+    if (list.length < 1) {
+      ctx.fillStyle = 'rgba(148,163,184,0.7)';
+      ctx.font = '12px sans-serif';
+      ctx.fillText('No sessions yet', 12, h / 2);
+      canvas.onclick = null;
+      return;
+    }
+    const lows = list.map((s) => Number(s.fps_1pct_low)).filter((n) => Number.isFinite(n));
+    const avgs = list.map((s) => Number(s.fps_avg)).filter((n) => Number.isFinite(n));
+    const vals = [...lows, ...avgs];
+    const min = vals.length ? Math.min(...vals) : 0;
+    const max = vals.length ? Math.max(...vals) : 1;
+    const span = Math.max(1e-6, max - min);
+    const barW = (w - 16) / list.length;
+    list.forEach((s, i) => {
+      const low = Number(s.fps_1pct_low);
+      if (!Number.isFinite(low)) return;
+      const bh = ((low - min) / span) * (h - 18);
+      const x = 8 + i * barW;
+      ctx.fillStyle = 'rgba(34, 211, 238, 0.65)';
+      ctx.fillRect(x + 2, h - 6 - bh, Math.max(2, barW - 4), bh);
+      const avg = Number(s.fps_avg);
+      if (Number.isFinite(avg)) {
+        const y = h - 6 - ((avg - min) / span) * (h - 18);
+        ctx.fillStyle = 'rgba(251, 146, 60, 0.9)';
+        ctx.fillRect(x + 2, y - 1, Math.max(2, barW - 4), 2);
+      }
+    });
+    canvas.onclick = (ev) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = ((ev.clientX - rect.left) / rect.width) * w;
+      const i = Math.min(list.length - 1, Math.max(0, Math.floor((x - 8) / barW)));
+      const id = list[i]?.id;
+      if (!id) return;
+      const aSel = el('dx-pm-session-a');
+      if (aSel) {
+        aSel.value = id;
+        selectSessions(id, el('dx-pm-session-b')?.value || '');
+      }
+    };
+  }
+
   function sessionLabel(s) {
     const src = s.source === 'import' ? 'CX' : 'PM';
     const avg = s.fps_avg != null ? `${s.fps_avg} avg` : 'n/a';
-    const lab = s.label || s.id;
-    return `[${src}] ${lab} · ${avg}`;
+    const low = s.fps_1pct_low != null ? ` · 1% ${s.fps_1pct_low}` : '';
+    const lab = s.label || s.process_name || s.id;
+    return `[${src}] ${lab} · ${avg}${low}`;
   }
 
   function fillSessionSelects(preferId) {
@@ -313,6 +374,7 @@
       const data = await res.json().catch(() => ({}));
       sessionsCache = data.sessions || [];
       fillSessionSelects(preferId);
+      drawTrend(sessionsCache);
       const aId = el('dx-pm-session-a')?.value;
       if (!aId) {
         sessionA = null;
@@ -321,6 +383,7 @@
         drawHistogram(null);
         drawCompare(null, null);
         renderSpikes(null);
+        drawTrend(sessionsCache);
         if (data.presentmon_missing && el('dx-pm-status') && !el('dx-pm-status').textContent) {
           el('dx-pm-status').textContent = data.note || 'PresentMon missing — CapFrameX import still works.';
         }
@@ -428,15 +491,54 @@
     }
   }
 
+  async function useForegroundProcess() {
+    const st = el('dx-pm-status');
+    try {
+      const res = await fetch(AGENT() + '/presentmon/session/foreground', { mode: 'cors' });
+      const data = await res.json().catch(() => ({}));
+      if (data.process_name && el('dx-pm-process')) {
+        el('dx-pm-process').value = data.process_name;
+      }
+      if (st) st.textContent = data.note || (data.process_name ? `Foreground: ${data.process_name}` : 'No foreground process');
+    } catch (e) {
+      if (st) st.textContent = e.message || String(e);
+    }
+  }
+
+  async function exportCapFrameX() {
+    const st = el('dx-pm-status');
+    const id = el('dx-pm-session-a')?.value || sessionA?.id;
+    if (!id) {
+      if (st) st.textContent = 'Select Session A to export';
+      return;
+    }
+    if (st) st.textContent = 'Exporting CapFrameX JSON…';
+    try {
+      const res = await fetch(AGENT() + `/presentmon/sessions/${encodeURIComponent(id)}/export`, { mode: 'cors' });
+      const data = await res.json().catch(() => ({}));
+      if (!data.ok || !data.export) throw new Error(data.message || data.error || 'Export failed');
+      const blob = new Blob([JSON.stringify(data.export, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = data.filename || `pclab_${id}_capframex.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      if (st) st.textContent = `Exported ${a.download}`;
+    } catch (e) {
+      if (st) st.textContent = e.message || String(e);
+    }
+  }
+
   async function startSession() {
     const st = el('dx-pm-status');
     if (st) st.textContent = 'Starting PresentMon session…';
     try {
+      const process_name = (el('dx-pm-process')?.value || '').trim();
       const res = await fetch(AGENT() + '/presentmon/session/start', {
         method: 'POST',
         mode: 'cors',
         headers: await probeJsonHeaders(),
-        body: JSON.stringify({}),
+        body: JSON.stringify(process_name ? { process_name } : {}),
       });
       const data = await res.json().catch(() => ({}));
       if (!data.ok && !data.running) {
@@ -493,6 +595,8 @@
     el('dx-pm-capture')?.addEventListener('click', capturePresentMon);
     el('dx-pm-session-start')?.addEventListener('click', startSession);
     el('dx-pm-session-stop')?.addEventListener('click', stopSession);
+    el('dx-pm-use-fg')?.addEventListener('click', useForegroundProcess);
+    el('dx-pm-export-cx')?.addEventListener('click', exportCapFrameX);
     el('dx-pm-review-refresh')?.addEventListener('click', () => refreshReview());
     el('dx-pm-session-a')?.addEventListener('change', () => {
       selectSessions(el('dx-pm-session-a').value, el('dx-pm-session-b')?.value || '');
@@ -524,6 +628,8 @@
     stopSession,
     refreshReview,
     importCapFrameXFile,
+    exportCapFrameX,
+    useForegroundProcess,
   };
 
   if (document.readyState === 'loading') {

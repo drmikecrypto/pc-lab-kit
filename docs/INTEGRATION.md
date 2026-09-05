@@ -64,12 +64,14 @@ Identity: Windows `"agent":"pclab-probe"` / Linux `"agent":"pclab-probe-linux"`,
 | POST | `/presentmon/session/stop` | Stop session, parse series, persist Session Review artifact |
 | GET | `/presentmon/session/status` | Session running? |
 | GET | `/presentmon/sessions` | List last N saved sessions (`?limit=`, default 20) |
-| GET | `/presentmon/sessions/{id}` | Full artifact: series, histogram, spikes |
+| GET | `/presentmon/sessions/{id}` | Full artifact: series, histogram, spikes, telemetry context |
+| GET | `/presentmon/sessions/{id}/export` | CapFrameX-shaped JSON export for a saved session |
 | POST | `/presentmon/sessions/import` | Import CapFrameX JSON (`json` / `content` or raw Runs payload) into Session Review |
+| GET | `/presentmon/session/foreground` | Best-effort foreground process name for session labeling |
 
-### PresentMon Session Review (CapFrameX-lite)
+### PresentMon Session Forensics (CapFrameX-lite)
 
-Artifacts live under `%LOCALAPPDATA%\PcLabKit\Probe\presentmon-sessions\`. Each stop/timed capture with samples (and CapFrameX imports) writes `id`, stats (`fps_avg`, `fps_1pct_low`, `fps_0_1pct_low`, `frametime_p99_ms`), `fps_series` / `frametime_series`, histogram bins, and a spike list. If PresentMon.exe is missing, list/import still work; live capture returns `presentmon_missing` honesty. The SMART · PresentMon panel Session Review UI loads these for histogram, spike table, and A/B compare.
+Artifacts live under `%LOCALAPPDATA%\PcLabKit\Probe\presentmon-sessions\`. Each stop/timed capture with samples (and CapFrameX imports) writes `id`, stats (`fps_avg`, `fps_1pct_low`, `fps_0_1pct_low`, `frametime_p99_ms`), `fps_series` / `frametime_series`, histogram bins, spike list, optional `process_name` / `label`, and `context` from the Probe telemetry ring when available. Spikes may include nearest `cpu_c` / `gpu_c` / `gpu_hotspot_c` / `package_w` / `gpu_w`. If PresentMon.exe is missing, list/import/export still work; live capture returns honesty notes. If the ring is empty, `context.available = false` (no invented temps). Session Review UI: histogram, spike forensics table, A/B compare, 1% low trend strip, CapFrameX import/export.
 
 ### LCD Studio honesty
 

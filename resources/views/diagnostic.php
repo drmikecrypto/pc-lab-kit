@@ -24,7 +24,7 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.4.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-arena.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.4.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.5.0">
 
 <div class="container dx-shell">
 
@@ -634,19 +634,31 @@ $toolTotal = $toolKit->total();
                         <span>Timed capture (s)</span>
                         <input type="number" id="dx-pm-seconds" min="3" max="120" value="10" aria-label="PresentMon seconds">
                     </label>
+                    <label class="dx-stress-field">
+                        <span>Process (optional)</span>
+                        <input type="text" id="dx-pm-process" placeholder="e.g. game.exe" aria-label="PresentMon process name" autocomplete="off">
+                    </label>
+                    <button type="button" class="dx-btn ghost" id="dx-pm-use-fg" title="Fill from foreground window">Use foreground</button>
                     <button type="button" class="dx-btn primary" id="dx-pm-capture">Capture frametimes</button>
                     <button type="button" class="dx-btn ghost" id="dx-pm-session-start">Start session</button>
                     <button type="button" class="dx-btn ghost" id="dx-pm-session-stop" disabled>Stop &amp; review</button>
                     <p class="muted fs-sm" id="dx-pm-status" role="status"></p>
                     <canvas id="dx-pm-spark" class="dx-pm-spark" width="640" height="72" hidden aria-label="PresentMon FPS series"></canvas>
                 </div>
-                <div class="dx-pm-review" id="dx-pm-review" aria-label="CapFrameX-lite Session Review">
+                <div class="dx-pm-review" id="dx-pm-review" aria-label="Session Forensics Review">
                     <div class="dx-pm-review-head">
                         <div>
-                            <h3>Session Review</h3>
-                            <p class="muted fs-sm">Histogram · 1% / 0.1% / P99 · spikes · A/B compare (CapFrameX-lite)</p>
+                            <h3>Session Forensics</h3>
+                            <p class="muted fs-sm">Why did it stutter? · histogram · spikes + temps · A/B · CapFrameX export</p>
                         </div>
-                        <button type="button" class="dx-btn ghost" id="dx-pm-review-refresh">Refresh list</button>
+                        <div class="dx-pm-review-actions">
+                            <button type="button" class="dx-btn ghost" id="dx-pm-export-cx">Export CapFrameX JSON</button>
+                            <button type="button" class="dx-btn ghost" id="dx-pm-review-refresh">Refresh list</button>
+                        </div>
+                    </div>
+                    <div class="dx-pm-trend-wrap">
+                        <div class="dx-tel-spark-label">1% low trend (recent sessions)</div>
+                        <canvas id="dx-pm-trend" width="640" height="72" aria-label="1 percent low trend"></canvas>
                     </div>
                     <div class="dx-pm-review-controls">
                         <label class="dx-stress-field">
@@ -844,7 +856,7 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-suite.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-tree.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-smart-frames.js?v=1.3.0"></script>
+<script defer src="/assets/js/diagnostic-smart-frames.js?v=1.4.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-openbook.js?v=1.4.0"></script>

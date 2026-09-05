@@ -2,7 +2,7 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; Universal LCD Studio **v4.2.0** / **v4.2.0.0**; operator library **v4.2.3**; CapFrameX-lite Session Review **v4.2.3.0** (desktop **4.3.0**). Capability-first doctrine: own the full lab, not an import shell.
+**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; Universal LCD Studio **v4.2.0** / **v4.2.0.0**; operator library **v4.2.3**; CapFrameX Session Review **v4.2.3.0**; Session Forensics **v4.2.3.1** (desktop **4.3.1**). Capability-first doctrine: own the full lab, not an import shell.
 **Last updated:** 2026-09-03  
 **Repository:** [pc-lab-kit](../README.md)
 
@@ -581,6 +581,8 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 
 ## Immediate next steps
 
+**Shipped in v4.2.3.1:** Session Forensics — spike↔telemetry context, process labels, CapFrameX export, 1% low trend strip. Desktop **4.3.1**.
+
 **Shipped in v4.2.3.0:** CapFrameX-lite **Session Review** — persisted PresentMon artifacts, FPS histogram, 1%/0.1%/P99 strip, stutter spike list, A/B session compare, CapFrameX JSON import into the same list (`/presentmon/sessions*`). Desktop installer **4.3.0**.
 
 **Shipped in v4.2.3:** LCD media library re-apply; open staged folder in Explorer; Open Book assembly progress meter + calm Probe-offline states.
@@ -595,11 +597,11 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 2. Daily assembly on **Open Book** Platform Console (coverage meter + firmware planes)
 3. Community verify RTX 50 Hot Spot / VRAM MMIO when hardware is available
 4. **Linux probe parity** — OC/RGB/Ring0 remain Windows-only
-5. **Parked:** per-OEM AIO HID reverse-engineer; PawnIO kernel migration; SuperIO fan-curve apply; full RTSS OSD / CapFrameX stutter library (Session Review lite shipped in v4.2.3.0)
+5. **Parked:** per-OEM AIO HID reverse-engineer; PawnIO kernel migration; SuperIO fan-curve apply; full RTSS OSD / CapFrameX stutter library (Session Review + Forensics lite shipped in v4.2.3.0 / v4.2.3.1)
 
 ### Recommended focus
 
-Session Review soak-test with real PresentMon + CapFrameX exports; then HID plugins where safe / PawnIO trust path.
+Soak-test Session Forensics with live PresentMon + Sensor Deck ring; CapFrameX round-trip export/import; then HID plugins where safe / PawnIO trust path.
 ---
 
 ## Assumptions

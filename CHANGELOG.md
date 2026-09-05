@@ -6,6 +6,16 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.2.3.1] - 2026-09-06
+
+> Marketing / `APP_VERSION` **4.2.3.1**; desktop Tauri/npm/Cargo bundle **4.3.1** (Tauri requires MAJOR.MINOR.PATCH).
+
+### Added — Session Forensics (“Why did it stutter?”)
+- Correlate PresentMon spikes with Probe telemetry ring (CPU/GPU/hotspot/power) on stop/capture
+- Process/game labels: optional process field, **Use foreground**, CSV `Application` fallback
+- CapFrameX JSON **export** (`GET /presentmon/sessions/{id}/export`) + Session Review download button
+- Multi-run **1% low trend** strip (click a bar to select Session A)
+
 ## [4.2.3.0] - 2026-09-06
 
 > Marketing / `APP_VERSION` **4.2.3.0**; desktop Tauri/npm/Cargo bundle **4.3.0** (Tauri requires MAJOR.MINOR.PATCH).

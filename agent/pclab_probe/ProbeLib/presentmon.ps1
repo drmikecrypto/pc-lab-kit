@@ -55,9 +55,15 @@ function ConvertFrom-PresentMonCsv {
     $frametimes = @()
     $msBetween = @()
     $fpsSamples = @()
+    $appCounts = @{}
     foreach ($line in $lines | Select-Object -Skip 1) {
         $cols = $line -split ','
         if ($cols.Count -ge 10) {
+            $app = ($cols[0] -replace '^"|"$', '').Trim()
+            if ($app -and $app -notmatch '^(Application|Process)$') {
+                if (-not $appCounts.ContainsKey($app)) { $appCounts[$app] = 0 }
+                $appCounts[$app]++
+            }
             $ft = 0.0
             if ([double]::TryParse($cols[9], [ref]$ft) -and $ft -gt 0) { $frametimes += $ft }
             $mb = 0.0
@@ -66,6 +72,10 @@ function ConvertFrom-PresentMonCsv {
                 $fpsSamples += (1000.0 / $mb)
             }
         }
+    }
+    $topApp = $null
+    if ($appCounts.Count -gt 0) {
+        $topApp = ($appCounts.GetEnumerator() | Sort-Object Value -Descending | Select-Object -First 1).Key
     }
 
     $fps = if ($msBetween.Count) { 1000.0 / (($msBetween | Measure-Object -Average).Average) } else { 0 }
@@ -101,12 +111,14 @@ function ConvertFrom-PresentMonCsv {
         frametime_series = @($ftSeries)
         ms_between_series = @($msSeries)
         fps_series = @($fpsSeries)
+        process_name = $topApp
+        label = $topApp
         methodology = '1%/0.1% lows = FPS samples at 1st / 0.1st percentile (sorted ascending), CapFrameX-compatible language'
     }
 }
 
 function Get-ProbePresentMonTelemetry {
-    param([int]$TimedSeconds = 3)
+    param([int]$TimedSeconds = 3, [string]$ContextJsonPath = '')
     $TimedSeconds = [Math]::Max(1, [Math]::Min(300, $TimedSeconds))
     $exe = Find-PresentMonExe
     if (-not $exe) {
@@ -131,10 +143,13 @@ function Get-ProbePresentMonTelemetry {
         if ($parsed.available -and $parsed.sample_count -gt 1) {
             $parsed.duration_s = $TimedSeconds
             $parsed.stopped_at = (Get-Date).ToUniversalTime().ToString('o')
-            $saved = Save-ProbePresentMonSessionArtifact -Parsed $parsed -Source 'presentmon' -Label ("Timed {0}s" -f $TimedSeconds)
+            $lab = if ($parsed.label) { [string]$parsed.label } else { ("Timed {0}s" -f $TimedSeconds) }
+            $saved = Save-ProbePresentMonSessionArtifact -Parsed $parsed -Source 'presentmon' -Label $lab -ContextJsonPath $ContextJsonPath
             if ($saved.ok) {
                 $parsed.session_id = $saved.id
                 $parsed.saved = $true
+                $parsed.context = $saved.context
+                $parsed.spikes = $saved.spikes
             }
         }
         return $parsed
@@ -226,14 +241,17 @@ function Start-ProbePresentMonSession {
 }
 
 function Stop-ProbePresentMonSession {
+    param([string]$ContextJsonPath = '')
     $paths = Get-PresentMonSessionPaths
     $procId = $null
     $started = $null
+    $sessionProcess = ''
     if (Test-Path $paths.status) {
         try {
             $st = Get-Content $paths.status -Raw | ConvertFrom-Json
             $procId = $st.pid
             $started = $st.started_at
+            if ($st.process_name) { $sessionProcess = [string]$st.process_name }
         } catch {}
     }
     if ($procId) {
@@ -260,12 +278,19 @@ function Stop-ProbePresentMonSession {
     $parsed.stopped_at = (Get-Date).ToUniversalTime().ToString('o')
 
     Remove-Item $paths.status -Force -ErrorAction SilentlyContinue
+    if ($sessionProcess) {
+        $parsed.process_name = $sessionProcess
+        if (-not $parsed.label) { $parsed.label = $sessionProcess }
+    }
     if ($parsed.sample_count -gt 1) {
-        $saved = Save-ProbePresentMonSessionArtifact -Parsed $parsed -Source 'presentmon'
+        $label = if ($parsed.label) { [string]$parsed.label } elseif ($parsed.process_name) { [string]$parsed.process_name } else { '' }
+        $saved = Save-ProbePresentMonSessionArtifact -Parsed $parsed -Source 'presentmon' -Label $label -ContextJsonPath $ContextJsonPath
         if ($saved.ok) {
             $parsed.session_id = $saved.id
             $parsed.saved = $true
             $parsed.artifact_path = $saved.path
+            $parsed.context = $saved.context
+            $parsed.spikes = $saved.spikes
         }
     }
     return $parsed
@@ -277,6 +302,157 @@ function Get-PresentMonSessionsDir {
     return $dir
 }
 
+function Get-ProbePresentMonForegroundHint {
+    $hint = $null
+    $title = $null
+    try {
+        Add-Type -TypeDefinition @"
+using System;
+using System.Text;
+using System.Runtime.InteropServices;
+public static class PcLabFg {
+  [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
+  [DllImport("user32.dll")] public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint pid);
+  [DllImport("user32.dll", CharSet=CharSet.Unicode)] public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+}
+"@ -ErrorAction SilentlyContinue
+        $hwnd = [PcLabFg]::GetForegroundWindow()
+        if ($hwnd -ne [IntPtr]::Zero) {
+            $pid = [uint32]0
+            [void][PcLabFg]::GetWindowThreadProcessId($hwnd, [ref]$pid)
+            $sb = New-Object System.Text.StringBuilder 512
+            [void][PcLabFg]::GetWindowText($hwnd, $sb, $sb.Capacity)
+            $title = $sb.ToString()
+            if ($pid -gt 0) {
+                $proc = Get-Process -Id ([int]$pid) -ErrorAction SilentlyContinue
+                if ($proc) { $hint = $proc.ProcessName }
+            }
+        }
+    } catch {}
+    if (-not $hint) {
+        try {
+            $fg = Get-Process | Where-Object { $_.MainWindowHandle -ne 0 -and $_.MainWindowTitle } |
+                Sort-Object StartTime -Descending | Select-Object -First 1
+            if ($fg) {
+                $hint = $fg.ProcessName
+                if (-not $title) { $title = $fg.MainWindowTitle }
+            }
+        } catch {}
+    }
+    return @{
+        ok = $true
+        process_name = $hint
+        window_title = $title
+        note = if ($hint) { "Foreground: $hint" } else { 'No foreground process detected' }
+    }
+}
+
+function Normalize-PresentMonContextSamples {
+    param($RawSamples, [double]$DurationS = 0)
+    $rows = @()
+    if (-not $RawSamples) {
+        return @{ available = $false; samples = @(); note = 'No telemetry history during capture - open Sensor Deck / leave Probe live for spike context.' }
+    }
+    $list = @($RawSamples)
+    if ($list.Count -eq 0) {
+        return @{ available = $false; samples = @(); note = 'Telemetry ring empty - spike temps unavailable.' }
+    }
+    foreach ($s in $list) {
+        try {
+            $ts = $null
+            if ($s.ts) { $ts = [string]$s.ts }
+            elseif ($s.collected_at) { $ts = [string]$s.collected_at }
+            $rows += @{
+                t = $ts
+                cpu_c = $(if ($null -ne $s.cpu_temp) { $s.cpu_temp } else { $s.cpu_c })
+                gpu_c = $(if ($null -ne $s.gpu_temp) { $s.gpu_temp } else { $s.gpu_c })
+                gpu_hotspot_c = $(if ($null -ne $s.gpu_hotspot) { $s.gpu_hotspot } else { $s.gpu_hotspot_c })
+                package_w = $(if ($null -ne $s.package_power_w) { $s.package_power_w } else { $s.package_w })
+                gpu_w = $(if ($null -ne $s.gpu_power_w) { $s.gpu_power_w } elseif ($null -ne $s.gpu_power) { $s.gpu_power } else { $s.gpu_w })
+            }
+        } catch {}
+    }
+    if ($rows.Count -eq 0) {
+        return @{ available = $false; samples = @(); note = 'Telemetry history had no usable samples.' }
+    }
+    # Keep last samples covering roughly duration (assume ~1 sample / few sec; cap 120)
+    $keep = 120
+    if ($DurationS -gt 0) {
+        $keep = [Math]::Max(8, [Math]::Min(120, [int][Math]::Ceiling($DurationS / 2.0) + 4))
+    }
+    if ($rows.Count -gt $keep) {
+        $rows = $rows[($rows.Count - $keep)..($rows.Count - 1)]
+    }
+    return @{
+        available = $true
+        samples = @($rows)
+        sample_count = $rows.Count
+        note = $null
+    }
+}
+
+function Get-PresentMonContextFromJsonPath {
+    param([string]$Path, [double]$DurationS = 0)
+    if (-not $Path -or -not (Test-Path $Path)) {
+        return Normalize-PresentMonContextSamples -RawSamples @() -DurationS $DurationS
+    }
+    try {
+        $raw = Get-Content $Path -Raw -ErrorAction Stop
+        if (-not $raw -or $raw.Trim() -eq '' -or $raw.Trim() -eq 'null') {
+            return Normalize-PresentMonContextSamples -RawSamples @() -DurationS $DurationS
+        }
+        $j = $raw | ConvertFrom-Json
+        return Normalize-PresentMonContextSamples -RawSamples $j -DurationS $DurationS
+    } catch {
+        return @{ available = $false; samples = @(); note = "Context parse failed: $($_.Exception.Message)" }
+    }
+}
+
+function Add-PresentMonSpikeContext {
+    param($Spikes, $Context, [double]$DurationMs = 0)
+    if (-not $Spikes) { return $Spikes }
+    $spikeList = @($Spikes.spikes)
+    if (-not $Context -or -not $Context.available -or -not $Context.samples -or @($Context.samples).Count -eq 0) {
+        $Spikes.context_attached = $false
+        return $Spikes
+    }
+    $samples = @($Context.samples)
+    $n = $samples.Count
+    if ($DurationMs -le 0) {
+        foreach ($sp in $spikeList) {
+            $tm = if ($sp -is [hashtable]) { [double]$sp['t_ms'] } else { [double]$sp.t_ms }
+            if ($tm -gt $DurationMs) { $DurationMs = $tm }
+        }
+    }
+    if ($DurationMs -le 0) { $DurationMs = 1000.0 }
+    $enriched = @()
+    foreach ($sp in $spikeList) {
+        $row = @{}
+        if ($sp -is [hashtable]) {
+            foreach ($k in $sp.Keys) { $row[$k] = $sp[$k] }
+        } else {
+            foreach ($k in $sp.PSObject.Properties.Name) { $row[$k] = $sp.$k }
+        }
+        $tMs = [double]$row['t_ms']
+        $idx = 0
+        if ($n -gt 1) {
+            $idx = [int][Math]::Floor(($tMs / $DurationMs) * ($n - 1))
+            if ($idx -lt 0) { $idx = 0 }
+            if ($idx -ge $n) { $idx = $n - 1 }
+        }
+        $ctx = $samples[$idx]
+        $row['cpu_c'] = $ctx.cpu_c
+        $row['gpu_c'] = $ctx.gpu_c
+        $row['gpu_hotspot_c'] = $ctx.gpu_hotspot_c
+        $row['package_w'] = $ctx.package_w
+        $row['gpu_w'] = $ctx.gpu_w
+        $enriched += $row
+    }
+    $Spikes.spikes = $enriched
+    $Spikes.context_attached = $true
+    return $Spikes
+}
+
 function Get-ProbePresentMonSpikes {
     param(
         [double[]]$FrametimeMs,
@@ -284,7 +460,7 @@ function Get-ProbePresentMonSpikes {
         [int]$MaxSpikes = 40
     )
     if (-not $FrametimeMs -or $FrametimeMs.Count -lt 2) {
-        return @{ available = $false; spikes = @(); spike_count = 0; threshold_ms = $SpikeThresholdMs }
+        return @{ available = $false; spikes = @(); spike_count = 0; threshold_ms = $SpikeThresholdMs; context_attached = $false }
     }
     $mean = ($FrametimeMs | Measure-Object -Average).Average
     $threshold = [Math]::Max($SpikeThresholdMs, $mean * 2.5)
@@ -310,6 +486,7 @@ function Get-ProbePresentMonSpikes {
         spike_count = $spikes.Count
         threshold_ms = [math]::Round($threshold, 2)
         mean_ms = [math]::Round($mean, 2)
+        context_attached = $false
     }
 }
 
@@ -317,7 +494,8 @@ function Save-ProbePresentMonSessionArtifact {
     param(
         [hashtable]$Parsed,
         [string]$Source = 'presentmon',
-        [string]$Label = ''
+        [string]$Label = '',
+        [string]$ContextJsonPath = ''
     )
     if (-not $Parsed) { return @{ ok = $false; error = 'no_data' } }
     $dir = Get-PresentMonSessionsDir
@@ -325,6 +503,12 @@ function Save-ProbePresentMonSessionArtifact {
     $ft = @($Parsed.frametime_series)
     if (-not $ft.Count -and $Parsed.ms_between_series) { $ft = @($Parsed.ms_between_series) }
     $spikes = Get-ProbePresentMonSpikes -FrametimeMs $ft
+    $dur = 0.0
+    if ($null -ne $Parsed.duration_s) { $dur = [double]$Parsed.duration_s }
+    elseif ($null -ne $Parsed.timed_s) { $dur = [double]$Parsed.timed_s }
+    $context = Get-PresentMonContextFromJsonPath -Path $ContextJsonPath -DurationS $dur
+    $durMs = if ($dur -gt 0) { $dur * 1000.0 } else { 0.0 }
+    $spikes = Add-PresentMonSpikeContext -Spikes $spikes -Context $context -DurationMs $durMs
     $fpsSeries = @($Parsed.fps_series)
     $hist = @{
         bins = @()
@@ -350,10 +534,18 @@ function Save-ProbePresentMonSessionArtifact {
         $hist = @{ bins = $bins; counts = @($counts); min = [math]::Round($minF, 1); max = [math]::Round($maxF, 1) }
     }
 
+    $procName = $null
+    if ($Parsed.process_name) { $procName = [string]$Parsed.process_name }
+    $labelOut = $Label
+    if (-not $labelOut -and $Parsed.label) { $labelOut = [string]$Parsed.label }
+    if (-not $labelOut -and $procName) { $labelOut = $procName }
+    if (-not $labelOut) { $labelOut = if ($Source -eq 'import') { 'CapFrameX import' } else { 'PresentMon session' } }
+
     $artifact = @{
         id = $id
         source = $Source
-        label = $(if ($Label) { $Label } else { if ($Source -eq 'import') { 'CapFrameX import' } else { 'PresentMon session' } })
+        label = $labelOut
+        process_name = $procName
         started_at = $Parsed.started_at
         stopped_at = $Parsed.stopped_at
         duration_s = $Parsed.duration_s
@@ -367,20 +559,20 @@ function Save-ProbePresentMonSessionArtifact {
         frametime_series = $ft
         ms_between_series = @($Parsed.ms_between_series)
         spikes = $spikes
+        context = $context
         histogram = $hist
         methodology = $Parsed.methodology
         available = [bool]$Parsed.available
         saved_at = (Get-Date).ToUniversalTime().ToString('o')
     }
     $path = Join-Path $dir ("$id.json")
-    ($artifact | ConvertTo-Json -Depth 8 -Compress) | Set-Content -Path $path -Encoding UTF8
+    ($artifact | ConvertTo-Json -Depth 10 -Compress) | Set-Content -Path $path -Encoding UTF8
 
-    # prune oldest beyond 40
     $all = @(Get-ChildItem $dir -Filter '*.json' -File | Sort-Object LastWriteTime -Descending)
     if ($all.Count -gt 40) {
         $all | Select-Object -Skip 40 | ForEach-Object { Remove-Item $_.FullName -Force -ErrorAction SilentlyContinue }
     }
-    return @{ ok = $true; id = $id; path = $path }
+    return @{ ok = $true; id = $id; path = $path; context = $context; spikes = $spikes }
 }
 
 function Get-ProbePresentMonSessions {
@@ -399,6 +591,7 @@ function Get-ProbePresentMonSessions {
                     id = $j.id
                     source = $j.source
                     label = $j.label
+                    process_name = $j.process_name
                     started_at = $j.started_at
                     duration_s = $j.duration_s
                     fps_avg = $j.fps_avg
@@ -407,6 +600,7 @@ function Get-ProbePresentMonSessions {
                     frametime_p99_ms = $j.frametime_p99_ms
                     sample_count = $j.sample_count
                     spike_count = $(if ($j.spikes) { $j.spikes.spike_count } else { 0 })
+                    context_available = $(if ($j.context) { [bool]$j.context.available } else { $false })
                     saved_at = $j.saved_at
                 }
             } catch {}
@@ -570,3 +764,47 @@ function Import-ProbePresentMonCapFrameX {
         message = "Imported as session $($saved.id)"
     }
 }
+
+function Export-ProbePresentMonCapFrameX {
+    param([string]$Id)
+    $full = Get-ProbePresentMonSessionById -Id $Id
+    if (-not $full.ok) { return $full }
+    $s = $full.session
+    $ft = @()
+    if ($s.frametime_series) { $ft = @($s.frametime_series | ForEach-Object { [double]$_ }) }
+    elseif ($s.ms_between_series) { $ft = @($s.ms_between_series | ForEach-Object { [double]$_ }) }
+    $game = if ($s.label) { [string]$s.label } elseif ($s.process_name) { [string]$s.process_name } else { 'PcLabKit Session' }
+    $payload = @{
+        Info = @{
+            ProcessName = $(if ($s.process_name) { [string]$s.process_name } else { $game })
+            GameName = $game
+            CreationDate = $(if ($s.saved_at) { [string]$s.saved_at } else { (Get-Date).ToUniversalTime().ToString('o') })
+            Comment = 'Exported from PcLab Kit Session Forensics'
+        }
+        Runs = @(
+            @{
+                Info = @{ GameName = $game }
+                Metrics = @{
+                    AvgFps = $s.fps_avg
+                    AverageFPS = $s.fps_avg
+                    Fps1PctLow = $s.fps_1pct_low
+                    OnePercentLow = $s.fps_1pct_low
+                    Fps01PctLow = $s.fps_0_1pct_low
+                    FrametimeP99 = $s.frametime_p99_ms
+                }
+                CaptureData = @{
+                    Frametimes = $ft
+                    MsBetweenPresents = $ft
+                }
+            }
+        )
+    }
+    return @{
+        ok = $true
+        format = 'capframex'
+        id = $s.id
+        filename = ("pclab_{0}_capframex.json" -f ($s.id -replace '[^\w\-]', '_'))
+        export = $payload
+    }
+}
+

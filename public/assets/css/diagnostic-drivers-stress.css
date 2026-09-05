@@ -517,6 +517,25 @@
   margin-bottom: 12px;
 }
 
+.dx-pm-review-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dx-pm-trend-wrap {
+  margin-bottom: 12px;
+}
+
+.dx-pm-trend-wrap canvas {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
 .dx-pm-review-head h3 {
   margin: 0 0 4px;
   font-size: 1.05rem;
