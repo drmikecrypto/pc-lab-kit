@@ -51,6 +51,9 @@ $script:Routes = @(
     @{ method = 'POST'; path = '/presentmon/session/start'; desc = 'start PresentMon capture session (CapFrameX-lite)' }
     @{ method = 'POST'; path = '/presentmon/session/stop'; desc = 'stop PresentMon session + parse series' }
     @{ method = 'GET';  path = '/presentmon/session/status'; desc = 'PresentMon session running?' }
+    @{ method = 'GET';  path = '/presentmon/sessions'; desc = 'list saved PresentMon / CapFrameX session reviews' }
+    @{ method = 'GET';  path = '/presentmon/sessions/{id}'; desc = 'full session artifact (series + histogram + spikes)' }
+    @{ method = 'POST'; path = '/presentmon/sessions/import'; desc = 'import CapFrameX JSON into Session Review' }
     @{ method = 'GET';  path = '/devices';            desc = 'full PnP / PCI / USB / monitor inventory' }
     @{ method = 'GET';  path = '/drivers';            desc = 'driver advisor + install queue (?wu=1 optional WU scan)' }
     @{ method = 'POST'; path = '/drivers/install';    desc = 'one-click install matched package (confirm required)' }
@@ -362,6 +365,31 @@ Stop-ProbePresentMonSession | ConvertTo-Json -Depth 8 -Compress }
 & { . '$scriptDir\ProbeLib\presentmon.ps1'
 Get-ProbePresentMonSessionStatus | ConvertTo-Json -Depth 6 -Compress }
 "@
+            }
+            "/presentmon/sessions" {
+                $lim = 20
+                if ($req.Url.Query -match 'limit=(\d+)') { $lim = [int]$Matches[1] }
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+Get-ProbePresentMonSessions -Limit $lim | ConvertTo-Json -Depth 6 -Compress }
+"@
+            }
+            "/presentmon/sessions/import" {
+                if ($req.HttpMethod -ne 'POST') { $code = 405; $body = '{"error":"POST required"}'; break }
+                $raw = Read-RequestBody $req
+                $tmp = Join-Path $env:TEMP ("pclab_pm_import_" + [guid]::NewGuid().ToString("n") + ".json")
+                try {
+                    if (-not $raw) { $raw = '{}' }
+                    [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+`$label = if (`$j.label) { [string]`$j.label } else { '' }
+`$content = if (`$j.json) { [string]`$j.json } elseif (`$j.content) { [string]`$j.content } else { '' }
+if (-not `$content -and `$j.Runs) { `$content = (`$j | ConvertTo-Json -Depth 20 -Compress) }
+Import-ProbePresentMonCapFrameX -JsonContent `$content -Label `$label | ConvertTo-Json -Depth 10 -Compress }
+"@
+                } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }
             "/devices" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
@@ -852,14 +880,28 @@ Invoke-ProbeRepairTool -Id `$id -Confirm:`$c | ConvertTo-Json -Depth 6 -Compress
                 } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
             }
             default {
-                $code = 404
-                $body = @{
-                    error   = 'not found'
-                    path    = $path
-                    version = 5
-                    hint    = 'Open http://127.0.0.1:' + $Port + '/ for the endpoint index.'
-                    routes  = @($script:Routes | ForEach-Object { $_.method + ' ' + $_.path })
-                } | ConvertTo-Json -Depth 4 -Compress
+                if ($path -match '^/presentmon/sessions/([^/]+)$') {
+                    $pmSid = $Matches[1]
+                    if ($pmSid -eq 'import') {
+                        $code = 405
+                        $body = '{"error":"POST required","path":"/presentmon/sessions/import"}'
+                    } else {
+                        $safeSid = ($pmSid -replace '[^\w\-]', '')
+                        $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+Get-ProbePresentMonSessionById -Id '$safeSid' | ConvertTo-Json -Depth 10 -Compress }
+"@
+                    }
+                } else {
+                    $code = 404
+                    $body = @{
+                        error   = 'not found'
+                        path    = $path
+                        version = 5
+                        hint    = 'Open http://127.0.0.1:' + $Port + '/ for the endpoint index.'
+                        routes  = @($script:Routes | ForEach-Object { $_.method + ' ' + $_.path })
+                    } | ConvertTo-Json -Depth 4 -Compress
+                }
             }
         }
 

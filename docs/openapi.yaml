@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: PC Lab Kit Diagnostic API
-  version: 4.2.3
+  version: 4.2.3.0
   description: Local-first PC laboratory REST API (localhost only).
 servers:
   - url: http://127.0.0.1:8080
@@ -64,3 +64,13 @@ paths:
   /lcd/open-stage:
     post:
       summary: Open staged LCD file or folder in Explorer
+  # Probe PresentMon Session Review (localhost:18765)
+  /presentmon/sessions:
+    get:
+      summary: List saved PresentMon / CapFrameX session reviews
+  /presentmon/sessions/{id}:
+    get:
+      summary: Full session artifact (series, histogram, spikes)
+  /presentmon/sessions/import:
+    post:
+      summary: Import CapFrameX JSON into Session Review

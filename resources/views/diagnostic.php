@@ -24,7 +24,7 @@ $toolTotal = $toolKit->total();
 <link rel="stylesheet" href="/assets/css/diagnostic-command.css?v=1.5.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-command-layout.css?v=1.4.0">
 <link rel="stylesheet" href="/assets/css/diagnostic-arena.css?v=1.0.0">
-<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.3.0">
+<link rel="stylesheet" href="/assets/css/diagnostic-drivers-stress.css?v=1.4.0">
 
 <div class="container dx-shell">
 
@@ -640,6 +640,45 @@ $toolTotal = $toolKit->total();
                     <p class="muted fs-sm" id="dx-pm-status" role="status"></p>
                     <canvas id="dx-pm-spark" class="dx-pm-spark" width="640" height="72" hidden aria-label="PresentMon FPS series"></canvas>
                 </div>
+                <div class="dx-pm-review" id="dx-pm-review" aria-label="CapFrameX-lite Session Review">
+                    <div class="dx-pm-review-head">
+                        <div>
+                            <h3>Session Review</h3>
+                            <p class="muted fs-sm">Histogram · 1% / 0.1% / P99 · spikes · A/B compare (CapFrameX-lite)</p>
+                        </div>
+                        <button type="button" class="dx-btn ghost" id="dx-pm-review-refresh">Refresh list</button>
+                    </div>
+                    <div class="dx-pm-review-controls">
+                        <label class="dx-stress-field">
+                            <span>Session A</span>
+                            <select id="dx-pm-session-a" aria-label="Session A"></select>
+                        </label>
+                        <label class="dx-stress-field">
+                            <span>Session B (compare)</span>
+                            <select id="dx-pm-session-b" aria-label="Session B">
+                                <option value="">— none —</option>
+                            </select>
+                        </label>
+                        <label class="dx-pm-import-label dx-btn ghost">
+                            Import CapFrameX JSON
+                            <input type="file" id="dx-pm-import-file" accept=".json,application/json" hidden>
+                        </label>
+                    </div>
+                    <div class="dx-pm-stat-strip" id="dx-pm-stat-strip" aria-live="polite"></div>
+                    <div class="dx-pm-review-viz">
+                        <div class="dx-pm-hist-wrap">
+                            <div class="dx-tel-spark-label">FPS histogram</div>
+                            <canvas id="dx-pm-hist" width="640" height="120" aria-label="FPS histogram"></canvas>
+                        </div>
+                        <div class="dx-pm-compare-wrap">
+                            <div class="dx-tel-spark-label">Series A / B</div>
+                            <canvas id="dx-pm-compare" width="640" height="96" aria-label="Session compare series"></canvas>
+                        </div>
+                    </div>
+                    <div class="dx-pm-spikes" id="dx-pm-spikes">
+                        <p class="muted fs-sm">Stop a session or import CapFrameX JSON to review spikes.</p>
+                    </div>
+                </div>
             </section>
 
             <section class="dx-panel-card" id="dx-fleet-panel" aria-label="Shop fleet">
@@ -805,7 +844,7 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-suite.js?v=1.6.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-tree.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-smart-frames.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-smart-frames.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-openbook.js?v=1.4.0"></script>

@@ -258,6 +258,31 @@
       const sel = document.getElementById('dx-import-format');
       if (sel) sel.value = importFormat;
     }
+    // Mirror CapFrameX JSON into Probe Session Review when the agent is reachable.
+    if (/capframex/i.test(importFormat) && importContent) {
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (window.PcLabProbeAuth) {
+          await window.PcLabProbeAuth.ensure();
+          Object.assign(headers, window.PcLabProbeAuth.jsonHeaders());
+        }
+        const res = await fetch(AGENT + '/presentmon/sessions/import', {
+          method: 'POST',
+          mode: 'cors',
+          headers,
+          body: JSON.stringify({
+            json: importContent,
+            label: file.name.replace(/\.json$/i, ''),
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (data.ok && window.PcLabSmartFrames?.refreshReview) {
+          window.PcLabSmartFrames.refreshReview(data.id);
+        }
+      } catch (_) {
+        /* Probe offline — lab import still works via PHP */
+      }
+    }
   });
 
   async function loadGames(q) {

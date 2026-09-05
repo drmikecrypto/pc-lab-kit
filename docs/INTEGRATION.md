@@ -59,6 +59,17 @@ Identity: Windows `"agent":"pclab-probe"` / Linux `"agent":"pclab-probe-linux"`,
 | GET/POST | `/launchers`, `/launchers/run` | Optional third-party stress tools (Windows) |
 | GET | `/integrations/hwinfo-sm` | Write **JSON sensor feed** (see below) |
 | GET/POST | `/repair/*` | OS maintenance catalog / run (Windows; confirm required) |
+| GET | `/presentmon/capture` | Timed PresentMon capture → 1% / 0.1% / P99 (+ auto-save when samples exist) |
+| POST | `/presentmon/session/start` | Start PresentMon capture session |
+| POST | `/presentmon/session/stop` | Stop session, parse series, persist Session Review artifact |
+| GET | `/presentmon/session/status` | Session running? |
+| GET | `/presentmon/sessions` | List last N saved sessions (`?limit=`, default 20) |
+| GET | `/presentmon/sessions/{id}` | Full artifact: series, histogram, spikes |
+| POST | `/presentmon/sessions/import` | Import CapFrameX JSON (`json` / `content` or raw Runs payload) into Session Review |
+
+### PresentMon Session Review (CapFrameX-lite)
+
+Artifacts live under `%LOCALAPPDATA%\PcLabKit\Probe\presentmon-sessions\`. Each stop/timed capture with samples (and CapFrameX imports) writes `id`, stats (`fps_avg`, `fps_1pct_low`, `fps_0_1pct_low`, `frametime_p99_ms`), `fps_series` / `frametime_series`, histogram bins, and a spike list. If PresentMon.exe is missing, list/import still work; live capture returns `presentmon_missing` honesty. The SMART · PresentMon panel Session Review UI loads these for histogram, spike table, and A/B compare.
 
 ### LCD Studio honesty
 

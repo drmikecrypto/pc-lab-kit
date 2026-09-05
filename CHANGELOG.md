@@ -6,6 +6,16 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.2.3.0] - 2026-09-06
+
+> Marketing / `APP_VERSION` **4.2.3.0**; desktop Tauri/npm/Cargo bundle **4.3.0** (Tauri requires MAJOR.MINOR.PATCH).
+
+### Added — CapFrameX-lite Session Review
+- Persist PresentMon session artifacts under `%LOCALAPPDATA%\PcLabKit\Probe\presentmon-sessions\`
+- Probe routes: `GET /presentmon/sessions`, `GET /presentmon/sessions/{id}`, `POST /presentmon/sessions/import`
+- SMART · PresentMon **Session Review** UI: FPS histogram, avg / 1% / 0.1% / P99 strip, stutter spike list, A/B series compare
+- CapFrameX JSON import into the same review list (panel file drop + lab import mirror when Probe is up)
+
 ## [4.2.3] - 2026-09-03
 
 ### Added
