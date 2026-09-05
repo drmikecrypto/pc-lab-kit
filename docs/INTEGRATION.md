@@ -83,7 +83,7 @@ Artifacts live under `%LOCALAPPDATA%\PcLabKit\Probe\presentmon-sessions\`. Each 
 - Live dashboard is **Windows-display only**.
 - Missing ffmpeg/liquidctl: LCD Studio shows **Install tools** with expected paths; run `scripts/fetch-lcd-tools.ps1` for portable ffmpeg, then Rescan.
 - Multi-Kraken: pass `liquidctl_match` on `/lcd/apply` (UI picker when `tools.liquidctl_devices.length > 1`).
-- Release builds: refresh `php_windows_url` in `config/build-deps.json` when windows.php.net rotates ZIPs; preflight and `bootstrap-build-tools.ps1` also try the **archives** URL. Marketing/`APP_VERSION` may be four-part (e.g. `4.2.0.0`); desktop Tauri versions stay `MAJOR.MINOR.PATCH`.
+- Release builds: refresh `php_windows_url` in `config/build-deps.json` when windows.php.net rotates ZIPs; preflight and `bootstrap-build-tools.ps1` also try the **archives** URL. Prefer a **unified** `MAJOR.MINOR.PATCH` for APP and desktop (e.g. `4.2.4`). Tauri rejects four-part versions; older releases sometimes used four-part marketing tags with a separate desktop three-part.
 
 ### Sensor JSON feed (not binary HWiNFO Shared Memory)
 

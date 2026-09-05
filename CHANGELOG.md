@@ -6,9 +6,14 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [4.2.4] - 2026-09-06
+
+### Changed — Version alignment
+- Unified **APP + desktop** to **4.2.4** (MAJOR.MINOR.PATCH). Tauri cannot use four-part versions; Session Forensics previously shipped as marketing `4.2.3.1` / desktop `4.3.1` — same product, now one number everywhere.
+
 ## [4.2.3.1] - 2026-09-06
 
-> Marketing / `APP_VERSION` **4.2.3.1**; desktop Tauri/npm/Cargo bundle **4.3.1** (Tauri requires MAJOR.MINOR.PATCH).
+> Historical: Marketing / `APP_VERSION` **4.2.3.1**; desktop Tauri/npm/Cargo bundle **4.3.1** (Tauri requires MAJOR.MINOR.PATCH). Superseded by unified **4.2.4**.
 
 ### Added — Session Forensics (“Why did it stutter?”)
 - Correlate PresentMon spikes with Probe telemetry ring (CPU/GPU/hotspot/power) on stop/capture

@@ -2,7 +2,7 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; Universal LCD Studio **v4.2.0** / **v4.2.0.0**; operator library **v4.2.3**; CapFrameX Session Review **v4.2.3.0**; Session Forensics **v4.2.3.1** (desktop **4.3.1**). Capability-first doctrine: own the full lab, not an import shell.
+**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; Universal LCD Studio **v4.2.0** / **v4.2.0.0**; operator library **v4.2.3**; CapFrameX Session Review **v4.2.3.0**; Session Forensics **v4.2.3.1** aligned as unified **v4.2.4**. Capability-first doctrine: own the full lab, not an import shell.
 **Last updated:** 2026-09-03  
 **Repository:** [pc-lab-kit](../README.md)
 
@@ -581,7 +581,9 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 
 ## Immediate next steps
 
-**Shipped in v4.2.3.1:** Session Forensics — spike↔telemetry context, process labels, CapFrameX export, 1% low trend strip. Desktop **4.3.1**.
+**Shipped in v4.2.4:** Unified APP + desktop version **4.2.4** (drops four-part marketing / three-part desktop split for this line). Session Forensics content remains from v4.2.3.1.
+
+**Shipped in v4.2.3.1:** Session Forensics — spike↔telemetry context, process labels, CapFrameX export, 1% low trend strip. (Originally desktop **4.3.1**; superseded by unified **4.2.4**.)
 
 **Shipped in v4.2.3.0:** CapFrameX-lite **Session Review** — persisted PresentMon artifacts, FPS histogram, 1%/0.1%/P99 strip, stutter spike list, A/B session compare, CapFrameX JSON import into the same list (`/presentmon/sessions*`). Desktop installer **4.3.0**.
 
