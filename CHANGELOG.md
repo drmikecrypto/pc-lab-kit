@@ -6,6 +6,21 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-07
+
+### Added — Competitive gap roadmap Phase 0–1 foundations
+- Locked competitive roadmap + **1.0 exit criteria** in `docs/MASTER_PLAN.md`
+- Sensor honesty matrix on `/health` (`sensor_trust.honesty_matrix`) + `docs/SENSOR_HONESTY.md`
+- Fan curves v1: `GET/POST /fans`, `/fans/curves` — discover RPM, stage curves, preview duty (no SuperIO write yet); RGB Lab UI
+- Session Forensics v2: capture profiles (`/presentmon/profiles`), stutter severity classes, `docs/OVERLAY_FEED.md`
+- Overview identity strip (CPU/GPU/board/RAM/NVMe); SMART multi-drive compare bay
+- Long-run sensor JSONL log (`GET /telemetry/log`) + Sensor Deck browser
+- E2E trust smoke (Forensics / LCD Studio / Full Lab controls)
+- Linux `/health` honesty + roadmap flags for Phase 3–4
+
+### Changed
+- Unified APP + desktop version **0.1.0**
+
 ## [0.0.7] - 2026-09-07
 
 ### Changed

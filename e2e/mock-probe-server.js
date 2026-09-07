@@ -47,6 +47,32 @@ const routes = {
     const latest = hist[hist.length - 1] || {};
     return { _snapshot: latest, collected_at: latest.ts || new Date().toISOString() };
   },
+  '/presentmon/profiles': () => ({
+    ok: true,
+    version: 2,
+    profiles: [
+      { id: 'quick_10s', label: 'Quick 10s', seconds: 10, process_name: '' },
+      { id: 'standard_30s', label: 'Standard 30s', seconds: 30, process_name: '' },
+    ],
+  }),
+  '/presentmon/sessions': () => ({ ok: true, sessions: [] }),
+  '/fans': () => ({
+    ok: true,
+    inventory: {
+      fan_count: 1,
+      control_count: 1,
+      fans: [{ hardware: 'Mock', name: 'Fan #1', value: 1200 }],
+      apply_capability: { write_pwm: false, honesty: 'preview' },
+    },
+    evaluated: [{ id: 'case', name: 'Case fans', sensor_c: 42, target_duty_pct: 30 }],
+    temps: { ref_c: 42 },
+  }),
+  '/fans/curves': () => ({
+    ok: true,
+    staged: false,
+    curves: { curves: [{ id: 'case', points: [{ t: 40, duty: 25 }] }] },
+  }),
+  '/telemetry/log': () => ({ ok: true, count: 0, samples: [], path: 'mock' }),
   '/suite/status': () => ({
     ok: true,
     job: suiteJob,

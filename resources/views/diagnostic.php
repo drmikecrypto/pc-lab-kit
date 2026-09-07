@@ -101,6 +101,16 @@ $toolTotal = $toolKit->total();
 
             <div class="dx-overview-cert-handoff" id="dx-overview-cert-handoff" aria-label="Certificate handoff"></div>
 
+            <div class="dx-identity-strip" id="dx-identity-strip" aria-label="Identity cards">
+                <div class="dx-identity-strip__head">
+                    <h3>Identity</h3>
+                    <p class="muted fs-xs">CPU-Z / GPU-Z-speed cards from Probe inventory</p>
+                </div>
+                <div class="dx-identity-strip__grid" id="dx-identity-strip-grid">
+                    <p class="muted fs-sm">Waiting for inventory…</p>
+                </div>
+            </div>
+
             <div class="dx-overview-detected" aria-label="Detected hardware">
                 <div class="dx-overview-detected__head">
                     <h3>Detected hardware</h3>
@@ -581,6 +591,18 @@ $toolTotal = $toolKit->total();
                 </div>
                 <p class="dx-deck-alerts muted fs-sm" id="dx-deck-alerts" hidden role="status"></p>
                 <div class="dx-sensor-deck__grid" id="dx-deck-grid"></div>
+                <div class="dx-sensor-log" id="dx-sensor-log" aria-label="Long-run sensor log">
+                    <div class="dx-tel-head">
+                        <div>
+                            <h3>Long-run log</h3>
+                            <p class="muted fs-sm">Hours/days JSONL — not only the 120-sample ring</p>
+                        </div>
+                        <button type="button" class="dx-btn ghost" id="dx-sensor-log-refresh">Load 24h</button>
+                        <button type="button" class="dx-btn ghost" id="dx-sensor-log-csv">Export CSV</button>
+                    </div>
+                    <p class="muted fs-xs" id="dx-sensor-log-status" role="status"></p>
+                    <pre class="dx-sensor-log__preview muted fs-xs" id="dx-sensor-log-preview" hidden></pre>
+                </div>
             </section>
 
             <section class="dx-panel-card dx-sensor-tree" id="dx-sensor-tree" aria-label="Sensor tree">
@@ -631,6 +653,12 @@ $toolTotal = $toolKit->total();
                 <div id="dx-smart-body" class="dx-smart-body"><p class="muted fs-sm">Waiting for Probe…</p></div>
                 <div class="dx-pm-capture">
                     <label class="dx-stress-field">
+                        <span>Capture profile</span>
+                        <select id="dx-pm-profile" aria-label="PresentMon capture profile">
+                            <option value="">Custom</option>
+                        </select>
+                    </label>
+                    <label class="dx-stress-field">
                         <span>Timed capture (s)</span>
                         <input type="number" id="dx-pm-seconds" min="3" max="120" value="10" aria-label="PresentMon seconds">
                     </label>
@@ -645,6 +673,7 @@ $toolTotal = $toolKit->total();
                     <p class="muted fs-sm" id="dx-pm-status" role="status"></p>
                     <canvas id="dx-pm-spark" class="dx-pm-spark" width="640" height="72" hidden aria-label="PresentMon FPS series"></canvas>
                 </div>
+                <div id="dx-smart-compare" class="dx-smart-compare" aria-label="Multi-drive compare"></div>
                 <div class="dx-pm-review" id="dx-pm-review" aria-label="Session Forensics Review">
                     <div class="dx-pm-review-head">
                         <div>
@@ -697,7 +726,7 @@ $toolTotal = $toolKit->total();
                 <div class="dx-tel-head">
                     <div>
                         <h2>Shop fleet</h2>
-                        <p>Discover loopback probes · queue burn-in (local ports only)</p>
+                        <p>Discover loopback probes · queue burn-in (local ports only). Multi-bench Session Review compare targets Phase 3.</p>
                     </div>
                     <button type="button" class="dx-btn ghost" id="dx-fleet-refresh">Discover</button>
                 </div>
@@ -724,6 +753,34 @@ $toolTotal = $toolKit->total();
                     </div>
                     <div class="dx-rgb-presets" id="dx-rgb-presets" role="group" aria-label="RGB preset packs"></div>
                     <div class="dx-rgb-devices" id="dx-rgb-devices"><div class="dx-rgb-empty">Scanning USB/HID…</div></div>
+
+                    <div class="dx-fans-panel" id="dx-fans-panel" aria-label="Fan curves">
+                        <div class="dx-tel-head">
+                            <div>
+                                <h3>Fan curves</h3>
+                                <p class="muted fs-sm">Discover RPM · stage curves · preview duty (SuperIO write = Phase 2)</p>
+                            </div>
+                            <button type="button" class="dx-btn ghost" id="dx-fans-refresh">Refresh</button>
+                        </div>
+                        <p class="muted fs-xs" id="dx-fans-status" role="status"></p>
+                        <div id="dx-fans-body" class="dx-fans-body"><p class="muted fs-sm">Waiting for Probe…</p></div>
+                        <div class="dx-fans-editor">
+                            <label class="dx-stress-field">
+                                <span>Curve name</span>
+                                <input type="text" id="dx-fans-curve-name" value="Case fans" autocomplete="off">
+                            </label>
+                            <label class="dx-stress-field">
+                                <span>Points (temp°C, duty% per line)</span>
+                                <textarea id="dx-fans-points" rows="5" spellcheck="false">40,25
+55,40
+65,65
+75,85
+85,100</textarea>
+                            </label>
+                            <button type="button" class="dx-btn primary" id="dx-fans-save">Save &amp; stage</button>
+                            <p class="muted fs-xs" id="dx-fans-save-status" role="status"></p>
+                        </div>
+                    </div>
 
                     <div class="dx-lcd-studio" id="dx-lcd-studio" aria-label="LCD Studio">
                         <h3>LCD Studio</h3>
@@ -844,7 +901,7 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-arena.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-lab.js?v=1.7.4"></script>
 <script defer src="/assets/js/diagnostic-live.js?v=1.8.0"></script>
-<script defer src="/assets/js/diagnostic-overview.js?v=1.2.0"></script>
+<script defer src="/assets/js/diagnostic-overview.js?v=1.3.0"></script>
 <script defer src="/assets/js/diagnostic-drivers.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-stress.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-telemetry.js?v=1.6.0"></script>
@@ -854,9 +911,10 @@ window.PCLAB_DIAGNOSTIC = {
 <script defer src="/assets/js/diagnostic-fleet.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-repair.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-suite.js?v=1.6.0"></script>
-<script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.1.0"></script>
+<script defer src="/assets/js/diagnostic-sensor-deck.js?v=1.2.0"></script>
 <script defer src="/assets/js/diagnostic-sensor-tree.js?v=1.0.0"></script>
-<script defer src="/assets/js/diagnostic-smart-frames.js?v=1.4.0"></script>
+<script defer src="/assets/js/diagnostic-smart-frames.js?v=1.5.0"></script>
+<script defer src="/assets/js/diagnostic-fans.js?v=1.0.0"></script>
 <script defer src="/assets/js/diagnostic-topology.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-topology-3d.js?v=1.1.0"></script>
 <script defer src="/assets/js/diagnostic-openbook.js?v=1.4.0"></script>

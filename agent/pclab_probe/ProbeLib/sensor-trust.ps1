@@ -32,6 +32,86 @@ function Get-SensorCompetingTools {
     return @($found)
 }
 
+function Get-SensorHonestyMatrix {
+    param(
+        [bool]$Elevated = $false,
+        [bool]$HwmonExe = $false
+    )
+    $ring0 = [bool]($Elevated -and $HwmonExe)
+    return @(
+        @{
+            id = 'cpu_die_temp'
+            label = 'CPU die / package temp'
+            needs = 'admin + PcLabHwMon'
+            status = if ($ring0) { 'ok' } elseif ($Elevated) { 'limited' } else { 'missing' }
+            note = if ($ring0) { 'Elevated LHM path' } else { 'Restart Start-PcLabProbe.bat as Admin' }
+        }
+        @{
+            id = 'motherboard_superio'
+            label = 'Board SuperIO fans / voltages'
+            needs = 'admin + PcLabHwMon (board-dependent)'
+            status = if ($ring0) { 'partial' } else { 'missing' }
+            note = 'Leaf coverage varies by chipset; HWiNFO may still win exotic sensors'
+        }
+        @{
+            id = 'gpu_core_hotspot'
+            label = 'GPU core / hotspot'
+            needs = 'vendor APIs and/or Open Book MMIO'
+            status = if ($Elevated) { 'ok' } else { 'limited' }
+            note = 'Open Book BAR0 needs elevation where used'
+        }
+        @{
+            id = 'fan_rpm_read'
+            label = 'Fan RPM read'
+            needs = 'PcLabHwMon Fan sensors'
+            status = if ($HwmonExe) { 'ok' } else { 'missing' }
+            note = 'See GET /fans'
+        }
+        @{
+            id = 'fan_pwm_write'
+            label = 'Fan PWM / curve apply'
+            needs = 'PawnIO / elevated Control write (Phase 2)'
+            status = 'missing'
+            note = 'v1 stages curves + preview duty only'
+        }
+        @{
+            id = 'nvme_smart'
+            label = 'NVMe / SMART depth'
+            needs = 'admin preferred + optional smartctl'
+            status = if ($Elevated) { 'ok' } else { 'limited' }
+            note = 'GET /storage/smart depth badges'
+        }
+        @{
+            id = 'presentmon'
+            label = 'PresentMon Session Forensics'
+            needs = 'tools/PresentMon.exe (user mode)'
+            status = 'ok'
+            note = 'No admin required for capture'
+        }
+        @{
+            id = 'long_sensor_log'
+            label = 'Long-run sensor log'
+            needs = 'Probe live (any elevation)'
+            status = 'ok'
+            note = 'GET /telemetry/log — JSONL under LOCALAPPDATA'
+        }
+        @{
+            id = 'pawnio'
+            label = 'PawnIO Ring0 helper'
+            needs = 'Phase 2 signed helper'
+            status = 'planned'
+            note = 'Tracked; not shipped'
+        }
+        @{
+            id = 'vulkan_raster'
+            label = 'Vulkan raster suite'
+            needs = 'Phase 2 PcLabVkBench raster path'
+            status = 'planned'
+            note = 'Compute helper ships; raster scores later'
+        }
+    )
+}
+
 function Get-SensorTrustStatus {
     param(
         [bool]$Elevated = $false,
@@ -45,6 +125,7 @@ function Get-SensorTrustStatus {
     $conflicts = @(Get-SensorCompetingTools)
     $mode = if ($Elevated -and $hwmonExe) { 'elevated_hwmon_ring0' } else { 'hwmon_only' }
     $backend = if ($hwmonExe) { 'pclab_hwmon_lhm' } else { 'os_counters_only' }
+    $matrix = @(Get-SensorHonestyMatrix -Elevated $Elevated -HwmonExe $hwmonExe)
 
     $msg = $null
     if ($conflicts.Count -gt 0) {
@@ -72,7 +153,15 @@ function Get-SensorTrustStatus {
         conflict = ($conflicts.Count -gt 0)
         message = $msg
         winring0_shipped = $false
+        honesty_matrix = $matrix
+        roadmap = @{
+            pawnio = 'planned'
+            superio_write = 'planned'
+            vulkan_raster = 'planned'
+            fan_curves_v1 = 'shipping'
+            long_sensor_log = 'shipping'
+        }
         pawnio_note = 'PC Lab Kit does not ship WinRing0.sys. Sensors use PcLabHwMon (LibreHardwareMonitor path). Prefer closing other Ring0 tools; PawnIO migration is tracked for Defender-friendly shops.'
-        docs = 'docs/SECURITY.md#sensor-trust'
+        docs = 'docs/SENSOR_HONESTY.md'
     }
 }

@@ -51,4 +51,6 @@ PC Lab Kit **does not ship WinRing0.sys**. Sensors use:
 
 PawnIO (FanControl-style signed kernel helper) is the longer-term Defender-friendly migration target; until then shops should prefer elevated PcLabHwMon and closing competing Ring0 tools — never install random WinRing0 forks.
 
+**Honesty matrix:** `/health` → `sensor_trust.honesty_matrix` lists per-capability needs (admin / HwMon / missing / planned). Full table: [SENSOR_HONESTY.md](SENSOR_HONESTY.md). Fan PWM write remains honesty-gated until Phase 2.
+
 See also [OPEN_BOOK_SENSORS.md](OPEN_BOOK_SENSORS.md).

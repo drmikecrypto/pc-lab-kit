@@ -2,6 +2,8 @@
 
 **Local-first hardware laboratory** — one tray app that owns the full bay: probe, sensors, native benches, stress soak, drivers, topology, signed certificates, optional BYOK advisor. Your silicon stays on your machine.
 
+**Public line:** **0.1.0** (post **0.0.7** repo reset). Sensor trust matrix: [docs/SENSOR_HONESTY.md](docs/SENSOR_HONESTY.md). Competitive roadmap: [docs/MASTER_PLAN.md](docs/MASTER_PLAN.md#competitive-gap-roadmap-post-v007).
+
 Not a launcher for other people's tools. Not a cloud telemetry product. A lab you can run offline, resume after a crash, and hand an engineer a `.pclab` pack they can verify.
 
 ```

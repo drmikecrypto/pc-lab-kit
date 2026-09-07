@@ -56,6 +56,11 @@ $script:Routes = @(
     @{ method = 'GET';  path = '/presentmon/sessions/{id}'; desc = 'full session artifact (series + histogram + spikes + context)' }
     @{ method = 'GET';  path = '/presentmon/sessions/{id}/export'; desc = 'export CapFrameX-shaped JSON for a saved session' }
     @{ method = 'POST'; path = '/presentmon/sessions/import'; desc = 'import CapFrameX JSON into Session Review' }
+    @{ method = 'GET';  path = '/presentmon/profiles'; desc = 'Session Forensics v2 capture profiles' }
+    @{ method = 'GET';  path = '/fans';               desc = 'fan inventory + curve evaluate (v1)' }
+    @{ method = 'GET';  path = '/fans/curves';        desc = 'staged fan curves JSON' }
+    @{ method = 'POST'; path = '/fans/curves';        desc = 'save / confirm-stage fan curves' }
+    @{ method = 'GET';  path = '/telemetry/log';      desc = 'long-run sensor JSONL (?hours=&limit=&format=csv)' }
     @{ method = 'GET';  path = '/devices';            desc = 'full PnP / PCI / USB / monitor inventory' }
     @{ method = 'GET';  path = '/drivers';            desc = 'driver advisor + install queue (?wu=1 optional WU scan)' }
     @{ method = 'POST'; path = '/drivers/install';    desc = 'one-click install matched package (confirm required)' }
@@ -109,6 +114,10 @@ function Add-RingSample($sample) {
     while ($script:Ring.Count -gt $script:RingMax) {
         $script:Ring.RemoveAt(0)
     }
+    try {
+        . (Join-Path $scriptDir 'ProbeLib\sensor-log.ps1')
+        Add-ProbeSensorLogSample -Sample $sample
+    } catch {}
 }
 
 function Read-RequestBody($req) {
@@ -256,14 +265,9 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
                 $authRequired = ([bool]$script:ProbeAuthToken).ToString().ToLower()
                 . (Join-Path $scriptDir 'ProbeLib\sensor-trust.ps1')
                 $trust = Get-SensorTrustStatus -Elevated $elevated -ServiceMode $script:ServiceMode -ProbeRoot $scriptDir
-                $conflictsJson = '[]'
-                if ($trust.competing_tools -and @($trust.competing_tools).Count -gt 0) {
-                    $conflictsJson = (@($trust.competing_tools) | ConvertTo-Json -Compress)
-                    if (-not $conflictsJson.StartsWith('[')) { $conflictsJson = '[' + $conflictsJson + ']' }
-                }
-                $trustMsg = if ($trust.message) { ($trust.message -replace '\\','\\' -replace '"','\"') } else { '' }
-                $opStory = ($trust.operator_story -replace '\\','\\' -replace '"','\"')
-                $body = '{"ok":true,"agent":"pclab-probe","version":6,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"open_book_count":' + $obCount + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"devices":true,"drivers":true,"suite":true,"launchers":true,"uptime_s":' + $uptime + ',"pid":' + $PID + ',"service_mode":' + $svc + ',"last_error":' + $(if ($lastErr) { '"' + $lastErr + '"' } else { 'null' }) + ',"auth_required":' + $authRequired + ',"ring0":' + $elevated.ToString().ToLower() + ',"sensor_trust":{"backend":"' + $trust.backend + '","trust_mode":"' + $trust.trust_mode + '","ring0_path":' + $trust.ring0_path.ToString().ToLower() + ',"conflict":' + $trust.conflict.ToString().ToLower() + ',"competing_tools":' + $conflictsJson + ',"message":' + $(if ($trustMsg) { '"' + $trustMsg + '"' } else { 'null' }) + ',"operator_story":"' + $opStory + '","winring0_shipped":false}}'
+                $trustJson = ($trust | ConvertTo-Json -Depth 8 -Compress)
+                if (-not $trustJson) { $trustJson = '{}' }
+                $body = '{"ok":true,"agent":"pclab-probe","version":6,"hwmon":' + $hwmon + ',"vkbench":' + $vkbench + ',"open_book":true,"open_book_count":' + $obCount + ',"elevated":' + $elevated.ToString().ToLower() + ',"oc":true,"rgb":true,"fans":true,"devices":true,"drivers":true,"suite":true,"launchers":true,"uptime_s":' + $uptime + ',"pid":' + $PID + ',"service_mode":' + $svc + ',"last_error":' + $(if ($lastErr) { '"' + $lastErr + '"' } else { 'null' }) + ',"auth_required":' + $authRequired + ',"ring0":' + $elevated.ToString().ToLower() + ',"sensor_trust":' + $trustJson + ',"product_line":"0.1.x","docs":{"sensor_honesty":"docs/SENSOR_HONESTY.md","overlay_feed":"docs/OVERLAY_FEED.md","roadmap":"docs/MASTER_PLAN.md"}}'
             }
             "/probe" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -File $probeScript
@@ -298,6 +302,49 @@ POST endpoints expect a JSON body from the PcLab web lab.</p>
                         $body = ($merged | ConvertTo-Json -Compress)
                     }
                 } catch {}
+            }
+            "/telemetry/log" {
+                $hours = 24.0
+                $limit = 2000
+                $fmt = ''
+                try {
+                    if ($req.QueryString['hours']) { $hours = [double]$req.QueryString['hours'] }
+                    if ($req.QueryString['limit']) { $limit = [int]$req.QueryString['limit'] }
+                    if ($req.QueryString['format']) { $fmt = [string]$req.QueryString['format'] }
+                } catch {}
+                $csvSwitch = if ($fmt -eq 'csv') { '-Csv' } else { '' }
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\sensor-log.ps1'
+Get-ProbeSensorLog -Hours $hours -Limit $limit $csvSwitch | ConvertTo-Json -Depth 8 -Compress }
+"@
+            }
+            "/fans" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\fans.ps1'
+Invoke-ProbeFanCurveEvaluate | ConvertTo-Json -Depth 10 -Compress }
+"@
+            }
+            "/fans/curves" {
+                if ($req.HttpMethod -eq 'GET') {
+                    $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\fans.ps1'
+Get-ProbeFanCurves | ConvertTo-Json -Depth 10 -Compress }
+"@
+                } elseif ($req.HttpMethod -eq 'POST') {
+                    $raw = Read-RequestBody $req
+                    $tmp = Join-Path $env:TEMP ("pclab_fans_" + [guid]::NewGuid().ToString("n") + ".json")
+                    try {
+                        if (-not $raw) { $raw = '{}' }
+                        [System.IO.File]::WriteAllText($tmp, $raw, [System.Text.UTF8Encoding]::new($false))
+                        $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\fans.ps1'
+`$j = Get-Content '$tmp' -Raw | ConvertFrom-Json
+Set-ProbeFanCurvesApply -Body `$j | ConvertTo-Json -Depth 10 -Compress }
+"@
+                    } finally { Remove-Item $tmp -Force -ErrorAction SilentlyContinue }
+                } else {
+                    $code = 405; $body = '{"error":"GET or POST required"}'
+                }
             }
             "/integrations/hwinfo-sm" {
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
@@ -394,6 +441,12 @@ Get-ProbePresentMonSessionStatus | ConvertTo-Json -Depth 6 -Compress }
                 $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
 & { . '$scriptDir\ProbeLib\presentmon.ps1'
 Get-ProbePresentMonForegroundHint | ConvertTo-Json -Depth 4 -Compress }
+"@
+            }
+            "/presentmon/profiles" {
+                $body = & powershell.exe -NoProfile -ExecutionPolicy Bypass -Command @"
+& { . '$scriptDir\ProbeLib\presentmon.ps1'
+Get-PresentMonCaptureProfiles | ConvertTo-Json -Depth 6 -Compress }
 "@
             }
             "/presentmon/sessions" {

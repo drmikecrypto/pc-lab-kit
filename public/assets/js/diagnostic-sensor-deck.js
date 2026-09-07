@@ -163,6 +163,38 @@
     window.open('/api/diagnostic/sensor-deck/export?format=' + encodeURIComponent(format), '_blank');
   }
 
+  async function loadSensorLog(csv) {
+    const st = document.getElementById('dx-sensor-log-status');
+    const prev = document.getElementById('dx-sensor-log-preview');
+    if (st) st.textContent = 'Loading log…';
+    try {
+      const q = csv ? '?hours=24&limit=5000&format=csv' : '?hours=24&limit=200';
+      const res = await fetch(AGENT() + '/telemetry/log' + q, { mode: 'cors' });
+      const data = await res.json();
+      if (!res.ok || data.ok === false) throw new Error(data.error || `HTTP ${res.status}`);
+      if (csv && data.csv) {
+        const blob = new Blob([data.csv], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'pclab-sensor-log.csv';
+        a.click();
+        if (st) st.textContent = `Exported ${data.count || 0} samples`;
+        return;
+      }
+      const samples = data.samples || [];
+      if (st) st.textContent = `${samples.length} samples · ${data.path || 'LOCALAPPDATA sensor-logs'}`;
+      if (prev) {
+        prev.hidden = false;
+        const tail = samples.slice(-12);
+        prev.textContent = tail
+          .map((s) => `${s.ts || ''}  CPU ${s.cpu_temp ?? '—'}  GPU ${s.gpu_temp ?? '—'}  fan ${s.fan_rpm ?? '—'}`)
+          .join('\n');
+      }
+    } catch (e) {
+      if (st) st.textContent = e.message || String(e);
+    }
+  }
+
   async function boot() {
     if (!document.getElementById('dx-sensor-deck')) return;
     try {
@@ -173,6 +205,8 @@
     document.getElementById('dx-deck-export-json')?.addEventListener('click', () => exportLayout('json'));
     document.getElementById('dx-deck-export-csv')?.addEventListener('click', () => exportLayout('csv'));
     document.getElementById('dx-deck-export-rain')?.addEventListener('click', () => exportLayout('rainmeter'));
+    document.getElementById('dx-sensor-log-refresh')?.addEventListener('click', () => loadSensorLog(false));
+    document.getElementById('dx-sensor-log-csv')?.addEventListener('click', () => loadSensorLog(true));
     ['dx-deck-th-cpu', 'dx-deck-th-gpu', 'dx-deck-th-hs', 'dx-deck-th-cpupwr', 'dx-deck-th-gpupwr'].forEach((id) => {
       document.getElementById(id)?.addEventListener('change', () => {
         readThresholdInputs();

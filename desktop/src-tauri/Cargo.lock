@@ -2389,7 +2389,7 @@ dependencies = [
 
 [[package]]
 name = "pclabkit"
-version = "0.0.7"
+version = "0.1.0"
 dependencies = [
  "dirs 5.0.1",
  "serde",

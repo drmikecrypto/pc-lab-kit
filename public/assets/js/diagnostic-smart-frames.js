@@ -116,6 +116,35 @@
             ? enqueue.note || 'smartctl ready — Short/Long enqueue Admin SMART self-tests.'
             : enqueue.note || 'Install smartctl (or tools/smartctl.exe) for self-test enqueue.'
         )}</p>`;
+      const compare = el('dx-smart-compare');
+      if (compare && rows.length > 1) {
+        const bestWear = rows
+          .map((r) => ({ n: r.friendly_name, w: r.wear_pct != null ? Number(r.wear_pct) : null, t: r.temperature_c }))
+          .filter((x) => x.w != null);
+        compare.innerHTML = `<div class="dx-smart-compare-card">
+          <strong>Multi-drive bay</strong>
+          <p class="muted fs-sm">${rows.length} drives · CDM-class benches live in Full Lab / Arena</p>
+          <table class="dx-smart-table"><thead><tr><th>Drive</th><th>Wear</th><th>Temp</th><th>Health</th></tr></thead><tbody>${rows
+            .map(
+              (r) => `<tr>
+            <td>${esc(r.friendly_name || '—')}</td>
+            <td>${r.wear_pct != null ? esc(r.wear_pct) + '%' : '—'}</td>
+            <td>${r.temperature_c != null ? esc(r.temperature_c) + '°C' : '—'}</td>
+            <td>${esc(r.health_status || '—')}</td>
+          </tr>`
+            )
+            .join('')}</tbody></table>
+          ${
+            bestWear.length
+              ? `<p class="muted fs-xs">Highest wear: ${esc(
+                  bestWear.sort((a, b) => b.w - a.w)[0].n
+                )} (${bestWear[0].w}%)</p>`
+              : ''
+          }
+        </div>`;
+      } else if (compare) {
+        compare.innerHTML = '';
+      }
       box.querySelectorAll('.dx-smart-st').forEach((btn) => {
         btn.addEventListener('click', () => {
           enqueueSelfTest(btn.getAttribute('data-device'), btn.getAttribute('data-type') || 'short');
@@ -264,11 +293,15 @@
       return;
     }
     const fmt = (v, u = '') => (v != null && v !== '' ? `${esc(v)}${u}` : '—');
-    box.innerHTML = `<div class="dx-pm-spikes-head">Spikes (≥ ${esc(thr ?? '—')} ms) · ${spikes.length}${
+    const summary = session?.stutter_summary || session?.spikes?.stutter_summary;
+    const sevNote = summary
+      ? ` · mild ${summary.mild || 0} / mod ${summary.moderate || 0} / sev ${summary.severe || 0} / crit ${summary.critical || 0}`
+      : '';
+    box.innerHTML = `<div class="dx-pm-spikes-head">Spikes (≥ ${esc(thr ?? '—')} ms) · ${spikes.length}${sevNote}${
       ctxOk ? ' · temps from Probe ring' : ctxNote ? ` · ${esc(ctxNote)}` : ' · no thermal context'
     }</div>
       <table class="dx-smart-table dx-pm-spikes-table"><thead><tr>
-        <th>#</th><th>t (ms)</th><th>ft</th><th>FPS</th><th>CPU</th><th>GPU</th><th>Hotspot</th><th>Pkg W</th><th>Cause</th>
+        <th>#</th><th>t (ms)</th><th>ft</th><th>FPS</th><th>Sev</th><th>CPU</th><th>GPU</th><th>Hotspot</th><th>Pkg W</th><th>Cause</th>
       </tr></thead><tbody>${spikes
         .map(
           (s, i) => `<tr>
@@ -276,6 +309,7 @@
         <td>${esc(s.t_ms)}</td>
         <td>${esc(s.ft_ms)}</td>
         <td>${esc(s.fps ?? '—')}</td>
+        <td>${esc(s.severity || '—')}</td>
         <td>${fmt(s.cpu_c, '°')}</td>
         <td>${fmt(s.gpu_c, '°')}</td>
         <td>${fmt(s.gpu_hotspot_c, '°')}</td>
@@ -590,6 +624,37 @@
     } catch (_) {}
   }
 
+  async function loadCaptureProfiles() {
+    const sel = el('dx-pm-profile');
+    if (!sel) return;
+    try {
+      const res = await fetch(AGENT() + '/presentmon/profiles', { mode: 'cors' });
+      const data = await res.json().catch(() => ({}));
+      const profiles = data.profiles || [];
+      window.__dxPmProfiles = profiles;
+      sel.innerHTML =
+        `<option value="">Custom</option>` +
+        profiles
+          .map((p) => `<option value="${esc(p.id)}" title="${esc(p.note || '')}">${esc(p.label || p.id)}</option>`)
+          .join('');
+    } catch (_) {}
+  }
+
+  function applyCaptureProfile() {
+    const id = el('dx-pm-profile')?.value;
+    const profiles = window.__dxPmProfiles || [];
+    const p = profiles.find((x) => x.id === id);
+    if (!p) return;
+    if (p.seconds > 0) {
+      const sec = el('dx-pm-seconds');
+      if (sec) sec.value = String(p.seconds);
+    }
+    if (p.process_name != null) {
+      const proc = el('dx-pm-process');
+      if (proc && p.process_name) proc.value = p.process_name;
+    }
+  }
+
   function bind() {
     el('dx-smart-refresh')?.addEventListener('click', refreshSmart);
     el('dx-pm-capture')?.addEventListener('click', capturePresentMon);
@@ -598,6 +663,7 @@
     el('dx-pm-use-fg')?.addEventListener('click', useForegroundProcess);
     el('dx-pm-export-cx')?.addEventListener('click', exportCapFrameX);
     el('dx-pm-review-refresh')?.addEventListener('click', () => refreshReview());
+    el('dx-pm-profile')?.addEventListener('change', applyCaptureProfile);
     el('dx-pm-session-a')?.addEventListener('change', () => {
       selectSessions(el('dx-pm-session-a').value, el('dx-pm-session-b')?.value || '');
     });
@@ -617,6 +683,7 @@
       }
     });
     if (el('dx-smart-body')) refreshSmart();
+    loadCaptureProfiles();
     refreshSessionStatus();
     refreshReview();
   }

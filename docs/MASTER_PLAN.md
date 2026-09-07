@@ -2,8 +2,8 @@
 
 **Strategic master plan** — living roadmap. Shipping product: **PHP lab + Windows probe + Tauri desktop**.
 
-**Status:** Active — Pillars A–E shipped; competitive wedge through **v4.1.7**; Universal LCD Studio **v4.2.0** / **v4.2.0.0**; CapFrameX Session Review / Forensics through **v4.2.4**; lab hygiene **v4.2.5**. Capability-first doctrine: own the full lab, not an import shell.
-**Last updated:** 2026-09-03  
+**Status:** Active — public line **0.1.0** (post **0.0.7** reset). Pillars A–E + Session Forensics + LCD Studio shipped; competitive catch-up via phased roadmap below (fan curves v1, honesty matrix, long sensor logs).
+**Last updated:** 2026-09-07  
 **Repository:** [pc-lab-kit](../README.md)
 
 > Historical sections below still mention Flutter/Qt in places. Prefer this status block and the root README for what ships today.
@@ -51,8 +51,9 @@
 10. [Open-source & GitHub growth](#open-source--github-growth-strategy)
 11. [Phased roadmap](#phased-roadmap)
 12. [Competitive differentiation](#what-makes-this-stand-out-vs-existing-oss)
-13. [Immediate next steps](#immediate-next-steps)
-14. [Assumptions](#assumptions)
+13. [Competitive gap roadmap (post v0.0.7)](#competitive-gap-roadmap-post-v007)
+14. [Immediate next steps](#immediate-next-steps)
+15. [Assumptions](#assumptions)
 
 ---
 
@@ -574,12 +575,83 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 | **Phoronix Test Suite** | Linux-heavy, CLI, no consumer UX |
 | **UserBenchmark** | Cloud-centric, mistrusted, not local-first |
 | **HWiNFO** | Closed source, no AI advisor, no OC orchestration |
+| **Fan Control** | Best curves — we stage + preview in 0.1; live SuperIO write is Phase 2 |
+| **CapFrameX** | Frametime science — we ship Session Forensics + CX import/export locally |
 
-**Moat:** Unified local lab + safety-gated OC + benchmark reference DB + AI advisor + OpenRGB — in one tray app.
+**Moat:** Unified local lab + safety-gated OC + signed evidence (`.pclab` / certs) + Session Forensics (spike × thermal) + Open Book honesty + BYOK AI — in one tray app.
+
+---
+
+## Competitive gap roadmap (post v0.0.7)
+
+Rivals are mostly **best-of-breed single verticals**. We win on *workflow collapse*; we catch up on *depth inside each vertical* without abandoning local-first.
+
+### Explicit non-goals
+
+- Cloud accounts, telemetry SaaS, UserBenchmark-style public shaming leaderboards
+- Cloning iCUE cloud sync or Armoury bloat
+- Becoming “just an OpenRGB skin” or “just an HWiNFO clone”
+- Full RTSS OSD day-one (prefer PresentMon / JSON feeds — [OVERLAY_FEED.md](OVERLAY_FEED.md))
+
+### Phase 0 — Trust reset (0.0.8 – 0.0.9) → **landed in 0.1.0**
+
+- Green Release CI + APP==desktop preflight; signed installers as process allows
+- Public **0.0.7** reset honesty; probe elevation + [SENSOR_HONESTY.md](SENSOR_HONESTY.md) matrix on `/health`
+- E2E smoke: Session Forensics + LCD Studio + Full Lab resume paths
+
+**Exit:** stranger can install, run Full Lab, export a cert without Discord.
+
+### Phase 1 — Control + measure parity (0.1.x) → **in progress / foundations in 0.1.0**
+
+- **Fan curves v1:** `GET/POST /fans*` — discover Fan/Control sensors, stage curves, preview duty; SuperIO write honesty-gated
+- **Session Forensics v2:** capture profiles, stutter severity classes, overlay feed docs
+- **Storage bay:** multi-drive SMART compare strip; DiskSpd CDM-class remains in Full Lab
+- **Identity strip:** CPU / GPU / board / RAM / NVMe cards on Overview
+
+**Exit:** operator can replace Fan Control *for basic curves* (read + stage) + CapFrameX *for shop handoff* without leaving PcLab for those jobs.
+
+### Phase 2 — Depth (0.2.x – 0.5.x)
+
+- PawnIO / elevated sensor path with clear trust UX
+- SuperIO read completeness; **write** only behind confirm + rollback
+- Vulkan **raster** suite + Arena percentiles vs local reference DB (compute helper already ships)
+- Long-term sensor log browser (JSONL under LOCALAPPDATA — **shipped** `GET /telemetry/log`; UI polish continues)
+
+**Exit:** HWiNFO power users still deeper — but PcLab is “good enough sensors + better lab workflow.”
+
+### Phase 3 — Platform (0.6.x – 0.9.x)
+
+- Linux: RGB/LCD subset + GPU control hooks where APIs exist; OC remains conservative
+- Selective OEM LCD plugins (NZXT/liquidctl first-class; ASUS/iCUE only with legal/plugin model)
+- Shop fleet: multi-bench Session Review compare (parked UI; discover path exists)
+
+**Exit:** Windows is flagship; Linux is credible for monitor/bench/RGB, not Armoury replacement.
+
+### Phase 4 — 1.0 declaration
+
+Ship **1.0** when all are true:
+
+1. Fan curves usable on mainstream boards without external Fan Control (live apply)
+2. PresentMon Session Forensics + export trusted in shop workflow
+3. Full Lab → cert path reliable; probe elevation story documented
+4. Linux probe covers inventory + sensors + benches (OC/RGB marked partial if needed)
+5. No four-part version drama; release-preflight APP==desktop green
+
+### Moat to protect while catching up
+
+- Unified Command Center / Full Lab resume
+- Signed evidence (`.pclab`, assembly/stress certs)
+- Session Forensics (spike × thermal)
+- Open Book / Platform Intelligence honesty
+- Local-first + BYOK AI (never forced cloud)
 
 ---
 
 ## Immediate next steps
+
+**Shipped in v0.1.0:** Competitive roadmap locked; sensor honesty matrix; fan curves v1 (stage + preview); Session Forensics v2 profiles + severity; identity strip; SMART multi-drive bay; long sensor JSONL log; overlay feed docs; Linux health parity flags.
+
+**Shipped in v0.0.7:** Public repository reset; unified APP + desktop **0.0.7**.
 
 **Shipped in v4.2.5:** PresentMon timed-capture + CSV header parse; CapFrameX-style 1%/0.1% means; spike nearest-timestamp context; PS 5.1 encoding; release-preflight APP==desktop; RGB LCD → LCD Studio primary.
 
@@ -597,15 +669,16 @@ Update docs as features ship; CI runs PHPUnit + Playwright smoke.
 
 **Shipped in v4.1.7 (competitive wedge):** Sensor Tree, PresentMon sessions, dense JSON overlay feed, VkBench artifact/CRC fail → stress cert, elevated SMART depth badges.
 
-1. Validate LCD Studio on secondary case/AIO monitors + NZXT liquidctl when hardware is present
+1. Validate fan curve staging on elevated boards; PawnIO write path design
 2. Daily assembly on **Open Book** Platform Console (coverage meter + firmware planes)
 3. Community verify RTX 50 Hot Spot / VRAM MMIO when hardware is available
-4. **Linux probe parity** — OC/RGB/Ring0 remain Windows-only
-5. **Parked:** per-OEM AIO HID reverse-engineer; PawnIO kernel migration; SuperIO fan-curve apply; full RTSS OSD / CapFrameX stutter library (Session Review + Forensics lite shipped in v4.2.3.0 / v4.2.3.1)
+4. **Linux probe parity** — inventory/sensors/benches; OC/RGB remain partial
+5. **Parked until Phase 2+:** per-OEM AIO HID reverse-engineer; full RTSS OSD; SuperIO live PWM apply
 
 ### Recommended focus
 
-Soak-test Session Forensics with live PresentMon + Sensor Deck ring; CapFrameX round-trip export/import; then HID plugins where safe / PawnIO trust path.
+**Next engineering vertical:** PawnIO / SuperIO write for fan curves (Phase 2) while keeping Phase 0–1 trust UX honest. Soak-test Session Forensics with live PresentMon + Sensor Deck ring; CapFrameX round-trip export/import; then HID plugins where safe.
+
 ---
 
 ## Assumptions

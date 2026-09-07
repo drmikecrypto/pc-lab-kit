@@ -9,8 +9,20 @@
   "elevated": true,
   "oc": true,
   "rgb": true,
+  "fans": true,
   "devices": true,
   "drivers": true,
   "suite": true,
-  "launchers": true
+  "launchers": true,
+  "sensor_trust": {
+    "backend": "pclab_hwmon_lhm",
+    "trust_mode": "elevated_hwmon_ring0",
+    "ring0_path": true,
+    "conflict": false,
+    "competing_tools": [],
+    "honesty_matrix": [
+      { "id": "presentmon", "status": "ok", "needs": "PresentMon.exe" },
+      { "id": "fan_pwm_write", "status": "missing", "needs": "PawnIO Phase 2" }
+    ]
+  }
 }

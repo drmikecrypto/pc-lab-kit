@@ -542,16 +542,23 @@ function Get-ProbePresentMonSpikes {
         $v = [double]$FrametimeMs[$i]
         $t += $v
         if ($v -ge $threshold) {
+            $severity = if ($v -ge 80) { 'critical' } elseif ($v -ge 50) { 'severe' } elseif ($v -ge ($mean * 3) -or $v -ge 33) { 'moderate' } else { 'mild' }
             $spikes += @{
                 i = $i
                 t_ms = [math]::Round($t, 1)
                 ft_ms = [math]::Round($v, 2)
                 fps = if ($v -gt 0) { [math]::Round(1000.0 / $v, 1) } else { $null }
-                likely_cause = if ($v -ge 50) { 'severe_stutter' } elseif ($v -ge ($mean * 3)) { 'spike_up' } else { 'frametime_high' }
+                severity = $severity
+                likely_cause = if ($severity -eq 'critical') { 'critical_stutter' } elseif ($severity -eq 'severe') { 'severe_stutter' } elseif ($severity -eq 'moderate') { 'spike_up' } else { 'frametime_high' }
             }
         }
     }
     $spikes = @($spikes | Sort-Object { $_.ft_ms } -Descending | Select-Object -First $MaxSpikes | Sort-Object { $_.t_ms })
+    $bySev = @{ mild = 0; moderate = 0; severe = 0; critical = 0 }
+    foreach ($sp in $spikes) {
+        $key = [string]$sp.severity
+        if ($bySev.ContainsKey($key)) { $bySev[$key]++ }
+    }
     return @{
         available = $true
         spikes = $spikes
@@ -559,6 +566,29 @@ function Get-ProbePresentMonSpikes {
         threshold_ms = [math]::Round($threshold, 2)
         mean_ms = [math]::Round($mean, 2)
         context_attached = $false
+        severity_classes = $bySev
+        stutter_summary = @{
+            mild = $bySev.mild
+            moderate = $bySev.moderate
+            severe = $bySev.severe
+            critical = $bySev.critical
+            worst_ft_ms = if ($spikes.Count -gt 0) { ($spikes | Measure-Object -Property ft_ms -Maximum).Maximum } else { $null }
+        }
+    }
+}
+
+function Get-PresentMonCaptureProfiles {
+    return @{
+        ok = $true
+        version = 2
+        profiles = @(
+            @{ id = 'quick_10s'; label = 'Quick 10s'; seconds = 10; process_name = ''; note = 'Timed capture for smoke / shop check' }
+            @{ id = 'standard_30s'; label = 'Standard 30s'; seconds = 30; process_name = ''; note = 'Default Session Forensics length' }
+            @{ id = 'deep_60s'; label = 'Deep 60s'; seconds = 60; process_name = ''; note = 'Longer stutter sample' }
+            @{ id = 'process_named'; label = 'Named process session'; seconds = 0; process_name = ''; note = 'Manual process + Start session (until exit)' }
+        )
+        overlay_docs = 'docs/OVERLAY_FEED.md'
+        note = 'Session Forensics v2 — profiles + stutter severity classes (mild/moderate/severe/critical)'
     }
 }
 
@@ -632,10 +662,12 @@ function Save-ProbePresentMonSessionArtifact {
         frametime_series = $ft
         ms_between_series = @($Parsed.ms_between_series)
         spikes = $spikes
+        stutter_summary = if ($spikes.stutter_summary) { $spikes.stutter_summary } else { $null }
         context = $context
         histogram = $hist
         methodology = $Parsed.methodology
         available = [bool]$Parsed.available
+        forensics_version = 2
         saved_at = (Get-Date).ToUniversalTime().ToString('o')
     }
     $path = Join-Path $dir ("$id.json")

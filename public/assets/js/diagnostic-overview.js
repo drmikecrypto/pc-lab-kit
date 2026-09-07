@@ -203,12 +203,57 @@
       .join('');
   }
 
+  function renderIdentityStrip(devices) {
+    const grid = el('dx-identity-strip-grid');
+    if (!grid) return;
+    if (!devices || typeof devices !== 'object') {
+      grid.innerHTML = `<p class="muted fs-sm">Waiting for inventory…</p>`;
+      return;
+    }
+    const cpu =
+      pickName(devices?.cpu, ['name', 'model', 'brand_string']) ||
+      pickName(devices?.processors?.[0], ['name', 'model']) ||
+      '—';
+    const gpu =
+      pickName(devices?.gpu, ['name', 'model', 'adapter']) ||
+      pickName(devices?.gpus?.[0], ['name', 'model']) ||
+      '—';
+    const mb =
+      pickName(devices?.motherboard || devices?.board || devices?.baseboard, ['product', 'name', 'model']) ||
+      pickName(devices?.system, ['manufacturer', 'model']) ||
+      '—';
+    const ram =
+      pickName(devices?.memory, ['summary', 'total', 'size']) ||
+      (devices?.memory_gb != null ? `${devices.memory_gb} GB` : '') ||
+      '—';
+    const nvme =
+      pickName((devices?.storage || devices?.disks || []).find?.((d) => d?.is_nvme || /nvme/i.test(d?.name || d?.model || '')) ||
+        (devices?.storage || devices?.disks || [])[0],
+        ['name', 'model', 'caption']) || '—';
+    const cards = [
+      { k: 'CPU', v: cpu },
+      { k: 'GPU', v: gpu },
+      { k: 'Board', v: mb },
+      { k: 'RAM', v: ram },
+      { k: 'NVMe', v: nvme },
+    ];
+    grid.innerHTML = cards
+      .map(
+        (c) => `<article class="dx-identity-card">
+        <span class="dx-identity-card__k">${esc(c.k)}</span>
+        <strong class="dx-identity-card__v">${esc(c.v)}</strong>
+      </article>`
+      )
+      .join('');
+  }
+
   async function refreshInventory() {
     const grid = el('dx-overview-grid');
     if (grid) grid.innerHTML = `<p class="muted fs-sm">Scanning inventory…</p>`;
     const online = await checkProbe();
     renderCertHandoff();
     if (!online) {
+      renderIdentityStrip(null);
       if (grid) {
         grid.innerHTML = `<div class="dx-panel-empty">
           <strong>Cannot detect hardware</strong>
@@ -227,8 +272,10 @@
       const drivers = drvWrap.drivers || drvWrap;
       window.__dxLastDevices = devices;
       window.__dxLastDrivers = drivers;
+      renderIdentityStrip(devices);
       renderGrid(summarize(devices, drivers));
     } catch (e) {
+      renderIdentityStrip(null);
       if (grid) {
         grid.innerHTML = `<div class="dx-panel-empty is-error">
           <strong>Inventory failed</strong>

@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: PC Lab Kit Diagnostic API
-  version: 0.0.7
+  version: 0.1.0
   description: Local-first PC laboratory REST API (localhost only).
 servers:
   - url: http://127.0.0.1:8080
@@ -80,3 +80,20 @@ paths:
   /presentmon/session/foreground:
     get:
       summary: Best-effort foreground process hint for session labeling
+  /presentmon/profiles:
+    get:
+      summary: Session Forensics v2 capture profiles
+  /fans:
+    get:
+      summary: Fan inventory + curve duty preview (v1, no SuperIO write)
+  /fans/curves:
+    get:
+      summary: Staged fan curves JSON
+    post:
+      summary: Save / confirm-stage fan curves (preview apply)
+  /telemetry/log:
+    get:
+      summary: Long-run sensor JSONL (?hours=&limit=&format=csv)
+  /health:
+    get:
+      summary: Liveness + capabilities + sensor_trust.honesty_matrix
