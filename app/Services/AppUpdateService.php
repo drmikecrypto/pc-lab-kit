@@ -1,0 +1,240 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Services;
+
+use App\Support\Env;
+
+/**
+ * Checks GitHub releases for newer PC Lab Kit versions.
+ */
+class AppUpdateService
+{
+    /** @var callable|null */
+    private $releaseFetcher;
+
+    /** @param callable|null $releaseFetcher fn(string $owner, string $repo): ?array */
+    public function __construct(?callable $releaseFetcher = null)
+    {
+        $this->releaseFetcher = $releaseFetcher;
+    }
+
+    /** @return array<string, mixed> */
+    public function check(bool $forceRefresh = false): array
+    {
+        $cfg = require dirname(__DIR__, 2) . '/config/app.php';
+        $current = (string) ($cfg['version'] ?? '1.0.0');
+        $owner = (string) ($cfg['github']['owner'] ?? 'drmikecrypto');
+        $repo = (string) ($cfg['github']['repo'] ?? 'pc-lab-kit');
+
+        $cached = $forceRefresh ? null : $this->readCache();
+        if ($cached !== null) {
+            $cached['current_version'] = $current;
+
+            return $this->finalize($cached, $current);
+        }
+
+        $release = $this->fetchLatestRelease($owner, $repo);
+        if ($release === null) {
+            return [
+                'ok' => false,
+                'current_version' => $current,
+                'latest_version' => $current,
+                'update_available' => false,
+                'github_owner' => $owner,
+                'github_repo' => $repo,
+                'message' => 'Could not reach GitHub releases. Try again later.',
+            ];
+        }
+
+        $payload = [
+            'ok' => true,
+            'fetched_at' => date('c'),
+            'current_version_at_fetch' => $current,
+            'latest_version' => $release['version'],
+            'release_name' => $release['name'],
+            'release_url' => $release['url'],
+            'download_windows' => $release['download_windows'],
+            'download_linux' => $release['download_linux'],
+            'published_at' => $release['published_at'],
+            'release_notes' => $release['notes'],
+            'github_owner' => $owner,
+            'github_repo' => $repo,
+        ];
+        if ($this->releaseFetcher === null) {
+            $this->writeCache($payload);
+        }
+
+        return $this->finalize($payload, $current);
+    }
+
+    /**
+     * Apply current version and update_available flag to a release payload.
+     *
+     * @param array<string, mixed> $payload
+     * @return array<string, mixed>
+     */
+    public function finalizePayload(array $payload, string $current): array
+    {
+        return $this->finalize($payload, $current);
+    }
+
+    public function versionIsNewer(string $latest, string $current): bool
+    {
+        return $this->isNewer($latest, $current);
+    }
+
+    /** @param array<string, mixed> $payload */
+    private function finalize(array $payload, string $current): array
+    {
+        $latest = (string) ($payload['latest_version'] ?? $current);
+        $payload['current_version'] = $current;
+        $payload['update_available'] = $this->isNewer($latest, $current);
+
+        return $payload;
+    }
+
+    /** @return array<string, mixed>|null */
+    private function fetchLatestRelease(string $owner, string $repo): ?array
+    {
+        if ($this->releaseFetcher !== null) {
+            $result = ($this->releaseFetcher)($owner, $repo);
+
+            return is_array($result) ? $result : null;
+        }
+
+        $url = "https://api.github.com/repos/{$owner}/{$repo}/releases/latest";
+        $ctx = stream_context_create([
+            'http' => [
+                'method' => 'GET',
+                'timeout' => 8,
+                'header' => implode("\r\n", [
+                    'User-Agent: PcLabKit-UpdateChecker',
+                    'Accept: application/vnd.github+json',
+                ]),
+            ],
+        ]);
+
+        $raw = @file_get_contents($url, false, $ctx);
+        if ($raw === false || $raw === '') {
+            return null;
+        }
+
+        $json = json_decode($raw, true);
+        if (!is_array($json)) {
+            return null;
+        }
+
+        $tag = ltrim((string) ($json['tag_name'] ?? ''), 'vV');
+        if ($tag === '') {
+            return null;
+        }
+
+        $assets = is_array($json['assets'] ?? null) ? $json['assets'] : [];
+        $windowsUrl = '';
+        $linuxUrl = '';
+        $probeUrl = '';
+        $releaseUrl = (string) ($json['html_url'] ?? "https://github.com/{$owner}/{$repo}/releases/latest");
+        foreach ($assets as $asset) {
+            if (!is_array($asset)) {
+                continue;
+            }
+            $name = strtolower((string) ($asset['name'] ?? ''));
+            $browser = (string) ($asset['browser_download_url'] ?? '');
+            if ($browser === '') {
+                continue;
+            }
+            if ($name === 'pclabkit-setup-windows-x64.exe'
+                || ($name === 'pc-lab-kit-windows-x64.zip')
+                || (str_contains($name, 'windows') && (str_ends_with($name, '.exe') || str_ends_with($name, '.msi')))
+            ) {
+                $windowsUrl = $browser;
+            } elseif ($name === 'pclabkit-linux-x64.appimage'
+                || $name === 'pc-lab-kit-linux-x64.tar.gz'
+                || (str_contains($name, 'linux') && (str_ends_with($name, '.appimage') || str_ends_with($name, '.tar.gz') || str_ends_with($name, '.tgz') || str_ends_with($name, '.deb')))
+            ) {
+                $linuxUrl = $browser;
+            } elseif ($name === 'pc-lab-kit-probe-windows.zip' || str_contains($name, 'probe')) {
+                $probeUrl = $browser;
+            }
+        }
+
+        return [
+            'version' => $tag,
+            'name' => (string) ($json['name'] ?? ('PC Lab Kit ' . $tag)),
+            'url' => $releaseUrl,
+            'published_at' => (string) ($json['published_at'] ?? ''),
+            'notes' => $this->trimNotes((string) ($json['body'] ?? '')),
+            'download_windows' => $windowsUrl !== '' ? $windowsUrl : $releaseUrl,
+            'download_linux' => $linuxUrl !== '' ? $linuxUrl : $releaseUrl,
+            'download_probe' => $probeUrl !== '' ? $probeUrl : ($windowsUrl !== '' ? $windowsUrl : $releaseUrl),
+        ];
+    }
+
+    private function trimNotes(string $body): string
+    {
+        $body = trim($body);
+        if ($body === '') {
+            return '';
+        }
+        if (strlen($body) > 600) {
+            return substr($body, 0, 597) . '...';
+        }
+
+        return $body;
+    }
+
+    private function isNewer(string $latest, string $current): bool
+    {
+        if ($latest === $current) {
+            return false;
+        }
+
+        return version_compare($latest, $current, '>');
+    }
+
+    /** @return array<string, mixed>|null */
+    private function readCache(): ?array
+    {
+        $path = $this->cachePath();
+        if (!is_file($path)) {
+            return null;
+        }
+        $json = json_decode((string) file_get_contents($path), true);
+        if (!is_array($json)) {
+            return null;
+        }
+        $fetched = strtotime((string) ($json['fetched_at'] ?? ''));
+        $ttl = (int) Env::get('UPDATE_CHECK_TTL_SECONDS', '21600');
+        if ($fetched === false || (time() - $fetched) > max(300, $ttl)) {
+            return null;
+        }
+
+        // After a desktop payload upgrade, APP_VERSION changes while this cache may still
+        // point at an older GitHub "latest" — force a fresh fetch.
+        $cfg = require dirname(__DIR__, 2) . '/config/app.php';
+        $current = (string) ($cfg['version'] ?? '');
+        $cachedFor = (string) ($json['current_version_at_fetch'] ?? '');
+        if ($current !== '' && $cachedFor !== '' && $cachedFor !== $current) {
+            return null;
+        }
+
+        return $json;
+    }
+
+    /** @param array<string, mixed> $payload */
+    private function writeCache(array $payload): void
+    {
+        $dir = dirname($this->cachePath());
+        if (!is_dir($dir)) {
+            mkdir($dir, 0775, true);
+        }
+        file_put_contents($this->cachePath(), json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+    }
+
+    private function cachePath(): string
+    {
+        return dirname(__DIR__, 2) . '/storage/cache/github-release.json';
+    }
+}

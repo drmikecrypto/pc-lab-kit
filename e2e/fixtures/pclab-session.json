@@ -1,0 +1,28 @@
+{
+  "format": "pclab-session-v1",
+  "fingerprint": "e2e-fixture-fp",
+  "probe_version": "7",
+  "profile": "standard",
+  "dossier": {
+    "cpu": { "model": "Ryzen 7 5800X" },
+    "gpu": { "name": "RTX 4070", "gpu_therm_spread": 6 },
+    "open_book": { "count": 3, "sensors": [{ "source": "blackwell_therm_mmio" }] }
+  },
+  "dossier_hash": "sha256:fixture",
+  "openbook_snapshot": [{ "name": "GPU Hot Spot", "value": 72, "source": "blackwell_therm_mmio" }],
+  "bench_scores": { "cpu_score": 12000, "gpu_score": 8500 },
+  "stress_certificate": {
+    "verdict": "PASS",
+    "passed": true,
+    "stability_margin_pct": 38,
+    "oracle_grade": "B"
+  },
+  "stress_certificate_id": "sha256:cert",
+  "telemetry_archive": [],
+  "pcie_warnings": [],
+  "stability_margin_pct": 38,
+  "hardware_graph_summary": { "node_count": 5 },
+  "signed_at": "2026-08-20T00:00:00Z",
+  "session_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "verification_qr": "pclab://verify/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

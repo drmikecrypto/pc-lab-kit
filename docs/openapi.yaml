@@ -1,0 +1,82 @@
+openapi: 3.1.0
+info:
+  title: PC Lab Kit Diagnostic API
+  version: 0.0.7
+  description: Local-first PC laboratory REST API (localhost only).
+servers:
+  - url: http://127.0.0.1:8080
+paths:
+  /api/diagnostic/config:
+    get:
+      summary: Lab config + public settings
+  /api/diagnostic/live:
+    get:
+      summary: Live dashboard payload
+  /api/diagnostic/arena:
+    get:
+      summary: Benchmark Arena percentile rings vs reference DB
+  /api/diagnostic/silicon-aging:
+    get:
+      summary: Silicon Aging Index timeline
+  /api/diagnostic/hardware-graph:
+    post:
+      summary: Hardware knowledge graph + explore view
+  /api/diagnostic/telemetry/stream:
+    get:
+      summary: SSE proxy to probe telemetry stream
+  /api/diagnostic/suite/start:
+    post:
+      summary: Start Full Lab suite job
+  /api/diagnostic/suite/finalize/{id}:
+    post:
+      summary: Finalize suite → advisor cards + history
+  /api/diagnostic/session/export:
+    post:
+      summary: Export signed .pclab session
+  /api/diagnostic/session/verify:
+    get:
+      summary: Verify session hash
+  /verify/{hash}:
+    get:
+      summary: Public certificate verify page
+  /api/diagnostic/fleet/discover:
+    get:
+      summary: Shop mode — discover LAN probes
+  /api/diagnostic/federated/aggregates:
+    get:
+      summary: Opt-in local federated benchmark aggregates
+  # Probe LCD Studio (localhost:18765 — documented for clients; not PHP-proxied by default)
+  /lcd/panels:
+    get:
+      summary: LCD Studio panel discovery (HID + Windows displays)
+  /lcd/library:
+    get:
+      summary: Recent LCD media library entries for re-apply
+  /lcd/apply:
+    post:
+      summary: Fit + push/play GIF/MP4/WebM to a panel
+  /lcd/play-display:
+    post:
+      summary: Fullscreen media player on a Windows display index
+  /lcd/stop:
+    post:
+      summary: Stop LCD display player
+  /lcd/open-stage:
+    post:
+      summary: Open staged LCD file or folder in Explorer
+  # Probe PresentMon Session Review (localhost:18765)
+  /presentmon/sessions:
+    get:
+      summary: List saved PresentMon / CapFrameX session reviews
+  /presentmon/sessions/{id}:
+    get:
+      summary: Full session artifact (series, histogram, spikes)
+  /presentmon/sessions/import:
+    post:
+      summary: Import CapFrameX JSON into Session Review
+  /presentmon/sessions/{id}/export:
+    get:
+      summary: Export CapFrameX-shaped JSON for a saved session
+  /presentmon/session/foreground:
+    get:
+      summary: Best-effort foreground process hint for session labeling

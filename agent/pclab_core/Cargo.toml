@@ -1,0 +1,17 @@
+[package]
+name = "pclab_core"
+version = "0.1.0"
+edition = "2021"
+description = "PC Lab Kit probe hot-path sidecar — telemetry ring buffer and MMIO reads"
+
+[lib]
+name = "pclab_core"
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[[bin]]
+name = "pclab_core"
+path = "src/main.rs"

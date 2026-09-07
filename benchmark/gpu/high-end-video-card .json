@@ -1,0 +1,5217 @@
+[
+    {
+        "Videocard": "GeForce RTX 5090 D(86%)41,588NA",
+        "G3D Mark": "41588",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX PRO 5000 72GB Blackwell(84%)40,493NA",
+        "G3D Mark": "40493",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 5090(81%)38,9503,799.99*",
+        "G3D Mark": "38950",
+        "Ratio": "NA",
+        "Price (USD)": "$3,799.99",
+        "Price (Toman)": "759,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX PRO 6000 Blackwell Workstation Edition(80%)38,279NA",
+        "G3D Mark": "38279",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 4090(79%)38,0723,399.99*",
+        "G3D Mark": "38072",
+        "Ratio": "NA",
+        "Price (USD)": "$3,399.99",
+        "Price (Toman)": "679,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 5080(74%)35,6931,599.99",
+        "G3D Mark": "35693",
+        "Ratio": "NA",
+        "Price (USD)": "$1,599.99",
+        "Price (Toman)": "319,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 4080(72%)34,4511,582.20*",
+        "G3D Mark": "34451",
+        "Ratio": "NA",
+        "Price (USD)": "$1,582.20",
+        "Price (Toman)": "316,440,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 4080 SUPER(71%)34,2611,499.00*",
+        "G3D Mark": "34261",
+        "Ratio": "NA",
+        "Price (USD)": "$1,499.00",
+        "Price (Toman)": "299,800,000 Toman"
+    },
+    {
+        "Videocard": "RTX PRO 4500 Blackwell(69%)33,4083,018.99",
+        "G3D Mark": "33408",
+        "Ratio": "NA",
+        "Price (USD)": "$3,018.99",
+        "Price (Toman)": "603,798,000 Toman"
+    },
+    {
+        "Videocard": "nVidia L40-48Q(69%)33,270NA",
+        "G3D Mark": "33270",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX PRO 5000 Blackwell(68%)32,9384,559.99",
+        "G3D Mark": "32938",
+        "Ratio": "NA",
+        "Price (USD)": "$4,559.99",
+        "Price (Toman)": "911,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 5090 D v2(68%)32,936NA",
+        "G3D Mark": "32936",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "nVidia L40-4Q(68%)32,601NA",
+        "G3D Mark": "32601",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 5070 Ti(67%)32,419979.99*",
+        "G3D Mark": "32419",
+        "Ratio": "NA",
+        "Price (USD)": "$979.99",
+        "Price (Toman)": "195,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX PRO 6000 Blackwell Max-Q Workstation Edition(67%)32,392NA",
+        "G3D Mark": "32392",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 4070 Ti SUPER(66%)31,8171,701.19*",
+        "G3D Mark": "31817",
+        "Ratio": "NA",
+        "Price (USD)": "$1,701.19",
+        "Price (Toman)": "340,238,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 4070 Ti(66%)31,568791.83*",
+        "G3D Mark": "31568",
+        "Ratio": "NA",
+        "Price (USD)": "$791.83",
+        "Price (Toman)": "158,366,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 7900 XTX(65%)31,4151,199.99*",
+        "G3D Mark": "31415",
+        "Ratio": "NA",
+        "Price (USD)": "$1,199.99",
+        "Price (Toman)": "239,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 4090 D(64%)30,970NA",
+        "G3D Mark": "30970",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX 5000 Ada Generation(63%)30,334NA",
+        "G3D Mark": "30334",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 4070 SUPER(62%)29,957835.00*",
+        "G3D Mark": "29957",
+        "Ratio": "NA",
+        "Price (USD)": "$835.00",
+        "Price (Toman)": "167,000,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 3090 Ti(61%)29,2781,799.99*",
+        "G3D Mark": "29278",
+        "Ratio": "NA",
+        "Price (USD)": "$1,799.99",
+        "Price (Toman)": "359,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 7900 XT(60%)29,0351,168.00*",
+        "G3D Mark": "29035",
+        "Ratio": "NA",
+        "Price (USD)": "$1,168.00",
+        "Price (Toman)": "233,600,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 5070(60%)28,734634.98*",
+        "G3D Mark": "28734",
+        "Ratio": "NA",
+        "Price (USD)": "$634.98",
+        "Price (Toman)": "126,996,000 Toman"
+    },
+    {
+        "Videocard": "RTX 6000 Ada Generation(59%)28,642NA",
+        "G3D Mark": "28642",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "TURZX Display(59%)28,635NA",
+        "G3D Mark": "28635",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 5090 Laptop GPU(59%)28,269NA",
+        "G3D Mark": "28269",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX 4500 Ada Generation(59%)28,265NA",
+        "G3D Mark": "28265",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX PRO 4000 Blackwell(58%)28,1871,754.99",
+        "G3D Mark": "28187",
+        "Ratio": "NA",
+        "Price (USD)": "$1,754.99",
+        "Price (Toman)": "350,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6950 XT(58%)28,0771,098.00*",
+        "G3D Mark": "28077",
+        "Ratio": "NA",
+        "Price (USD)": "$1,098.00",
+        "Price (Toman)": "219,600,000 Toman"
+    },
+    {
+        "Videocard": "Radeon PRO W7900(57%)27,729NA",
+        "G3D Mark": "27729",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX PRO 6000 Blackwell Server Edition(57%)27,523NA",
+        "G3D Mark": "27523",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon AI PRO R9700(57%)27,493NA",
+        "G3D Mark": "27493",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 7900 GRE(57%)27,404799.00*",
+        "G3D Mark": "27404",
+        "Ratio": "NA",
+        "Price (USD)": "$799.00",
+        "Price (Toman)": "159,800,000 Toman"
+    },
+    {
+        "Videocard": "nVidia L40(57%)27,355NA",
+        "G3D Mark": "27355",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon PRO W7800(56%)27,212NA",
+        "G3D Mark": "27212",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 4090 Laptop GPU(56%)27,063NA",
+        "G3D Mark": "27063",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 9070 XT(56%)26,908629.00*",
+        "G3D Mark": "26908",
+        "Ratio": "NA",
+        "Price (USD)": "$629.00",
+        "Price (Toman)": "125,800,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 4070(56%)26,898769.00*",
+        "G3D Mark": "26898",
+        "Ratio": "NA",
+        "Price (USD)": "$769.00",
+        "Price (Toman)": "153,800,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 3080 Ti(55%)26,761933.12*",
+        "G3D Mark": "26761",
+        "Ratio": "NA",
+        "Price (USD)": "$933.12",
+        "Price (Toman)": "186,624,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6900 XT(55%)26,691669.99*",
+        "G3D Mark": "26691",
+        "Ratio": "NA",
+        "Price (USD)": "$669.99",
+        "Price (Toman)": "133,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 3080 12GB(55%)26,564NA",
+        "G3D Mark": "26564",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3090(55%)26,5351,699.99*",
+        "G3D Mark": "26535",
+        "Ratio": "NA",
+        "Price (USD)": "$1,699.99",
+        "Price (Toman)": "339,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro V620(55%)26,519NA",
+        "G3D Mark": "26519",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 5080 Laptop GPU(55%)26,353NA",
+        "G3D Mark": "26353",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "AicUsbDisplay Device(54%)25,879NA",
+        "G3D Mark": "25879",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 9070(53%)25,401595.00*",
+        "G3D Mark": "25401",
+        "Ratio": "NA",
+        "Price (USD)": "$595.00",
+        "Price (Toman)": "119,000,000 Toman"
+    },
+    {
+        "Videocard": "RTX 5880 Ada Generation(52%)25,096NA",
+        "G3D Mark": "25096",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6800 XT(52%)25,060698.00*",
+        "G3D Mark": "25060",
+        "Ratio": "NA",
+        "Price (USD)": "$698.00",
+        "Price (Toman)": "139,600,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 3080(52%)25,008669.99*",
+        "G3D Mark": "25008",
+        "Ratio": "NA",
+        "Price (USD)": "$669.99",
+        "Price (Toman)": "133,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 4080 Laptop GPU(51%)24,745NA",
+        "G3D Mark": "24745",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 7800 XT(50%)24,360579.99*",
+        "G3D Mark": "24360",
+        "Ratio": "NA",
+        "Price (USD)": "$579.99",
+        "Price (Toman)": "115,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX PRO 5000 Blackwell Generation Laptop GPU(50%)24,326NA",
+        "G3D Mark": "24326",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L20-8Q(50%)24,277NA",
+        "G3D Mark": "24277",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX PRO 4000 Blackwell SFF Edition(50%)24,252NA",
+        "G3D Mark": "24252",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 9070 GRE(50%)24,025NA",
+        "G3D Mark": "24025",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX 4000 Ada Generation(49%)23,654NA",
+        "G3D Mark": "23654",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX PRO 4000 Blackwell Generation Laptop GPU(48%)23,263NA",
+        "G3D Mark": "23263",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX 5000 Ada Generation Laptop GPU(48%)23,247NA",
+        "G3D Mark": "23247",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX6000-Ada-6Q(48%)23,236NA",
+        "G3D Mark": "23236",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3070 Ti(48%)23,225476.13*",
+        "G3D Mark": "23225",
+        "Ratio": "NA",
+        "Price (USD)": "$476.13",
+        "Price (Toman)": "95,226,000 Toman"
+    },
+    {
+        "Videocard": "RTX 3500 Ada Generation Embedded GPU(47%)22,926NA",
+        "G3D Mark": "22926",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A5000(47%)22,8912,229.99*",
+        "G3D Mark": "22891",
+        "Ratio": "NA",
+        "Price (USD)": "$2,229.99",
+        "Price (Toman)": "445,997,999 Toman"
+    },
+    {
+        "Videocard": "Radeon PRO W7700(47%)22,868NA",
+        "G3D Mark": "22868",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A6000(47%)22,7784,109.99*",
+        "G3D Mark": "22778",
+        "Ratio": "NA",
+        "Price (USD)": "$4,109.99",
+        "Price (Toman)": "821,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 7700 XT(47%)22,690409.99*",
+        "G3D Mark": "22690",
+        "Ratio": "NA",
+        "Price (USD)": "$409.99",
+        "Price (Toman)": "81,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 5070 Ti Laptop GPU(47%)22,657NA",
+        "G3D Mark": "22657",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 5060 Ti 16GB(47%)22,633572.93*",
+        "G3D Mark": "22633",
+        "Ratio": "NA",
+        "Price (USD)": "$572.93",
+        "Price (Toman)": "114,585,999 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 4060 Ti 16GB(47%)22,618459.99*",
+        "G3D Mark": "22618",
+        "Ratio": "NA",
+        "Price (USD)": "$459.99",
+        "Price (Toman)": "91,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 4060 Ti(47%)22,609451.28*",
+        "G3D Mark": "22609",
+        "Ratio": "NA",
+        "Price (USD)": "$451.28",
+        "Price (Toman)": "90,256,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 5060 Ti 8GB(46%)22,215409.99*",
+        "G3D Mark": "22215",
+        "Ratio": "NA",
+        "Price (USD)": "$409.99",
+        "Price (Toman)": "81,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX 4000 Ada Generation Laptop GPU(46%)22,188NA",
+        "G3D Mark": "22188",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3070(46%)22,113379.26*",
+        "G3D Mark": "22113",
+        "Ratio": "NA",
+        "Price (USD)": "$379.26",
+        "Price (Toman)": "75,852,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 7900M(46%)22,111NA",
+        "G3D Mark": "22111",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6800(46%)22,041449.99*",
+        "G3D Mark": "22041",
+        "Ratio": "NA",
+        "Price (USD)": "$449.99",
+        "Price (Toman)": "89,998,000 Toman"
+    },
+    {
+        "Videocard": "GRID RTX6000-6Q(45%)21,987NA",
+        "G3D Mark": "21987",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA A10(45%)21,687NA",
+        "G3D Mark": "21687",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX PRO 3000 Blackwell Generation Laptop GPU(45%)21,616NA",
+        "G3D Mark": "21616",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 2080 Ti(44%)21,454785.00*",
+        "G3D Mark": "21454",
+        "Ratio": "NA",
+        "Price (USD)": "$785.00",
+        "Price (Toman)": "157,000,000 Toman"
+    },
+    {
+        "Videocard": "RTX A5500(44%)21,1922,762.00*",
+        "G3D Mark": "21192",
+        "Ratio": "NA",
+        "Price (USD)": "$2,762.00",
+        "Price (Toman)": "552,400,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 7700(43%)21,015NA",
+        "G3D Mark": "21015",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 610M Ryzen 7 7840HX(43%)20,904NA",
+        "G3D Mark": "20904",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 5060(43%)20,775339.99*",
+        "G3D Mark": "20775",
+        "Ratio": "NA",
+        "Price (USD)": "$339.99",
+        "Price (Toman)": "67,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6750 XT(43%)20,714419.99*",
+        "G3D Mark": "20714",
+        "Ratio": "NA",
+        "Price (USD)": "$419.99",
+        "Price (Toman)": "83,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX A4500(43%)20,6261,199.95*",
+        "G3D Mark": "20626",
+        "Ratio": "NA",
+        "Price (USD)": "$1,199.95",
+        "Price (Toman)": "239,990,000 Toman"
+    },
+    {
+        "Videocard": "RTX PRO 2000 Blackwell(43%)20,574849.99",
+        "G3D Mark": "20574",
+        "Ratio": "NA",
+        "Price (USD)": "$849.99",
+        "Price (Toman)": "169,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX 4000 SFF Ada Generation(42%)20,470NA",
+        "G3D Mark": "20470",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3060 Ti(42%)20,258380.41*",
+        "G3D Mark": "20258",
+        "Ratio": "NA",
+        "Price (USD)": "$380.41",
+        "Price (Toman)": "76,082,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6750 GRE 12GB(42%)20,155NA",
+        "G3D Mark": "20155",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon PRO W6800(42%)20,1221,849.99*",
+        "G3D Mark": "20122",
+        "Ratio": "NA",
+        "Price (USD)": "$1,849.99",
+        "Price (Toman)": "369,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 9060 XT 16GB(42%)20,117448.99*",
+        "G3D Mark": "20117",
+        "Ratio": "NA",
+        "Price (USD)": "$448.99",
+        "Price (Toman)": "89,798,000 Toman"
+    },
+    {
+        "Videocard": "L40S(41%)20,023NA",
+        "G3D Mark": "20023",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "TITAN RTX(41%)19,9871,295.00*",
+        "G3D Mark": "19987",
+        "Ratio": "NA",
+        "Price (USD)": "$1,295.00",
+        "Price (Toman)": "259,000,000 Toman"
+    },
+    {
+        "Videocard": "Quadro RTX 8000(41%)19,9113,760.00*",
+        "G3D Mark": "19911",
+        "Ratio": "NA",
+        "Price (USD)": "$3,760.00",
+        "Price (Toman)": "752,000,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 9060 XT 8GB(41%)19,806359.99*",
+        "G3D Mark": "19806",
+        "Ratio": "NA",
+        "Price (USD)": "$359.99",
+        "Price (Toman)": "71,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX 3500 Ada Generation Laptop GPU(41%)19,737NA",
+        "G3D Mark": "19737",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6700 XT(41%)19,732499.99*",
+        "G3D Mark": "19732",
+        "Ratio": "NA",
+        "Price (USD)": "$499.99",
+        "Price (Toman)": "99,998,000 Toman"
+    },
+    {
+        "Videocard": "TITAN V(41%)19,720739.96*",
+        "G3D Mark": "19720",
+        "Ratio": "NA",
+        "Price (USD)": "$739.96",
+        "Price (Toman)": "147,992,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 4070 Laptop GPU(40%)19,508NA",
+        "G3D Mark": "19508",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 4060(40%)19,507340.87*",
+        "G3D Mark": "19507",
+        "Ratio": "NA",
+        "Price (USD)": "$340.87",
+        "Price (Toman)": "68,174,000 Toman"
+    },
+    {
+        "Videocard": "SMI USB Display(40%)19,462NA",
+        "G3D Mark": "19462",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 2080 SUPER(40%)19,442775.00*",
+        "G3D Mark": "19442",
+        "Ratio": "NA",
+        "Price (USD)": "$775.00",
+        "Price (Toman)": "155,000,000 Toman"
+    },
+    {
+        "Videocard": "RTX A4000(40%)19,3711,042.99*",
+        "G3D Mark": "19371",
+        "Ratio": "NA",
+        "Price (USD)": "$1,042.99",
+        "Price (Toman)": "208,598,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 5070 Laptop GPU(40%)19,164NA",
+        "G3D Mark": "19164",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6750 GRE 10GB(39%)18,979NA",
+        "G3D Mark": "18979",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "LIANLI USB Display-60hz(39%)18,968NA",
+        "G3D Mark": "18968",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6700(39%)18,935NA",
+        "G3D Mark": "18935",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3080 Ti Laptop GPU(39%)18,927NA",
+        "G3D Mark": "18927",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc Pro B70(39%)18,847NA",
+        "G3D Mark": "18847",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA TITAN Xp(39%)18,754999.00*",
+        "G3D Mark": "18754",
+        "Ratio": "NA",
+        "Price (USD)": "$999.00",
+        "Price (Toman)": "199,800,000 Toman"
+    },
+    {
+        "Videocard": "Quadro GV100(38%)18,6248,999.00*",
+        "G3D Mark": "18624",
+        "Ratio": "NA",
+        "Price (USD)": "$8,999.00",
+        "Price (Toman)": "1,799,800,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 1080 Ti(38%)18,593395.00*",
+        "G3D Mark": "18593",
+        "Ratio": "NA",
+        "Price (USD)": "$395.00",
+        "Price (Toman)": "79,000,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 2080(38%)18,589735.00*",
+        "G3D Mark": "18589",
+        "Ratio": "NA",
+        "Price (USD)": "$735.00",
+        "Price (Toman)": "147,000,000 Toman"
+    },
+    {
+        "Videocard": "TITAN Xp COLLECTORS EDITION(38%)18,526NA",
+        "G3D Mark": "18526",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 7650 GRE(38%)18,369279.00*",
+        "G3D Mark": "18369",
+        "Ratio": "NA",
+        "Price (USD)": "$279.00",
+        "Price (Toman)": "55,800,000 Toman"
+    },
+    {
+        "Videocard": "Radeon 8060S(37%)18,153NA",
+        "G3D Mark": "18153",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 2070 SUPER(37%)18,139599.00*",
+        "G3D Mark": "18139",
+        "Ratio": "NA",
+        "Price (USD)": "$599.00",
+        "Price (Toman)": "119,800,000 Toman"
+    },
+    {
+        "Videocard": "Quadro RTX 6000(37%)17,8306,300.00*",
+        "G3D Mark": "17830",
+        "Ratio": "NA",
+        "Price (USD)": "$6,300.00",
+        "Price (Toman)": "1,260,000,000 Toman"
+    },
+    {
+        "Videocard": "NVIDIA A10G(36%)17,660NA",
+        "G3D Mark": "17660",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 9060(36%)17,649NA",
+        "G3D Mark": "17649",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 7800M(36%)17,634NA",
+        "G3D Mark": "17634",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3070 Ti Laptop GPU(36%)17,417NA",
+        "G3D Mark": "17417",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro W6900X(36%)17,413NA",
+        "G3D Mark": "17413",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Barco MXRV-7100(36%)17,382NA",
+        "G3D Mark": "17382",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 4060 Laptop GPU(36%)17,376NA",
+        "G3D Mark": "17376",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6850M XT(36%)17,311NA",
+        "G3D Mark": "17311",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 7600 XT(36%)17,304499.99*",
+        "G3D Mark": "17304",
+        "Ratio": "NA",
+        "Price (USD)": "$499.99",
+        "Price (Toman)": "99,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX A5500 Laptop GPU(36%)17,224NA",
+        "G3D Mark": "17224",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX 2000 Ada Generation(35%)17,203NA",
+        "G3D Mark": "17203",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6650 XT(35%)17,119299.99*",
+        "G3D Mark": "17119",
+        "Ratio": "NA",
+        "Price (USD)": "$299.99",
+        "Price (Toman)": "59,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 5050(35%)17,113289.99*",
+        "G3D Mark": "17113",
+        "Ratio": "NA",
+        "Price (USD)": "$289.99",
+        "Price (Toman)": "57,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX 5000 Ada Generation Embedded GPU(35%)17,056NA",
+        "G3D Mark": "17056",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "EIZO Quadro MED-XN92(35%)17,036NA",
+        "G3D Mark": "17036",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "TITAN V CEO Edition(35%)16,988NA",
+        "G3D Mark": "16988",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3060(35%)16,978NA",
+        "G3D Mark": "16978",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX6000-Ada-3A(35%)16,841NA",
+        "G3D Mark": "16841",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 5060 Laptop GPU(35%)16,801NA",
+        "G3D Mark": "16801",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A4500 Laptop GPU(35%)16,801NA",
+        "G3D Mark": "16801",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A4000H(35%)16,768NA",
+        "G3D Mark": "16768",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3060 12GB(34%)16,730469.99*",
+        "G3D Mark": "16730",
+        "Ratio": "NA",
+        "Price (USD)": "$469.99",
+        "Price (Toman)": "93,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro W6800X(34%)16,619NA",
+        "G3D Mark": "16619",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5700 XT 50th Anniversary(34%)16,528NA",
+        "G3D Mark": "16528",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 7600(34%)16,492279.99*",
+        "G3D Mark": "16492",
+        "Ratio": "NA",
+        "Price (USD)": "$279.99",
+        "Price (Toman)": "55,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 2060 SUPER(34%)16,461239.99*",
+        "G3D Mark": "16461",
+        "Ratio": "NA",
+        "Price (USD)": "$239.99",
+        "Price (Toman)": "47,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6600 XT(34%)16,448324.97*",
+        "G3D Mark": "16448",
+        "Ratio": "NA",
+        "Price (USD)": "$324.97",
+        "Price (Toman)": "64,994,000 Toman"
+    },
+    {
+        "Videocard": "RTX PRO 2000 Blackwell Generation Laptop GPU(34%)16,408NA",
+        "G3D Mark": "16408",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A5000 Laptop GPU(34%)16,368NA",
+        "G3D Mark": "16368",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon PRO W7600(34%)16,355NA",
+        "G3D Mark": "16355",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon VII(33%)16,2531,899.95*",
+        "G3D Mark": "16253",
+        "Ratio": "NA",
+        "Price (USD)": "$1,899.95",
+        "Price (Toman)": "379,990,000 Toman"
+    },
+    {
+        "Videocard": "Radeon 8050S(33%)16,194NA",
+        "G3D Mark": "16194",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3080 Laptop GPU(33%)16,120NA",
+        "G3D Mark": "16120",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6650M XT(33%)16,081NA",
+        "G3D Mark": "16081",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5700 XT(33%)16,071630.00*",
+        "G3D Mark": "16071",
+        "Ratio": "NA",
+        "Price (USD)": "$630.00",
+        "Price (Toman)": "126,000,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 2070(33%)16,064585.00*",
+        "G3D Mark": "16064",
+        "Ratio": "NA",
+        "Price (USD)": "$585.00",
+        "Price (Toman)": "117,000,000 Toman"
+    },
+    {
+        "Videocard": "RTX 3000 Ada Generation Laptop GPU(33%)16,023NA",
+        "G3D Mark": "16023",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc B580(33%)15,973249.00*",
+        "G3D Mark": "15973",
+        "Ratio": "NA",
+        "Price (USD)": "$249.00",
+        "Price (Toman)": "49,800,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 2060 12GB(33%)15,923NA",
+        "G3D Mark": "15923",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6800S(32%)15,737NA",
+        "G3D Mark": "15737",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX 2000E Ada Generation(32%)15,634NA",
+        "G3D Mark": "15634",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro V620 MxGPU(32%)15,633NA",
+        "G3D Mark": "15633",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro Vega II(32%)15,618NA",
+        "G3D Mark": "15618",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1080(32%)15,606379.00*",
+        "G3D Mark": "15606",
+        "Ratio": "NA",
+        "Price (USD)": "$379.00",
+        "Price (Toman)": "75,800,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 7600S(32%)15,500NA",
+        "G3D Mark": "15500",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P6000(32%)15,468890.00*",
+        "G3D Mark": "15468",
+        "Ratio": "NA",
+        "Price (USD)": "$890.00",
+        "Price (Toman)": "178,000,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 7700S(32%)15,432NA",
+        "G3D Mark": "15432",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro RTX 5000(32%)15,337NA",
+        "G3D Mark": "15337",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3060 8GB(31%)15,243NA",
+        "G3D Mark": "15243",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6650M(31%)15,189NA",
+        "G3D Mark": "15189",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro W5700X(31%)15,179NA",
+        "G3D Mark": "15179",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc Pro B60(31%)15,172NA",
+        "G3D Mark": "15172",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3070 Laptop GPU(31%)15,077NA",
+        "G3D Mark": "15077",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A10-24Q(31%)15,063NA",
+        "G3D Mark": "15063",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6600(31%)15,058423.00*",
+        "G3D Mark": "15058",
+        "Ratio": "NA",
+        "Price (USD)": "$423.00",
+        "Price (Toman)": "84,600,000 Toman"
+    },
+    {
+        "Videocard": "SQExtFramebufferUmode Device(31%)15,054NA",
+        "G3D Mark": "15054",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 2080 (Mobile)(31%)15,014NA",
+        "G3D Mark": "15014",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6700S(31%)15,000299.69*",
+        "G3D Mark": "15000",
+        "Ratio": "NA",
+        "Price (USD)": "$299.69",
+        "Price (Toman)": "59,938,000 Toman"
+    },
+    {
+        "Videocard": "Radeon PRO W6600(31%)14,978NA",
+        "G3D Mark": "14978",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Instinct MI60(31%)14,923NA",
+        "G3D Mark": "14923",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro RTX 4000(31%)14,859899.00*",
+        "G3D Mark": "14859",
+        "Ratio": "NA",
+        "Price (USD)": "$899.00",
+        "Price (Toman)": "179,800,000 Toman"
+    },
+    {
+        "Videocard": "RTX 2000 Ada Generation Laptop GPU(31%)14,852NA",
+        "G3D Mark": "14852",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro RTX 5000 (Mobile)(31%)14,832NA",
+        "G3D Mark": "14832",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A4000 Laptop GPU(30%)14,810NA",
+        "G3D Mark": "14810",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX PRO 1000 Blackwell Generation Laptop GPU(30%)14,806NA",
+        "G3D Mark": "14806",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro W6800X Duo(30%)14,742NA",
+        "G3D Mark": "14742",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1070 Ti(30%)14,671318.02*",
+        "G3D Mark": "14671",
+        "Ratio": "NA",
+        "Price (USD)": "$318.02",
+        "Price (Toman)": "63,604,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 7600M XT(30%)14,615NA",
+        "G3D Mark": "14615",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 5050 Laptop GPU(29%)14,296NA",
+        "G3D Mark": "14296",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 4050 Laptop GPU(29%)14,263NA",
+        "G3D Mark": "14263",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5700(29%)14,234585.00*",
+        "G3D Mark": "14234",
+        "Ratio": "NA",
+        "Price (USD)": "$585.00",
+        "Price (Toman)": "117,000,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro W5700(29%)14,139649.99*",
+        "G3D Mark": "14139",
+        "Ratio": "NA",
+        "Price (USD)": "$649.99",
+        "Price (Toman)": "129,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 2060(29%)14,091345.00*",
+        "G3D Mark": "14091",
+        "Ratio": "NA",
+        "Price (USD)": "$345.00",
+        "Price (Toman)": "69,000,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc B570(29%)14,085NA",
+        "G3D Mark": "14085",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6600 LE(29%)14,012NA",
+        "G3D Mark": "14012",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RadeonT RX 6850M XT(29%)13,992NA",
+        "G3D Mark": "13992",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro GP100(29%)13,983NA",
+        "G3D Mark": "13983",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA A40(29%)13,900259.99*",
+        "G3D Mark": "13900",
+        "Ratio": "NA",
+        "Price (USD)": "$259.99",
+        "Price (Toman)": "51,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX Vega 64(29%)13,879499.00*",
+        "G3D Mark": "13879",
+        "Ratio": "NA",
+        "Price (USD)": "$499.00",
+        "Price (Toman)": "99,800,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6600M(28%)13,863479.00*",
+        "G3D Mark": "13863",
+        "Ratio": "NA",
+        "Price (USD)": "$479.00",
+        "Price (Toman)": "95,800,000 Toman"
+    },
+    {
+        "Videocard": "RTX A3000 12GB Laptop GPU(28%)13,843NA",
+        "G3D Mark": "13843",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX 2000 Ada Generation Embedded GPU(28%)13,842NA",
+        "G3D Mark": "13842",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "spacedesk Adapter(28%)13,759NA",
+        "G3D Mark": "13759",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Racer-Tech USB Display Device(28%)13,692NA",
+        "G3D Mark": "13692",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro Vega II Duo(28%)13,690NA",
+        "G3D Mark": "13690",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A2000 12GB(28%)13,668NA",
+        "G3D Mark": "13668",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA TITAN X(28%)13,660398.00*",
+        "G3D Mark": "13660",
+        "Ratio": "NA",
+        "Price (USD)": "$398.00",
+        "Price (Toman)": "79,600,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro VII(28%)13,649NA",
+        "G3D Mark": "13649",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 980 Ti(28%)13,639399.99*",
+        "G3D Mark": "13639",
+        "Ratio": "NA",
+        "Price (USD)": "$399.99",
+        "Price (Toman)": "79,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6700M(28%)13,629269.99*",
+        "G3D Mark": "13629",
+        "Ratio": "NA",
+        "Price (USD)": "$269.99",
+        "Price (Toman)": "53,998,000 Toman"
+    },
+    {
+        "Videocard": "A10G(28%)13,598NA",
+        "G3D Mark": "13598",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX 1000 Ada Generation Laptop GPU(28%)13,591NA",
+        "G3D Mark": "13591",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1070(28%)13,513289.00*",
+        "G3D Mark": "13513",
+        "Ratio": "NA",
+        "Price (USD)": "$289.00",
+        "Price (Toman)": "57,800,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 2080 Super with Max-Q Design(28%)13,467NA",
+        "G3D Mark": "13467",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "nVidia L20(28%)13,430NA",
+        "G3D Mark": "13430",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 2070 Super with Max-Q Design(28%)13,413NA",
+        "G3D Mark": "13413",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A2000(28%)13,405574.99*",
+        "G3D Mark": "13405",
+        "Ratio": "NA",
+        "Price (USD)": "$574.99",
+        "Price (Toman)": "114,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 5600 XT(28%)13,400498.00*",
+        "G3D Mark": "13400",
+        "Ratio": "NA",
+        "Price (USD)": "$498.00",
+        "Price (Toman)": "99,600,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro Vega 64X(27%)13,369NA",
+        "G3D Mark": "13369",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc A770(27%)13,353379.00*",
+        "G3D Mark": "13353",
+        "Ratio": "NA",
+        "Price (USD)": "$379.00",
+        "Price (Toman)": "75,800,000 Toman"
+    },
+    {
+        "Videocard": "A100-SXM4-40GB(27%)13,326NA",
+        "G3D Mark": "13326",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla P100-PCIE-12GB(27%)13,310NA",
+        "G3D Mark": "13310",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6600S(27%)13,280NA",
+        "G3D Mark": "13280",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6800M(27%)13,274629.99*",
+        "G3D Mark": "13274",
+        "Ratio": "NA",
+        "Price (USD)": "$629.99",
+        "Price (Toman)": "125,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon PRO W7500(27%)13,220NA",
+        "G3D Mark": "13220",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon PRO W7900 Dual Slot(27%)13,182NA",
+        "G3D Mark": "13182",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "OrayIddDriver Device(27%)13,177NA",
+        "G3D Mark": "13177",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX PRO 500 Blackwell Generation Laptop GPU(27%)13,145NA",
+        "G3D Mark": "13145",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3060 Laptop GPU(27%)13,126309.99*",
+        "G3D Mark": "13126",
+        "Ratio": "NA",
+        "Price (USD)": "$309.99",
+        "Price (Toman)": "61,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon PRO W6600X(27%)13,113NA",
+        "G3D Mark": "13113",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX Vega 56(27%)12,967349.95*",
+        "G3D Mark": "12967",
+        "Ratio": "NA",
+        "Price (USD)": "$349.95",
+        "Price (Toman)": "69,990,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro Vega 64(26%)12,886NA",
+        "G3D Mark": "12886",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Vega Frontier Edition(26%)12,7051,679.99*",
+        "G3D Mark": "12705",
+        "Ratio": "NA",
+        "Price (USD)": "$1,679.99",
+        "Price (Toman)": "335,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 2080 with Max-Q Design(26%)12,6862,099.99*",
+        "G3D Mark": "12686",
+        "Ratio": "NA",
+        "Price (USD)": "$2,099.99",
+        "Price (Toman)": "419,997,999 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 1660 SUPER(26%)12,680189.99*",
+        "G3D Mark": "12680",
+        "Ratio": "NA",
+        "Price (USD)": "$189.99",
+        "Price (Toman)": "37,998,000 Toman"
+    },
+    {
+        "Videocard": "Quadro P5000(26%)12,6501,868.99*",
+        "G3D Mark": "12650",
+        "Ratio": "NA",
+        "Price (USD)": "$1,868.99",
+        "Price (Toman)": "373,798,000 Toman"
+    },
+    {
+        "Videocard": "Quadro RTX 5000 with Max-Q Design(26%)12,649NA",
+        "G3D Mark": "12649",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A3000 Laptop GPU(26%)12,633NA",
+        "G3D Mark": "12633",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1660 Ti(26%)12,624199.99*",
+        "G3D Mark": "12624",
+        "Ratio": "NA",
+        "Price (USD)": "$199.99",
+        "Price (Toman)": "39,998,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc A750(26%)12,624279.00*",
+        "G3D Mark": "12624",
+        "Ratio": "NA",
+        "Price (USD)": "$279.00",
+        "Price (Toman)": "55,800,000 Toman"
+    },
+    {
+        "Videocard": "GRID RTX6000-1Q(26%)12,617NA",
+        "G3D Mark": "12617",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX TITAN X(26%)12,5581,096.99*",
+        "G3D Mark": "12558",
+        "Ratio": "NA",
+        "Price (USD)": "$1,096.99",
+        "Price (Toman)": "219,398,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc Pro B50(26%)12,505NA",
+        "G3D Mark": "12505",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3050 8GB(26%)12,494249.99*",
+        "G3D Mark": "12494",
+        "Ratio": "NA",
+        "Price (USD)": "$249.99",
+        "Price (Toman)": "49,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro WX 8200(26%)12,4691,599.39*",
+        "G3D Mark": "12469",
+        "Ratio": "NA",
+        "Price (USD)": "$1,599.39",
+        "Price (Toman)": "319,878,000 Toman"
+    },
+    {
+        "Videocard": "Quadro P5200 with Max-Q Design(26%)12,464NA",
+        "G3D Mark": "12464",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 5700 XT(26%)12,457NA",
+        "G3D Mark": "12457",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5600 OEM(25%)12,426NA",
+        "G3D Mark": "12426",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 2070 (Mobile)(25%)12,357NA",
+        "G3D Mark": "12357",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla V100-PCIE-16GB(25%)12,328NA",
+        "G3D Mark": "12328",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6850M(25%)12,274NA",
+        "G3D Mark": "12274",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro V520 MxGPU(25%)12,258NA",
+        "G3D Mark": "12258",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro RTX 4000 with Max-Q Design(25%)12,201NA",
+        "G3D Mark": "12201",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro Vega 56(25%)12,065NA",
+        "G3D Mark": "12065",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc A580(25%)12,042199.99*",
+        "G3D Mark": "12042",
+        "Ratio": "NA",
+        "Price (USD)": "$199.99",
+        "Price (Toman)": "39,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 3050 Laptop GPU(25%)12,003NA",
+        "G3D Mark": "12003",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 7400(24%)11,909NA",
+        "G3D Mark": "11909",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3050 OEM(24%)11,887272.12*",
+        "G3D Mark": "11887",
+        "Ratio": "NA",
+        "Price (USD)": "$272.12",
+        "Price (Toman)": "54,424,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc A770M(24%)11,879NA",
+        "G3D Mark": "11879",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro WX 9100(24%)11,794NA",
+        "G3D Mark": "11794",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon PRO W6600M(24%)11,765NA",
+        "G3D Mark": "11765",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla T10(24%)11,764NA",
+        "G3D Mark": "11764",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5600(24%)11,753NA",
+        "G3D Mark": "11753",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "EIZO Quadro MED-XN91(24%)11,748NA",
+        "G3D Mark": "11748",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro M6000(24%)11,7094,933.21*",
+        "G3D Mark": "11709",
+        "Ratio": "NA",
+        "Price (USD)": "$4,933.21",
+        "Price (Toman)": "986,642,000 Toman"
+    },
+    {
+        "Videocard": "Quadro RTX 4000 (Mobile)(24%)11,692NA",
+        "G3D Mark": "11692",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1080 with Max-Q Design(24%)11,679NA",
+        "G3D Mark": "11679",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1660(24%)11,615235.28*",
+        "G3D Mark": "11615",
+        "Ratio": "NA",
+        "Price (USD)": "$235.28",
+        "Price (Toman)": "47,056,000 Toman"
+    },
+    {
+        "Videocard": "Tesla P40(24%)11,596424.96*",
+        "G3D Mark": "11596",
+        "Ratio": "NA",
+        "Price (USD)": "$424.96",
+        "Price (Toman)": "84,992,000 Toman"
+    },
+    {
+        "Videocard": "Quadro M6000 24GB(24%)11,500NA",
+        "G3D Mark": "11500",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P4200 with Max-Q Design(23%)11,472NA",
+        "G3D Mark": "11472",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 5700(23%)11,457NA",
+        "G3D Mark": "11457",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P4000(23%)11,414265.00*",
+        "G3D Mark": "11414",
+        "Ratio": "NA",
+        "Price (USD)": "$265.00",
+        "Price (Toman)": "53,000,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 2070 with Max-Q Design(23%)11,397NA",
+        "G3D Mark": "11397",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 2060 (Mobile)(23%)11,353NA",
+        "G3D Mark": "11353",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro Vega 48(23%)11,270NA",
+        "G3D Mark": "11270",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla V100-SXM2-16GB(23%)11,265NA",
+        "G3D Mark": "11265",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P5200(23%)11,240NA",
+        "G3D Mark": "11240",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX 500 Ada Generation Laptop GPU(23%)11,191NA",
+        "G3D Mark": "11191",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A2000 Embedded GPU(23%)11,117NA",
+        "G3D Mark": "11117",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 980(23%)11,079248.45*",
+        "G3D Mark": "11079",
+        "Ratio": "NA",
+        "Price (USD)": "$248.45",
+        "Price (Toman)": "49,690,000 Toman"
+    },
+    {
+        "Videocard": "RTX A1000 Embedded GPU(23%)11,009NA",
+        "G3D Mark": "11009",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 7600M(22%)10,999NA",
+        "G3D Mark": "10999",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro SSG(22%)10,9722,410.15*",
+        "G3D Mark": "10972",
+        "Ratio": "NA",
+        "Price (USD)": "$2,410.15",
+        "Price (Toman)": "482,030,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 3050 A Laptop GPU(22%)10,862NA",
+        "G3D Mark": "10862",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A1000(22%)10,760519.99*",
+        "G3D Mark": "10760",
+        "Ratio": "NA",
+        "Price (USD)": "$519.99",
+        "Price (Toman)": "103,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 3050 6GB(22%)10,758209.99*",
+        "G3D Mark": "10758",
+        "Ratio": "NA",
+        "Price (USD)": "$209.99",
+        "Price (Toman)": "41,998,000 Toman"
+    },
+    {
+        "Videocard": "Quadro RTX 3000(22%)10,653NA",
+        "G3D Mark": "10653",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla M40 24GB(22%)10,641NA",
+        "G3D Mark": "10641",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "CXDisplay Device(21%)10,499NA",
+        "G3D Mark": "10499",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A2000 8GB Laptop GPU(21%)10,483NA",
+        "G3D Mark": "10483",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon V520 MxGPU(21%)10,474NA",
+        "G3D Mark": "10474",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1070 (Mobile)(21%)10,465NA",
+        "G3D Mark": "10465",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A40-48Q(21%)10,436NA",
+        "G3D Mark": "10436",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 8040S(21%)10,431NA",
+        "G3D Mark": "10431",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla M40(21%)10,220600.00*",
+        "G3D Mark": "10220",
+        "Ratio": "NA",
+        "Price (USD)": "$600.00",
+        "Price (Toman)": "120,000,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 1650 SUPER(21%)10,189345.00*",
+        "G3D Mark": "10189",
+        "Ratio": "NA",
+        "Price (USD)": "$345.00",
+        "Price (Toman)": "69,000,000 Toman"
+    },
+    {
+        "Videocard": "L4(21%)10,1533,499.00*",
+        "G3D Mark": "10153",
+        "Ratio": "NA",
+        "Price (USD)": "$3,499.00",
+        "Price (Toman)": "699,800,000 Toman"
+    },
+    {
+        "Videocard": "Quadro P4200(21%)10,136NA",
+        "G3D Mark": "10136",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3050 6GB Laptop GPU(21%)10,131NA",
+        "G3D Mark": "10131",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1660 Ti (Mobile)(21%)10,096NA",
+        "G3D Mark": "10096",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 3050 Ti Laptop GPU(21%)10,078NA",
+        "G3D Mark": "10078",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1060(20%)10,043299.00*",
+        "G3D Mark": "10043",
+        "Ratio": "NA",
+        "Price (USD)": "$299.00",
+        "Price (Toman)": "59,800,000 Toman"
+    },
+    {
+        "Videocard": "RTX A1000 6GB Laptop GPU(20%)10,022NA",
+        "G3D Mark": "10022",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla T4(20%)9,912835.00*",
+        "G3D Mark": "9912",
+        "Ratio": "NA",
+        "Price (USD)": "$835.00",
+        "Price (Toman)": "167,000,000 Toman"
+    },
+    {
+        "Videocard": "RTX PRO 500 Blackwell Embedded GPU(20%)9,910NA",
+        "G3D Mark": "9910",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P40-2B(20%)9,842NA",
+        "G3D Mark": "9842",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1060 3GB(20%)9,840249.79*",
+        "G3D Mark": "9840",
+        "Ratio": "NA",
+        "Price (USD)": "$249.79",
+        "Price (Toman)": "49,958,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc A730M(20%)9,808NA",
+        "G3D Mark": "9808",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc Pro A60(20%)9,798NA",
+        "G3D Mark": "9798",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1070 with Max-Q Design(20%)9,776NA",
+        "G3D Mark": "9776",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 Fury + Fury X(20%)9,741449.99*",
+        "G3D Mark": "9741",
+        "Ratio": "NA",
+        "Price (USD)": "$449.99",
+        "Price (Toman)": "89,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 970(20%)9,640359.00*",
+        "G3D Mark": "9640",
+        "Ratio": "NA",
+        "Price (USD)": "$359.00",
+        "Price (Toman)": "71,800,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6500 XT(20%)9,631207.99*",
+        "G3D Mark": "9631",
+        "Ratio": "NA",
+        "Price (USD)": "$207.99",
+        "Price (Toman)": "41,598,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6550M(20%)9,630NA",
+        "G3D Mark": "9630",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce RTX 2060 with Max-Q Design(20%)9,622NA",
+        "G3D Mark": "9622",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla P100-PCIE-16GB(20%)9,6215,699.00*",
+        "G3D Mark": "9621",
+        "Ratio": "NA",
+        "Price (USD)": "$5,699.00",
+        "Price (Toman)": "1,139,800,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc Pro B390 GPU(20%)9,594NA",
+        "G3D Mark": "9594",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P40-2Q(20%)9,581NA",
+        "G3D Mark": "9581",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX Vega Ryzen 5 5600GT(19%)9,558NA",
+        "G3D Mark": "9558",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 Fury(19%)9,527443.10*",
+        "G3D Mark": "9527",
+        "Ratio": "NA",
+        "Price (USD)": "$443.10",
+        "Price (Toman)": "88,620,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 3050 4GB Laptop GPU(19%)9,499269.99*",
+        "G3D Mark": "9499",
+        "Ratio": "NA",
+        "Price (USD)": "$269.99",
+        "Price (Toman)": "53,998,000 Toman"
+    },
+    {
+        "Videocard": "RTX A2000 Laptop GPU(19%)9,486NA",
+        "G3D Mark": "9486",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 9 4900HSS with Radeon Graphics(19%)9,461NA",
+        "G3D Mark": "9461",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 780 Ti(19%)9,455410.00*",
+        "G3D Mark": "9455",
+        "Ratio": "NA",
+        "Price (USD)": "$410.00",
+        "Price (Toman)": "82,000,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc GPU(19%)9,446NA",
+        "G3D Mark": "9446",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A1000 Laptop GPU(19%)9,437NA",
+        "G3D Mark": "9437",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P2200(19%)9,413224.00*",
+        "G3D Mark": "9413",
+        "Ratio": "NA",
+        "Price (USD)": "$224.00",
+        "Price (Toman)": "44,800,000 Toman"
+    },
+    {
+        "Videocard": "Radeon R9 Fury X(19%)9,394NA",
+        "G3D Mark": "9394",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro M5000(19%)9,374499.00*",
+        "G3D Mark": "9374",
+        "Ratio": "NA",
+        "Price (USD)": "$499.00",
+        "Price (Toman)": "99,800,000 Toman"
+    },
+    {
+        "Videocard": "CMP 40HX(19%)9,344NA",
+        "G3D Mark": "9344",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 5600M(19%)9,304NA",
+        "G3D Mark": "9304",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 590(19%)9,291549.99*",
+        "G3D Mark": "9291",
+        "Ratio": "NA",
+        "Price (USD)": "$549.99",
+        "Price (Toman)": "109,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon R9 390X(19%)9,215NA",
+        "G3D Mark": "9215",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A10-12Q(19%)9,192NA",
+        "G3D Mark": "9192",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX TITAN Black(19%)9,184475.00*",
+        "G3D Mark": "9184",
+        "Ratio": "NA",
+        "Price (USD)": "$475.00",
+        "Price (Toman)": "95,000,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 1060 5GB(19%)9,180487.99*",
+        "G3D Mark": "9180",
+        "Ratio": "NA",
+        "Price (USD)": "$487.99",
+        "Price (Toman)": "97,598,000 Toman"
+    },
+    {
+        "Videocard": "Quadro P3200 with Max-Q Design(19%)9,179NA",
+        "G3D Mark": "9179",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla P4(19%)9,167235.00*",
+        "G3D Mark": "9167",
+        "Ratio": "NA",
+        "Price (USD)": "$235.00",
+        "Price (Toman)": "47,000,000 Toman"
+    },
+    {
+        "Videocard": "Inspiration CG620 MxGPU(19%)9,106NA",
+        "G3D Mark": "9106",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P4000 with Max-Q Design(18%)9,083NA",
+        "G3D Mark": "9083",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5500 XT(18%)9,068489.00*",
+        "G3D Mark": "9068",
+        "Ratio": "NA",
+        "Price (USD)": "$489.00",
+        "Price (Toman)": "97,800,000 Toman"
+    },
+    {
+        "Videocard": "EIZO Quadro MED-XN72(18%)9,037NA",
+        "G3D Mark": "9037",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc B390 GPU(18%)8,968NA",
+        "G3D Mark": "8968",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro W5500(18%)8,952409.99*",
+        "G3D Mark": "8952",
+        "Ratio": "NA",
+        "Price (USD)": "$409.99",
+        "Price (Toman)": "81,998,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc B390 GPU RI(18%)8,902NA",
+        "G3D Mark": "8902",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX TITAN Z(18%)8,897689.00*",
+        "G3D Mark": "8897",
+        "Ratio": "NA",
+        "Price (USD)": "$689.00",
+        "Price (Toman)": "137,800,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 5500(18%)8,858159.99*",
+        "G3D Mark": "8858",
+        "Ratio": "NA",
+        "Price (USD)": "$159.99",
+        "Price (Toman)": "31,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon R9 295X2(18%)8,816499.10*",
+        "G3D Mark": "8816",
+        "Ratio": "NA",
+        "Price (USD)": "$499.10",
+        "Price (Toman)": "99,820,000 Toman"
+    },
+    {
+        "Videocard": "Radeon R9 390(18%)8,804NA",
+        "G3D Mark": "8804",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5600M(18%)8,797NA",
+        "G3D Mark": "8797",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 580(18%)8,789249.99*",
+        "G3D Mark": "8789",
+        "Ratio": "NA",
+        "Price (USD)": "$249.99",
+        "Price (Toman)": "49,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 1660 Ti with Max-Q Design(17%)8,605NA",
+        "G3D Mark": "8605",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L40S-12Q(17%)8,601NA",
+        "G3D Mark": "8601",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 480(17%)8,528339.99*",
+        "G3D Mark": "8528",
+        "Ratio": "NA",
+        "Price (USD)": "$339.99",
+        "Price (Toman)": "67,998,000 Toman"
+    },
+    {
+        "Videocard": "Quadro P3200(17%)8,514389.30*",
+        "G3D Mark": "8514",
+        "Ratio": "NA",
+        "Price (USD)": "$389.30",
+        "Price (Toman)": "77,860,000 Toman"
+    },
+    {
+        "Videocard": "GRID RTX6000-1B(17%)8,473NA",
+        "G3D Mark": "8473",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 290X(17%)8,436NA",
+        "G3D Mark": "8436",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Miracast display port driver V3(17%)8,422NA",
+        "G3D Mark": "8422",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon PRO W6400(17%)8,381NA",
+        "G3D Mark": "8381",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 290X / 390X(17%)8,380319.99*",
+        "G3D Mark": "8380",
+        "Ratio": "NA",
+        "Price (USD)": "$319.99",
+        "Price (Toman)": "63,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro Duo(17%)8,3743,970.36*",
+        "G3D Mark": "8374",
+        "Ratio": "NA",
+        "Price (USD)": "$3,970.36",
+        "Price (Toman)": "794,072,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 5 4600HS with Radeon Graphics(17%)8,371NA",
+        "G3D Mark": "8371",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX590 GME(17%)8,315NA",
+        "G3D Mark": "8315",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A4500 Embedded GPU(17%)8,296NA",
+        "G3D Mark": "8296",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla V100-PCIE-32GB(17%)8,260NA",
+        "G3D Mark": "8260",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX Titan(17%)8,196745.00*",
+        "G3D Mark": "8196",
+        "Ratio": "NA",
+        "Price (USD)": "$745.00",
+        "Price (Toman)": "149,000,000 Toman"
+    },
+    {
+        "Videocard": "Quadro RTX 3000 with Max-Q Design(17%)8,170NA",
+        "G3D Mark": "8170",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1060 (Mobile)(17%)8,160NA",
+        "G3D Mark": "8160",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 290 / 390(17%)8,150380.00*",
+        "G3D Mark": "8150",
+        "Ratio": "NA",
+        "Price (USD)": "$380.00",
+        "Price (Toman)": "76,000,000 Toman"
+    },
+    {
+        "Videocard": "Radeon R9 290(17%)8,149NA",
+        "G3D Mark": "8149",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 890M(16%)8,106NA",
+        "G3D Mark": "8106",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc B370 GPU(16%)8,070NA",
+        "G3D Mark": "8070",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc A530M(16%)8,045NA",
+        "G3D Mark": "8045",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro K6000(16%)8,018250.00*",
+        "G3D Mark": "8018",
+        "Ratio": "NA",
+        "Price (USD)": "$250.00",
+        "Price (Toman)": "50,000,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 9 6900HS(16%)8,005NA",
+        "G3D Mark": "8005",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 780(16%)7,960279.99*",
+        "G3D Mark": "7960",
+        "Ratio": "NA",
+        "Price (USD)": "$279.99",
+        "Price (Toman)": "55,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 470/570(16%)7,918388.99*",
+        "G3D Mark": "7918",
+        "Ratio": "NA",
+        "Price (USD)": "$388.99",
+        "Price (Toman)": "77,798,000 Toman"
+    },
+    {
+        "Videocard": "Quadro M5500(16%)7,915NA",
+        "G3D Mark": "7915",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L40-8Q(16%)7,900NA",
+        "G3D Mark": "7900",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1650(16%)7,872299.99*",
+        "G3D Mark": "7872",
+        "Ratio": "NA",
+        "Price (USD)": "$299.99",
+        "Price (Toman)": "59,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro 5500 XT(16%)7,869NA",
+        "G3D Mark": "7869",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA T1200 Laptop GPU(16%)7,830NA",
+        "G3D Mark": "7830",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1060 with Max-Q Design(16%)7,819NA",
+        "G3D Mark": "7819",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 8845HS with Radeon 780M(16%)7,766NA",
+        "G3D Mark": "7766",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 580(16%)7,753NA",
+        "G3D Mark": "7753",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro W9100(16%)7,7481,729.99*",
+        "G3D Mark": "7748",
+        "Ratio": "NA",
+        "Price (USD)": "$1,729.99",
+        "Price (Toman)": "345,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6400(16%)7,739224.37*",
+        "G3D Mark": "7739",
+        "Ratio": "NA",
+        "Price (USD)": "$224.37",
+        "Price (Toman)": "44,874,000 Toman"
+    },
+    {
+        "Videocard": "A40-8Q(16%)7,716NA",
+        "G3D Mark": "7716",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro WX 7100(16%)7,715242.99*",
+        "G3D Mark": "7715",
+        "Ratio": "NA",
+        "Price (USD)": "$242.99",
+        "Price (Toman)": "48,598,000 Toman"
+    },
+    {
+        "Videocard": "GeForce RTX 2050(16%)7,711NA",
+        "G3D Mark": "7711",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6500(16%)7,706NA",
+        "G3D Mark": "7706",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "nVidia L40S-4Q(16%)7,687NA",
+        "G3D Mark": "7687",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA T1000 8GB(16%)7,676NA",
+        "G3D Mark": "7676",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 780(16%)7,658NA",
+        "G3D Mark": "7658",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 880M(16%)7,656NA",
+        "G3D Mark": "7656",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA T1000(15%)7,651450.00*",
+        "G3D Mark": "7651",
+        "Ratio": "NA",
+        "Price (USD)": "$450.00",
+        "Price (Toman)": "90,000,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 580 2048SP(15%)7,623NA",
+        "G3D Mark": "7623",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5300(15%)7,606NA",
+        "G3D Mark": "7606",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "EPSON Projector Support Driver for UD(15%)7,579NA",
+        "G3D Mark": "7579",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 580X(15%)7,540NA",
+        "G3D Mark": "7540",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1650 Ti(15%)7,535NA",
+        "G3D Mark": "7535",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P40-8Q(15%)7,507NA",
+        "G3D Mark": "7507",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 580X(15%)7,427NA",
+        "G3D Mark": "7427",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Qualcomm Adreno X2-90 GPU(15%)7,390NA",
+        "G3D Mark": "7390",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 980M(15%)7,388289.99*",
+        "G3D Mark": "7388",
+        "Ratio": "NA",
+        "Price (USD)": "$289.99",
+        "Price (Toman)": "57,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro W5500X(15%)7,351NA",
+        "G3D Mark": "7351",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon PRO V710 MxGPU(15%)7,298NA",
+        "G3D Mark": "7298",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro T2000(15%)7,277528.35*",
+        "G3D Mark": "7277",
+        "Ratio": "NA",
+        "Price (USD)": "$528.35",
+        "Price (Toman)": "105,670,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 6500M(15%)7,276NA",
+        "G3D Mark": "7276",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "EIZO Quadro MED-XN71(15%)7,245NA",
+        "G3D Mark": "7245",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L4-8Q(14%)7,114NA",
+        "G3D Mark": "7114",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RadeonT 780M(14%)7,103NA",
+        "G3D Mark": "7103",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 5300(14%)7,089NA",
+        "G3D Mark": "7089",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro M5000M(14%)7,068546.92*",
+        "G3D Mark": "7068",
+        "Ratio": "NA",
+        "Price (USD)": "$546.92",
+        "Price (Toman)": "109,383,999 Toman"
+    },
+    {
+        "Videocard": "GRID P40-24Q(14%)7,057NA",
+        "G3D Mark": "7057",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA T600 Laptop GPU(14%)7,052NA",
+        "G3D Mark": "7052",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro T2000 with Max-Q Design(14%)7,019NA",
+        "G3D Mark": "7019",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P2000(14%)7,008439.60*",
+        "G3D Mark": "7008",
+        "Ratio": "NA",
+        "Price (USD)": "$439.60",
+        "Price (Toman)": "87,920,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 7 4800HS with Radeon Graphics(14%)6,999NA",
+        "G3D Mark": "6999",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1650 (Mobile)(14%)6,968NA",
+        "G3D Mark": "6968",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 780M(14%)6,821NA",
+        "G3D Mark": "6821",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla M60(14%)6,817159.99*",
+        "G3D Mark": "6817",
+        "Ratio": "NA",
+        "Price (USD)": "$159.99",
+        "Price (Toman)": "31,998,000 Toman"
+    },
+    {
+        "Videocard": "FirePro W8100(14%)6,812704.00*",
+        "G3D Mark": "6812",
+        "Ratio": "NA",
+        "Price (USD)": "$704.00",
+        "Price (Toman)": "140,800,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 9 4900HS with Radeon Graphics(14%)6,791NA",
+        "G3D Mark": "6791",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "P106-100(14%)6,727NA",
+        "G3D Mark": "6727",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "extension Adapter(14%)6,726NA",
+        "G3D Mark": "6726",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 9 6900HS(14%)6,726NA",
+        "G3D Mark": "6726",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 5500M(14%)6,719NA",
+        "G3D Mark": "6719",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L40S-2B(14%)6,711NA",
+        "G3D Mark": "6711",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 970XM FORCE(14%)6,707NA",
+        "G3D Mark": "6707",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RadeonT 660M Ryzen 5 6600H(14%)6,700NA",
+        "G3D Mark": "6700",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 285(13%)6,680NA",
+        "G3D Mark": "6680",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro M4000(13%)6,677229.00*",
+        "G3D Mark": "6677",
+        "Ratio": "NA",
+        "Price (USD)": "$229.00",
+        "Price (Toman)": "45,800,000 Toman"
+    },
+    {
+        "Videocard": "A10-8Q(13%)6,648NA",
+        "G3D Mark": "6648",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1650 Ti with Max-Q Design(13%)6,640NA",
+        "G3D Mark": "6640",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro T1000 with Max-Q Design(13%)6,636NA",
+        "G3D Mark": "6636",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc 140T GPU(13%)6,622NA",
+        "G3D Mark": "6622",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc Pro 140T GPU(13%)6,608NA",
+        "G3D Mark": "6608",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6450M(13%)6,601NA",
+        "G3D Mark": "6601",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L40S-6Q(13%)6,588NA",
+        "G3D Mark": "6588",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P40-3Q(13%)6,570NA",
+        "G3D Mark": "6570",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A500 Laptop GPU(13%)6,551NA",
+        "G3D Mark": "6551",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX Vega M GH(13%)6,551NA",
+        "G3D Mark": "6551",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID RTX6000-24Q(13%)6,521NA",
+        "G3D Mark": "6521",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro T1000(13%)6,512480.00*",
+        "G3D Mark": "6512",
+        "Ratio": "NA",
+        "Price (USD)": "$480.00",
+        "Price (Toman)": "96,000,000 Toman"
+    },
+    {
+        "Videocard": "GRID P40-2B4(13%)6,501NA",
+        "G3D Mark": "6501",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "LuminonCore IDDCX Adapter(13%)6,479NA",
+        "G3D Mark": "6479",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "AMD Ryzen Z1 Extreme(13%)6,430NA",
+        "G3D Mark": "6430",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6300M(13%)6,421NA",
+        "G3D Mark": "6421",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA T600(13%)6,366265.00*",
+        "G3D Mark": "6366",
+        "Ratio": "NA",
+        "Price (USD)": "$265.00",
+        "Price (Toman)": "53,000,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 1050 Ti(13%)6,364129.98*",
+        "G3D Mark": "6364",
+        "Ratio": "NA",
+        "Price (USD)": "$129.98",
+        "Price (Toman)": "25,995,999 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 1650 with Max-Q Design(13%)6,352NA",
+        "G3D Mark": "6352",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 570(13%)6,337NA",
+        "G3D Mark": "6337",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P3000(13%)6,326NA",
+        "G3D Mark": "6326",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc A380(13%)6,309139.99*",
+        "G3D Mark": "6309",
+        "Ratio": "NA",
+        "Price (USD)": "$139.99",
+        "Price (Toman)": "27,998,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc A380E(13%)6,290NA",
+        "G3D Mark": "6290",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce MX570 A(13%)6,282NA",
+        "G3D Mark": "6282",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro WX 7130(13%)6,271NA",
+        "G3D Mark": "6271",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 6800HS with Radeon Graphics(13%)6,240NA",
+        "G3D Mark": "6240",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P4-4Q(13%)6,235NA",
+        "G3D Mark": "6235",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla M6(13%)6,225199.00*",
+        "G3D Mark": "6225",
+        "Ratio": "NA",
+        "Price (USD)": "$199.00",
+        "Price (Toman)": "39,800,000 Toman"
+    },
+    {
+        "Videocard": "RTX A500 Embedded GPU(12%)6,197NA",
+        "G3D Mark": "6197",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 6800HS(12%)6,187NA",
+        "G3D Mark": "6187",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 9 PRO 6950H with Radeon Graphics(12%)6,176NA",
+        "G3D Mark": "6176",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro K5200(12%)6,173415.00*",
+        "G3D Mark": "6173",
+        "Ratio": "NA",
+        "Price (USD)": "$415.00",
+        "Price (Toman)": "83,000,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc 130T GPU(12%)6,151NA",
+        "G3D Mark": "6151",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 960(12%)6,142200.00*",
+        "G3D Mark": "6142",
+        "Ratio": "NA",
+        "Price (USD)": "$200.00",
+        "Price (Toman)": "40,000,000 Toman"
+    },
+    {
+        "Videocard": "Radeon R9 380X(12%)6,127349.99*",
+        "G3D Mark": "6127",
+        "Ratio": "NA",
+        "Price (USD)": "$349.99",
+        "Price (Toman)": "69,998,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc Pro 130T GPU(12%)6,127NA",
+        "G3D Mark": "6127",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro W9000(12%)6,116845.00*",
+        "G3D Mark": "6116",
+        "Ratio": "NA",
+        "Price (USD)": "$845.00",
+        "Price (Toman)": "169,000,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 9 6900HS with Radeon Graphics(12%)6,110NA",
+        "G3D Mark": "6110",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro M4000M(12%)6,080254.91*",
+        "G3D Mark": "6080",
+        "Ratio": "NA",
+        "Price (USD)": "$254.91",
+        "Price (Toman)": "50,982,000 Toman"
+    },
+    {
+        "Videocard": "Radeon R9 280X(12%)6,079NA",
+        "G3D Mark": "6079",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5500M(12%)6,030NA",
+        "G3D Mark": "6030",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX A400(12%)6,003232.99",
+        "G3D Mark": "6003",
+        "Ratio": "NA",
+        "Price (USD)": "$232.99",
+        "Price (Toman)": "46,598,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 770(12%)5,962249.00*",
+        "G3D Mark": "5962",
+        "Ratio": "NA",
+        "Price (USD)": "$249.00",
+        "Price (Toman)": "49,800,000 Toman"
+    },
+    {
+        "Videocard": "Radeon R9 380(12%)5,95989.99*",
+        "G3D Mark": "5959",
+        "Ratio": "NA",
+        "Price (USD)": "$89.99",
+        "Price (Toman)": "17,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon 610M Ryzen 9 7845HX(12%)5,948NA",
+        "G3D Mark": "5948",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 6810U(12%)5,937NA",
+        "G3D Mark": "5937",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P40-4Q(12%)5,926NA",
+        "G3D Mark": "5926",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1050 Ti (Mobile)(12%)5,918NA",
+        "G3D Mark": "5918",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc Pro A30M(12%)5,862NA",
+        "G3D Mark": "5862",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RadeonT 760M(12%)5,846NA",
+        "G3D Mark": "5846",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A40-3Q(12%)5,842NA",
+        "G3D Mark": "5842",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 7736U(12%)5,826NA",
+        "G3D Mark": "5826",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc Pro(12%)5,817NA",
+        "G3D Mark": "5817",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce MX570(12%)5,812NA",
+        "G3D Mark": "5812",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Matrox LUMA A380P(12%)5,811NA",
+        "G3D Mark": "5811",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 5300M(12%)5,800NA",
+        "G3D Mark": "5800",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 PRO 6850H with Radeon Graphics(12%)5,791NA",
+        "G3D Mark": "5791",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "DisplayLink USB Device Ryzen 7 7735HS(12%)5,768NA",
+        "G3D Mark": "5768",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 9 PRO 6950H(12%)5,759NA",
+        "G3D Mark": "5759",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla K80(12%)5,754159.96*",
+        "G3D Mark": "5754",
+        "Ratio": "NA",
+        "Price (USD)": "$159.96",
+        "Price (Toman)": "31,992,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 970M(11%)5,729209.99*",
+        "G3D Mark": "5729",
+        "Ratio": "NA",
+        "Price (USD)": "$209.99",
+        "Price (Toman)": "41,998,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc Pro A40/A50(11%)5,697NA",
+        "G3D Mark": "5697",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "CMP 30HX(11%)5,694NA",
+        "G3D Mark": "5694",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon E9550(11%)5,693NA",
+        "G3D Mark": "5693",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RadeonT 680M Ryzen 7 7735HS(11%)5,681NA",
+        "G3D Mark": "5681",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RadeonT 680M(11%)5,680NA",
+        "G3D Mark": "5680",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Eng Sample: 100-000000560-40_Y(11%)5,656NA",
+        "G3D Mark": "5656",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc 140T(11%)5,635NA",
+        "G3D Mark": "5635",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Eng Sample: 100-000000544-40_Y(11%)5,630NA",
+        "G3D Mark": "5630",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 9 PRO 6950H(11%)5,609NA",
+        "G3D Mark": "5609",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon PRO Ryzen 7 PRO 6850U(11%)5,608NA",
+        "G3D Mark": "5608",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 680(11%)5,604399.00*",
+        "G3D Mark": "5604",
+        "Ratio": "NA",
+        "Price (USD)": "$399.00",
+        "Price (Toman)": "79,800,000 Toman"
+    },
+    {
+        "Videocard": "Barco MXRV-3100(11%)5,599NA",
+        "G3D Mark": "5599",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 PRO 6850U(11%)5,581NA",
+        "G3D Mark": "5581",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 7990(11%)5,566589.96*",
+        "G3D Mark": "5566",
+        "Ratio": "NA",
+        "Price (USD)": "$589.96",
+        "Price (Toman)": "117,992,000 Toman"
+    },
+    {
+        "Videocard": "Radeon PRO W6300(11%)5,560NA",
+        "G3D Mark": "5560",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon TM(11%)5,551NA",
+        "G3D Mark": "5551",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 285 / 380(11%)5,550485.00*",
+        "G3D Mark": "5550",
+        "Ratio": "NA",
+        "Price (USD)": "$485.00",
+        "Price (Toman)": "97,000,000 Toman"
+    },
+    {
+        "Videocard": "Quadro M3000M(11%)5,542159.95*",
+        "G3D Mark": "5542",
+        "Ratio": "NA",
+        "Price (USD)": "$159.95",
+        "Price (Toman)": "31,989,999 Toman"
+    },
+    {
+        "Videocard": "GRID P40-12Q(11%)5,540NA",
+        "G3D Mark": "5540",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 PRO 6850H(11%)5,529NA",
+        "G3D Mark": "5529",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 280(11%)5,525NA",
+        "G3D Mark": "5525",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID M60-8A(11%)5,523NA",
+        "G3D Mark": "5523",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 680M Ryzen 9 6900HX(11%)5,493NA",
+        "G3D Mark": "5493",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc(11%)5,482259.99*",
+        "G3D Mark": "5482",
+        "Ratio": "NA",
+        "Price (USD)": "$259.99",
+        "Price (Toman)": "51,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 760 Ti OEM(11%)5,474NA",
+        "G3D Mark": "5474",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L2(11%)5,467NA",
+        "G3D Mark": "5467",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 690(11%)5,466280.99*",
+        "G3D Mark": "5466",
+        "Ratio": "NA",
+        "Price (USD)": "$280.99",
+        "Price (Toman)": "56,198,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 7 6800HS Creator Edition(11%)5,465NA",
+        "G3D Mark": "5465",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro WX 5100(11%)5,464359.99*",
+        "G3D Mark": "5464",
+        "Ratio": "NA",
+        "Price (USD)": "$359.99",
+        "Price (Toman)": "71,998,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc A310(11%)5,461139.99*",
+        "G3D Mark": "5461",
+        "Ratio": "NA",
+        "Price (USD)": "$139.99",
+        "Price (Toman)": "27,998,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 9 5900HS with Radeon Graphics(11%)5,453NA",
+        "G3D Mark": "5453",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 5300M(11%)5,397NA",
+        "G3D Mark": "5397",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 6300(11%)5,384NA",
+        "G3D Mark": "5384",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 670(11%)5,367193.98*",
+        "G3D Mark": "5367",
+        "Ratio": "NA",
+        "Price (USD)": "$193.98",
+        "Price (Toman)": "38,796,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 950(11%)5,353155.00*",
+        "G3D Mark": "5353",
+        "Ratio": "NA",
+        "Price (USD)": "$155.00",
+        "Price (Toman)": "31,000,000 Toman"
+    },
+    {
+        "Videocard": "DameWare Development Mirror Driver 64-bit Ryzen 7(11%)5,350NA",
+        "G3D Mark": "5350",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P2000 with Max-Q Design(11%)5,347NA",
+        "G3D Mark": "5347",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 760M(11%)5,343NA",
+        "G3D Mark": "5343",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 6800HS Creator Edition(11%)5,336NA",
+        "G3D Mark": "5336",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1050 Ti with Max-Q Design(11%)5,314NA",
+        "G3D Mark": "5314",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 760 Ti(11%)5,307297.50*",
+        "G3D Mark": "5307",
+        "Ratio": "NA",
+        "Price (USD)": "$297.50",
+        "Price (Toman)": "59,500,000 Toman"
+    },
+    {
+        "Videocard": "RTX5000-Ada-4Q(11%)5,298NA",
+        "G3D Mark": "5298",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L40S-8Q(11%)5,288NA",
+        "G3D Mark": "5288",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P4-8Q(11%)5,283NA",
+        "G3D Mark": "5283",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A16(11%)5,281NA",
+        "G3D Mark": "5281",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 6800H(10%)5,260NA",
+        "G3D Mark": "5260",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 7735H(10%)5,254NA",
+        "G3D Mark": "5254",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 7970 / R9 280X(10%)5,248246.99*",
+        "G3D Mark": "5248",
+        "Ratio": "NA",
+        "Price (USD)": "$246.99",
+        "Price (Toman)": "49,398,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 7 6800HS(10%)5,237NA",
+        "G3D Mark": "5237",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 8990(10%)5,214NA",
+        "G3D Mark": "5214",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID M60-2Q(10%)5,203NA",
+        "G3D Mark": "5203",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 7735HS with Radeon Graphics(10%)5,175NA",
+        "G3D Mark": "5175",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID RTX8000P-4Q(10%)5,174NA",
+        "G3D Mark": "5174",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro Vega 20(10%)5,169NA",
+        "G3D Mark": "5169",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Q12U-1(10%)5,164NA",
+        "G3D Mark": "5164",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 M295X(10%)5,1501,449.00*",
+        "G3D Mark": "5150",
+        "Ratio": "NA",
+        "Price (USD)": "$1,449.00",
+        "Price (Toman)": "289,800,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 7 Pro 7735U with Radeon Graphics(10%)5,142NA",
+        "G3D Mark": "5142",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc 140V GPU(10%)5,137NA",
+        "G3D Mark": "5137",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 9 6900HX with Radeon Graphics(10%)5,125NA",
+        "G3D Mark": "5125",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 PRO 6850U with Radeon Graphics(10%)5,116NA",
+        "G3D Mark": "5116",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc A370M(10%)5,115NA",
+        "G3D Mark": "5115",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1050 3GB(10%)5,115NA",
+        "G3D Mark": "5115",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 M395X(10%)5,109NA",
+        "G3D Mark": "5109",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 7735U with Radeon Graphics(10%)5,081NA",
+        "G3D Mark": "5081",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 PRO 6860Z(10%)5,077NA",
+        "G3D Mark": "5077",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro S9000(10%)5,059NA",
+        "G3D Mark": "5059",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 PRO 6850HS(10%)5,057NA",
+        "G3D Mark": "5057",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "EIZO MED-XN44(10%)5,049NA",
+        "G3D Mark": "5049",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1050(10%)5,048389.00*",
+        "G3D Mark": "5048",
+        "Ratio": "NA",
+        "Price (USD)": "$389.00",
+        "Price (Toman)": "77,800,000 Toman"
+    },
+    {
+        "Videocard": "RTX Pro 6000 Blackwell DC-24Q(10%)5,044NA",
+        "G3D Mark": "5044",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro W7100(10%)5,039389.30*",
+        "G3D Mark": "5039",
+        "Ratio": "NA",
+        "Price (USD)": "$389.30",
+        "Price (Toman)": "77,860,000 Toman"
+    },
+    {
+        "Videocard": "A40-12Q(10%)5,025NA",
+        "G3D Mark": "5025",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "EIZO Quadro MED-XN51LP(10%)5,012NA",
+        "G3D Mark": "5012",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 7 6800U(10%)5,006NA",
+        "G3D Mark": "5006",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 PRO 6850U(10%)5,002NA",
+        "G3D Mark": "5002",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1630(10%)4,984189.99*",
+        "G3D Mark": "4984",
+        "Ratio": "NA",
+        "Price (USD)": "$189.99",
+        "Price (Toman)": "37,998,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 7 6800H with Radeon Graphics(10%)4,960NA",
+        "G3D Mark": "4960",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Barco MXRT 7600(10%)4,944602.59*",
+        "G3D Mark": "4944",
+        "Ratio": "NA",
+        "Price (USD)": "$602.59",
+        "Price (Toman)": "120,518,000 Toman"
+    },
+    {
+        "Videocard": "RTXA5000-8Q(10%)4,916NA",
+        "G3D Mark": "4916",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro S9050(10%)4,901NA",
+        "G3D Mark": "4901",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 M395(10%)4,897NA",
+        "G3D Mark": "4897",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc A310 LP(10%)4,889NA",
+        "G3D Mark": "4889",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc 130V GPU RI(10%)4,882NA",
+        "G3D Mark": "4882",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 270X(10%)4,874326.50*",
+        "G3D Mark": "4874",
+        "Ratio": "NA",
+        "Price (USD)": "$326.50",
+        "Price (Toman)": "65,300,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 7 PRO 6860Z with Radeon Graphics(10%)4,869NA",
+        "G3D Mark": "4869",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 860M(10%)4,868NA",
+        "G3D Mark": "4868",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 6800H(10%)4,862NA",
+        "G3D Mark": "4862",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L40-3Q(10%)4,858NA",
+        "G3D Mark": "4858",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "DisplayLink USB Device Ryzen 9 6900HX(10%)4,857NA",
+        "G3D Mark": "4857",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Intel Arc 140V GPU RI(10%)4,848NA",
+        "G3D Mark": "4848",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 7735HS(10%)4,824NA",
+        "G3D Mark": "4824",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 760(10%)4,824149.00*",
+        "G3D Mark": "4824",
+        "Ratio": "NA",
+        "Price (USD)": "$149.00",
+        "Price (Toman)": "29,800,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Pro Vega 16(10%)4,809NA",
+        "G3D Mark": "4809",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTXA5000-24Q(10%)4,803NA",
+        "G3D Mark": "4803",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID RTX6000P-6Q(9%)4,777NA",
+        "G3D Mark": "4777",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A16-8Q(9%)4,769NA",
+        "G3D Mark": "4769",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L4-24Q(9%)4,767NA",
+        "G3D Mark": "4767",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 7950 / R9 280(9%)4,7651,603.91*",
+        "G3D Mark": "4765",
+        "Ratio": "NA",
+        "Price (USD)": "$1,603.91",
+        "Price (Toman)": "320,782,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 7 6800U with Radeon Graphics(9%)4,760NA",
+        "G3D Mark": "4760",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID T4-8Q(9%)4,753NA",
+        "G3D Mark": "4753",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "T550 Laptop GPU(9%)4,733NA",
+        "G3D Mark": "4733",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L4-4Q(9%)4,732NA",
+        "G3D Mark": "4732",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen Z2 Go(9%)4,725NA",
+        "G3D Mark": "4725",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Sky 500(9%)4,723NA",
+        "G3D Mark": "4723",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 370(9%)4,722159.99*",
+        "G3D Mark": "4722",
+        "Ratio": "NA",
+        "Price (USD)": "$159.99",
+        "Price (Toman)": "31,998,000 Toman"
+    },
+    {
+        "Videocard": "L40-6Q(9%)4,718NA",
+        "G3D Mark": "4718",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla K20Xm(9%)4,7147,699.00*",
+        "G3D Mark": "4714",
+        "Ratio": "NA",
+        "Price (USD)": "$7,699.00",
+        "Price (Toman)": "1,539,800,000 Toman"
+    },
+    {
+        "Videocard": "FirePro S7000(9%)4,709246.54*",
+        "G3D Mark": "4709",
+        "Ratio": "NA",
+        "Price (USD)": "$246.54",
+        "Price (Toman)": "49,308,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 9 PRO 6950HS with Radeon Graphics(9%)4,705NA",
+        "G3D Mark": "4705",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTXA5000-12Q(9%)4,681NA",
+        "G3D Mark": "4681",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID V100D-2Q(9%)4,668NA",
+        "G3D Mark": "4668",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 580(9%)4,631488.59*",
+        "G3D Mark": "4631",
+        "Ratio": "NA",
+        "Price (USD)": "$488.59",
+        "Price (Toman)": "97,718,000 Toman"
+    },
+    {
+        "Videocard": "GRID P100-16Q(9%)4,626NA",
+        "G3D Mark": "4626",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro WX Vega M GL(9%)4,618NA",
+        "G3D Mark": "4618",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 7735U(9%)4,610NA",
+        "G3D Mark": "4610",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 9 6900HS Creator Edition(9%)4,595NA",
+        "G3D Mark": "4595",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 7870(9%)4,566176.00*",
+        "G3D Mark": "4566",
+        "Ratio": "NA",
+        "Price (USD)": "$176.00",
+        "Price (Toman)": "35,200,000 Toman"
+    },
+    {
+        "Videocard": "B8DKMDAP(9%)4,557NA",
+        "G3D Mark": "4557",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 465(9%)4,538NA",
+        "G3D Mark": "4538",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro S10000(9%)4,537NA",
+        "G3D Mark": "4537",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 PRO 6860Z(9%)4,536NA",
+        "G3D Mark": "4536",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID RTX6000-8Q(9%)4,514NA",
+        "G3D Mark": "4514",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 170(9%)4,506NA",
+        "G3D Mark": "4506",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P1000(9%)4,505289.99*",
+        "G3D Mark": "4505",
+        "Ratio": "NA",
+        "Price (USD)": "$289.99",
+        "Price (Toman)": "57,998,000 Toman"
+    },
+    {
+        "Videocard": "Intel Arc 130V GPU(9%)4,499NA",
+        "G3D Mark": "4499",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla K40c(9%)4,495NA",
+        "G3D Mark": "4495",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID T4-16Q(9%)4,490NA",
+        "G3D Mark": "4490",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R7 370(9%)4,480NA",
+        "G3D Mark": "4480",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 7870 XT(9%)4,470NA",
+        "G3D Mark": "4470",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 9 PRO 6950HS(9%)4,463NA",
+        "G3D Mark": "4463",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 1050 (Mobile)(9%)4,463NA",
+        "G3D Mark": "4463",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "DisplayLink USB Device Ryzen 7 6800H(9%)4,445NA",
+        "G3D Mark": "4445",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce MX550(9%)4,442NA",
+        "G3D Mark": "4442",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Tesla K20m(9%)4,432NA",
+        "G3D Mark": "4432",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P6-4Q(9%)4,429NA",
+        "G3D Mark": "4429",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A2-4Q(9%)4,423NA",
+        "G3D Mark": "4423",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 680M Ryzen 7 7735HS(9%)4,422NA",
+        "G3D Mark": "4422",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 660 Ti(9%)4,413144.00*",
+        "G3D Mark": "4413",
+        "Ratio": "NA",
+        "Price (USD)": "$144.00",
+        "Price (Toman)": "28,800,000 Toman"
+    },
+    {
+        "Videocard": "NVIDIA A40-4Q(9%)4,407NA",
+        "G3D Mark": "4407",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro W7000 Adapter(9%)4,383NA",
+        "G3D Mark": "4383",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "DisplayLink USB Device Ryzen 7 PRO 6850U(9%)4,381NA",
+        "G3D Mark": "4381",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L40S-3Q(9%)4,365NA",
+        "G3D Mark": "4365",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID GTX P40-6(9%)4,340NA",
+        "G3D Mark": "4340",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro K4200(9%)4,340249.00*",
+        "G3D Mark": "4340",
+        "Ratio": "NA",
+        "Price (USD)": "$249.00",
+        "Price (Toman)": "49,800,000 Toman"
+    },
+    {
+        "Videocard": "PCI\\VEN_1002&DEV_164E&SUBSYS_D0001458&REV_C7 Ryzen(9%)4,339NA",
+        "G3D Mark": "4339",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA A40-12Q(9%)4,336NA",
+        "G3D Mark": "4336",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Eng Sample: 100-000000536-40_Y(9%)4,328NA",
+        "G3D Mark": "4328",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTX Pro 6000 Blackwell DC-3Q(9%)4,324NA",
+        "G3D Mark": "4324",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro W7000(9%)4,315278.05*",
+        "G3D Mark": "4315",
+        "Ratio": "NA",
+        "Price (USD)": "$278.05",
+        "Price (Toman)": "55,610,000 Toman"
+    },
+    {
+        "Videocard": "Radeon R9 270(9%)4,306NA",
+        "G3D Mark": "4306",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID RTX6000P-4Q(8%)4,283NA",
+        "G3D Mark": "4283",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L4-2Q(8%)4,280NA",
+        "G3D Mark": "4280",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID V100DX-8Q(8%)4,276NA",
+        "G3D Mark": "4276",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 270 / R7 370(8%)4,260213.16*",
+        "G3D Mark": "4260",
+        "Ratio": "NA",
+        "Price (USD)": "$213.16",
+        "Price (Toman)": "42,632,000 Toman"
+    },
+    {
+        "Videocard": "Quadro M2200(8%)4,260249.99*",
+        "G3D Mark": "4260",
+        "Ratio": "NA",
+        "Price (USD)": "$249.99",
+        "Price (Toman)": "49,998,000 Toman"
+    },
+    {
+        "Videocard": "NVIDIA A40-8Q(8%)4,252NA",
+        "G3D Mark": "4252",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "RTXA6000-8Q(8%)4,237NA",
+        "G3D Mark": "4237",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 6800U(8%)4,226NA",
+        "G3D Mark": "4226",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Eng Sample: 100-000000561-40_Y(8%)4,206NA",
+        "G3D Mark": "4206",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID RTX8000P-12A(8%)4,166NA",
+        "G3D Mark": "4166",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID V100D-8Q(8%)4,156NA",
+        "G3D Mark": "4156",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon PRO Ryzen 5 PRO 6650U(8%)4,140NA",
+        "G3D Mark": "4140",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Winsta0\\\\Default(8%)4,125NA",
+        "G3D Mark": "4125",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX 460(8%)4,099166.81*",
+        "G3D Mark": "4099",
+        "Ratio": "NA",
+        "Price (USD)": "$166.81",
+        "Price (Toman)": "33,362,000 Toman"
+    },
+    {
+        "Videocard": "FirePro W8000(8%)4,092573.00*",
+        "G3D Mark": "4092",
+        "Ratio": "NA",
+        "Price (USD)": "$573.00",
+        "Price (Toman)": "114,600,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 7 PRO 6850HS with Radeon Graphics(8%)4,087NA",
+        "G3D Mark": "4087",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 480(8%)4,078169.99*",
+        "G3D Mark": "4078",
+        "Ratio": "NA",
+        "Price (USD)": "$169.99",
+        "Price (Toman)": "33,998,000 Toman"
+    },
+    {
+        "Videocard": "RadeonT 660M Ryzen 5 7535HS(8%)4,051NA",
+        "G3D Mark": "4051",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 660(8%)4,049295.00*",
+        "G3D Mark": "4049",
+        "Ratio": "NA",
+        "Price (USD)": "$295.00",
+        "Price (Toman)": "59,000,000 Toman"
+    },
+    {
+        "Videocard": "Quadro M2000(8%)4,047264.24*",
+        "G3D Mark": "4047",
+        "Ratio": "NA",
+        "Price (USD)": "$264.24",
+        "Price (Toman)": "52,848,000 Toman"
+    },
+    {
+        "Videocard": "L4-6Q(8%)4,034NA",
+        "G3D Mark": "4034",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 7800-serie(8%)4,029NA",
+        "G3D Mark": "4029",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 660M Ryzen 5 Pro 7535U(8%)4,025NA",
+        "G3D Mark": "4025",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro K5000(8%)4,002249.00*",
+        "G3D Mark": "4002",
+        "Ratio": "NA",
+        "Price (USD)": "$249.00",
+        "Price (Toman)": "49,800,000 Toman"
+    },
+    {
+        "Videocard": "Radeon Eng Sample: 100-000000263-50_Y(8%)3,975NA",
+        "G3D Mark": "3975",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID RTX8000-4Q(8%)3,961NA",
+        "G3D Mark": "3961",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Instinct MI25 MxGPU(8%)3,955NA",
+        "G3D Mark": "3955",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 775M(8%)3,951NA",
+        "G3D Mark": "3951",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "MacroSilicon USB Display Ryzen 7 6800U(8%)3,940NA",
+        "G3D Mark": "3940",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon RX Vega M GL(8%)3,938NA",
+        "G3D Mark": "3938",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 570(8%)3,937149.99*",
+        "G3D Mark": "3937",
+        "Ratio": "NA",
+        "Price (USD)": "$149.99",
+        "Price (Toman)": "29,998,000 Toman"
+    },
+    {
+        "Videocard": "A16-2Q(8%)3,926NA",
+        "G3D Mark": "3926",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P6-2Q(8%)3,926NA",
+        "G3D Mark": "3926",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 7850(8%)3,903174.99*",
+        "G3D Mark": "3903",
+        "Ratio": "NA",
+        "Price (USD)": "$174.99",
+        "Price (Toman)": "34,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 750 Ti(8%)3,900105.99*",
+        "G3D Mark": "3900",
+        "Ratio": "NA",
+        "Price (USD)": "$105.99",
+        "Price (Toman)": "21,198,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 1050 with Max-Q Design(8%)3,898NA",
+        "G3D Mark": "3898",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 780M(8%)3,898499.00*",
+        "G3D Mark": "3898",
+        "Ratio": "NA",
+        "Price (USD)": "$499.00",
+        "Price (Toman)": "99,800,000 Toman"
+    },
+    {
+        "Videocard": "VNC Mirror Driver(8%)3,897NA",
+        "G3D Mark": "3897",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 M390X(8%)3,895NA",
+        "G3D Mark": "3895",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID M60-8Q(8%)3,884NA",
+        "G3D Mark": "3884",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 8970M(8%)3,876139.99*",
+        "G3D Mark": "3876",
+        "Ratio": "NA",
+        "Price (USD)": "$139.99",
+        "Price (Toman)": "27,998,000 Toman"
+    },
+    {
+        "Videocard": "GeForce GTX 965M(8%)3,875NA",
+        "G3D Mark": "3875",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Matrox LUMA A310F(8%)3,873NA",
+        "G3D Mark": "3873",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A16-16Q(8%)3,873NA",
+        "G3D Mark": "3873",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "nVidia L40S-48Q(8%)3,869NA",
+        "G3D Mark": "3869",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 5 PRO 6650H(8%)3,868NA",
+        "G3D Mark": "3868",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 680M(8%)3,864NA",
+        "G3D Mark": "3864",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 7 Pro 7735U(8%)3,862NA",
+        "G3D Mark": "3862",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A16-4Q(8%)3,854NA",
+        "G3D Mark": "3854",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 880M(8%)3,844NA",
+        "G3D Mark": "3844",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID RTX8000P-2Q(8%)3,843NA",
+        "G3D Mark": "3843",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "EIZO MED-XN43(8%)3,843NA",
+        "G3D Mark": "3843",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P40-1Q(8%)3,839NA",
+        "G3D Mark": "3839",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID M60-4Q(8%)3,831NA",
+        "G3D Mark": "3831",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID V100-2Q(7%)3,811NA",
+        "G3D Mark": "3811",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "T400 4GB(7%)3,803NA",
+        "G3D Mark": "3803",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon R9 M485X(7%)3,801NA",
+        "G3D Mark": "3801",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 680MX(7%)3,799NA",
+        "G3D Mark": "3799",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID T4-2Q(7%)3,799NA",
+        "G3D Mark": "3799",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 5 6600HS Creator Edition(7%)3,798NA",
+        "G3D Mark": "3798",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 840M(7%)3,798NA",
+        "G3D Mark": "3798",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro S7150(7%)3,7701,697.99*",
+        "G3D Mark": "3770",
+        "Ratio": "NA",
+        "Price (USD)": "$1,697.99",
+        "Price (Toman)": "339,598,000 Toman"
+    },
+    {
+        "Videocard": "Barco MXRT 7500(7%)3,753299.00*",
+        "G3D Mark": "3753",
+        "Ratio": "NA",
+        "Price (USD)": "$299.00",
+        "Price (Toman)": "59,800,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 5 Pro 7535U with Radeon Graphics(7%)3,750NA",
+        "G3D Mark": "3750",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 5 PRO 6650H with Radeon Graphics(7%)3,727NA",
+        "G3D Mark": "3727",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce MX450(7%)3,719NA",
+        "G3D Mark": "3719",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID T4-4Q(7%)3,717NA",
+        "G3D Mark": "3717",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "A40-4Q(7%)3,712NA",
+        "G3D Mark": "3712",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro P620(7%)3,708574.55*",
+        "G3D Mark": "3708",
+        "Ratio": "NA",
+        "Price (USD)": "$574.55",
+        "Price (Toman)": "114,909,999 Toman"
+    },
+    {
+        "Videocard": "P102-100(7%)3,703NA",
+        "G3D Mark": "3703",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID M60-1Q(7%)3,695NA",
+        "G3D Mark": "3695",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "FirePro W7170M(7%)3,694NA",
+        "G3D Mark": "3694",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 5 6600HS Creator Edition(7%)3,691NA",
+        "G3D Mark": "3691",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Matrox LUMA A310(7%)3,690NA",
+        "G3D Mark": "3690",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID P40-1B(7%)3,690NA",
+        "G3D Mark": "3690",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro WX 4100(7%)3,688499.99*",
+        "G3D Mark": "3688",
+        "Ratio": "NA",
+        "Price (USD)": "$499.99",
+        "Price (Toman)": "99,998,000 Toman"
+    },
+    {
+        "Videocard": "Radeon RX 560(7%)3,681243.93*",
+        "G3D Mark": "3681",
+        "Ratio": "NA",
+        "Price (USD)": "$243.93",
+        "Price (Toman)": "48,786,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 5 7535HS with Radeon Graphics(7%)3,680NA",
+        "G3D Mark": "3680",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 560X(7%)3,678NA",
+        "G3D Mark": "3678",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon HD 7970M(7%)3,678NA",
+        "G3D Mark": "3678",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "P104-100(7%)3,668299.99*",
+        "G3D Mark": "3668",
+        "Ratio": "NA",
+        "Price (USD)": "$299.99",
+        "Price (Toman)": "59,998,000 Toman"
+    },
+    {
+        "Videocard": "L40S-12A(7%)3,660NA",
+        "G3D Mark": "3660",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "NVIDIA T500(7%)3,622NA",
+        "G3D Mark": "3622",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "T400(7%)3,613195.00*",
+        "G3D Mark": "3613",
+        "Ratio": "NA",
+        "Price (USD)": "$195.00",
+        "Price (Toman)": "39,000,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 5 6600H with Radeon Graphics(7%)3,580NA",
+        "G3D Mark": "3580",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro K2200(7%)3,579268.30*",
+        "G3D Mark": "3579",
+        "Ratio": "NA",
+        "Price (USD)": "$268.30",
+        "Price (Toman)": "53,660,000 Toman"
+    },
+    {
+        "Videocard": "GRID RTX8000-2Q(7%)3,574NA",
+        "G3D Mark": "3574",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 680M KY_Bullet Edition(7%)3,569NA",
+        "G3D Mark": "3569",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID M6-8Q(7%)3,568NA",
+        "G3D Mark": "3568",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "VMware Horizon Indirect Display Driver(7%)3,565NA",
+        "G3D Mark": "3565",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GeForce GTX 870M(7%)3,554NA",
+        "G3D Mark": "3554",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "L4-12Q(7%)3,544NA",
+        "G3D Mark": "3544",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Quadro K2200M(7%)3,534124.95*",
+        "G3D Mark": "3534",
+        "Ratio": "NA",
+        "Price (USD)": "$124.95",
+        "Price (Toman)": "24,990,000 Toman"
+    },
+    {
+        "Videocard": "Ryzen 5 PRO 6650U with Radeon Graphics(7%)3,534NA",
+        "G3D Mark": "3534",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon 680M Ryzen 7 Pro 7735U(7%)3,531NA",
+        "G3D Mark": "3531",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 5 6600H(7%)3,522NA",
+        "G3D Mark": "3522",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Ryzen 5 PRO 6650U(7%)3,519NA",
+        "G3D Mark": "3519",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "GRID K520(7%)3,516134.99*",
+        "G3D Mark": "3516",
+        "Ratio": "NA",
+        "Price (USD)": "$134.99",
+        "Price (Toman)": "26,998,000 Toman"
+    },
+    {
+        "Videocard": "Quadro 7000(7%)3,505NA",
+        "G3D Mark": "3505",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Ryzen 5 PRO 6650U(7%)3,487NA",
+        "G3D Mark": "3487",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro 560(7%)3,475NA",
+        "G3D Mark": "3475",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    },
+    {
+        "Videocard": "Radeon Pro W5500M(7%)3,470NA",
+        "G3D Mark": "3470",
+        "Ratio": "NA",
+        "Price (USD)": "NA",
+        "Price (Toman)": "NA"
+    }
+]

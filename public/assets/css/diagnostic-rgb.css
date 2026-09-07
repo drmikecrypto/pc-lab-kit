@@ -1,0 +1,325 @@
+/* RGB Lab — case / fan ring / LCD */
+.dx-rgb {
+  margin: 40px 0 64px;
+  border-radius: 24px;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  background: linear-gradient(165deg, #0a0814 0%, #12101f 45%, #0d0f18 100%);
+  overflow: hidden;
+}
+.dx-rgb-head {
+  padding: 24px 28px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 16px;
+}
+.dx-rgb-brand { font-size: 11px; letter-spacing: 0.18em; color: #a78bfa; font-weight: 800; }
+.dx-rgb-head h2 { margin: 6px 0 8px; font-size: 1.35rem; }
+.dx-rgb-privacy { font-size: 11px; color: rgba(34,211,238,0.85); max-width: 520px; line-height: 1.6; }
+.dx-rgb-status { font-size: 11px; display: flex; align-items: center; gap: 6px; }
+.dx-rgb-status.ok { color: #22c55e; }
+.dx-rgb-status.warn { color: #f29f05; }
+.dx-rgb-body { padding: 20px 28px 28px; }
+.dx-rgb-toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.dx-rgb-devices { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.dx-rgb-device {
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.25);
+  padding: 16px;
+}
+.dx-rgb-device-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.dx-rgb-device-head strong { font-size: 13px; }
+.dx-rgb-type { font-size: 9px; padding: 2px 8px; border-radius: 999px; background: rgba(167,139,250,0.15); color: #c4b5fd; }
+.dx-rgb-zone {
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 10px;
+}
+.dx-rgb-zone-lbl { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 8px; }
+.dx-rgb-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.dx-rgb-controls input[type=color] {
+  width: 36px; height: 36px; border: none; border-radius: 8px; cursor: pointer; background: transparent;
+}
+.dx-rgb-controls select {
+  flex: 1; min-width: 100px; padding: 8px 10px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.4); color: #fff; font-size: 12px;
+}
+.dx-rgb-blink {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;
+  padding-top: 8px; border-top: 1px dashed rgba(255,255,255,0.08);
+}
+.dx-rgb-blink label {
+  font-size: 11px; color: rgba(255,255,255,0.55); display: flex; align-items: center; gap: 6px;
+}
+.dx-rgb-blink input[type=number] {
+  width: 88px; padding: 6px 8px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12); background: rgba(0,0,0,0.4); color: #fff; font-size: 12px;
+}
+.dx-rgb-conflict {
+  grid-column: 1 / -1;
+  padding: 12px 14px; border-radius: 12px; margin-bottom: 4px;
+  background: rgba(242,159,5,0.1); border: 1px solid rgba(242,159,5,0.35);
+  color: #fbbf24; font-size: 12px; line-height: 1.5;
+}
+.dx-rgb-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.dx-rgb-lcd-badge {
+  font-size: 9px; padding: 2px 6px; border-radius: 999px; margin-left: 6px;
+  background: rgba(34,211,238,0.15); color: #67e8f9;
+}
+.dx-rgb-lcd-status { margin-top: 8px; line-height: 1.5; color: rgba(255,255,255,0.55); }
+.dx-rgb-lcd-status.ok { color: #86efac; }
+.dx-rgb-lcd-status.warn { color: #fbbf24; }
+
+/* LCD Studio */
+.dx-lcd-studio {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.dx-lcd-studio h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+.dx-lcd-studio > .muted {
+  margin: 0 0 0.85rem;
+}
+.dx-lcd-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+.dx-lcd-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.55rem;
+  margin-bottom: 1rem;
+}
+.dx-lcd-panel-card {
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.28);
+  border-radius: 12px;
+  padding: 0.75rem;
+  color: inherit;
+  cursor: pointer;
+}
+.dx-lcd-panel-card.is-active {
+  border-color: rgba(34, 211, 238, 0.55);
+  box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.25);
+}
+.dx-lcd-panel-card strong {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+.dx-lcd-panel-meta {
+  display: block;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 0.4rem;
+}
+.dx-lcd-panel-badges,
+.dx-lcd-badge {
+  display: inline-flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+.dx-lcd-badge {
+  font-size: 0.62rem;
+  letter-spacing: 0.02em;
+  padding: 0.12rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(148, 163, 184, 0.2);
+}
+.dx-lcd-badge--disp { background: rgba(34, 197, 94, 0.22); color: #86efac; }
+.dx-lcd-badge--hid { background: rgba(56, 189, 248, 0.22); color: #7dd3fc; }
+.dx-lcd-badge--og { background: rgba(167, 139, 250, 0.22); color: #c4b5fd; }
+.dx-lcd-badge--stage { background: rgba(251, 191, 36, 0.18); color: #fcd34d; }
+.dx-lcd-badge--shape { background: rgba(255, 255, 255, 0.08); }
+.dx-lcd-work {
+  display: grid;
+  grid-template-columns: minmax(140px, 200px) 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .dx-lcd-work { grid-template-columns: 1fr; }
+}
+.dx-lcd-preview {
+  aspect-ratio: 1;
+  max-width: 200px;
+  border-radius: 12px;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.dx-lcd-preview.is-round {
+  border-radius: 50%;
+}
+.dx-lcd-preview img,
+.dx-lcd-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.dx-lcd-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 0.65rem;
+}
+.dx-lcd-controls select,
+.dx-lcd-controls input[type=file] {
+  font-size: 0.8rem;
+}
+.dx-lcd-controls select {
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.4);
+  color: inherit;
+}
+.dx-lcd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.5rem;
+}
+.dx-lcd-honesty {
+  margin: 0.55rem 0 0;
+  line-height: 1.35;
+  max-width: 36rem;
+}
+.dx-lcd-tools {
+  margin: 0.65rem 0 0.85rem;
+}
+.dx-lcd-tools-card {
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(251, 191, 36, 0.35);
+  border-radius: 10px;
+  background: rgba(251, 191, 36, 0.06);
+}
+.dx-lcd-tools-list {
+  margin: 0.45rem 0 0.65rem 1.1rem;
+  padding: 0;
+}
+.dx-lcd-tools-list code {
+  font-size: 0.85em;
+  word-break: break-all;
+}
+.dx-lcd-library {
+  margin: 0.55rem 0 0.35rem;
+  max-width: 100%;
+}
+.dx-lcd-library-head {
+  margin-bottom: 0.35rem;
+}
+.dx-lcd-library-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.dx-lcd-lib-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  max-width: 11rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.35);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+.dx-lcd-lib-chip:hover {
+  border-color: rgba(94, 234, 212, 0.45);
+}
+.dx-lcd-lib-kind {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.65;
+}
+.dx-lcd-lib-name {
+  font-size: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 10rem;
+}
+.dx-lcd-status {
+  margin-top: 0.75rem;
+  line-height: 1.45;
+}
+.dx-lcd-status.ok { color: #86efac; }
+.dx-lcd-status.warn { color: #fbbf24; }
+
+.dx-rgb-lcd-steps { margin: 6px 0 0 1.1rem; padding: 0; font-size: 11px; }
+.dx-rgb-dash-link { color: #67e8f9; text-decoration: underline; }
+.dx-rgb-lcd {
+  margin-top: 10px; padding-top: 10px; border-top: 1px dashed rgba(255,255,255,0.1);
+}
+.dx-rgb-lcd-preview {
+  width: 120px; height: 120px; border-radius: 50%; overflow: hidden;
+  border: 2px solid rgba(167,139,250,0.4); margin: 8px 0; background: #111;
+  display: flex; align-items: center; justify-content: center;
+}
+.dx-rgb-lcd-preview img { width: 100%; height: 100%; object-fit: cover; }
+.dx-rgb-lcd-preview.square { border-radius: 12px; }
+.dx-rgb-empty { padding: 32px; text-align: center; color: rgba(255,255,255,0.4); font-size: 13px; }
+
+.dx-rgb-popup-overlay {
+  position: fixed; inset: 0; z-index: 10000;
+  background: rgba(0,0,0,0.82); display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.dx-rgb-popup {
+  max-width: 520px; width: 100%; padding: 28px; border-radius: 20px;
+  background: linear-gradient(145deg, #1a1030, #0f1218);
+  border: 1px solid rgba(167,139,250,0.35);
+  box-shadow: 0 0 60px rgba(167,139,250,0.12);
+}
+.dx-rgb-popup h3 { margin: 0 0 12px; color: #c4b5fd; }
+.dx-rgb-popup ol { padding-right: 1.2rem; line-height: 1.9; font-size: 13px; color: rgba(255,255,255,0.75); }
+.dx-rgb-popup-close {
+  float: left; background: none; border: none; color: #888; font-size: 22px; cursor: pointer;
+}
+
+.dx-vkh-result {
+  max-width: 560px; width: 100%; padding: 32px; border-radius: 24px;
+  background: linear-gradient(155deg, #1a1030 0%, #0f1418 50%, #12101f 100%);
+  border: 1px solid rgba(167,139,250,0.4);
+  box-shadow: 0 0 80px rgba(167,139,250,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+  max-height: 90vh; overflow-y: auto;
+}
+.dx-vkh-result h2 { margin: 8px 0 16px; font-size: 1.35rem; line-height: 1.45; color: #f1f5f9; }
+.dx-vkh-why { font-size: 13px; line-height: 1.75; color: rgba(255,255,255,0.55); margin-bottom: 20px; }
+.dx-vkh-section { margin-bottom: 18px; }
+.dx-vkh-section h4 { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #a78bfa; margin-bottom: 8px; }
+.dx-vkh-section ul, .dx-vkh-section ol { padding-right: 1.2rem; line-height: 1.85; font-size: 13px; color: rgba(255,255,255,0.78); }
+.dx-vkh-benefit {
+  padding: 14px 16px; border-radius: 12px;
+  background: rgba(34,211,238,0.06); border-right: 3px solid #22d3ee;
+}
+.dx-vkh-benefit p { margin: 0; font-size: 13px; line-height: 1.7; color: #e2e8f0; }
+.dx-vkh-compare { display: grid; gap: 6px; margin: 16px 0; }
+.dx-vkh-cmp { display: grid; grid-template-columns: 100px 1fr; gap: 8px; font-size: 11px; color: rgba(255,255,255,0.5); }
+.dx-vkh-cmp-k { color: #f29f05; font-weight: 700; text-transform: uppercase; }
+.dx-vkh-paths { word-break: break-all; margin-top: 12px; }
